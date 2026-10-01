@@ -11,8 +11,8 @@
 <script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Tutorials for Introductory Statistics">
-<meta name="description" content="Collection of tutorials covering the concepts of an introductory statistics course, worked through in R. Makes extensive use of the tools in the tutorial.helpers package.">
-<meta property="og:description" content="Collection of tutorials covering the concepts of an introductory statistics course, worked through in R. Makes extensive use of the tools in the tutorial.helpers package.">
+<meta name="description" content="Collection of tutorials covering the concepts of an introductory statistics course, worked through in R. Makes use of the learnr2 package: tutorials are Quarto documents whose exercises run in the browser via WebR.">
+<meta property="og:description" content="Collection of tutorials covering the concepts of an introductory statistics course, worked through in R. Makes use of the learnr2 package: tutorials are Quarto documents whose exercises run in the browser via WebR.">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -55,7 +55,7 @@
 <div class="section level2">
 <h2 id="about-this-package">About this package<a class="anchor" aria-label="anchor" href="#about-this-package"></a>
 </h2>
-<p><strong>stat101.tutorials</strong> is a collection of tutorials covering the concepts of an introductory statistics course, worked through in R. Makes extensive use of the tools in the <strong><a href="https://ppbds.github.io/tutorial.helpers/" class="external-link">tutorial.helpers</a></strong> package.</p>
+<p><strong>stat101.tutorials</strong> is a collection of tutorials covering the concepts of an introductory statistics course, worked through in R. Built with <strong><a href="https://github.com/PPBDS/learnr2" class="external-link">learnr2</a></strong>: each tutorial is a Quarto document whose exercises run in the browser via WebR.</p>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -63,13 +63,14 @@
 <p>Install the development version from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"PPBDS/stat101.tutorials"</span><span class="op">)</span></span></code></pre></div>
+<p>This also installs the development version of <strong>learnr2</strong>. Rendering a tutorial requires the <a href="https://quarto.org/docs/get-started/" class="external-link">Quarto CLI</a>.</p>
 </div>
 <div class="section level2">
 <h2 id="tutorials">Tutorials<a class="anchor" aria-label="anchor" href="#tutorials"></a>
 </h2>
 <p>The recommended way to launch tutorials is with the <a href="https://open-vsx.org/extension/PPBDS/vscode-r-tutorials" class="external-link">R Tutorials extension for VS Code</a>, which lists every installed tutorial and lets you start one with a click.</p>
-<p>As a backup, you can launch a tutorial from the R console with <code><a href="https://pkgs.rstudio.com/learnr/reference/run_tutorial.html" class="external-link">learnr::run_tutorial()</a></code>, providing the short name of the tutorial and the package name.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>learnr<span class="sc">::</span><span class="fu">run_tutorial</span>(<span class="at">name =</span> <span class="st">"01-example"</span>,</span>
+<p>As a backup, you can launch a tutorial from the R console with <code><a href="https://ppbds.github.io/learnr2/reference/run_tutorial.html" class="external-link">learnr2::run_tutorial()</a></code>, providing the short name of the tutorial and the package name.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>learnr2<span class="sc">::</span><span class="fu">run_tutorial</span>(<span class="at">name =</span> <span class="st">"01-example"</span>,</span>
 <span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>                     <span class="at">package =</span> <span class="st">"stat101.tutorials"</span>)</span></code></pre></div>
 <p>There are no tutorials yet.</p>
 </div>

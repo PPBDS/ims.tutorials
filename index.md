@@ -5,10 +5,9 @@ Package website: <https://ppbds.github.io/stat101.tutorials/>
 ## About this package
 
 **stat101.tutorials** is a collection of tutorials covering the concepts
-of an introductory statistics course, worked through in R. Makes
-extensive use of the tools in the
-**[tutorial.helpers](https://ppbds.github.io/tutorial.helpers/)**
-package.
+of an introductory statistics course, worked through in R. Built with
+**[learnr2](https://github.com/PPBDS/learnr2)**: each tutorial is a
+Quarto document whose exercises run in the browser via WebR.
 
 ## Installation
 
@@ -19,6 +18,10 @@ Install the development version from [GitHub](https://github.com/) with:
 remotes::install_github("PPBDS/stat101.tutorials")
 ```
 
+This also installs the development version of **learnr2**. Rendering a
+tutorial requires the [Quarto
+CLI](https://quarto.org/docs/get-started/).
+
 ## Tutorials
 
 The recommended way to launch tutorials is with the [R Tutorials
@@ -27,11 +30,11 @@ Code](https://open-vsx.org/extension/PPBDS/vscode-r-tutorials), which
 lists every installed tutorial and lets you start one with a click.
 
 As a backup, you can launch a tutorial from the R console with
-[`learnr::run_tutorial()`](https://pkgs.rstudio.com/learnr/reference/run_tutorial.html),
+[`learnr2::run_tutorial()`](https://ppbds.github.io/learnr2/reference/run_tutorial.html),
 providing the short name of the tutorial and the package name.
 
 ``` R
-learnr::run_tutorial(name = "01-example",
+learnr2::run_tutorial(name = "01-example",
                      package = "stat101.tutorials")
 ```
 
