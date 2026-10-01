@@ -1,0 +1,104 @@
+# Workflow derived from https://github.com/r-lib/actions/tree/v2/examples
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+name: R-CMD-check
+
+jobs:
+  R-CMD-check:
+    runs-on: ${{ matrix.config.os }}
+
+    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {os: windows-latest, r: 'release'}
+          - {os: ubuntu-latest, r: 'release'}
+
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_KEEP_PKG_SOURCE: yes
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-pandoc@v2
+
+      - uses: quarto-dev/quarto-actions/setup@v2
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: ${{ matrix.config.r }}
+          use-public-rspm: true
+
+      # For Linux, install ALL spatial and system dependencies
+      - name: Install system dependencies on Linux
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libcurl4-openssl-dev \
+            libssl-dev \
+            libxml2-dev \
+            libharfbuzz-dev \
+            libfribidi-dev \
+            libudunits2-dev \
+            libgdal-dev \
+            libgeos-dev \
+            libproj-dev \
+            libsqlite3-dev \
+            libtiff-dev \
+            libgeotiff-dev \
+            libicu-dev \
+            libjpeg-dev \
+            libpng-dev
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::rcmdcheck
+          needs: check
+
+      - uses: r-lib/actions/check-r-package@v2
+        with:
+          upload-snapshots: true
+
+  # R-CMD-check above installs ALL dependencies, including Suggests, so it
+  # cannot catch failures that only occur for students, whose devcontainer
+  # image has exactly this package's Suggests baked (via the image's
+  # dependencies = TRUE install) and nothing more. This job renders every
+  # tutorial inside the ACTUAL image students' Codespaces run --
+  # ghcr.io/ppbds/devcontainer, built by PPBDS/devcontainers -- after
+  # installing this package the way a student update does (hard
+  # dependencies only). If this job is green, the tutorials render for
+  # students; if a tutorial needs a package the image lacks (a new or
+  # undeclared Suggests, or an invisible render-time dependency like the
+  # 2026-07 katex incident in primer.tutorials), this job fails exactly
+  # the way a codespace would -- the signal to cut an image release.
+  student-env-render:
+    runs-on: ubuntu-latest
+    name: render tutorials in the student devcontainer
+
+    # Keep this tag in sync with the "image" pin in
+    # PPBDS/codespace-starter .devcontainer/devcontainer.json.
+    container:
+      image: ghcr.io/ppbds/devcontainer:1.1.5
+
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install this package the way students do (hard deps only)
+        run: R -q -e 'pak::local_install(".", ask = FALSE)'
+
+      - name: Render all tutorials
+        run: |
+          paths <- tutorial.helpers::return_tutorial_paths(package = "stat101.tutorials")
+          tutorial.helpers::knit_tutorials(paths)
+        shell: Rscript {0}
