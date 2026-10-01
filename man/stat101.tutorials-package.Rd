@@ -11,13 +11,13 @@ introductory statistics concepts, worked through in R.
 }
 \details{
 A collection of interactive tutorials covering the concepts of an
-introductory statistics course. This package makes extensive use of the
-tools in the tutorial.helpers package.
+introductory statistics course. Tutorials are built with the learnr2
+package: Quarto documents whose exercises run in the browser via WebR.
 }
 \section{Running Tutorials}{
 
 To run a tutorial, use:
-\code{learnr::run_tutorial(name = "short_tutorial_name", package = "stat101.tutorials")}
+\code{learnr2::run_tutorial(name = "tutorial_name", package = "stat101.tutorials")}
 }
 
 \seealso{

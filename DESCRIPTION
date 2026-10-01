@@ -10,7 +10,8 @@ Authors@R:
            comment = c(ORCID = "0000-0002-6660-3934")))
 Description: Collection of tutorials covering the concepts of an
     introductory statistics course, worked through in R. Makes
-    extensive use of the tools in the 'tutorial.helpers' package.
+    use of the 'learnr2' package: tutorials are 'Quarto' documents
+    whose exercises run in the browser via 'WebR'.
 Depends: R (>= 4.1.0)
 License: MIT + file LICENSE
 Encoding: UTF-8
@@ -20,9 +21,12 @@ Config/testthat/edition: 3
 BugReports: https://github.com/PPBDS/stat101.tutorials/issues
 URL: https://ppbds.github.io/stat101.tutorials/, https://github.com/PPBDS/stat101.tutorials
 Imports:
-    tutorial.helpers
+    learnr2
 Suggests:
-    knitr,
-    learnr,
     testthat,
-    tidyverse
+    tidyverse,
+    withr
+Remotes:
+    PPBDS/learnr2
+SystemRequirements: Quarto command line tool
+    (https://github.com/quarto-dev/quarto-cli).

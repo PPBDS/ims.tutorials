@@ -99,6 +99,9 @@ jobs:
 
       - name: Render all tutorials
         run: |
-          paths <- tutorial.helpers::return_tutorial_paths(package = "stat101.tutorials")
-          tutorial.helpers::knit_tutorials(paths)
+          for (name in learnr2::available_tutorials(package = "stat101.tutorials")$name) {
+            html <- learnr2::run_tutorial(name, package = "stat101.tutorials",
+                                          output_dir = tempdir(), open = FALSE)
+            stopifnot(file.exists(html))
+          }
         shell: Rscript {0}

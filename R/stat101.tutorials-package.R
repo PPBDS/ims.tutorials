@@ -1,8 +1,8 @@
 #' Statistics 101 Tutorials
 #'
 #' A collection of interactive tutorials covering the concepts of an
-#' introductory statistics course. This package makes extensive use of the
-#' tools in the tutorial.helpers package.
+#' introductory statistics course. Tutorials are built with the learnr2
+#' package: Quarto documents whose exercises run in the browser via WebR.
 #'
 #' @description
 #' The stat101.tutorials package provides interactive tutorials covering
@@ -10,9 +10,9 @@
 #'
 #' @section Running Tutorials:
 #' To run a tutorial, use:
-#' \code{learnr::run_tutorial(name = "short_tutorial_name", package = "stat101.tutorials")}
+#' \code{learnr2::run_tutorial(name = "tutorial_name", package = "stat101.tutorials")}
 #'
-#' @importFrom tutorial.helpers show_file
+#' @importFrom learnr2 question
 #'
 #' @keywords internal
 "_PACKAGE"
