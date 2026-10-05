@@ -1,6 +1,7 @@
-# CLAUDE.md — stat101.tutorials
+# CLAUDE.md — ims.tutorials
 
-`stat101.tutorials` is a tutorial package covering the concepts of an
+`ims.tutorials` is a tutorial package, one tutorial per chapter of
+*Introduction to Modern Statistics*, covering the concepts of an
 **introductory statistics course** — distributions, sampling,
 estimation, uncertainty, regression, and the rest — worked through in R.
 It is organized and maintained like
@@ -25,7 +26,7 @@ order:
     rhythm, knowledge drops (at most two sentences), submission
     evidence, and formatting. It governs every tutorial here.
 
-This file adds only what is specific to `stat101.tutorials`. On anything
+This file adds only what is specific to `ims.tutorials`. On anything
 both cover, the base guide wins unless an override is recorded below.
 When a lesson learned here applies to every tutorial package, fix it in
 ai-rules rather than here. The local checkout may be ahead of GitHub;
@@ -98,9 +99,8 @@ their structure.
   chapter has more, each built on the chapter’s own datasets.
 - **Introduction and Summary follow the *Tutorials for Books* article.**
   The Introduction’s first sentence: “This tutorial covers [Chapter N:
-  Title](https://ppbds.github.io/stat101.tutorials/url) from
-  [*Introduction to Modern
-  Statistics*](https://openintrostat.github.io/ims/) by Mine
+  Title](https://ppbds.github.io/ims.tutorials/url) from [*Introduction
+  to Modern Statistics*](https://openintrostat.github.io/ims/) by Mine
   Çetinkaya-Rundel and Johanna Hardin.” Then one sentence on what
   students will learn. The Summary repeats that paragraph in the past
   tense, then points to one or two of the best further readings, ideally
@@ -162,9 +162,9 @@ it is git-ignored and build-ignored, never committed.
 
 The base guide
 ([`claude-md/tutorials/CLAUDE.md`](https://github.com/PPBDS/ai-rules/blob/main/claude-md/tutorials/CLAUDE.md))
-is the default contract for this package, and **`stat101.tutorials`
-follows it in full**; where it conflicts with learnr2’s own guide, the
-base guide wins (see the mapping below). These are normal tutorials: a
+is the default contract for this package, and **`ims.tutorials` follows
+it in full**; where it conflicts with learnr2’s own guide, the base
+guide wins (see the mapping below). These are normal tutorials: a
 statistics topic explored through data, with the full analysis path (get
 data, explore it, build a plot or table, interpret, publish), the
 `analysis.qmd` working chunk, render + Live Server, CP/CR, and the
@@ -266,14 +266,14 @@ is `/home/rstudio` (prompt `~ $`).
 ### Repo names derive from tutorial titles
 
 Every tutorial uses its own work repo, named after its **title**:
-lowercase, with spaces and other non-alphanumeric characters replaced by
-dashes (“Hello Data” → `hello-data`). When a title changes, update the
-repo-name instruction, every prompt line, every `/workspaces/<name>`
-path, and every URL (`github.com/<user>/<name>`,
-`<user>.github.io/<name>/`). Do not change the directory name, `.qmd`
-file name, or chunk labels (a `question()` chunk’s label is the key for
-the student’s saved answer). A title must never map to
-`codespace-starter`.
+lowercase, with each run of spaces and other non-alphanumeric characters
+collapsed to a single dash (“Hello Data” → `hello-data`, “Applications:
+Data” → `applications-data`). When a title changes, update the repo-name
+instruction, every prompt line, every `/workspaces/<name>` path, and
+every URL (`github.com/<user>/<name>`, `<user>.github.io/<name>/`). Do
+not change the directory name, `.qmd` file name, or chunk labels (a
+`question()` chunk’s label is the key for the student’s saved answer). A
+title must never map to `codespace-starter`.
 
 ### Refer to tutorials by title, not number
 
@@ -296,7 +296,7 @@ Tutorial directories are `inst/tutorials/NN-slug/`, holding
     such URL in `tests/testthat/test-downloads.R` (see the
     `vscode.tutorials` version for the pattern).
 3.  Cross-references in prose, README.Rmd’s tutorial list, the tutorial
-    list in `R/stat101.tutorials-package.R` (run `devtools::document()`
+    list in `R/ims.tutorials-package.R` (run `devtools::document()`
     after), and this file.
 4.  The `.qmd` file name and the `filename_prefix` of
     `download_answers_button()` — both **must always equal the directory
@@ -316,7 +316,7 @@ NEWS.md entries are historical records — never retro-renumber them.
     `student-env-render` CI job fails if a tutorial needs something
     undeclared.
 3.  List it in README.Rmd (re-render README.md) and in
-    `R/stat101.tutorials-package.R` (re-run `devtools::document()`).
+    `R/ims.tutorials-package.R` (re-run `devtools::document()`).
 
 ### The devcontainer image pin (`ghcr.io/ppbds/devcontainer:X.Y.Z`)
 

@@ -5,14 +5,14 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Tutorials for Introductory Statistics • stat101.tutorials</title>
+<title>Tutorials for Introduction to Modern Statistics • ims.tutorials</title>
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Tutorials for Introductory Statistics">
-<meta name="description" content="Collection of tutorials covering the concepts of an introductory statistics course, worked through in R. Makes use of the learnr2 package: tutorials are Quarto documents whose exercises run in the browser via WebR.">
-<meta property="og:description" content="Collection of tutorials covering the concepts of an introductory statistics course, worked through in R. Makes use of the learnr2 package: tutorials are Quarto documents whose exercises run in the browser via WebR.">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Tutorials for Introduction to Modern Statistics">
+<meta name="description" content="Collection of tutorials, one per chapter, accompanying Introduction to Modern Statistics by Mine Cetinkaya-Rundel and Johanna Hardin. Students work through each chapters ideas in R, using AI to build an analysis in their own Quarto document. Built with the learnr2' package: each tutorial is a Quarto document rendered to a static web page.">
+<meta property="og:description" content="Collection of tutorials, one per chapter, accompanying Introduction to Modern Statistics by Mine Cetinkaya-Rundel and Johanna Hardin. Students work through each chapters ideas in R, using AI to build an analysis in their own Quarto document. Built with the learnr2' package: each tutorial is a Quarto document rendered to a static web page.">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -20,9 +20,9 @@
 
     <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
 
-    <a class="navbar-brand me-2" href="index.html">stat101.tutorials</a>
+    <a class="navbar-brand me-2" href="index.html">ims.tutorials</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9001</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9002</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,7 +38,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="search.json">
 </form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/PPBDS/stat101.tutorials/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/PPBDS/ims.tutorials/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -47,22 +47,22 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9"><div class="section level1">
-<div class="page-header"><h1 id="statistics-101-tutorials">Statistics 101 Tutorials<a class="anchor" aria-label="anchor" href="#statistics-101-tutorials"></a>
+<div class="page-header"><h1 id="ims-tutorials">IMS Tutorials<a class="anchor" aria-label="anchor" href="#ims-tutorials"></a>
 </h1></div>
 <!-- badges: start -->
 
-<p>Package website: <a href="https://ppbds.github.io/stat101.tutorials/" class="uri">https://ppbds.github.io/stat101.tutorials/</a></p>
+<p>Package website: <a href="https://ppbds.github.io/ims.tutorials/" class="uri">https://ppbds.github.io/ims.tutorials/</a></p>
 <div class="section level2">
 <h2 id="about-this-package">About this package<a class="anchor" aria-label="anchor" href="#about-this-package"></a>
 </h2>
-<p><strong>stat101.tutorials</strong> is a collection of tutorials covering the concepts of an introductory statistics course, worked through in R. Built with <strong><a href="https://github.com/PPBDS/learnr2" class="external-link">learnr2</a></strong>: each tutorial is a Quarto document whose exercises run in the browser via WebR.</p>
+<p><strong>ims.tutorials</strong> is a collection of tutorials, one per chapter, accompanying <a href="https://openintrostat.github.io/ims/" class="external-link"><em>Introduction to Modern Statistics</em></a> by Mine Çetinkaya-Rundel and Johanna Hardin. Students work through each chapter’s ideas in R, using AI to build an analysis in their own Quarto document. Built with <strong><a href="https://github.com/PPBDS/learnr2" class="external-link">learnr2</a></strong>: each tutorial is a Quarto document rendered to a static web page.</p>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
 <p>Install the development version from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"PPBDS/stat101.tutorials"</span>, dependencies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"PPBDS/ims.tutorials"</span>, dependencies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>This also installs the development version of <strong>learnr2</strong> and every package the tutorials use, including the book’s data packages, <strong>openintro</strong> and <strong>usdata</strong>. Rendering a tutorial requires the <a href="https://quarto.org/docs/get-started/" class="external-link">Quarto CLI</a>.</p>
 </div>
 <div class="section level2">
@@ -71,18 +71,26 @@
 <p>The recommended way to launch tutorials is with the <a href="https://open-vsx.org/extension/PPBDS/vscode-r-tutorials" class="external-link">R Tutorials extension for VS Code</a>, which lists every installed tutorial and lets you start one with a click.</p>
 <p>As a backup, you can launch a tutorial from the R console with <code><a href="https://ppbds.github.io/learnr2/reference/run_tutorial.html" class="external-link">learnr2::run_tutorial()</a></code>, providing the short name of the tutorial and the package name.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>learnr2<span class="sc">::</span><span class="fu">run_tutorial</span>(<span class="at">name =</span> <span class="st">"01-hello-data"</span>,</span>
-<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>                     <span class="at">package =</span> <span class="st">"stat101.tutorials"</span>)</span></code></pre></div>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>                     <span class="at">package =</span> <span class="st">"ims.tutorials"</span>)</span></code></pre></div>
 <ul>
 <li>
 <em>Hello Data</em> (“01-hello-data”). Chapter 1: the stent experiment, cases and variables in <code>loan50</code>, associations among US counties, and experiments versus observational studies.</li>
+<li>
+<em>Study Design</em> (“02-study-design”). Chapter 2: populations and samples using <code>mlb</code> salaries, simple random and stratified sampling, and the malaria vaccine experiment.</li>
+<li>
+<em>Applications: Data</em> (“03-applications-data”). Chapter 3: getting to know <code>paralympic_1500</code>, and Simpson’s paradox in 1500m gold medal times.</li>
+<li>
+<em>Exploring Categorical Data</em> (“04-exploring-categorical-data”). Chapter 4: contingency tables, bar plots, and conditional proportions in <code>loans_full_schema</code>, and comparing county incomes across groups.</li>
+<li>
+<em>Exploring Numerical Data</em> (“05-exploring-numerical-data”). Chapter 5: histograms, shape, and summary statistics for <code>loan50</code>, and transformations and intensity maps of <code>county</code>.</li>
 </ul>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/PPBDS/stat101.tutorials/" class="external-link">Browse source code</a></li>
-<li><a href="https://github.com/PPBDS/stat101.tutorials/issues" class="external-link">Report a bug</a></li>
+<li><a href="https://github.com/PPBDS/ims.tutorials/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/PPBDS/ims.tutorials/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
 
@@ -98,7 +106,7 @@
 <div class="citation">
 <h2 data-toc-skip>Citation</h2>
 <ul class="list-unstyled">
-<li><a href="authors.html#citation">Citing stat101.tutorials</a></li>
+<li><a href="authors.html#citation">Citing ims.tutorials</a></li>
 </ul>
 </div>
 
@@ -112,7 +120,7 @@
 <div class="dev-status">
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/PPBDS/stat101.tutorials/actions" class="external-link"><img src="https://github.com/PPBDS/stat101.tutorials/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
+<li><a href="https://github.com/PPBDS/ims.tutorials/actions" class="external-link"><img src="https://github.com/PPBDS/ims.tutorials/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
 </ul>
 </div>
 

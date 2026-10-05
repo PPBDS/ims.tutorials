@@ -8,16 +8,16 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/PPBDS/stat101.tutorials/blob/main/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/PPBDS/ims.tutorials/blob/main/DESCRIPTION)
 
-Kane D (2026). *stat101.tutorials: Tutorials for Introductory
-Statistics*. R package version 0.0.0.9001,
-<https://ppbds.github.io/stat101.tutorials/>.
+Kane D (2026). *ims.tutorials: Tutorials for Introduction to Modern
+Statistics*. R package version 0.0.0.9002,
+<https://ppbds.github.io/ims.tutorials/>.
 
     @Manual{,
-      title = {stat101.tutorials: Tutorials for Introductory Statistics},
+      title = {ims.tutorials: Tutorials for Introduction to Modern Statistics},
       author = {David Kane},
       year = {2026},
-      note = {R package version 0.0.0.9001},
-      url = {https://ppbds.github.io/stat101.tutorials/},
+      note = {R package version 0.0.0.9002},
+      url = {https://ppbds.github.io/ims.tutorials/},
     }

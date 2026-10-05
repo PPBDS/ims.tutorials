@@ -1,4 +1,4 @@
 # License
 
     YEAR: 2026
-    COPYRIGHT HOLDER: stat101.tutorials authors
+    COPYRIGHT HOLDER: ims.tutorials authors
