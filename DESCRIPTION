@@ -1,6 +1,6 @@
 Package: stat101.tutorials
 Title: Tutorials for Introductory Statistics
-Version: 0.0.0.9000
+Version: 0.0.0.9001
 Authors@R:
     c(
     person(given = "David",
@@ -23,8 +23,10 @@ URL: https://ppbds.github.io/stat101.tutorials/, https://github.com/PPBDS/stat10
 Imports:
     learnr2
 Suggests:
+    openintro,
     testthat,
     tidyverse,
+    usdata,
     withr
 Remotes:
     PPBDS/learnr2

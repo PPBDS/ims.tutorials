@@ -23,11 +23,12 @@ Quarto document whose exercises run in the browser via WebR.
 Install the development version from [GitHub](https://github.com/) with:
 
 ``` r
-remotes::install_github("PPBDS/stat101.tutorials")
+remotes::install_github("PPBDS/stat101.tutorials", dependencies = TRUE)
 ```
 
-This also installs the development version of **learnr2**. Rendering a
-tutorial requires the [Quarto
+This also installs the development version of **learnr2** and every
+package the tutorials use, including the book’s data packages,
+**openintro** and **usdata**. Rendering a tutorial requires the [Quarto
 CLI](https://quarto.org/docs/get-started/).
 
 ## Tutorials
@@ -41,7 +42,9 @@ As a backup, you can launch a tutorial from the R console with
 `learnr2::run_tutorial()`, providing the short name of the tutorial and
 the package name.
 
-    learnr2::run_tutorial(name = "01-example",
+    learnr2::run_tutorial(name = "01-hello-data",
                          package = "stat101.tutorials")
 
-There are no tutorials yet.
+- *Hello Data* (“01-hello-data”). Chapter 1: the stent experiment, cases
+  and variables in `loan50`, associations among US counties, and
+  experiments versus observational studies.
