@@ -63,3 +63,9 @@ the package name.
 - *Exploring Numerical Data* (“05-exploring-numerical-data”). Chapter 5:
   histograms, shape, and summary statistics for `loan50`, and
   transformations and intensity maps of `county`.
+- *Histograms* (“01-histograms”). Read, make, and interpret histograms:
+  what the bars count, how to choose the bins, center, spread, and
+  shape, comparing groups with facets, and a log scale for skewed data,
+  using `ggplot2::mpg` and `ggplot2::diamonds`. Students connect a repo
+  of their own with `gh` and `git`, build `analysis.qmd` as they go, and
+  submit the repository URL at the end.

@@ -9,6 +9,10 @@
   (`04-exploring-categorical-data`), and Exploring Numerical Data
   (`05-exploring-numerical-data`).
 
+* Added "Histograms" (`01-histograms`): reading and building histograms with
+  ggplot2, with browser-run webr exercises, gated knowledge drops, and a final
+  submission of the student's own repository URL.
+
 * Added **ggridges** and **maps** to `Suggests`, for the ridge plot in Exploring
   Categorical Data and the county intensity map in Exploring Numerical Data. The
   student devcontainer image needs both before these tutorials will render there.

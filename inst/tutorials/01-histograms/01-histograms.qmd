@@ -1,0 +1,1083 @@
+---
+title: "Histograms"
+subtitle: "Reading distributions with ggplot2"
+format: live-html
+engine: knitr
+toc: true
+toc-depth: 2
+webr:
+  packages:
+    - ggplot2
+---
+
+{{< include _extensions/r-wasm/live/_knitr.qmd >}}
+
+## Student Information
+
+```{r}
+#| label: student-information-1
+#| echo: false
+learnr2::student_info()
+```
+
+In this tutorial you will draw histograms of real data --- highway mileage
+for 234 cars and prices for 53,940 diamonds --- learn to read their shape,
+and write them up in a Quarto document of your own.
+
+You work in two places. The code cells on this page run in your browser, so
+you can experiment freely. The document you build lives in a GitHub repo
+named `histograms`, which the next section creates by hand, with the real
+commands rather than any shortcut script. By the end you will hand in the
+URL of that repo, along with the answers this page saves as you go --- the
+download button at the bottom collects them all.
+
+## Connect to your repo
+
+You should be doing this tutorial in a repo named `histograms`. You do not
+have one yet. This section creates it --- by hand, with the same commands a
+shortcut script would run for you --- so that every command is one you will
+use again this term. Do **not** run `connect-repo` today.
+
+Everything happens in the **bash Terminal** (Terminal → New Terminal, in
+the Panel). Each question below shows what a correct run looks like. Paste
+your own command and its response, then continue.
+
+```{r}
+#| label: connect-to-your-repo-1
+#| echo: false
+learnr2::question(
+  "Open a new bash Terminal and run `pwd`, then `ls -a`. CP/CR.",
+  type = "reflection_editable"
+)
+```
+
+### What you should see
+
+```
+codespace-starter $ pwd
+/workspaces/codespace-starter
+codespace-starter $ ls -a
+.  ..  .devcontainer  .github  .git
+```
+
+(Your listing may show a few extra files. That is fine.)
+
+### Key idea
+
+This is `codespace-starter` --- the workshop every course Codespace starts
+from, not your project. Nothing you save here is yours; your work will live
+in the repo you create in the next few steps.
+
+```{r}
+#| label: connect-to-your-repo-2
+#| echo: false
+learnr2::question(
+  "Two commands make `gh` and `git` act as you instead of the Codespace.
+  Run `unset GITHUB_TOKEN GH_TOKEN`, then `gh auth status`. If it says you
+  are not logged in, sign in with
+  `gh auth login --hostname github.com --git-protocol https --web --clipboard=false`
+  (click Authorize in the browser that opens), then run `gh auth status`
+  again. CP/CR.",
+  type = "reflection_editable"
+)
+```
+
+### What you should see
+
+```
+codespace-starter $ gh auth status
+github.com
+  ✓ Logged in to github.com account your-username
+  - Active account: true
+  - Git operations protocol: https
+  - Token: gho_************************************
+  - Token scopes: 'gist', 'read:org', 'repo', 'workflow'
+```
+
+### Key idea
+
+The `repo` scope is the one that matters --- it is what lets your login
+create repositories and push to them. If you were already signed in, that
+is a login from an earlier session; credentials stick around inside a
+Codespace, but clearing the built-in token is what makes every later
+command act as you.
+
+Now make `git push` authenticate with your token --- from the bash Terminal
+*and* from the Source Control panel. Run these four commands, one at a
+time:
+
+````
+git config --global --replace-all credential.helper ""
+git config --global --add credential.helper store
+printf 'https://x-access-token:%s@github.com\n' "$(gh auth token)" > ~/.git-credentials
+chmod 600 ~/.git-credentials
+````
+
+```{r}
+#| label: connect-to-your-repo-3
+#| echo: false
+learnr2::question(
+  "Then run `ls -l ~/.git-credentials`. CP/CR.",
+  type = "reflection_editable"
+)
+```
+
+### What you should see
+
+```
+codespace-starter $ ls -l ~/.git-credentials
+-rw------- 1 rstudio rstudio 62 Oct  4 16:20 /home/rstudio/.git-credentials
+```
+
+### Key idea
+
+That file holds your personal token --- the same thing a password would be.
+The `-rw-------` permissions mean only you can read it, and git consults it
+for every push, which is why the Source Control panel pushes as you rather
+than as the Codespace.
+
+Create this tutorial's repo. From the same bash Terminal, run:
+
+````
+cd /workspaces
+gh repo create histograms --public --clone
+````
+
+```{r}
+#| label: connect-to-your-repo-4
+#| echo: false
+learnr2::question(
+  "Then run `ls`. CP/CR. (If git says the repository already exists, clone
+  it instead with `gh repo clone histograms`.)",
+  type = "reflection_editable"
+)
+```
+
+### What you should see
+
+```
+workspaces $ cd /workspaces
+workspaces $ gh repo create histograms --public --clone
+✓ Created repository your-username/histograms on github.com
+  https://github.com/your-username/histograms
+Cloning into 'histograms'...
+warning: You appear to have cloned an empty repository.
+workspaces $ ls
+codespace-starter  histograms
+```
+
+(Your `ls` may show folders from earlier sessions. That is fine.)
+
+### Key idea
+
+One command did two jobs: it created the filing cabinet on GitHub, and
+`--clone` copied it down to a local folder. The "empty repository" warning
+is expected --- a brand-new repo has no commits yet. `--public` is what
+later lets GitHub Pages host your work for free.
+
+How does the local folder know which GitHub repo it belongs to? Run:
+
+````
+cd histograms
+git remote -v
+````
+
+```{r}
+#| label: connect-to-your-repo-5
+#| echo: false
+learnr2::question(
+  "CP/CR the two commands and their output.",
+  type = "reflection_editable"
+)
+```
+
+### What you should see
+
+```
+workspaces $ cd histograms
+histograms $ git remote -v
+origin  https://github.com/your-username/histograms (fetch)
+origin  https://github.com/your-username/histograms (push)
+```
+
+### Key idea
+
+`origin` is git's nickname for the GitHub copy of this repo. From now on
+`git push` sends your commits there and `git pull` brings changes back.
+
+```{r}
+#| label: connect-to-your-repo-6
+#| echo: false
+learnr2::question(
+  "Point VS Code at your repo: File → Open Folder…, then open
+  `/workspaces/histograms`. The window reloads and this tutorial stops ---
+  that is expected. Restart it exactly as you started it: R Tutorials in
+  the Activity Bar, find this tutorial, click the arrow. Your saved answers
+  come back. Then open a new bash Terminal and run `pwd`. CP/CR.",
+  type = "reflection_editable"
+)
+```
+
+### What you should see
+
+```
+histograms $ pwd
+/workspaces/histograms
+```
+
+### Key idea
+
+New terminals now open in your own repo, and the Explorer, the Source
+Control panel, and every AI agent all act on `/workspaces/histograms` ---
+you are out of the workshop and into your own project.
+
+## Your analysis workspace
+
+Create `analysis.qmd` in your repo, with the Title Case title
+*Histogram Analysis*. Give it a setup chunk holding `library(ggplot2)`
+with `#| message: false`, and add `execute: echo: false` to the YAML, so
+the rendered page shows results rather than code. Use AI however you like.
+Then, in the bash Terminal, render it:
+
+````
+quarto render analysis.qmd
+````
+
+and right-click `analysis.html` in the Explorer → **Open with Live
+Server**, keeping that tab open --- it refreshes on every later render.
+
+```{r}
+#| label: your-analysis-workspace-1
+#| echo: false
+learnr2::question(
+  "CP/CR the render command and its response.",
+  type = "reflection_editable"
+)
+```
+
+### What you should see
+
+```
+histograms $ quarto render analysis.qmd
+processing file: analysis.qmd
+output file: analysis.html
+```
+
+### Key idea
+
+From now on, **Render** is shorthand for `quarto render analysis.qmd` in
+the bash Terminal, then a glance at the Live Server tab. The `echo: false`
+setting matters for a document someone else reads: they want the picture,
+not the code that drew it.
+
+```{r}
+#| label: your-analysis-workspace-2
+#| echo: false
+learnr2::question(
+  "Rendering created an `analysis_files` folder full of web assets git has
+  no business tracking. Add `analysis_files` to `.gitignore` (create the
+  file if there is none). Paste the file below.",
+  type = "reflection_editable"
+)
+```
+
+### What you should see
+
+```
+analysis_files
+```
+
+### Key idea
+
+`.gitignore` is a list of files git should walk past. The code that
+*produces* the renderable output belongs in the repo; the output itself
+does not.
+
+## Reading a histogram
+
+A **histogram** cuts one numeric variable into bins and draws a bar whose
+height is the count in each bin. It answers one question: what does the
+distribution of this variable look like?
+
+```{webr}
+#| label: reading-a-histogram-1
+#| autorun: true
+library(ggplot2)
+ggplot(mpg, aes(hwy)) +
+  geom_histogram()
+```
+
+```{webr}
+#| label: reading-a-histogram-3
+#| exercise: ex_hwy
+#| persist: true
+library(ggplot2)
+
+# Make a histogram of highway mileage (`hwy`) from `mpg`.
+```
+
+::: { .hint exercise="ex_hwy" }
+`geom_histogram()` draws bars for a binned numeric variable; map `hwy` to
+x inside `aes()`.
+:::
+
+::: { .solution exercise="ex_hwy" }
+```r
+library(ggplot2)
+ggplot(mpg, aes(hwy)) +
+  geom_histogram()
+```
+:::
+
+```{r}
+#| label: reading-a-histogram-2
+#| echo: false
+learnr2::question(
+  "In a histogram, what does the height of each bar count?",
+  learnr2::answer(
+    "How many of the 234 cars fall in that bar's range of `hwy`",
+    correct = TRUE
+  ),
+  learnr2::answer("How many distinct values of `hwy` exist"),
+  learnr2::answer("The highway mileage of a single car"),
+  learnr2::answer("The percentage of cars in that bar"),
+  allow_retry = TRUE
+)
+```
+
+### Key idea
+
+Each bar covers a *range* of highway mileages --- a bin --- and its height
+is the number of cars whose `hwy` falls inside that range. The 234 cars
+are the `n` behind this plot, and a histogram never shows more than that.
+
+```{r}
+#| label: reading-a-histogram-4
+#| echo: false
+learnr2::question(
+  "Run your cell and look at the plot. In one sentence, describe where the
+  bulk of the 234 cars sit.",
+  learnr2::answer(
+    "Most cars get between roughly 18 and 30 mpg on the highway, with the
+    tallest bars around 24 to 28, and a thin tail of a few cars reaching
+    into the high 30s up to 44.",
+    correct = TRUE
+  ),
+  type = "reflection"
+)
+```
+
+### Key idea
+
+Center, spread, shape, outliers --- those four words are the whole
+vocabulary of a histogram. Here the center sits near 24 highway mpg (the
+median), the values stretch about 12 to 44, and the tail runs to the right.
+
+```{r}
+#| label: reading-a-histogram-5
+#| echo: false
+learnr2::question(
+  "Which of these belongs in a histogram?",
+  learnr2::answer("Highway mileage of 234 cars", correct = TRUE),
+  learnr2::answer("Counts of cars by drive type: fwd, 4wd, r"),
+  learnr2::answer("Number of students in each letter grade"),
+  learnr2::answer("Prices labeled cheap, medium, expensive"),
+  allow_retry = TRUE
+)
+```
+
+### Key idea
+
+A histogram bins one *continuous* numeric variable; a bar chart counts the
+levels of a *category*. The giveaway is the x-axis: a histogram's axis is a
+number line, with no gaps between the bars.
+
+## Choosing the bins
+
+`geom_histogram()` draws 30 bins by default --- a starting point, not a
+law. Change it with `bins =` (a count) or `binwidth =` (a width on the
+data's own scale), and watch how the picture changes.
+
+```{webr}
+#| label: choosing-the-bins-1
+#| autorun: true
+library(ggplot2)
+ggplot(mpg, aes(hwy)) +
+  geom_histogram()
+```
+
+```{webr}
+#| label: choosing-the-bins-3
+#| exercise: ex_binwidth
+#| persist: true
+library(ggplot2)
+
+# Redraw the `hwy` histogram with bins exactly 1 mpg wide.
+```
+
+::: { .hint exercise="ex_binwidth" }
+Pass `binwidth = 1` to `geom_histogram()`.
+:::
+
+::: { .solution exercise="ex_binwidth" }
+```r
+library(ggplot2)
+ggplot(mpg, aes(hwy)) +
+  geom_histogram(binwidth = 1)
+```
+:::
+
+```{r}
+#| label: choosing-the-bins-2
+#| echo: false
+learnr2::question(
+  "By default, how many bins does `geom_histogram()` draw?",
+  learnr2::answer("30", correct = TRUE),
+  learnr2::answer("30 bins", correct = TRUE),
+  type = "text",
+  allow_retry = TRUE
+)
+```
+
+### Key idea
+
+Thirty is ggplot2's default because it works okay for many datasets ---
+not because statistics says 30 is correct. The number of bins is a display
+choice you make, and you should say which choice you made.
+
+```{r}
+#| label: choosing-the-bins-4
+#| echo: false
+learnr2::question(
+  "Run your cell. Compared with the 30-bin version, what changed about the
+  shape?",
+  learnr2::answer(
+    "The smooth hump breaks into jagged spikes and gaps --- bins holding
+    one or two cars now show up as isolated bars, so sampling noise reads
+    as structure.",
+    correct = TRUE
+  ),
+  type = "reflection"
+)
+```
+
+### Key idea
+
+Too few bins pile different shapes into the same bar and hide structure;
+too many turn the luck of the draw into apparent spikes. Bin width is a
+display choice --- the 234 cars never changed, only the ruler you drew
+over them.
+
+```{r}
+#| label: choosing-the-bins-5
+#| echo: false
+learnr2::question(
+  "You plot `hwy` twice, once with `bins = 5` and once with
+  `bins = 100`, and the pictures look quite different. What can you
+  honestly conclude?",
+  learnr2::answer(
+    "The bins are a display choice; the underlying 234 cars are identical
+    in both pictures.",
+    correct = TRUE
+  ),
+  learnr2::answer("The 100-bin plot is the more accurate one"),
+  learnr2::answer("The 5-bin plot proves the distribution is symmetric"),
+  learnr2::answer("Report whichever picture supports your story"),
+  allow_retry = TRUE
+)
+```
+
+### Key idea
+
+Always report the bin width you used --- a reader who cannot reproduce your
+picture cannot check your claim. When a feature appears at only one bin
+width, treat it as a question, not a finding.
+
+```{r}
+#| label: choosing-the-bins-6
+#| echo: false
+learnr2::question(
+  "Now put it to work in your repo. Add a histogram of `hwy` as the last
+  chunk of your `analysis.qmd`, Render, and look at it in Live Server.
+  Paste the chunk's code below.",
+  type = "reflection_editable"
+)
+```
+
+### What you should see
+
+```
+ggplot(mpg, aes(hwy)) +
+  geom_histogram()
+```
+
+### Key idea
+
+Your working chunk starts simple and gets rewritten as you learn more ---
+each exercise replaces what was there before, so only the final state
+matters. Nothing is lost by changing your mind; the history lives in git.
+
+Your first histogram is in. In the bash Terminal, save it:
+
+````
+git add analysis.qmd && git commit -m "Add hwy histogram" && git push -u origin main
+````
+
+```{r}
+#| label: choosing-the-bins-7
+#| echo: false
+learnr2::question(
+  "CP/CR the commit and push.",
+  type = "reflection_editable"
+)
+```
+
+### What you should see
+
+```
+histograms $ git add analysis.qmd && git commit -m "Add hwy histogram" && git push -u origin main
+[main (root-commit) a1b2c3d] Add hwy histogram
+ 1 file changed, 42 insertions(+)
+Enumerating objects: 5, done.
+Counting objects: 100% (5/5), done.
+To https://github.com/your-username/histograms.git
+ * [new branch]      main -> main
+branch 'main' set up to track 'origin/main'.
+```
+
+### Key idea
+
+The first push needs `-u origin main`: your local `main` branch has never
+met `origin`, so git has to pair them; after that, plain `git push` is
+enough. And push as you commit --- a Codespace is disposable, so unpushed
+work is the only work you can lose.
+
+## Center, spread, and shape
+
+Diamonds next: 53,940 of them, with prices from $44 to $18,823. Before
+plotting, look at the numbers.
+
+```{webr}
+#| label: center-spread-and-shape-1
+#| autorun: true
+library(ggplot2)
+summary(diamonds$price)
+```
+
+```{webr}
+#| label: center-spread-and-shape-3
+#| exercise: ex_price
+#| persist: true
+library(ggplot2)
+
+# Histogram of `price` from `diamonds`, with one vertical line at the mean
+# and another at the median.
+```
+
+::: { .hint exercise="ex_price" }
+Add two `geom_vline()` layers, each with `xintercept = mean(diamonds$price)`
+or `xintercept = median(diamonds$price)`, and give them different colors.
+:::
+
+::: { .solution exercise="ex_price" }
+```r
+library(ggplot2)
+ggplot(diamonds, aes(price)) +
+  geom_histogram() +
+  geom_vline(xintercept = mean(diamonds$price), color = "red") +
+  geom_vline(xintercept = median(diamonds$price), color = "blue")
+```
+:::
+
+```{r}
+#| label: center-spread-and-shape-2
+#| echo: false
+learnr2::question(
+  "Which two statements about the shape of `price` are true?",
+  learnr2::answer(
+    "The mean ($3,933) sits well above the median ($2,401)",
+    correct = TRUE
+  ),
+  learnr2::answer("The distribution is skewed to the right", correct = TRUE),
+  learnr2::answer("The distribution is symmetric about the mean"),
+  learnr2::answer("The median sits above the third quartile"),
+  allow_retry = TRUE
+)
+```
+
+### Key idea
+
+When mean and median disagree, the tail wins: a long right tail drags the
+mean upward, while the median stays at the 50% mark. Skew is named for the
+tail, never the hump.
+
+```{r}
+#| label: center-spread-and-shape-4
+#| echo: false
+learnr2::question(
+  "For this distribution, which is larger: the mean or the median?",
+  learnr2::answer("mean", correct = TRUE),
+  learnr2::answer("the mean", correct = TRUE),
+  type = "text",
+  allow_retry = TRUE
+)
+```
+
+### Key idea
+
+The mean line sits to the right of the median because a few very expensive
+diamonds pull the average up. When a distribution is skewed, the median is
+the safer summary of "typical" --- it cannot be moved by a handful of
+extreme values.
+
+```{r}
+#| label: center-spread-and-shape-5
+#| echo: false
+learnr2::question(
+  "Rewrite your working chunk: a histogram of `price` with the mean and
+  median lines, axis labels, and the number of diamonds in the title
+  (n = 53,940). Render, then paste the chunk below.",
+  type = "reflection_editable"
+)
+```
+
+### What you should see
+
+```
+ggplot(diamonds, aes(price)) +
+  geom_histogram() +
+  geom_vline(xintercept = mean(diamonds$price), color = "red") +
+  geom_vline(xintercept = median(diamonds$price), color = "blue") +
+  labs(
+    title = "Prices of 53,940 diamonds",
+    x = "Price (USD)",
+    y = "Number of diamonds"
+  )
+```
+
+### Key idea
+
+Every histogram should say how many observations it counts --- filters,
+missing values, and group definitions can silently shrink `n`. The title is
+the cheapest place to say it, and "Number of diamonds" beats a bare "count"
+for telling a reader what the bars hold.
+
+```{r}
+#| label: center-spread-and-shape-6
+#| echo: false
+learnr2::question(
+  "Look at your rendered plot and write one sentence interpreting it: what
+  would a buyer take away? Submit, then compare with our answer.",
+  learnr2::answer(
+    "Half of the 53,940 diamonds are priced under about $2,400, but a long
+    tail of expensive stones pulls the average up to nearly $3,900 --- so a
+    typical diamond costs closer to the median than to the mean.",
+    correct = TRUE
+  ),
+  type = "reflection"
+)
+```
+
+### Key idea
+
+An interpretation names the group, the feature, and the comparison ---
+"most …, but …" --- and stays inside what the plot can support. Notice
+what this one cannot say: nothing about *why* prices are skewed.
+
+## Comparing groups
+
+```{webr}
+#| label: comparing-groups-1
+#| exercise: ex_facet
+#| persist: true
+library(ggplot2)
+
+# Histogram of `hwy`, one panel per `class` of car.
+```
+
+::: { .hint exercise="ex_facet" }
+`facet_wrap(~ class)` splits one plot into a panel per level of `class`.
+:::
+
+::: { .solution exercise="ex_facet" }
+```r
+library(ggplot2)
+ggplot(mpg, aes(hwy)) +
+  geom_histogram() +
+  facet_wrap(~ class)
+```
+:::
+
+```{r}
+#| label: comparing-groups-2
+#| echo: false
+learnr2::question(
+  "Run your cell. Which classes sit clearly at the bottom of highway
+  mileage?",
+  learnr2::answer("pickup and suv", correct = TRUE),
+  learnr2::answer("minivan and suv"),
+  learnr2::answer("pickup and 2seater"),
+  learnr2::answer("midsize and minivan"),
+  allow_retry = TRUE
+)
+```
+
+### Key idea
+
+Pickups (about 17 mpg) and SUVs (about 18) sit far to the left of compact
+and subcompact cars (about 28). Facets share one x-axis, so the panels are
+directly comparable --- but each panel counts only its own group (62 SUVs
+but just 5 two-seaters), so compare shapes, not bar heights.
+
+```{r}
+#| label: comparing-groups-3
+#| echo: false
+learnr2::question(
+  "Add the faceted histogram to `analysis.qmd` as your working chunk ---
+  labels and `n` in the title included. Render, then paste the chunk below.",
+  type = "reflection_editable"
+)
+```
+
+### What you should see
+
+```
+ggplot(mpg, aes(hwy)) +
+  geom_histogram() +
+  facet_wrap(~ class) +
+  labs(
+    title = "Highway mileage by class (234 cars)",
+    x = "Highway miles per gallon",
+    y = "Number of cars"
+  )
+```
+
+### Key idea
+
+Seven panels means seven group sizes: the two-seater panel holds just 5
+cars, so its shape is fragile, while the SUV panel's is dependable.
+Faceting answers "how do the distributions differ?" --- the question a
+table of averages cannot.
+
+Commit this section's progress in the bash Terminal:
+
+````
+git add analysis.qmd && git commit -m "Add faceted histogram" && git push
+````
+
+```{r}
+#| label: comparing-groups-4
+#| echo: false
+learnr2::question(
+  "CP/CR the commit and push.",
+  type = "reflection_editable"
+)
+```
+
+### What you should see
+
+```
+histograms $ git add analysis.qmd && git commit -m "Add faceted histogram" && git push
+[main e5f6a7b] Add faceted histogram
+ 1 file changed, 16 insertions(+), 6 deletions(-)
+To https://github.com/your-username/histograms.git
+   a1b2c3d..e5f6a7b  main -> main
+```
+
+### Key idea
+
+Notice the push now moves `a1b2c3d..e5f6a7b` --- each commit points back
+at the one before it, so GitHub holds a history, not just the latest file.
+Plain `git push` will do from now on; `-u` was a first-push-only
+courtesy.
+
+## Transforming the scale
+
+```{webr}
+#| label: transforming-the-scale-1
+#| exercise: ex_log
+#| persist: true
+library(ggplot2)
+
+# Histogram of `price` on a log10 scale.
+```
+
+::: { .hint exercise="ex_log" }
+Add `scale_x_log10()` after the histogram layer to change the x-axis
+scale without touching the data.
+:::
+
+::: { .solution exercise="ex_log" }
+```r
+library(ggplot2)
+ggplot(diamonds, aes(price)) +
+  geom_histogram() +
+  scale_x_log10()
+```
+:::
+
+```{r}
+#| label: transforming-the-scale-2
+#| echo: false
+learnr2::question(
+  "Run your cell. In one sentence, what does the log scale do to the
+  shape?",
+  learnr2::answer(
+    "The right-skewed hump becomes roughly symmetric and centered --- equal
+    distances on the axis now mean equal ratios, so each tick is ten
+    times the last.",
+    correct = TRUE
+  ),
+  type = "reflection"
+)
+```
+
+### Key idea
+
+A log axis trades "how much more" for "how many times more". Left of
+center are the cheap diamonds, right are the expensive ones, and the hump
+shows where most prices actually cluster.
+
+```{r}
+#| label: transforming-the-scale-3
+#| echo: false
+learnr2::question(
+  "Why log-transform a right-skewed variable like `price` before comparing
+  groups or reporting a center?",
+  learnr2::answer(
+    "Because a multiplicative difference becomes a fixed distance on the
+    log scale, so spread and center become comparable across groups.",
+    correct = TRUE
+  ),
+  learnr2::answer("Because it makes the sample size effectively larger"),
+  learnr2::answer("Because logs delete outliers, which are usually errors"),
+  learnr2::answer("Because the mean of logged values equals the logged mean"),
+  allow_retry = TRUE
+)
+```
+
+### Key idea
+
+Log transformation does not delete anything and does not change the data:
+it changes the ruler. On a log scale, $1,000 to $10,000 is the same
+distance as $100 to $1,000, because both are a tenfold jump.
+
+```{r}
+#| label: transforming-the-scale-4
+#| echo: false
+learnr2::question(
+  "Swap the log-scale version into `analysis.qmd` as your working chunk ---
+  keep the labels and `n` in the title. Render, then paste the chunk
+  below.",
+  type = "reflection_editable"
+)
+```
+
+### What you should see
+
+```
+ggplot(diamonds, aes(price)) +
+  geom_histogram() +
+  scale_x_log10() +
+  labs(
+    title = "Prices of 53,940 diamonds (log10 scale)",
+    x = "Price (USD, log10 scale)",
+    y = "Number of diamonds"
+  )
+```
+
+### Key idea
+
+Say "log scale" in the label itself --- an unlabeled log axis invites
+readers to misread $3,000 as $3. Here the ticks run $100, $1,000,
+$10,000, and each step is a multiplication.
+
+## Caching
+
+Each render redraws every histogram, including the ones built from all
+53,940 diamonds. Quarto can remember a chunk's results and skip re-running
+it --- **caching** --- which you set up in three steps.
+
+```{r}
+#| label: caching-1
+#| echo: false
+learnr2::question(
+  "Step one, clean up. Find the chunk you want to cache --- the one that
+  draws the diamond price histogram --- and delete any exploratory lines
+  you left in it (test prints, scratch summaries), so it holds only the
+  final plot. Paste the cleaned chunk below.",
+  type = "reflection_editable"
+)
+```
+
+### What you should see
+
+```
+ggplot(diamonds, aes(price)) +
+  geom_histogram() +
+  scale_x_log10() +
+  labs(
+    title = "Prices of 53,940 diamonds (log10 scale)",
+    x = "Price (USD, log10 scale)",
+    y = "Number of diamonds"
+  )
+```
+
+### Key idea
+
+A cached chunk should hold a definition and nothing else --- anything you
+add later invalidates the cache and forces the slow work all over again.
+
+```{r}
+#| label: caching-2
+#| echo: false
+learnr2::question(
+  "Step two, turn it on. Add `#| cache: true` as that chunk's first line,
+  Render, then run `ls` in the bash Terminal. CP/CR.",
+  type = "reflection_editable"
+)
+```
+
+### What you should see
+
+```
+histograms $ ls
+analysis.html  analysis.qmd  analysis_cache  analysis_files
+```
+
+### Key idea
+
+`analysis_cache/` appearing next to your document is the visible evidence
+that caching is wired up. Quarto now reuses that chunk's results until you
+edit its code.
+
+```{r}
+#| label: caching-3
+#| echo: false
+learnr2::question(
+  "Step three, keep git clean. The Source Control change count just jumped
+  because `analysis_cache/` filled with files git should not track. Add
+  `analysis_cache` to `.gitignore`. Paste the file below.",
+  type = "reflection_editable"
+)
+```
+
+### What you should see
+
+```
+analysis_files
+analysis_cache
+```
+
+### Key idea
+
+A cache is derived --- git tracks what produces it (the code), not the
+products. Add each cache directory once, and the change count drops back.
+
+## Summary
+
+```{r}
+#| label: summary-1
+#| echo: false
+learnr2::question(
+  "Final check of the finished document: Render, open `analysis.html` with
+  Live Server, and take a screenshot of the page --- `Cmd+Shift+4` on a
+  Mac, `Win+Shift+S` on Windows, `Ctrl+Show windows` on a Chromebook.
+  Submit, then paste the screenshot into the box (Ctrl/Cmd+V).",
+  learnr2::answer(
+    "A rendered page of analysis.qmd showing four labeled histograms of
+    real data: hwy, price with mean and median lines, hwy faceted by
+    class, and price on a log10 scale.",
+    correct = TRUE
+  ),
+  type = "reflection_editable",
+  allow_image = TRUE
+)
+```
+
+### Key idea
+
+One page, four histograms, each labeled with what it counts and how many
+observations back it --- that is an artifact you would show someone, not a
+worksheet you would hand in and forget.
+
+Commit any remaining changes:
+
+````
+git add -A && git commit -m "Finish histograms tutorial" && git push
+````
+
+(if git reports nothing to commit, you are already up to date). Then show
+your repo's timeline:
+
+````
+git log --oneline
+````
+
+```{r}
+#| label: summary-2
+#| echo: false
+learnr2::question(
+  "CP/CR the log.",
+  type = "reflection_editable"
+)
+```
+
+### What you should see
+
+```
+histograms $ git log --oneline
+f7a8b9c Finish histograms tutorial
+e5f6a7b Add faceted histogram
+a1b2c3d Add hwy histogram
+```
+
+(Your hashes --- the short codes at the start of each line --- will differ
+from ours. That is expected: they name your commits, not ours.)
+
+### Key idea
+
+Each commit points back at the one before it, so `git log` is a timeline
+of your work rather than a stack of file copies. Push every checkpoint, so
+the timeline lives on GitHub rather than inside a disposable Codespace.
+
+```{r}
+#| label: summary-3
+#| echo: false
+learnr2::question(
+  "Finally: paste the URL of your GitHub repo --- the page someone would
+  open to see your work.",
+  learnr2::answer(
+    "https://github.com/your-username/histograms --- yours will carry your
+    own GitHub username in place of `your-username`.",
+    correct = TRUE
+  ),
+  type = "reflection_editable"
+)
+```
+
+### Key idea
+
+That URL is your submission: your code and your full history live there,
+pushed from a Codespace that could be deleted tomorrow. The download button
+below collects every answer you gave in this tutorial --- turn that file in
+as well.
+
+## Your Answers
+
+```{r}
+#| label: your-answers-1
+#| echo: false
+learnr2::question(
+  "How many minutes, approximately, did it take you to complete this
+  tutorial? For example, an hour and a half would be 90 minutes.",
+  type = "reflection_editable",
+  validate = "integer"
+)
+```
+
+```{r}
+#| label: your-answers-2
+#| echo: false
+learnr2::download_answers_button(filename_prefix = "01-histograms")
+```

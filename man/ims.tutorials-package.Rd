@@ -20,6 +20,7 @@ rendered to static web pages. Students do the work in their own
 
 \itemize{
 \item \strong{Hello Data} (01-hello-data): Chapter 1 --- cases, variables, associations, and experiments versus observational studies
+\item \strong{Histograms} (01-histograms): reading and making histograms with ggplot2, from the bars' count to bin choice, center, spread, shape, facets, and a log scale for skewed data, ending with the student's own repository URL
 \item \strong{Study Design} (02-study-design): Chapter 2 --- populations and samples, sampling methods, and the principles of experiments
 \item \strong{Applications: Data} (03-applications-data): Chapter 3 --- getting to know a new dataset, and Simpson's paradox
 \item \strong{Exploring Categorical Data} (04-exploring-categorical-data): Chapter 4 --- contingency tables, bar plots, conditional proportions, and comparing numerical data across groups
@@ -44,6 +45,11 @@ Useful links:
 }
 \author{
 \strong{Maintainer}: David Kane \email{dave.kane@gmail.com} (\href{https://orcid.org/0000-0002-6660-3934}{ORCID}) [copyright holder]
+
+Authors:
+\itemize{
+  \item David Kane \email{dave.kane@gmail.com} (\href{https://orcid.org/0000-0002-6660-3934}{ORCID}) [copyright holder]
+}
 
 }
 \keyword{internal}
