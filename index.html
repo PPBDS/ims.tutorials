@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">stat101.tutorials</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9001</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -62,17 +62,20 @@
 </h2>
 <p>Install the development version from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"PPBDS/stat101.tutorials"</span><span class="op">)</span></span></code></pre></div>
-<p>This also installs the development version of <strong>learnr2</strong>. Rendering a tutorial requires the <a href="https://quarto.org/docs/get-started/" class="external-link">Quarto CLI</a>.</p>
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"PPBDS/stat101.tutorials"</span>, dependencies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p>This also installs the development version of <strong>learnr2</strong> and every package the tutorials use, including the book’s data packages, <strong>openintro</strong> and <strong>usdata</strong>. Rendering a tutorial requires the <a href="https://quarto.org/docs/get-started/" class="external-link">Quarto CLI</a>.</p>
 </div>
 <div class="section level2">
 <h2 id="tutorials">Tutorials<a class="anchor" aria-label="anchor" href="#tutorials"></a>
 </h2>
 <p>The recommended way to launch tutorials is with the <a href="https://open-vsx.org/extension/PPBDS/vscode-r-tutorials" class="external-link">R Tutorials extension for VS Code</a>, which lists every installed tutorial and lets you start one with a click.</p>
 <p>As a backup, you can launch a tutorial from the R console with <code><a href="https://ppbds.github.io/learnr2/reference/run_tutorial.html" class="external-link">learnr2::run_tutorial()</a></code>, providing the short name of the tutorial and the package name.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>learnr2<span class="sc">::</span><span class="fu">run_tutorial</span>(<span class="at">name =</span> <span class="st">"01-example"</span>,</span>
+<div class="sourceCode" id="cb2"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>learnr2<span class="sc">::</span><span class="fu">run_tutorial</span>(<span class="at">name =</span> <span class="st">"01-hello-data"</span>,</span>
 <span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>                     <span class="at">package =</span> <span class="st">"stat101.tutorials"</span>)</span></code></pre></div>
-<p>There are no tutorials yet.</p>
+<ul>
+<li>
+<em>Hello Data</em> (“01-hello-data”). Chapter 1: the stent experiment, cases and variables in <code>loan50</code>, associations among US counties, and experiments versus observational studies.</li>
+</ul>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">

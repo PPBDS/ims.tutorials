@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="index.html">stat101.tutorials</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9001</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,18 +36,104 @@
 
 <p><code>stat101.tutorials</code> is a tutorial package covering the concepts of an <strong>introductory statistics course</strong> — distributions, sampling, estimation, uncertainty, regression, and the rest — worked through in R. It is organized and maintained like <a href="https://github.com/PPBDS/vscode.tutorials" class="external-link"><code>vscode.tutorials</code></a> — tutorials in <code>inst/tutorials/</code>, launched from the R Tutorials extension, checked by tests and a CI render in the student image — but it is built on <strong><a href="https://github.com/PPBDS/learnr2" class="external-link">learnr2</a></strong> (development version, via <code>Remotes:</code>), not learnr or tutorial.helpers.</p>
 <div class="section level2">
+<h2 id="read-first-ai-rules">Read first: ai-rules<a class="anchor" aria-label="anchor" href="#read-first-ai-rules"></a></h2>
+<p>The rules for writing tutorials live in <strong><a href="https://github.com/PPBDS/ai-rules" class="external-link">PPBDS/ai-rules</a></strong> (locally: <a href="../ai-rules/"><code>../ai-rules/</code></a>), not here. Read, in order:</p>
+<ol style="list-style-type: decimal"><li>
+<a href="https://github.com/PPBDS/ai-rules/blob/main/claude-md/CLAUDE.md" class="external-link"><code>claude-md/CLAUDE.md</code></a> — the map of which guide governs which package.</li>
+<li>
+<a href="https://github.com/PPBDS/ai-rules/blob/main/claude-md/tutorials/CLAUDE.md" class="external-link"><code>claude-md/tutorials/CLAUDE.md</code></a> (<a href="../ai-rules/claude-md/tutorials/CLAUDE.html">local</a>) — the <strong>base tutorial guide</strong>: the AI-era philosophy, exercise rhythm, knowledge drops (at most two sentences), submission evidence, and formatting. It governs every tutorial here.</li>
+</ol><p>This file adds only what is specific to <code>stat101.tutorials</code>. On anything both cover, the base guide wins unless an override is recorded below. When a lesson learned here applies to every tutorial package, fix it in ai-rules rather than here. The local checkout may be ahead of GitHub; prefer it when both exist.</p>
+</div>
+<div class="section level2">
+<h2 id="companion-book-introduction-to-modern-statistics">Companion book: <em>Introduction to Modern Statistics</em>
+<a class="anchor" aria-label="anchor" href="#companion-book-introduction-to-modern-statistics"></a></h2>
+<p>Our guide for constructing tutorials is <strong><a href="https://openintrostat.github.io/ims/" class="external-link"><em>Introduction to Modern Statistics</em></a></strong> (2nd edition) by Mine Çetinkaya-Rundel and Johanna Hardin, free online under a CC BY-SA 3.0 license. It decides what we teach, in what order, and with what vocabulary.</p>
+<p>How the book shapes a tutorial:</p>
+<ul><li>
+<strong>Each tutorial is a companion to specific chapters.</strong> Per the base guide’s companion-text rule, the tutorial’s first sentence names and links the exact chapter, not just the book.</li>
+<li>
+<strong>Knowledge drops pull key points from that chapter</strong> (the base guide’s first kind of drop). Students usually won’t read the chapter, so the tutorial is where its main ideas reach them. Use the book’s terms (<em>sampling distribution</em>, <em>standard error</em>, <em>point estimate</em>) exactly as it defines them.</li>
+<li>
+<strong>Follow the book’s order.</strong> Never quiz a concept the book introduces in a later chapter.</li>
+<li>
+<strong>Simulation before formulas.</strong> The book teaches inference first through randomization and the bootstrap (Part 4) and only then through the normal model. Tutorials should do the same: students simulate first, then check the result against the formula.</li>
+<li>
+<strong>Data.</strong> The book’s examples use real datasets, mostly from the <strong><a href="https://openintrostat.github.io/openintro/" class="external-link">openintro</a></strong> R package (also <strong>usdata</strong>, <strong>cherryblossom</strong>, <strong>palmerpenguins</strong>). Prefer the chapter’s own dataset, or another from these packages, so the tutorial and the chapter tell the same story. Add any package used to <code>Suggests</code>.</li>
+<li>
+<strong>The book shows no R code.</strong> It teaches concepts with tables and figures. Our tutorials supply the R work, done by students with AI in <code>analysis.qmd</code>.</li>
+</ul><p>OpenIntro also publishes learnr tutorials and R labs for the book (<a href="https://www.openintro.org/book/ims/" class="external-link">openintro.org/book/ims</a>), built on the <strong>tidyverse</strong> and <strong>infer</strong>. They are useful for seeing which exercises the authors pair with each chapter. They follow a different philosophy (students type code into exercise chunks), so do not copy their structure.</p>
+<table class="table"><colgroup><col width="50%"><col width="50%"></colgroup><thead><tr><th>Part</th>
+<th>Chapter</th>
+</tr></thead><tbody><tr><td>1. Introduction to data</td>
+<td>1 <a href="https://openintrostat.github.io/ims/data-hello.html" class="external-link">Hello data</a> · 2 <a href="https://openintrostat.github.io/ims/data-design.html" class="external-link">Study design</a> · 3 <a href="https://openintrostat.github.io/ims/data-applications.html" class="external-link">Applications: Data</a>
+</td>
+</tr><tr><td>2. Exploratory data analysis</td>
+<td>4 <a href="https://openintrostat.github.io/ims/explore-categorical.html" class="external-link">Exploring categorical data</a> · 5 <a href="https://openintrostat.github.io/ims/explore-numerical.html" class="external-link">Exploring numerical data</a> · 6 <a href="https://openintrostat.github.io/ims/explore-applications.html" class="external-link">Applications: Explore</a>
+</td>
+</tr><tr><td>3. Regression modeling</td>
+<td>7 <a href="https://openintrostat.github.io/ims/model-slr.html" class="external-link">Linear regression with a single predictor</a> · 8 <a href="https://openintrostat.github.io/ims/model-mlr.html" class="external-link">Linear regression with multiple predictors</a> · 9 <a href="https://openintrostat.github.io/ims/model-logistic.html" class="external-link">Logistic regression</a> · 10 <a href="https://openintrostat.github.io/ims/model-applications.html" class="external-link">Applications: Model</a>
+</td>
+</tr><tr><td>4. Foundations of inference</td>
+<td>11 <a href="https://openintrostat.github.io/ims/foundations-randomization.html" class="external-link">Hypothesis testing with randomization</a> · 12 <a href="https://openintrostat.github.io/ims/foundations-bootstrapping.html" class="external-link">Confidence intervals with bootstrapping</a> · 13 <a href="https://openintrostat.github.io/ims/foundations-mathematical.html" class="external-link">Inference with mathematical models</a> · 14 <a href="https://openintrostat.github.io/ims/foundations-errors.html" class="external-link">Decision errors</a> · 15 <a href="https://openintrostat.github.io/ims/foundations-applications.html" class="external-link">Applications: Foundations</a>
+</td>
+</tr><tr><td>5. Statistical inference</td>
+<td>16 <a href="https://openintrostat.github.io/ims/inference-one-prop.html" class="external-link">Inference for a single proportion</a> · 17 <a href="https://openintrostat.github.io/ims/inference-two-props.html" class="external-link">Comparing two proportions</a> · 18 <a href="https://openintrostat.github.io/ims/inference-tables.html" class="external-link">Two-way tables</a> · 19 <a href="https://openintrostat.github.io/ims/inference-one-mean.html" class="external-link">A single mean</a> · 20 <a href="https://openintrostat.github.io/ims/inference-two-means.html" class="external-link">Two independent means</a> · 21 <a href="https://openintrostat.github.io/ims/inference-paired-means.html" class="external-link">Paired means</a> · 22 <a href="https://openintrostat.github.io/ims/inference-many-means.html" class="external-link">Many means</a> · 23 <a href="https://openintrostat.github.io/ims/inference-applications.html" class="external-link">Applications: Infer</a>
+</td>
+</tr><tr><td>6. Inferential modeling</td>
+<td>24 <a href="https://openintrostat.github.io/ims/inf-model-slr.html" class="external-link">Inference for regression, single predictor</a> · 25 <a href="https://openintrostat.github.io/ims/inf-model-mlr.html" class="external-link">Multiple predictors</a> · 26 <a href="https://openintrostat.github.io/ims/inf-model-logistic.html" class="external-link">Logistic regression</a> · 27 <a href="https://openintrostat.github.io/ims/inf-model-applications.html" class="external-link">Applications: Model and infer</a>
+</td>
+</tr></tbody></table><div class="section level3">
+<h3 id="one-tutorial-per-chapter">One tutorial per chapter<a class="anchor" aria-label="anchor" href="#one-tutorial-per-chapter"></a></h3>
+<ul><li>
+<strong>Each chapter gets exactly one tutorial</strong>, in the book’s order. Its directory is the two-digit chapter number plus a slug of the chapter title, and its title is the chapter title in Title Case: Chapter 1, “Hello data,” is <code>01-hello-data</code>, titled “Hello Data,” with work repo <code>hello-data</code>.</li>
+<li>
+<strong>60 minutes or less</strong>, which generally means <strong>around 40 questions</strong>. A chapter with more material than that gets its most important ideas, not all of them.</li>
+<li>
+<strong>At most two topics.</strong> Per the <em>Tutorials in the Age of AI</em> article (see the base guide’s <em>Sources</em>), a one-hour AI tutorial has at most two topics between the Introduction and the Summary. Follow the chapter’s sections in order, merging them into two topics when the chapter has more, each built on the chapter’s own datasets.</li>
+<li>
+<strong>Introduction and Summary follow the <em>Tutorials for Books</em> article.</strong> The Introduction’s first sentence: “This tutorial covers <a href="url">Chapter N: Title</a> from <a href="https://openintrostat.github.io/ims/" class="external-link"><em>Introduction to Modern Statistics</em></a> by Mine Çetinkaya-Rundel and Johanna Hardin.” Then one sentence on what students will learn. The Summary repeats that paragraph in the past tense, then points to one or two of the best further readings, ideally a source the chapter cites that an earlier knowledge drop already mentioned.</li>
+<li>
+<strong>Knowledge drops quote the chapter.</strong> Pick the chapter’s most important sentences, its definitions and its warnings, and quote them directly, in quotation marks, so the student meets the book’s exact wording. The other drop sentence ties the quote to what the student’s output just showed. Never more than two sentences.</li>
+<li>
+<strong>Students only code, using AI.</strong> There are no multiple-choice or quiz questions (base guide §3). Each concept the chapter defines is taught by an exercise whose output displays it: averaging <code>interest_rate</code> shows what makes a variable numerical, and counting the levels of <code>grade</code> shows a categorical one. The knowledge drop then names the concept in the book’s words.</li>
+<li>
+<strong>Help-page exercises.</strong> Per <em>Tutorials for Books</em>, have students run <code>?dataset</code> in the R Terminal and paste part of the help page, at least once per dataset. Our answer is the relevant excerpt. Help pages are also where documentation and data disagree, which makes them good material for knowledge drops.</li>
+<li>
+<strong>Override: one exercise per library.</strong> The base guide (§4, Introduction step 2) loads every library in one exercise. Here each library gets its own exercise, per <em>Tutorials for Books</em>, adding to the setup chunk in turn. Each is a knowledge-drop opportunity about that package’s place in the book.</li>
+<li>
+<strong>Override: no interpretation exercises.</strong> The base guide (§4, <em>Analysis path</em>) asks for a written interpretation after each major plot. Here students only code, so the takeaway goes in the plot’s subtitle instead, written as part of the plot-improvement exercise, per <em>Tutorials in the Age of AI</em>. Each topic ends with a plot built in one exercise and improved in the next.</li>
+</ul></div>
+</div>
+<div class="section level2">
 <h2 id="learnr2-not-learnr">learnr2, not learnr<a class="anchor" aria-label="anchor" href="#learnr2-not-learnr"></a></h2>
-<p>Each tutorial is a Quarto document, <code>inst/tutorials/&lt;name&gt;/&lt;name&gt;.qmd</code>, with <code>format: live-html</code> and <code>engine: knitr</code>. Exercises are <a href="https://github.com/cardiomoon/webr" class="external-link">webr</a> cells that run in the reader’s browser; questions, the student-information block, and the download button are <code><a href="https://ppbds.github.io/learnr2/reference/question.html" class="external-link">learnr2::question()</a></code>, <code><a href="https://ppbds.github.io/learnr2/reference/student_info.html" class="external-link">learnr2::student_info()</a></code>, and <code><a href="https://ppbds.github.io/learnr2/reference/download_answers_button.html" class="external-link">learnr2::download_answers_button()</a></code> calls in <code>{r}</code> chunks with <code>#| echo: false</code>. <strong>Read learnr2’s <a href="https://github.com/PPBDS/learnr2/blob/main/AGENTS.md" class="external-link"><code>AGENTS.md</code></a> before writing a tutorial</strong> — it is the authoring guide for the file format (frontmatter, chunk labels, exercises, hints, solutions, quizzes, the <code>webr: packages:</code> list, and the traps). Use <code><a href="https://ppbds.github.io/learnr2/reference/create_tutorial.html" class="external-link">learnr2::create_tutorial()</a></code> or the bundled <code>intro-vectors</code> tutorial as a starting point. Never add <code><a href="https://rstudio.github.io/learnr/" class="external-link">library(learnr)</a></code>, <code><a href="https://ppbds.github.io/tutorial.helpers/" class="external-link">library(tutorial.helpers)</a></code>, child documents, or a <code>tutorial: id:</code> field.</p>
+<p>Each tutorial is a Quarto document, <code>inst/tutorials/&lt;name&gt;/&lt;name&gt;.qmd</code>, with <code>format: live-html</code> and <code>engine: knitr</code>. Questions, the student-information block, and the download button are <code><a href="https://ppbds.github.io/learnr2/reference/question.html" class="external-link">learnr2::question()</a></code>, <code><a href="https://ppbds.github.io/learnr2/reference/student_info.html" class="external-link">learnr2::student_info()</a></code>, and <code><a href="https://ppbds.github.io/learnr2/reference/download_answers_button.html" class="external-link">learnr2::download_answers_button()</a></code> calls in <code>{r}</code> chunks with <code>#| echo: false</code>. <strong>Read learnr2’s <a href="https://github.com/PPBDS/learnr2/blob/main/AGENTS.md" class="external-link"><code>AGENTS.md</code></a> before writing a tutorial</strong> — it is the authoring guide for the file format (frontmatter, chunk labels, exercises, hints, solutions, quizzes, the <code>webr: packages:</code> list, and the traps). Use <code><a href="https://ppbds.github.io/learnr2/reference/create_tutorial.html" class="external-link">learnr2::create_tutorial()</a></code> or the bundled <code>intro-vectors</code> tutorial as a starting point. Never add <code><a href="https://rstudio.github.io/learnr/" class="external-link">library(learnr)</a></code>, <code><a href="https://ppbds.github.io/tutorial.helpers/" class="external-link">library(tutorial.helpers)</a></code>, child documents, or a <code>tutorial: id:</code> field.</p>
 <p>The <code>_extensions/</code> directory is added at render time by <code><a href="https://ppbds.github.io/learnr2/reference/run_tutorial.html" class="external-link">learnr2::run_tutorial()</a></code>; it is git-ignored and build-ignored, never committed.</p>
 </div>
 <div class="section level2">
 <h2 id="relationship-to-the-base-tutorial-guide">Relationship to the base tutorial guide<a class="anchor" aria-label="anchor" href="#relationship-to-the-base-tutorial-guide"></a></h2>
-<p>The base guide (<a href="https://github.com/PPBDS/ai-rules/blob/main/claude-md/tutorials/CLAUDE.md" class="external-link"><code>claude-md/tutorials/CLAUDE.md</code></a>) is the default contract for this package, and <strong><code>stat101.tutorials</code> follows it</strong> except where learnr2 makes a rule impossible. These are normal tutorials: a statistics topic explored through data, with the full analysis path (get data, explore it, build a plot or table, interpret, publish), the <code>analysis.qmd</code> working chunk, render + Live Server, CP/CR, and the standard Introduction/Summary structure. Read the base guide first.</p>
-<p><strong>TODO: reconcile the base guide with learnr2.</strong> The base guide is written for learnr tutorials that students run in a Codespace alongside their own <code>analysis.qmd</code>: evidence via <code>show_file()</code> and CP/CR, render + Live Server, Git commits. learnr2 has no <code>show_file()</code>, and its own guide says a tutorial must not depend on a local R session. Until this is settled, decide case by case and record each departure here.</p>
-<p>Unlike <code>vscode.tutorials</code>, there is <strong>no mechanics exception</strong>. Students arrive having done <code>vscode.tutorials</code> through the Quarto tutorial — the boundary the base guide assumes — and nothing here re-teaches those mechanics. When a tutorial needs a skill not taught through Quarto, scaffold it explicitly or fix it upstream; never assume it silently.</p>
+<p>The base guide (<a href="https://github.com/PPBDS/ai-rules/blob/main/claude-md/tutorials/CLAUDE.md" class="external-link"><code>claude-md/tutorials/CLAUDE.md</code></a>) is the default contract for this package, and <strong><code>stat101.tutorials</code> follows it in full</strong>; where it conflicts with learnr2’s own guide, the base guide wins (see the mapping below). These are normal tutorials: a statistics topic explored through data, with the full analysis path (get data, explore it, build a plot or table, interpret, publish), the <code>analysis.qmd</code> working chunk, render + Live Server, CP/CR, and the standard Introduction/Summary structure. Read the base guide first.</p>
+<div class="section level3">
+<h3 id="how-the-base-guide-maps-onto-learnr2">How the base guide maps onto learnr2<a class="anchor" aria-label="anchor" href="#how-the-base-guide-maps-onto-learnr2"></a></h3>
+<p><code>inst/tutorials/01-hello-data/</code> is the reference implementation of this mapping and of everything in this file; copy its patterns.</p>
+<ul><li>
+<strong>The student workflow is unchanged.</strong> Students work in a Codespace on their own <code>analysis.qmd</code>, render with Live Server, commit, and submit <code>show_file()</code> output with CP/CR. This overrides learnr2’s “no local R dependency” rule, which assumes a reader with nothing but a browser.</li>
+<li>
+<strong><code>show_file()</code> comes from learnr2, not tutorial.helpers.</strong> It is installed with this package (learnr2 is in <code>Imports</code>), and the standing note on the first <code>show_file()</code> exercise names <code><a href="https://github.com/PPBDS/learnr2" class="external-link">library(learnr2)</a></code>. Its default differs from the base guide’s version: for a file with code chunks it shows only the last chunk. So the evidence call is <code>show_file("analysis.qmd")</code>, never <code>chunk = "Last"</code>, and the Summary’s whole-file check is <code>show_file("analysis.qmd", start = 0)</code>. Files without chunks, like <code>.gitignore</code>, print whole by default.</li>
+<li>
+<strong>Questions</strong> are <code>learnr2::question("CP/CR.", type = "reflection_editable")</code>, the equivalent of the base guide’s no-answer <code>question_text()</code>. URL and interpretation questions use the same type with a different prompt (“Paste the URL of your published page.”).</li>
+<li>
+<strong>Pacing.</strong> learnr2 gates every <code>##</code>/<code>###</code> section behind a Continue button, and a bare <code>###</code> line renders as an empty section, so the base guide’s two <code>###</code> dividers (question → our answer → knowledge drop) work unchanged. <code>toc-depth: 2</code> keeps the dividers and <code>### Exercise N</code> headings out of the sidebar.</li>
+<li>
+<strong>Our answers</strong> are render-time <code>{r}</code> chunks with <code>#| echo: true</code>, as in the base guide, backed by a hidden setup chunk (<code>#| include: false</code>) that loads the tidyverse. This overrides learnr2’s rule that <code>{r}</code> chunks hold only widget calls: every package these chunks use must be in <code>Suggests</code>. No <a href="https://github.com/cardiomoon/webr" class="external-link">webr</a> cells; the base guide’s ban on exercise code chunks stands.</li>
+<li>
+<strong>Chunk labels</strong> follow the base guide’s <code>section-name-N</code> (question) and <code>section-name-N-test</code> (answer) format. The question’s label is its learnr2 <code>id</code>.</li>
+<li>
+<strong>No install exercises.</strong> Every package a tutorial uses, including the book’s data packages (<strong>openintro</strong>, <strong>usdata</strong>, and others), goes in <code>Suggests</code> in DESCRIPTION. The student image installs each course package’s <code>Suggests</code>, so students never install packages by hand.</li>
+</ul><p>Unlike <code>vscode.tutorials</code>, there is <strong>no mechanics exception</strong>. Students arrive having done <code>vscode.tutorials</code> through the Quarto tutorial — the boundary the base guide assumes — and nothing here re-teaches those mechanics. When a tutorial needs a skill not taught through Quarto, scaffold it explicitly or fix it upstream; never assume it silently.</p>
+</div>
 <div class="section level3">
 <h3 id="choosing-topics">Choosing topics<a class="anchor" aria-label="anchor" href="#choosing-topics"></a></h3>
-<p>The base guide (§7) leaves topic choice to each project. <strong>TODO: define the topic model here</strong> — the sequence of statistics concepts, which dataset(s) each tutorial uses, and how a concept maps onto the analysis path.</p>
+<p>The base guide (§7) leaves topic choice to each project. Here, the topic of each tutorial is one chapter of <em>Introduction to Modern Statistics</em>, including the “Applications” chapters (see <em>One tutorial per chapter</em>, above). Use the chapter’s own datasets; when a dataset hides a discoverable anomaly, as <code>county</code> does with Kalawao County’s 0% homeownership, build an exercise that lets the student find it.</p>
 </div>
 <div class="section level3">
 <h3 id="the-universal-entry-point">The universal entry point<a class="anchor" aria-label="anchor" href="#the-universal-entry-point"></a></h3>
@@ -68,15 +154,15 @@
 <h2 id="consistency-rules">Consistency rules<a class="anchor" aria-label="anchor" href="#consistency-rules"></a></h2>
 <div class="section level3">
 <h3 id="the-bash-prompt-in-example-answers">The bash prompt in example answers<a class="anchor" aria-label="anchor" href="#the-bash-prompt-in-example-answers"></a></h3>
-<p><code>codespace-starter</code> sets <code>PS1='\W \$ '</code>, so the prompt is the basename of the working directory, a space, and a dollar sign: <code>sampling $</code>. Never GitHub’s stock long prompt, never a bare <code>$</code>. The home directory is <code>/home/rstudio</code> (prompt <code>~ $</code>).</p>
+<p><code>codespace-starter</code> sets <code>PS1='\W \$ '</code>, so the prompt is the basename of the working directory, a space, and a dollar sign: <code>hello-data $</code>. Never GitHub’s stock long prompt, never a bare <code>$</code>. The home directory is <code>/home/rstudio</code> (prompt <code>~ $</code>).</p>
 </div>
 <div class="section level3">
 <h3 id="repo-names-derive-from-tutorial-titles">Repo names derive from tutorial titles<a class="anchor" aria-label="anchor" href="#repo-names-derive-from-tutorial-titles"></a></h3>
-<p>Every tutorial uses its own work repo, named after its <strong>title</strong>: lowercase, with spaces and other non-alphanumeric characters replaced by dashes (“Sampling Distributions” → <code>sampling-distributions</code>). When a title changes, update the repo-name instruction, every prompt line, every <code>/workspaces/&lt;name&gt;</code> path, and every URL (<code>github.com/&lt;user&gt;/&lt;name&gt;</code>, <code>&lt;user&gt;.github.io/&lt;name&gt;/</code>). Do not change the directory name, <code>.qmd</code> file name, or chunk labels (a <code>question()</code> chunk’s label is the key for the student’s saved answer). A title must never map to <code>codespace-starter</code>.</p>
+<p>Every tutorial uses its own work repo, named after its <strong>title</strong>: lowercase, with spaces and other non-alphanumeric characters replaced by dashes (“Hello Data” → <code>hello-data</code>). When a title changes, update the repo-name instruction, every prompt line, every <code>/workspaces/&lt;name&gt;</code> path, and every URL (<code>github.com/&lt;user&gt;/&lt;name&gt;</code>, <code>&lt;user&gt;.github.io/&lt;name&gt;/</code>). Do not change the directory name, <code>.qmd</code> file name, or chunk labels (a <code>question()</code> chunk’s label is the key for the student’s saved answer). A title must never map to <code>codespace-starter</code>.</p>
 </div>
 <div class="section level3">
 <h3 id="refer-to-tutorials-by-title-not-number">Refer to tutorials by title, not number<a class="anchor" aria-label="anchor" href="#refer-to-tutorials-by-title-not-number"></a></h3>
-<p>In prose, refer to a tutorial by its <strong>title</strong>, never its <code>NN-slug</code> directory name. Reserve the directory name for paths, URLs, <code>run_tutorial()</code> calls, and ids. Quote a title written out as a title (<em>the next tutorial, “Sampling,” covers…</em>); short attributive references (the Sampling tutorial) stay unquoted.</p>
+<p>In prose, refer to a tutorial by its <strong>title</strong>, never its <code>NN-slug</code> directory name. Reserve the directory name for paths, URLs, <code>run_tutorial()</code> calls, and ids. Quote a title written out as a title (<em>the next tutorial, “Study Design,” covers…</em>); short attributive references (the Hello Data tutorial) stay unquoted.</p>
 </div>
 <div class="section level3">
 <h3 id="renumbering-tutorials-directory-renames">Renumbering tutorials (directory renames)<a class="anchor" aria-label="anchor" href="#renumbering-tutorials-directory-renames"></a></h3>
