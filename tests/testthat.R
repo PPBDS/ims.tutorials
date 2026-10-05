@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/articles/special-files.html
 
 library(testthat)
-library(stat101.tutorials)
+library(ims.tutorials)
 
-test_check("stat101.tutorials")
+test_check("ims.tutorials")

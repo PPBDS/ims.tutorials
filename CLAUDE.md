@@ -1,8 +1,9 @@
-# CLAUDE.md — stat101.tutorials
+# CLAUDE.md — ims.tutorials
 
-`stat101.tutorials` is a tutorial package covering the concepts of an **introductory
-statistics course** — distributions, sampling, estimation, uncertainty, regression,
-and the rest — worked through in R. It is organized and maintained like
+`ims.tutorials` is a tutorial package, one tutorial per chapter of *Introduction to
+Modern Statistics*, covering the concepts of an **introductory statistics course** —
+distributions, sampling, estimation, uncertainty, regression, and the rest — worked
+through in R. It is organized and maintained like
 [`vscode.tutorials`](https://github.com/PPBDS/vscode.tutorials) — tutorials in
 `inst/tutorials/`, launched from the R Tutorials extension, checked by tests and a CI
 render in the student image — but it is built on
@@ -21,7 +22,7 @@ The rules for writing tutorials live in **[PPBDS/ai-rules](https://github.com/PP
    the AI-era philosophy, exercise rhythm, knowledge drops (at most two sentences),
    submission evidence, and formatting. It governs every tutorial here.
 
-This file adds only what is specific to `stat101.tutorials`. On anything both cover,
+This file adds only what is specific to `ims.tutorials`. On anything both cover,
 the base guide wins unless an override is recorded below. When a lesson learned here
 applies to every tutorial package, fix it in ai-rules rather than here. The local
 checkout may be ahead of GitHub; prefer it when both exist.
@@ -134,7 +135,7 @@ is git-ignored and build-ignored, never committed.
 
 The base guide
 ([`claude-md/tutorials/CLAUDE.md`](https://github.com/PPBDS/ai-rules/blob/main/claude-md/tutorials/CLAUDE.md))
-is the default contract for this package, and **`stat101.tutorials` follows it in full**;
+is the default contract for this package, and **`ims.tutorials` follows it in full**;
 where it conflicts with learnr2's own guide, the base guide wins (see the mapping below). These are normal tutorials: a statistics topic explored through data, with
 the full analysis path (get data, explore it, build a plot or table, interpret,
 publish), the `analysis.qmd` working chunk, render + Live Server, CP/CR, and the
@@ -224,9 +225,9 @@ never a bare `$`. The home directory is `/home/rstudio` (prompt `~ $`).
 ### Repo names derive from tutorial titles
 
 Every tutorial uses its own work repo, named after its **title**: lowercase, with
-spaces and other non-alphanumeric characters replaced by dashes ("Hello Data" →
-`hello-data`). When a title changes, update the repo-name
-instruction, every prompt line, every `/workspaces/<name>` path, and every URL
+each run of spaces and other non-alphanumeric characters collapsed to a single dash
+("Hello Data" → `hello-data`, "Applications: Data" → `applications-data`). When a
+title changes, update the repo-name instruction, every prompt line, every `/workspaces/<name>` path, and every URL
 (`github.com/<user>/<name>`, `<user>.github.io/<name>/`). Do not change the
 directory name, `.qmd` file name, or chunk labels (a `question()` chunk's label is the
 key for the student's saved answer). A title must never map to `codespace-starter`.
@@ -250,7 +251,7 @@ one fans out:
    changes the URL. Add a check for each such URL in `tests/testthat/test-downloads.R`
    (see the `vscode.tutorials` version for the pattern).
 3. Cross-references in prose, README.Rmd's tutorial list, the tutorial list in
-   `R/stat101.tutorials-package.R` (run `devtools::document()` after), and this file.
+   `R/ims.tutorials-package.R` (run `devtools::document()` after), and this file.
 4. The `.qmd` file name and the `filename_prefix` of `download_answers_button()` —
    both **must always equal the directory name.**
 
@@ -265,7 +266,7 @@ NEWS.md entries are historical records — never retro-renumber them.
    has only what the course packages declare, and the `student-env-render` CI job
    fails if a tutorial needs something undeclared.
 3. List it in README.Rmd (re-render README.md) and in
-   `R/stat101.tutorials-package.R` (re-run `devtools::document()`).
+   `R/ims.tutorials-package.R` (re-run `devtools::document()`).
 
 ### The devcontainer image pin (`ghcr.io/ppbds/devcontainer:X.Y.Z`)
 

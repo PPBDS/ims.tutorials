@@ -1,0 +1,1063 @@
+---
+title: "Exploring Categorical Data"
+subtitle: "Contingency tables, bar plots, conditional proportions, and comparing groups."
+format: live-html
+engine: knitr
+toc: true
+toc-depth: 2
+---
+
+{{< include _extensions/r-wasm/live/_knitr.qmd >}}
+
+```{r}
+#| label: setup
+#| include: false
+library(tidyverse)
+library(openintro)
+library(usdata)
+library(ggridges)
+knitr::opts_chunk$set(out.width = "90%")
+```
+
+## Student Information
+
+```{r}
+#| label: student-information-1
+#| echo: false
+learnr2::student_info()
+```
+
+## Introduction
+
+This tutorial covers [Chapter 4: Exploring categorical data](https://openintrostat.github.io/ims/explore-categorical.html) from [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) by Mine Çetinkaya-Rundel and Johanna Hardin. You will learn to summarize one or two categorical variables with contingency tables and bar plots, to read row and column proportions, and to compare a numerical variable across groups.
+
+### Exercise 1
+
+You should be doing this tutorial in a repo named `exploring-categorical-data`. If you are not, create one and then connect to it. You may need to restart this tutorial after you do so.
+
+Create a new file, `analysis.qmd`, with the title `"Exploring Categorical Data"` and your name as the author. In a bash Terminal, render it:
+
+```
+quarto render analysis.qmd
+```
+
+Open `analysis.html` with Live Server (right-click it in the Explorer → **Open with Live Server**) and keep the tab open. It refreshes on every render. Going forward, we will just tell you to "Render" when we want you to take these steps.
+
+Create a `.gitignore` with `analysis_files` followed by a blank line. Commit and push. Use AI however you like.
+
+In the R Terminal, run `show_file(".gitignore")`. If that fails, it is probably because you have not yet loaded `library(learnr2)` in the R Terminal.
+
+```{r}
+#| label: introduction-1
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```
+analysis_files
+```
+
+###
+
+"This chapter focuses on exploring categorical data using summary statistics and visualizations." Its main example is the full Lending Club dataset, of which `loan50` was a sample.
+
+### Exercise 2
+
+Add a chunk to `analysis.qmd` that loads the **[tidyverse](https://www.tidyverse.org/)**, with `#| message: false` so the startup messages stay out of the rendered page. Add `execute: echo: false` to the YAML header. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: introduction-2
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+<pre><code>#| message: false
+library(tidyverse)
+</code></pre>
+
+###
+
+The **tidyverse** includes **forcats**, for working with *factors*, R's type for categorical variables. Factors carry their levels in a fixed order, which decides the order of bars in every plot in this chapter.
+
+### Exercise 3
+
+Add **[openintro](https://openintrostat.github.io/openintro/)** to that chunk. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: introduction-3
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+<pre><code>#| message: false
+library(tidyverse)
+library(openintro)
+</code></pre>
+
+###
+
+**openintro** holds `loans_full_schema`, 10,000 loans with 55 variables, and `email`, 3,921 messages from one inbox in 2012. Both appear in this chapter.
+
+### Exercise 4
+
+Add **[usdata](https://openintrostat.github.io/usdata/)** to that chunk. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: introduction-4
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+<pre><code>#| message: false
+library(tidyverse)
+library(openintro)
+library(usdata)
+</code></pre>
+
+###
+
+**usdata** holds `county`. The chapter returns to it in its final section to compare household income between counties that grew and counties that did not.
+
+### Exercise 5
+
+Add **[ggridges](https://wilkelab.org/ggridges/)** to that chunk. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: introduction-5
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+<pre><code>#| message: false
+library(tidyverse)
+library(openintro)
+library(usdata)
+library(ggridges)
+</code></pre>
+
+###
+
+**ggridges** adds *ridge plots* to **ggplot2**: several density curves stacked on one scale. The chapter uses one to compare income distributions across groups of counties.
+
+## Contingency tables and bar plots
+
+"We will examine the relationship between `homeownership`, which for the `loans` data can take a value of `rent`, `mortgage` (owns but has a mortgage), or `own`, and `application_type`, which indicates whether the loan application was made with a partner or whether it was an individual application."
+
+### Exercise 1
+
+Add a chunk that prints `loans_full_schema`. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: contingency-tables-and-bar-plots-1
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: contingency-tables-and-bar-plots-1-test
+#| echo: true
+loans_full_schema
+```
+
+###
+
+"This larger dataset contains information on 10,000 loans made through Lending Club." The 55 columns will not fit on the page, so the tibble names the ones it could not show.
+
+### Exercise 2
+
+In the R Terminal, run `?loans_full_schema` to open the help page. Copy and paste the entries for `homeownership` and `application_type` from the Format section.
+
+```{r}
+#| label: contingency-tables-and-bar-plots-2
+#| echo: false
+learnr2::question("Paste the two entries.", type = "reflection_editable")
+```
+
+###
+
+```
+     homeownership The ownership status of the applicant's residence.
+
+     application_type The type of application: either ‘individual’ or
+          ‘joint’.
+```
+
+###
+
+"Note that loans from Lending Club are typically for small items or for cash, not for homes." Homeownership describes the borrower, not the purpose of the loan.
+
+### Exercise 3
+
+Replace the code in that chunk so that it counts the loans with each value of `homeownership`. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: contingency-tables-and-bar-plots-3
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: contingency-tables-and-bar-plots-3-test
+#| echo: true
+loans_full_schema |>
+  count(homeownership)
+```
+
+###
+
+The levels arrive in capitals and in alphabetical order: MORTGAGE, OWN, RENT. The book writes them in lowercase and in the order rent, mortgage, own, which is a cleaner story, from no ownership to full ownership.
+
+### Exercise 4
+
+Replace the code in that chunk so that it counts the loans with each value of `application_type`. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: contingency-tables-and-bar-plots-4
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: contingency-tables-and-bar-plots-4-test
+#| echo: true
+loans_full_schema |>
+  count(application_type)
+```
+
+###
+
+8,505 loans were individual applications and 1,495 were joint. The imbalance between these two groups will matter when we choose how to plot them.
+
+### Exercise 5
+
+Start a new chunk that creates `loans` from `loans_full_schema`, with `homeownership` converted to lowercase and its levels ordered rent, mortgage, own. Print `loans`. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: contingency-tables-and-bar-plots-5
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: contingency-tables-and-bar-plots-5-test
+#| echo: true
+loans <- loans_full_schema |>
+  mutate(homeownership = str_to_lower(homeownership),
+         homeownership = fct_relevel(homeownership, "rent", "mortgage", "own"))
+
+loans
+```
+
+###
+
+"Based on the data in this dataset we have modified the `homeownership` and `application_type` variables. We will refer to this modified dataset as `loans`." Recoding a categorical variable changes its labels and order, never its counts.
+
+### Exercise 6
+
+Delete the line that prints `loans`, so that the chunk only creates it. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: contingency-tables-and-bar-plots-6
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+<pre><code>loans <- loans_full_schema |>
+  mutate(homeownership = str_to_lower(homeownership),
+         homeownership = fct_relevel(homeownership, "rent", "mortgage", "own"))
+</code></pre>
+
+###
+
+Every table and plot in the rest of this section starts from `loans`, so it earns a chunk of its own.
+
+### Exercise 7
+
+Add `#| cache: true` to that chunk. Render. In the bash Terminal, run `ls`.
+
+```{r}
+#| label: contingency-tables-and-bar-plots-7
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```
+analysis.html  analysis.qmd  analysis_cache  analysis_files
+```
+
+###
+
+`analysis_cache` now holds the recoded `loans`, so later renders skip rebuilding it. Lending Club loans are "for their personal use," and the help page's warning stands: these are loans made, not applications.
+
+### Exercise 8
+
+Your Source Control count just jumped, because Git sees every file in the new cache directory. Add `analysis_cache` to `.gitignore`, and the count drops back.
+
+In the R Terminal, run `show_file(".gitignore")`.
+
+```{r}
+#| label: contingency-tables-and-bar-plots-8
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```
+analysis_files
+analysis_cache
+```
+
+###
+
+"Mastery of the content presented in this chapter will be crucial for understanding the methods and techniques introduced in the rest of the book." Two-way tables of counts return in Chapter 18 as the basis of a hypothesis test.
+
+### Exercise 9
+
+Start a new chunk that counts the loans in each combination of `application_type` and `homeownership`, then spreads the result into a table with one row per `application_type` and one column per level of `homeownership`. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: contingency-tables-and-bar-plots-9
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: contingency-tables-and-bar-plots-9-test
+#| echo: true
+loans |>
+  count(application_type, homeownership) |>
+  pivot_wider(names_from = homeownership, values_from = n)
+```
+
+###
+
+"A table that summarizes data for two categorical variables in this way is called a contingency table. Each value in the table represents the number of times a particular combination of variable outcomes occurred," so 3,496 is the number of individual applicants who rent.
+
+### Exercise 10
+
+Replace the code in that chunk with a bar plot of the number of loans at each level of `homeownership`. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: contingency-tables-and-bar-plots-10
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: contingency-tables-and-bar-plots-10-test
+#| echo: true
+loans |>
+  ggplot(aes(x = homeownership)) +
+  geom_bar()
+```
+
+###
+
+"A bar plot is a common way to display a single categorical variable." The bars appear in the order rent, mortgage, own because that is the order of the levels you set.
+
+### Exercise 11
+
+Change the bar plot so that it shows the proportion of loans at each level of `homeownership` rather than the count. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: contingency-tables-and-bar-plots-11
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: contingency-tables-and-bar-plots-11-test
+#| echo: true
+loans |>
+  count(homeownership) |>
+  mutate(proportion = n / sum(n)) |>
+  ggplot(aes(x = homeownership, y = proportion)) +
+  geom_col()
+```
+
+###
+
+Nearly half of borrowers, 47.9%, have a mortgage; 38.6% rent and 13.5% own outright. The shape is identical to the count plot; only the axis changed.
+
+### Exercise 12
+
+Replace the code in that chunk with a stacked bar plot: the count of loans at each level of `homeownership`, with each bar filled by `application_type`. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: contingency-tables-and-bar-plots-12
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: contingency-tables-and-bar-plots-12-test
+#| echo: true
+loans |>
+  ggplot(aes(x = homeownership, fill = application_type)) +
+  geom_bar()
+```
+
+###
+
+"This plot most clearly displays that loan applicants most commonly live in mortgaged homes. It is difficult to say, based on this plot alone, how different application types vary across the levels of homeownership."
+
+### Exercise 13
+
+Change the stacked bar plot so that every bar is stretched to the same height, showing the proportion of each `application_type` within each level of `homeownership`. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: contingency-tables-and-bar-plots-13
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: contingency-tables-and-bar-plots-13-test
+#| echo: true
+loans |>
+  ggplot(aes(x = homeownership, fill = application_type)) +
+  geom_bar(position = "fill")
+```
+
+###
+
+This is a **standardized bar plot**, also called a filled bar plot. "Since the proportions of joint and individual loans vary across the groups, we can conclude that the two variables are associated for this sample."
+
+### Exercise 14
+
+Change the plot so that the two application types sit side by side within each level of `homeownership` instead of on top of each other. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: contingency-tables-and-bar-plots-14
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: contingency-tables-and-bar-plots-14-test
+#| echo: true
+loans |>
+  ggplot(aes(x = homeownership, fill = application_type)) +
+  geom_bar(position = "dodge")
+```
+
+###
+
+A **dodged bar plot** "most clearly displays that within each level of homeownership, individual applications are more common than joint applications." Its weakness: "when two groups are of very different sizes, … it is difficult to discern if there is an association."
+
+### Exercise 15
+
+Replace the plot with a table of row proportions: for each `application_type`, the proportion of its loans at each level of `homeownership`, spread into one column per level. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: contingency-tables-and-bar-plots-15
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: contingency-tables-and-bar-plots-15-test
+#| echo: true
+loans |>
+  count(application_type, homeownership) |>
+  mutate(proportion = n / sum(n), .by = application_type) |>
+  select(-n) |>
+  pivot_wider(names_from = homeownership, values_from = proportion)
+```
+
+###
+
+"The value 3496 at the intersection of individual and rent is replaced by 3496 / 8505 = 0.411 … It corresponds to the proportion of individual applicants who rent." Each row now sums to 1.
+
+### Exercise 16
+
+Change the table to column proportions: for each level of `homeownership`, the proportion of its loans with each `application_type`. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: contingency-tables-and-bar-plots-16
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: contingency-tables-and-bar-plots-16-test
+#| echo: true
+loans |>
+  count(application_type, homeownership) |>
+  mutate(proportion = n / sum(n), .by = homeownership) |>
+  select(-n) |>
+  pivot_wider(names_from = homeownership, values_from = proportion)
+```
+
+###
+
+"Here the value 0.906 indicates that 90.6% of renters applied as individuals for the loan. This rate is higher compared to loans from people with mortgages (80.2%) or who own their home (86.5%)." Both tables are **conditional proportions**; they answer different questions.
+
+### Exercise 17
+
+Replace the code in that chunk so that it uses `email` to calculate, for each email `format`, the proportion of messages that are `spam`. Label the formats `"text"` and `"HTML"`. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: contingency-tables-and-bar-plots-17
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: contingency-tables-and-bar-plots-17-test
+#| echo: true
+email |>
+  mutate(format = if_else(format == 1, "HTML", "text")) |>
+  summarize(prop_spam = mean(spam == 1), .by = format)
+```
+
+###
+
+"A higher fraction of plain text emails are spam (209/1195 = 17.5%) than compared to HTML emails (158/2726 = 5.8%)." The book's rule for choosing: "Usually it is most useful to 'condition' on the explanatory variable," here the format.
+
+### Exercise 18
+
+Replace the code in that chunk with the standardized bar plot of `application_type` within `homeownership` again, improved: show the y-axis as percentages, and add a title, axis labels, a legend title, a subtitle that states the main finding, and a caption giving the number of loans. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: contingency-tables-and-bar-plots-18
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: contingency-tables-and-bar-plots-18-test
+#| echo: true
+loans |>
+  ggplot(aes(x = homeownership, fill = application_type)) +
+  geom_bar(position = "fill") +
+  scale_y_continuous(labels = scales::label_percent()) +
+  labs(title = "Application Type by Homeownership for Lending Club Loans",
+       subtitle = "Joint applications are twice as common among borrowers with a mortgage as among renters",
+       x = "Homeownership",
+       y = "Share of Loans",
+       fill = "Application Type",
+       caption = "10,000 loans; Lending Club")
+```
+
+###
+
+"The major downside of the standardized version is that we lose all sense of how many cases each of the bars represents." The 1,353 owners look as weighty as the 4,789 mortgage holders.
+
+### Exercise 19
+
+Commit `analysis.qmd` and `.gitignore` with the message `"Summarize homeownership and application type"` and push. In a bash Terminal, run `git log --oneline -3`.
+
+```{r}
+#| label: contingency-tables-and-bar-plots-19
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```
+7a3c5e2 (HEAD -> main, origin/main) Summarize homeownership and application type
+9be04d2 Initial commit
+```
+
+###
+
+The chapter also shows mosaic plots, pie charts, and waffle charts of the same data. Its verdict on pie charts: "it is far easier to compare the counts of each loan grade using the bar plot than the pie chart."
+
+## Comparing numerical data across groups
+
+"We will revisit the `county` dataset and compare the median household income for counties that gained population from 2010 to 2017 versus counties that had no gain."
+
+### Exercise 1
+
+Start a new chunk that drops the counties with a missing `pop_change` or `median_hh_income`, adds a variable `change` equal to `"gain"` when `pop_change` is positive and `"no gain"` otherwise, stores the result as `county_change`, and counts the counties in each `change` group. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: comparing-numerical-data-across-groups-1
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: comparing-numerical-data-across-groups-1-test
+#| echo: true
+county_change <- county |>
+  drop_na(pop_change, median_hh_income) |>
+  mutate(change = if_else(pop_change > 0, "gain", "no gain"))
+
+county_change |>
+  count(change)
+```
+
+###
+
+"We have data on 3142 counties in the United States. We are missing 2017 population data from 3 of them, and of the remaining 3139 counties, in 1541 the population increased from 2010 to 2017 and in the remaining 1598 the population decreased." Two of the 1,541, in Alaska and South Dakota, have no income figure, so 1,539 remain here.
+
+### Exercise 2
+
+Replace the count with a calculation of the median `median_hh_income` for each `change` group. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: comparing-numerical-data-across-groups-2
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: comparing-numerical-data-across-groups-2-test
+#| echo: true
+county_change <- county |>
+  drop_na(pop_change, median_hh_income) |>
+  mutate(change = if_else(pop_change > 0, "gain", "no gain"))
+
+county_change |>
+  summarize(median_income = median(median_hh_income),
+            .by = change)
+```
+
+###
+
+Growing counties have a median household income of $52,080, against $44,842 for the rest. "While we might like to make a causal connection between income and population growth, remember that these are observational data."
+
+### Exercise 3
+
+Replace the summary with a histogram of `median_hh_income` from `county_change`, filled by `change`, with the two groups overlapping and semi-transparent. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: comparing-numerical-data-across-groups-3
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: comparing-numerical-data-across-groups-3-test
+#| echo: true
+county_change <- county |>
+  drop_na(pop_change, median_hh_income) |>
+  mutate(change = if_else(pop_change > 0, "gain", "no gain"))
+
+county_change |>
+  ggplot(aes(x = median_hh_income, fill = change)) +
+  geom_histogram(binwidth = 5000, alpha = 0.5, position = "identity")
+```
+
+###
+
+"Color can be used to split histograms for numerical variables by levels of a categorical variable." Both groups are right skewed, and the gain group sits a little further right.
+
+### Exercise 4
+
+Replace the histogram with side-by-side box plots of `median_hh_income`, one for each `change` group. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: comparing-numerical-data-across-groups-4
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: comparing-numerical-data-across-groups-4-test
+#| echo: true
+county_change <- county |>
+  drop_na(pop_change, median_hh_income) |>
+  mutate(change = if_else(pop_change > 0, "gain", "no gain"))
+
+county_change |>
+  ggplot(aes(x = median_hh_income, y = change)) +
+  geom_boxplot()
+```
+
+###
+
+"The side-by-side box plots are especially useful for comparing centers and spreads, while the hollow histograms are more useful for seeing distribution shape, skew, modes, and potential anomalies." The gain group's box is wider: its IQR is $16,241 against $13,031.
+
+### Exercise 5
+
+Replace the box plots with a ridge plot: a density curve of `median_hh_income` for each `change` group, stacked on the same scale. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: comparing-numerical-data-across-groups-5
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: comparing-numerical-data-across-groups-5-test
+#| echo: true
+county_change <- county |>
+  drop_na(pop_change, median_hh_income) |>
+  mutate(change = if_else(pop_change > 0, "gain", "no gain"))
+
+county_change |>
+  ggplot(aes(x = median_hh_income, y = change, fill = change)) +
+  geom_density_ridges(alpha = 0.5)
+```
+
+###
+
+"The ridge plot give us a better sense of the shape, and especially modality, of the data." Both groups have a single peak, so there is no hidden second population of counties here.
+
+### Exercise 6
+
+Replace the ridge plot with a count of counties in each combination of `change` and `metro`, dropping counties with unknown `metro`. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: comparing-numerical-data-across-groups-6
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: comparing-numerical-data-across-groups-6-test
+#| echo: true
+county_change <- county |>
+  drop_na(pop_change, median_hh_income) |>
+  mutate(change = if_else(pop_change > 0, "gain", "no gain"))
+
+county_change |>
+  drop_na(metro) |>
+  count(change, metro)
+```
+
+###
+
+Most metro counties grew, 829 of 1,165, while most non-metro counties did not, 1,261 of 1,971. Growth and metro status are associated, so the income gap might belong to either one.
+
+### Exercise 7
+
+Replace the count with histograms of `median_hh_income`, one panel for each combination of `change` and `metro`, laid out with `change` in rows and `metro` in columns. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: comparing-numerical-data-across-groups-7
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: comparing-numerical-data-across-groups-7-test
+#| echo: true
+county_change <- county |>
+  drop_na(pop_change, median_hh_income) |>
+  mutate(change = if_else(pop_change > 0, "gain", "no gain"))
+
+county_change |>
+  drop_na(metro) |>
+  ggplot(aes(x = median_hh_income)) +
+  geom_histogram(binwidth = 5000) +
+  facet_grid(change ~ metro, labeller = label_both)
+```
+
+###
+
+This is **faceting**: "we split (facet) the graphical display of the data across plotting windows based on groups." Its advantage is that "it extends to splitting the data across levels of two categorical variables, which allows for displaying relationships between three variables."
+
+### Exercise 8
+
+Improve the faceted histograms. Show income in dollars, and add a title, axis labels, a subtitle that states the main finding, and a caption giving the number of counties. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: comparing-numerical-data-across-groups-8
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: comparing-numerical-data-across-groups-8-test
+#| echo: true
+county_change <- county |>
+  drop_na(pop_change, median_hh_income) |>
+  mutate(change = if_else(pop_change > 0, "gain", "no gain"))
+
+county_change |>
+  drop_na(metro) |>
+  ggplot(aes(x = median_hh_income)) +
+  geom_histogram(binwidth = 5000) +
+  facet_grid(change ~ metro, labeller = label_both) +
+  scale_x_continuous(labels = scales::label_dollar(scale = 1 / 1000, suffix = "K")) +
+  labs(title = "Median Household Income in US Counties, by Growth and Metro Status",
+       subtitle = "Metro counties earn more whether or not they grew, and growing counties earn more either way",
+       x = "Median Household Income",
+       y = "Counties",
+       caption = "3,136 US counties with known population change and metro status")
+```
+
+###
+
+The medians run from $43,674 for non-metro counties that did not grow to $57,302 for metro counties that did. The book adds a fourth variable, `median_edu`, and finds "an increase in median household income from individuals with only a HS diploma, to individuals with some college, to individuals with a Bachelor's degree," regardless of the other two.
+
+### Exercise 9
+
+Commit `analysis.qmd` with the message `"Compare county incomes across groups"` and push. In a bash Terminal, run `git log --oneline -3`.
+
+```{r}
+#| label: comparing-numerical-data-across-groups-9
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```
+d08f41b (HEAD -> main, origin/main) Compare county incomes across groups
+7a3c5e2 Summarize homeownership and application type
+9be04d2 Initial commit
+```
+
+###
+
+"Fluently working with categorical variables is an important skill for data analysts." The chapter's one-line summary of its tools: "We presented bar plots, mosaic plots, pie charts, and estimations of conditional proportions."
+
+## Summary
+
+This tutorial covered [Chapter 4: Exploring categorical data](https://openintrostat.github.io/ims/explore-categorical.html) from [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) by Mine Çetinkaya-Rundel and Johanna Hardin. You have learned to summarize one or two categorical variables with contingency tables and bar plots, to read row and column proportions, and to compare a numerical variable across groups.
+
+For more on choosing among bar plots, read the "[Visualizing amounts](https://clauswilke.com/dataviz/visualizing-amounts.html)" and "[Visualizing proportions](https://clauswilke.com/dataviz/visualizing-proportions.html)" chapters of Claus Wilke's *Fundamentals of Data Visualization*, by the author of **ggridges**.
+
+### Exercise 1
+
+Render one last time. In the R Terminal, run `show_file("analysis.qmd", start = 0)` to see the whole file.
+
+```{r}
+#| label: summary-1
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+<pre><code>---
+title: "Exploring Categorical Data"
+author: "Your Name"
+format: html
+execute:
+  echo: false
+---
+
+&#96;&#96;&#96;{r}
+#| message: false
+library(tidyverse)
+library(openintro)
+library(usdata)
+library(ggridges)
+&#96;&#96;&#96;
+
+&#96;&#96;&#96;{r}
+loans_full_schema |>
+  count(application_type)
+&#96;&#96;&#96;
+
+&#96;&#96;&#96;{r}
+#| cache: true
+loans <- loans_full_schema |>
+  mutate(homeownership = str_to_lower(homeownership),
+         homeownership = fct_relevel(homeownership, "rent", "mortgage", "own"))
+&#96;&#96;&#96;
+
+&#96;&#96;&#96;{r}
+loans |>
+  ggplot(aes(x = homeownership, fill = application_type)) +
+  geom_bar(position = "fill") +
+  scale_y_continuous(labels = scales::label_percent()) +
+  labs(title = "Application Type by Homeownership for Lending Club Loans",
+       subtitle = "Joint applications are twice as common among borrowers with a mortgage as among renters",
+       x = "Homeownership",
+       y = "Share of Loans",
+       fill = "Application Type",
+       caption = "10,000 loans; Lending Club")
+&#96;&#96;&#96;
+
+&#96;&#96;&#96;{r}
+county_change <- county |>
+  drop_na(pop_change, median_hh_income) |>
+  mutate(change = if_else(pop_change > 0, "gain", "no gain"))
+
+county_change |>
+  drop_na(metro) |>
+  ggplot(aes(x = median_hh_income)) +
+  geom_histogram(binwidth = 5000) +
+  facet_grid(change ~ metro, labeller = label_both) +
+  scale_x_continuous(labels = scales::label_dollar(scale = 1 / 1000, suffix = "K")) +
+  labs(title = "Median Household Income in US Counties, by Growth and Metro Status",
+       subtitle = "Metro counties earn more whether or not they grew, and growing counties earn more either way",
+       x = "Median Household Income",
+       y = "Counties",
+       caption = "3,136 US counties with known population change and metro status")
+&#96;&#96;&#96;
+</code></pre>
+
+###
+
+Your page shows one association between two categorical variables and one numerical variable split across four groups. "The graphical visualizations are even more descriptive when two variables are presented simultaneously."
+
+### Exercise 2
+
+Publish your analysis to GitHub Pages. In a bash Terminal, run:
+
+```
+quarto publish gh-pages analysis.qmd
+```
+
+```{r}
+#| label: summary-2
+#| echo: false
+learnr2::question("Paste the URL of your published page.", type = "reflection_editable")
+```
+
+###
+
+Your answer should look like `https://your-github-username.github.io/exploring-categorical-data/`.
+
+###
+
+"Row and column proportions can also be thought of as conditional proportions as they tell us about the proportion of observations in a given level of a categorical variable conditional on the level of another categorical variable." Conditioning is the idea that carries into every two-way table later in the book.
+
+### Exercise 3
+
+Commit and push any remaining changes.
+
+```{r}
+#| label: summary-3
+#| echo: false
+learnr2::question("Paste the URL of your GitHub repo.", type = "reflection_editable")
+```
+
+###
+
+Your answer should look like `https://github.com/your-github-username/exploring-categorical-data`.
+
+###
+
+"Before settling on one form for a table, it is important to consider each to ensure that the most useful table is constructed. However, sometimes it simply isn't clear which, if either, is more useful."
+
+## Your Answers
+
+```{r}
+#| label: your-answers-1
+#| echo: false
+learnr2::question(
+  "How many minutes, approximately, did it take you to complete this
+  tutorial? For example, an hour and a half would be 90 minutes.",
+  type = "reflection_editable",
+  validate = "integer"
+)
+```
+
+```{r}
+#| label: your-answers-2
+#| echo: false
+learnr2::download_answers_button(filename_prefix = "04-exploring-categorical-data")
+```

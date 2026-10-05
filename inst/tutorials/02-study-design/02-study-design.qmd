@@ -1,0 +1,1046 @@
+---
+title: "Study Design"
+subtitle: "Populations and samples, four ways to sample, and what makes an experiment."
+format: live-html
+engine: knitr
+toc: true
+toc-depth: 2
+---
+
+{{< include _extensions/r-wasm/live/_knitr.qmd >}}
+
+```{r}
+#| label: setup
+#| include: false
+library(tidyverse)
+library(openintro)
+library(usdata)
+knitr::opts_chunk$set(out.width = "90%")
+```
+
+## Student Information
+
+```{r}
+#| label: student-information-1
+#| echo: false
+learnr2::student_info()
+```
+
+## Introduction
+
+This tutorial covers [Chapter 2: Study design](https://openintrostat.github.io/ims/data-design.html) from [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) by Mine Çetinkaya-Rundel and Johanna Hardin. You will learn the difference between a population and a sample, how simple random, stratified, and convenience samples behave, and what separates a randomized experiment from an observational study.
+
+### Exercise 1
+
+You should be doing this tutorial in a repo named `study-design`. If you are not, create one and then connect to it. You may need to restart this tutorial after you do so.
+
+Create a new file, `analysis.qmd`, with the title `"Study Design"` and your name as the author. In a bash Terminal, render it:
+
+```
+quarto render analysis.qmd
+```
+
+Open `analysis.html` with Live Server (right-click it in the Explorer → **Open with Live Server**) and keep the tab open. It refreshes on every render. Going forward, we will just tell you to "Render" when we want you to take these steps.
+
+Create a `.gitignore` with `analysis_files` followed by a blank line. Commit and push. Use AI however you like.
+
+In the R Terminal, run `show_file(".gitignore")`. If that fails, it is probably because you have not yet loaded `library(learnr2)` in the R Terminal.
+
+```{r}
+#| label: introduction-1
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```
+analysis_files
+```
+
+###
+
+"Before digging into the details of working with data, we stop to think about how data come to be." The question this chapter asks of every dataset is, "How were these observations collected?"
+
+### Exercise 2
+
+Add a chunk to `analysis.qmd` that loads the **[tidyverse](https://www.tidyverse.org/)**, with `#| message: false` so the startup messages stay out of the rendered page. Add `execute: echo: false` to the YAML header. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: introduction-2
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+<pre><code>#| message: false
+library(tidyverse)
+</code></pre>
+
+###
+
+The **tidyverse** includes **dplyr**, whose verbs draw samples from a data frame as easily as they count or summarize it. Drawing samples is the work of this tutorial.
+
+### Exercise 3
+
+Add **[openintro](https://openintrostat.github.io/openintro/)** to that chunk. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: introduction-3
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+<pre><code>#| message: false
+library(tidyverse)
+library(openintro)
+</code></pre>
+
+###
+
+**openintro** holds `mlb`, the salaries of every Major League Baseball player in 2010, which the chapter uses to explain sampling, and `malaria`, a small randomized experiment with a placebo.
+
+### Exercise 4
+
+Add **[usdata](https://openintrostat.github.io/usdata/)** to that chunk. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: introduction-4
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+<pre><code>#| message: false
+library(tidyverse)
+library(openintro)
+library(usdata)
+</code></pre>
+
+###
+
+**usdata** holds `county`. The chapter returns to it as an example of an observational study, where "making the same causal conclusions based on observational data can be treacherous."
+
+## Sampling principles and strategies
+
+"The first step in conducting research is to identify topics or questions that are to be investigated." Ours: what was the average salary of a Major League Baseball player in 2010? For once, we have the whole population, so we can watch how samples of it behave.
+
+### Exercise 1
+
+Add a chunk that prints `mlb`. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: sampling-principles-and-strategies-1
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: sampling-principles-and-strategies-1-test
+#| echo: true
+mlb
+```
+
+###
+
+Each of the 828 rows is one player on a 2010 Major League roster. "Collecting data for an entire population is called a census," and that is what this data frame is.
+
+### Exercise 2
+
+In the R Terminal, run `?mlb` to open the help page. Copy and paste the Description, the entry for `salary`, and the Source.
+
+```{r}
+#| label: sampling-principles-and-strategies-2
+#| echo: false
+learnr2::question("Paste the three excerpts.", type = "reflection_editable")
+```
+
+###
+
+```
+Description:
+
+     Salary data for Major League Baseball players in the year 2010.
+
+     salary Salary (in $1000s)
+
+Source:
+
+     <https://databases.usatoday.com/mlb-salaries/>, retrieved
+     2011-02-23.
+```
+
+###
+
+Salaries are in thousands of dollars, so a value of `8500` means $8.5 million. The data came from a *USA Today* database, retrieved early in 2011, after the 2010 season ended.
+
+### Exercise 3
+
+Replace the code in that chunk so that it counts the players on each `team`. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: sampling-principles-and-strategies-3
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: sampling-principles-and-strategies-3-test
+#| echo: true
+mlb |>
+  count(team)
+```
+
+###
+
+There are 30 teams, with 25 to 35 players each. The book's sampling examples all start here: "each player is a member of one of the league's 30 teams."
+
+### Exercise 4
+
+Replace the code in that chunk so that it calculates the mean `salary` of all 828 players. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: sampling-principles-and-strategies-4
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: sampling-principles-and-strategies-4-test
+#| echo: true
+mlb |>
+  summarize(mean_salary = mean(salary))
+```
+
+###
+
+The mean salary of the whole population, about $3.28 million, is a **population parameter**: a number "calculated or considered for calculation on the entire population." Usually we cannot compute it, because we have only a sample.
+
+### Exercise 5
+
+Replace the code in that chunk so that it calculates the mean `salary` for each `team`, from highest to lowest. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: sampling-principles-and-strategies-5
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: sampling-principles-and-strategies-5-test
+#| echo: true
+mlb |>
+  summarize(mean_salary = mean(salary), .by = team) |>
+  arrange(desc(mean_salary))
+```
+
+###
+
+The Yankees averaged $8.25 million per player, the Pirates $1.29 million. The book says "some teams have a lot more money (up to 4 times as much!)," and this table shows the gap is even wider.
+
+### Exercise 6
+
+Start a new chunk that draws a simple random sample of 120 players from `mlb`, stores it as `mlb_srs`, and prints it. Set the random seed to 42 first, so that the same sample is drawn every time you render. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: sampling-principles-and-strategies-6
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: sampling-principles-and-strategies-6-test
+#| echo: true
+set.seed(42)
+mlb_srs <- mlb |>
+  slice_sample(n = 120)
+
+mlb_srs
+```
+
+###
+
+"The most basic random sample is called a simple random sample and is equivalent to drawing names out of a hat to select cases." Your 120 players may differ from ours if your code drew the sample differently, which is fine.
+
+### Exercise 7
+
+Replace the line that prints `mlb_srs` with one that calculates its mean `salary`. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: sampling-principles-and-strategies-7
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: sampling-principles-and-strategies-7-test
+#| echo: true
+set.seed(42)
+mlb_srs <- mlb |>
+  slice_sample(n = 120)
+
+mlb_srs |>
+  summarize(mean_salary = mean(salary))
+```
+
+###
+
+Our sample mean, about $3.29 million, is a **sample statistic**, a number "calculated on a sample of data." It lands close to the population parameter of $3.28 million, but a different sample would give a different number.
+
+### Exercise 8
+
+Replace the summary with a count of how many sampled players come from each `team`, from most to fewest. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: sampling-principles-and-strategies-8
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: sampling-principles-and-strategies-8-test
+#| echo: true
+set.seed(42)
+mlb_srs <- mlb |>
+  slice_sample(n = 120)
+
+mlb_srs |>
+  count(team, sort = TRUE)
+```
+
+###
+
+A simple random sample does not spread evenly: in ours, the Mariners contributed one player and the Nationals ten. Since teams differ so much in pay, an unlucky draw could over-represent the rich ones.
+
+### Exercise 9
+
+Delete the count, so that the chunk only sets the seed and creates `mlb_srs`. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: sampling-principles-and-strategies-9
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+<pre><code>set.seed(42)
+mlb_srs <- mlb |>
+  slice_sample(n = 120)
+</code></pre>
+
+###
+
+"In general, we always seek to randomly select a sample from a population." Random selection is what lets a sample stand in for the population it came from.
+
+### Exercise 10
+
+Add `#| cache: true` to that chunk. Render. In the bash Terminal, run `ls`.
+
+```{r}
+#| label: sampling-principles-and-strategies-10
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```
+analysis.html  analysis.qmd  analysis_cache  analysis_files
+```
+
+###
+
+`analysis_cache` now holds the saved sample, so later renders reuse it instead of drawing again. A cached chunk only re-runs when its code changes.
+
+### Exercise 11
+
+Your Source Control count just jumped, because Git sees every file in the new cache directory. Add `analysis_cache` to `.gitignore`, and the count drops back.
+
+In the R Terminal, run `show_file(".gitignore")`.
+
+```{r}
+#| label: sampling-principles-and-strategies-11
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```
+analysis_files
+analysis_cache
+```
+
+###
+
+Random selection is not the whole story. "Even when people are picked at random, e.g., for surveys, caution must be exercised if the non-response rate is high," since the people who answer may differ from those who do not.
+
+### Exercise 12
+
+Start a new chunk that draws a stratified sample, 4 players from each `team`, stores it as `mlb_strat`, and calculates its mean `salary`. Set the random seed to 42 first. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: sampling-principles-and-strategies-12
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: sampling-principles-and-strategies-12-test
+#| echo: true
+set.seed(42)
+mlb_strat <- mlb |>
+  slice_sample(n = 4, by = team)
+
+mlb_strat |>
+  summarize(mean_salary = mean(salary))
+```
+
+###
+
+"Stratified sampling is a divide-and-conquer sampling strategy. The population is divided into groups called strata," here the 30 teams, and a simple random sample is drawn within each one.
+
+### Exercise 13
+
+Replace the code in that chunk so that it calculates the mean `salary` of the first 120 rows of `mlb`, a sample of whoever happens to be at the top of the table. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: sampling-principles-and-strategies-13
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: sampling-principles-and-strategies-13-test
+#| echo: true
+mlb |>
+  slice_head(n = 120) |>
+  summarize(mean_salary = mean(salary))
+```
+
+###
+
+The table is sorted by team, so the first 120 rows are Arizona, Atlanta, Baltimore, Boston, and a few Cubs, and the Red Sox payroll pushes the mean up to $4.35 million. This is a **convenience sample**, "where individuals who are easily accessible are more likely to be included in the sample."
+
+### Exercise 14
+
+Replace the code in that chunk with a bar chart of the mean `salary` for each `team`, with teams sorted by mean salary, and a vertical line at the mean salary of the whole population. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: sampling-principles-and-strategies-14
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: sampling-principles-and-strategies-14-test
+#| echo: true
+mlb |>
+  summarize(mean_salary = mean(salary), .by = team) |>
+  ggplot(aes(x = mean_salary, y = fct_reorder(team, mean_salary))) +
+  geom_col() +
+  geom_vline(xintercept = mean(mlb$salary))
+```
+
+###
+
+Only 13 of the 30 teams sit above the population mean, because a few very expensive rosters pull the average up. Stratifying by team guarantees every roster, rich or poor, is represented.
+
+### Exercise 15
+
+Improve the bar chart. Show salaries in millions of dollars, and add a title, axis labels, a subtitle that states the main finding, and a caption giving the number of players and the source. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: sampling-principles-and-strategies-15
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: sampling-principles-and-strategies-15-test
+#| echo: true
+mlb |>
+  summarize(mean_salary = mean(salary), .by = team) |>
+  ggplot(aes(x = mean_salary, y = fct_reorder(team, mean_salary))) +
+  geom_col() +
+  geom_vline(xintercept = mean(mlb$salary), linetype = "dashed") +
+  scale_x_continuous(labels = scales::label_dollar(scale = 1 / 1000, suffix = "M")) +
+  labs(title = "Mean Player Salary by Team, 2010",
+       subtitle = "The Yankees paid six times what the Pirates did, so team is a natural stratum",
+       x = "Mean Salary",
+       y = NULL,
+       caption = "828 players; USA Today salary database")
+```
+
+###
+
+"Stratified sampling is especially useful when the cases in each stratum are very similar with respect to the outcome of interest." Teammates are not identical, but they are paid under one budget, which is why the book makes team the stratum.
+
+### Exercise 16
+
+Commit `analysis.qmd` and `.gitignore` with the message `"Sample baseball salaries"` and push. In a bash Terminal, run `git log --oneline -3`.
+
+```{r}
+#| label: sampling-principles-and-strategies-16
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```
+5b2e9c1 (HEAD -> main, origin/main) Sample baseball salaries
+9be04d2 Initial commit
+```
+
+###
+
+The chapter also describes cluster and multistage samples, which pick whole groups: "we break up the population into many groups, called clusters," then keep every case in a few chosen clusters. Those work best when "there is a lot of case-to-case variability within a cluster but the clusters themselves do not look very different from one another."
+
+## Experiments and observational studies
+
+"Studies where the researchers assign treatments to cases are called experiments." The chapter's other kind of study, where "no treatment has been explicitly applied," is observational. This section looks at one of each.
+
+### Exercise 1
+
+Start a new chunk that prints `malaria`. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: experiments-and-observational-studies-1
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: experiments-and-observational-studies-1-test
+#| echo: true
+malaria
+```
+
+###
+
+Each of the 20 rows is a volunteer who received either an experimental vaccine or a placebo, and was then deliberately exposed to malaria. "When this assignment includes randomization, e.g., using a coin flip to decide which treatment a patient receives, it is called a randomized experiment."
+
+### Exercise 2
+
+In the R Terminal, run `?malaria`. Copy and paste the Description and the Details sections.
+
+```{r}
+#| label: experiments-and-observational-studies-2
+#| echo: false
+learnr2::question("Paste the Description and Details.", type = "reflection_editable")
+```
+
+###
+
+```
+Description:
+
+     Volunteer patients were randomized into one of two experiment
+     groups where they would receive an experimental vaccine or a
+     placebo.  They were subsequently exposed to a drug-sensitive
+     strain of malaria and observed to see whether they came down with
+     an infection.
+
+Details:
+
+     In this study, volunteer patients were randomized into one of two
+     experiment groups: 14 patients received an experimental vaccine or
+     6 patients received a placebo vaccine.  Nineteen weeks later, all
+     20 patients were exposed to a drug-sensitive malaria virus strain;
+     the motivation of using a drug-sensitive strain of virus here is
+     for ethical considerations, allowing any infections to be treated
+     effectively.
+```
+
+###
+
+The placebo is "a fake treatment," and "an effective placebo is the key to making a study truly blind." The Details also show the ethics behind the design: a drug-sensitive strain, so every infection could be cured.
+
+### Exercise 3
+
+Replace the code in that chunk so that it counts volunteers by both `treatment` and `outcome`. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: experiments-and-observational-studies-3
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: experiments-and-observational-studies-3-test
+#| echo: true
+malaria |>
+  count(treatment, outcome)
+```
+
+###
+
+All 6 placebo volunteers were infected, against 5 of the 14 who got the vaccine. There is no row for placebo and no infection, because no such volunteer exists.
+
+### Exercise 4
+
+Replace the code in that chunk so that it calculates, for each `treatment`, the proportion of volunteers who were infected. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: experiments-and-observational-studies-4
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: experiments-and-observational-studies-4-test
+#| echo: true
+malaria |>
+  summarize(prop_infected = mean(outcome == "infection"),
+            .by = treatment)
+```
+
+###
+
+The vaccine group, the **treatment group**, had a 36% infection rate; the placebo group, the **control group**, had 100%. "Randomized experiments are fundamentally important when trying to show a causal connection between two variables."
+
+### Exercise 5
+
+Replace the summary in that chunk with a bar chart of the proportion infected, by `treatment`. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: experiments-and-observational-studies-5
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: experiments-and-observational-studies-5-test
+#| echo: true
+malaria |>
+  summarize(prop_infected = mean(outcome == "infection"),
+            .by = treatment) |>
+  ggplot(aes(x = treatment, y = prop_infected)) +
+  geom_col()
+```
+
+###
+
+The gap is large, but the groups are tiny. The book's third principle, **replication**, says that "at a minimum we want to have multiple subjects (experimental units) per treatment group," and 6 is not many.
+
+### Exercise 6
+
+Improve the bar chart. Put the placebo group first, label each bar with its percentage, show the y-axis as percentages, and add a title, axis labels, a subtitle that states the main finding, and a caption giving the number of volunteers and the source. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: experiments-and-observational-studies-6
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: experiments-and-observational-studies-6-test
+#| echo: true
+malaria |>
+  summarize(prop_infected = mean(outcome == "infection"),
+            .by = treatment) |>
+  mutate(treatment = fct_relevel(treatment, "placebo")) |>
+  ggplot(aes(x = treatment, y = prop_infected)) +
+  geom_col() +
+  geom_text(aes(label = scales::label_percent(accuracy = 1)(prop_infected)),
+            vjust = -0.5) +
+  scale_y_continuous(labels = scales::label_percent(),
+                     limits = c(0, 1.1)) +
+  labs(title = "Malaria Infection in a Vaccine Experiment",
+       subtitle = "Every placebo volunteer was infected; most vaccinated volunteers were not",
+       x = "Group",
+       y = "Volunteers Infected",
+       caption = "20 volunteers; Lyke et al. (2017)")
+```
+
+###
+
+Because the volunteers were randomized, the vaccine is the only systematic difference between the groups. Most modern trials also use "a double-blind setup where doctors or researchers who interact with patients are, just like the patients, unaware of who is or is not receiving the treatment."
+
+### Exercise 7
+
+Start a new chunk with a scatterplot of `homeownership` against `multi_unit`, using `county`. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: experiments-and-observational-studies-7
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: experiments-and-observational-studies-7-test
+#| echo: true
+county |>
+  ggplot(aes(x = multi_unit, y = homeownership)) +
+  geom_point(alpha = 0.3)
+```
+
+###
+
+Nobody assigned counties their share of apartments, so this is observational data, which can "show associations or form hypotheses that can be later checked with experiments." The book asks you to "suggest a variable that might explain the negative relationship."
+
+### Exercise 8
+
+Replace the code in that chunk so that it counts the counties with each value of `metro`. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: experiments-and-observational-studies-8
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: experiments-and-observational-studies-8-test
+#| echo: true
+county |>
+  count(metro)
+```
+
+###
+
+1,165 counties belong to a metropolitan area and 1,974 do not; 3 are unknown. The book's suggested explanation is population density, and `metro` is the closest thing to it in this data.
+
+### Exercise 9
+
+Replace the code in that chunk so that it calculates the mean `homeownership` and the mean `multi_unit` for each value of `metro`, ignoring missing values. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: experiments-and-observational-studies-9
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: experiments-and-observational-studies-9-test
+#| echo: true
+county |>
+  drop_na(metro) |>
+  summarize(homeownership = mean(homeownership, na.rm = TRUE),
+            multi_unit = mean(multi_unit, na.rm = TRUE),
+            .by = metro)
+```
+
+###
+
+Metro counties have more multi-unit housing and lower homeownership, so `metro` is tied to both variables at once. "A confounding variable is one that is associated with both the explanatory and response variables."
+
+### Exercise 10
+
+Replace the code in that chunk with the scatterplot of `homeownership` against `multi_unit` again, this time with points colored by `metro` and counties with unknown `metro` dropped. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: experiments-and-observational-studies-10
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: experiments-and-observational-studies-10-test
+#| echo: true
+county |>
+  drop_na(metro) |>
+  ggplot(aes(x = multi_unit, y = homeownership, color = metro)) +
+  geom_point(alpha = 0.3)
+```
+
+###
+
+The metro counties crowd the lower right. "Because it is associated with both variables, it prevents the study from concluding that the explanatory variable caused the response variable."
+
+### Exercise 11
+
+Improve the scatterplot. Add a title, axis labels, a legend title, a subtitle that states the main finding, and a caption giving the number of counties. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: experiments-and-observational-studies-11
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: experiments-and-observational-studies-11-test
+#| echo: true
+county |>
+  drop_na(metro) |>
+  ggplot(aes(x = multi_unit, y = homeownership, color = metro)) +
+  geom_point(alpha = 0.3) +
+  labs(title = "Homeownership and Multi-Unit Housing in US Counties",
+       subtitle = "Metro counties have more apartments and less ownership, so density may explain the link",
+       x = "Housing Units in Multi-Unit Structures (%)",
+       y = "Homeownership Rate (%)",
+       color = "Metro Area",
+       caption = "3,139 US counties with known metro status")
+```
+
+###
+
+"While one method to justify making causal conclusions from observational studies is to exhaust the search for confounding variables, there is no guarantee that all confounding variables can be examined or measured." Density is one candidate; there could be others.
+
+### Exercise 12
+
+Commit `analysis.qmd` with the message `"Compare an experiment with an observational study"` and push. In a bash Terminal, run `git log --oneline -3`.
+
+```{r}
+#| label: experiments-and-observational-studies-12
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```
+c7d10e4 (HEAD -> main, origin/main) Compare an experiment with an observational study
+5b2e9c1 Sample baseball salaries
+9be04d2 Initial commit
+```
+
+###
+
+Observational studies come in two forms. "A prospective study identifies individuals and collects information as events unfold," like the Nurses' Health Study, while "retrospective studies collect data after events have taken place," as the county data does.
+
+## Summary
+
+This tutorial covered [Chapter 2: Study design](https://openintrostat.github.io/ims/data-design.html) from [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) by Mine Çetinkaya-Rundel and Johanna Hardin. You have learned the difference between a population and a sample, how simple random, stratified, and convenience samples behave, and what separates a randomized experiment from an observational study.
+
+For the malaria experiment itself, read the original [article](https://doi.org/10.1073/pnas.1615324114) by Lyke and colleagues in *PNAS*. For how sampling and random assignment together decide what a study can conclude, revisit the chapter's [closing figure](https://openintrostat.github.io/ims/data-design.html#fig-randsampValloc).
+
+### Exercise 1
+
+Render one last time. In the R Terminal, run `show_file("analysis.qmd", start = 0)` to see the whole file.
+
+```{r}
+#| label: summary-1
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+<pre><code>---
+title: "Study Design"
+author: "Your Name"
+format: html
+execute:
+  echo: false
+---
+
+&#96;&#96;&#96;{r}
+#| message: false
+library(tidyverse)
+library(openintro)
+library(usdata)
+&#96;&#96;&#96;
+
+&#96;&#96;&#96;{r}
+#| cache: true
+set.seed(42)
+mlb_srs <- mlb |>
+  slice_sample(n = 120)
+&#96;&#96;&#96;
+
+&#96;&#96;&#96;{r}
+mlb |>
+  summarize(mean_salary = mean(salary), .by = team) |>
+  ggplot(aes(x = mean_salary, y = fct_reorder(team, mean_salary))) +
+  geom_col() +
+  geom_vline(xintercept = mean(mlb$salary), linetype = "dashed") +
+  scale_x_continuous(labels = scales::label_dollar(scale = 1 / 1000, suffix = "M")) +
+  labs(title = "Mean Player Salary by Team, 2010",
+       subtitle = "The Yankees paid six times what the Pirates did, so team is a natural stratum",
+       x = "Mean Salary",
+       y = NULL,
+       caption = "828 players; USA Today salary database")
+&#96;&#96;&#96;
+
+&#96;&#96;&#96;{r}
+malaria |>
+  summarize(prop_infected = mean(outcome == "infection"),
+            .by = treatment) |>
+  mutate(treatment = fct_relevel(treatment, "placebo")) |>
+  ggplot(aes(x = treatment, y = prop_infected)) +
+  geom_col() +
+  geom_text(aes(label = scales::label_percent(accuracy = 1)(prop_infected)),
+            vjust = -0.5) +
+  scale_y_continuous(labels = scales::label_percent(),
+                     limits = c(0, 1.1)) +
+  labs(title = "Malaria Infection in a Vaccine Experiment",
+       subtitle = "Every placebo volunteer was infected; most vaccinated volunteers were not",
+       x = "Group",
+       y = "Volunteers Infected",
+       caption = "20 volunteers; Lyke et al. (2017)")
+&#96;&#96;&#96;
+
+&#96;&#96;&#96;{r}
+county |>
+  drop_na(metro) |>
+  ggplot(aes(x = multi_unit, y = homeownership, color = metro)) +
+  geom_point(alpha = 0.3) +
+  labs(title = "Homeownership and Multi-Unit Housing in US Counties",
+       subtitle = "Metro counties have more apartments and less ownership, so density may explain the link",
+       x = "Housing Units in Multi-Unit Structures (%)",
+       y = "Homeownership Rate (%)",
+       color = "Metro Area",
+       caption = "3,139 US counties with known metro status")
+&#96;&#96;&#96;
+</code></pre>
+
+###
+
+The page holds the chapter's two halves: how a sample relates to its population, and how an experiment differs from an observational study. "Both representative (ideally random) sampling and experiments (random assignment of treatments) are important for how statistical conclusions can be made on populations."
+
+### Exercise 2
+
+Publish your analysis to GitHub Pages. In a bash Terminal, run:
+
+```
+quarto publish gh-pages analysis.qmd
+```
+
+```{r}
+#| label: summary-2
+#| echo: false
+learnr2::question("Paste the URL of your published page.", type = "reflection_editable")
+```
+
+###
+
+Your answer should look like `https://your-github-username.github.io/study-design/`.
+
+###
+
+The stent study from the last tutorial was an experiment but not a blind one: "a stent is a surgical procedure. There is no equivalent surgical placebo, so this study was not blind."
+
+### Exercise 3
+
+Commit and push any remaining changes.
+
+```{r}
+#| label: summary-3
+#| echo: false
+learnr2::question("Paste the URL of your GitHub repo.", type = "reflection_editable")
+```
+
+###
+
+Your answer should look like `https://github.com/your-github-username/study-design`.
+
+###
+
+"Almost all statistical methods are based on the notion of implied randomness. If data are not collected in a random framework from a population, these statistical methods -- the estimates and errors associated with the estimates -- are not reliable."
+
+## Your Answers
+
+```{r}
+#| label: your-answers-1
+#| echo: false
+learnr2::question(
+  "How many minutes, approximately, did it take you to complete this
+  tutorial? For example, an hour and a half would be 90 minutes.",
+  type = "reflection_editable",
+  validate = "integer"
+)
+```
+
+```{r}
+#| label: your-answers-2
+#| echo: false
+learnr2::download_answers_button(filename_prefix = "02-study-design")
+```

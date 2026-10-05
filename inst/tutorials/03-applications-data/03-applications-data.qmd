@@ -1,0 +1,881 @@
+---
+title: "Applications: Data"
+subtitle: "Getting to know a new dataset, and the paradox hiding in 1500m gold medal times."
+format: live-html
+engine: knitr
+toc: true
+toc-depth: 2
+---
+
+{{< include _extensions/r-wasm/live/_knitr.qmd >}}
+
+```{r}
+#| label: setup
+#| include: false
+library(tidyverse)
+library(openintro)
+knitr::opts_chunk$set(out.width = "90%")
+```
+
+## Student Information
+
+```{r}
+#| label: student-information-1
+#| echo: false
+learnr2::student_info()
+```
+
+## Introduction
+
+This tutorial covers [Chapter 3: Applications: Data](https://openintrostat.github.io/ims/data-applications.html) from [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) by Mine Çetinkaya-Rundel and Johanna Hardin. You will learn what a data scientist does on first meeting a dataset, and how a third variable can reverse the relationship between two others, which the book calls Simpson's paradox.
+
+### Exercise 1
+
+You should be doing this tutorial in a repo named `applications-data`. If you are not, create one and then connect to it. You may need to restart this tutorial after you do so.
+
+Create a new file, `analysis.qmd`, with the title `"Applications: Data"` and your name as the author. In a bash Terminal, render it:
+
+```
+quarto render analysis.qmd
+```
+
+Open `analysis.html` with Live Server (right-click it in the Explorer → **Open with Live Server**) and keep the tab open. It refreshes on every render. Going forward, we will just tell you to "Render" when we want you to take these steps.
+
+Create a `.gitignore` with `analysis_files` followed by a blank line. Commit and push. Use AI however you like.
+
+In the R Terminal, run `show_file(".gitignore")`. If that fails, it is probably because you have not yet loaded `library(learnr2)` in the R Terminal.
+
+```{r}
+#| label: introduction-1
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```
+analysis_files
+```
+
+###
+
+"The goal of the case study is to walk you through what a data scientist does when they first get a hold of a dataset." The dataset is every gold medal 1500m race in the Olympic and Paralympic Games.
+
+### Exercise 2
+
+Add a chunk to `analysis.qmd` that loads the **[tidyverse](https://www.tidyverse.org/)**, with `#| message: false` so the startup messages stay out of the rendered page. Add `execute: echo: false` to the YAML header. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: introduction-2
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+<pre><code>#| message: false
+library(tidyverse)
+</code></pre>
+
+###
+
+The **tidyverse** includes **ggplot2**, which draws every plot in the book, including the scatterplots with fitted lines that reveal the paradox at the end of this chapter.
+
+### Exercise 3
+
+Add **[openintro](https://openintrostat.github.io/openintro/)** to that chunk. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: introduction-3
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+<pre><code>#| message: false
+library(tidyverse)
+library(openintro)
+</code></pre>
+
+###
+
+**openintro** holds `paralympic_1500`, the chapter's only dataset. It was compiled from the International Paralympic Committee's website and from Wikipedia.
+
+## Case study: Olympic 1500m
+
+"The Paralympic Games began as a way to support soldiers who had been wounded in World War II." Since 1988 they have followed the Olympic Games in the same city, so the two can be compared race by race.
+
+### Exercise 1
+
+Add a chunk that prints `paralympic_1500`. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: case-study-olympic-1500m-1
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: case-study-olympic-1500m-1-test
+#| echo: true
+paralympic_1500
+```
+
+###
+
+"Each row represents a 1500m gold medal race and each column represents a variable containing information on each race." The first rows are all Men's Olympic races, because the data is sorted by year and the Games began in 1896.
+
+### Exercise 2
+
+Replace the code in that chunk so that it prints the last five rows of `paralympic_1500`. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: case-study-olympic-1500m-2
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: case-study-olympic-1500m-2-test
+#| echo: true
+paralympic_1500 |>
+  slice_tail(n = 5)
+```
+
+###
+
+"When you encounter a new dataset, taking a peek at the last few rows … should be instinctual." The last five are all from Tokyo 2020, and show both divisions and the race types T11, T13, and Olympic.
+
+### Exercise 3
+
+In the R Terminal, run `?paralympic_1500` to open the help page. Copy and paste the Description and the first line of the Format section.
+
+```{r}
+#| label: case-study-olympic-1500m-3
+#| echo: false
+learnr2::question("Paste the Description and the first line of Format.", type = "reflection_editable")
+```
+
+###
+
+```
+Description:
+
+     Compiled gold medal times for the 1500m race in the Olympic Games
+     and the Paralympic Games. The times given for contestants
+     competing in the Paralympic Games are for athletes with different
+     visual impairments; T11 indicates fully blind (with an option to
+     race with a guide-runner) with T12 and T13 as lower levels of
+     visual impairment.
+
+Format:
+
+     A data frame with 83 rows and 10 variables.
+```
+
+###
+
+The help page promises 83 rows and 10 variables, but the data frame has 82 and 9. "Sometimes the data dictionary … isn't sufficient for a complete analysis, and we need to go back to the data source."
+
+### Exercise 4
+
+Replace the code in that chunk so that it counts the races in each combination of `division` and `type`. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: case-study-olympic-1500m-4
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: case-study-olympic-1500m-4-test
+#| echo: true
+paralympic_1500 |>
+  count(division, type)
+```
+
+###
+
+The Men's Olympic race accounts for 29 of the 82 rows; no other combination has more than 13. "This is an observational study. Researchers collected data on past gold medal race times in both Olympic and Paralympic Games."
+
+### Exercise 5
+
+Replace the code in that chunk so that it shows the first year each combination of `division` and `type` appears in the data. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: case-study-olympic-1500m-5
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: case-study-olympic-1500m-5-test
+#| echo: true
+paralympic_1500 |>
+  summarize(first_year = min(year), .by = c(division, type))
+```
+
+###
+
+The Men's Olympic 1500m dates from 1896, the Women's from 1972, and every Paralympic race here from 1984. "Recall that the Men's Olympic division has taken place since 1896, whereas the Men's Paralympic division has happened only since 1960."
+
+### Exercise 6
+
+Replace the code in that chunk so that it counts the gold medals won by each `country_of_athlete`, from most to fewest. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: case-study-olympic-1500m-6
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: case-study-olympic-1500m-6-test
+#| echo: true
+paralympic_1500 |>
+  count(country_of_athlete, sort = TRUE)
+```
+
+###
+
+Great Britain has 11 gold medals and Kenya 10, with a long tail of countries that have exactly one. "Over the last century, the name describing the country for athletes from one particular region has changed and includes Russian Federation, Unified Team, and Russian Paralympic Committee."
+
+### Exercise 7
+
+Replace the code in that chunk so that it counts how many times each `country_of_games` has hosted, counting each year once, from most to fewest. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: case-study-olympic-1500m-7
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: case-study-olympic-1500m-7-test
+#| echo: true
+paralympic_1500 |>
+  distinct(year, country_of_games) |>
+  count(country_of_games, sort = TRUE)
+```
+
+###
+
+A single Games can contribute up to eight rows, one per division and race type, so a plain count would overstate recent hosts. Counting distinct years shows "the United States has hosted the Games most often," four times.
+
+### Exercise 8
+
+Replace the code in that chunk so that it calculates the mean, minimum, and maximum of `time_min` for each combination of `division` and `type`. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: case-study-olympic-1500m-8
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: case-study-olympic-1500m-8-test
+#| echo: true
+paralympic_1500 |>
+  summarize(mean = mean(time_min),
+            min = min(time_min),
+            max = max(time_min),
+            .by = c(division, type))
+```
+
+###
+
+The slowest Men's Olympic time, 4.55 minutes, is from 1896, while every T11 race is from 1984 or later. "The maximum race time, therefore, should be taken into context in terms of the year of the Games."
+
+### Exercise 9
+
+Replace the code in that chunk so that it shows the type and first few values of every variable. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: case-study-olympic-1500m-9
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: case-study-olympic-1500m-9-test
+#| echo: true
+paralympic_1500 |>
+  glimpse()
+```
+
+###
+
+"The `time` variable is trickier to classify -- we can think of it as numerical, but it is classified as categorical. The categorical classification is due to the colon `:` which separates the minutes from the seconds," which is why the data also carries `time_min`.
+
+### Exercise 10
+
+Replace the code in that chunk with a scatterplot of `time_min` against `year` for Men's races after 1950, with points colored by `type`. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: case-study-olympic-1500m-10
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: case-study-olympic-1500m-10-test
+#| echo: true
+paralympic_1500 |>
+  filter(division == "Men", year > 1950) |>
+  ggplot(aes(x = year, y = time_min, color = type)) +
+  geom_point(size = 2)
+```
+
+###
+
+"In each given year, the Olympic runner is substantially faster than the Paralympic runners, with one exception." Look at 2016.
+
+### Exercise 11
+
+Replace the code in that chunk so that it shows the Men's races in 2016, with `type`, `name`, `time`, and `time_min`. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: case-study-olympic-1500m-11
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: case-study-olympic-1500m-11-test
+#| echo: true
+paralympic_1500 |>
+  filter(division == "Men", year == 2016) |>
+  select(type, name, time, time_min)
+```
+
+###
+
+"In the Rio de Janeiro 2016 Games, the T13 gold medal athlete ran faster (3:48.29) than the Olympic gold medal athlete (3:50.00)." Abdellatif Baka's time would have won the Olympic final by nearly two seconds.
+
+### Exercise 12
+
+Replace the code in that chunk with the scatterplot from before, improved: a dashed vertical line at 2016, a title, axis labels, a legend title, a subtitle that states the main finding, and a caption giving the number of races. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: case-study-olympic-1500m-12
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: case-study-olympic-1500m-12-test
+#| echo: true
+paralympic_1500 |>
+  filter(division == "Men", year > 1950) |>
+  ggplot(aes(x = year, y = time_min, color = type)) +
+  geom_vline(xintercept = 2016, linetype = "dashed", color = "darkgrey") +
+  geom_point(size = 2) +
+  labs(title = "Men's 1500m Gold Medal Times, 1952 to 2020",
+       subtitle = "Olympic winners are faster every year except 2016, when the T13 winner beat them",
+       x = "Year",
+       y = "Winning Time (minutes)",
+       color = "Race Type",
+       caption = "43 gold medal races; paralympic.org and Wikipedia")
+```
+
+###
+
+"In fact, some internet sleuthing tells you that the *top four* T13 finishers all finished the 1500m under 3:50.00!" A plot can raise a question that only the original source can answer.
+
+### Exercise 13
+
+Commit `analysis.qmd` with the message `"Explore 1500m gold medal races"` and push. In a bash Terminal, run `git log --oneline -3`.
+
+```{r}
+#| label: case-study-olympic-1500m-13
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```
+a41f0b3 (HEAD -> main, origin/main) Explore 1500m gold medal races
+9be04d2 Initial commit
+```
+
+###
+
+"At this stage it's also useful to think about how the data were collected, as that will inform the scope of any inference you can make." These are winners only, so nothing here describes how fast runners in general have become.
+
+## Simpson's paradox
+
+"Simpson's paradox is a description of three (or more) variables. The paradox happens when a third variable reverses the relationship between the first two variables."
+
+### Exercise 1
+
+Start a new chunk that keeps only the Men's races after 1950 whose `type` is Olympic or T11, stores them as `men_1500`, and prints the result. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: simpsons-paradox-1
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: simpsons-paradox-1-test
+#| echo: true
+men_1500 <- paralympic_1500 |>
+  filter(division == "Men", type %in% c("Olympic", "T11"), year > 1950)
+
+men_1500
+```
+
+###
+
+28 races remain. T11 athletes "have almost complete visual impairment, run with a black-out blindfold, and are allowed to run with a guide-runner."
+
+### Exercise 2
+
+Delete the line that prints `men_1500`, so that the chunk only creates it. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: simpsons-paradox-2
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+<pre><code>men_1500 <- paralympic_1500 |>
+  filter(division == "Men", type %in% c("Olympic", "T11"), year > 1950)
+</code></pre>
+
+###
+
+The book restricts the comparison to Olympic and T11 because they are the two extremes: no visual impairment, and total visual impairment.
+
+### Exercise 3
+
+Add `#| cache: true` to that chunk. Render. In the bash Terminal, run `ls`.
+
+```{r}
+#| label: simpsons-paradox-3
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```
+analysis.html  analysis.qmd  analysis_cache  analysis_files
+```
+
+###
+
+`analysis_cache` now holds `men_1500`, so later renders load it from disk. The rest of this section builds on it without rebuilding it.
+
+### Exercise 4
+
+Your Source Control count just jumped, because Git sees every file in the new cache directory. Add `analysis_cache` to `.gitignore`, and the count drops back.
+
+In the R Terminal, run `show_file(".gitignore")`.
+
+```{r}
+#| label: simpsons-paradox-4
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```
+analysis_files
+analysis_cache
+```
+
+###
+
+"Simpson's paradox is observed with categorical data and with numeric data." Here all three variables, year, time, and race type, come from the same 28 rows.
+
+### Exercise 5
+
+Start a new chunk with a scatterplot of `time_min` against `year` for `men_1500`, with a single straight trend line fit to all the points. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: simpsons-paradox-5
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: simpsons-paradox-5-test
+#| echo: true
+men_1500 |>
+  ggplot(aes(x = year, y = time_min)) +
+  geom_point(size = 2) +
+  geom_smooth(method = "lm", formula = y ~ x, se = FALSE)
+```
+
+###
+
+"Notice that the line of best fit shows a *positive* relationship between race time and year. That is, for later years, the predicted gold medal time is higher than in earlier years."
+
+### Exercise 6
+
+Color the points by `type` and fit a separate trend line to each type. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: simpsons-paradox-6
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: simpsons-paradox-6-test
+#| echo: true
+men_1500 |>
+  ggplot(aes(x = year, y = time_min, color = type)) +
+  geom_point(size = 2) +
+  geom_smooth(method = "lm", formula = y ~ x, se = FALSE)
+```
+
+###
+
+"Notice that within each type of race, the relationship between 1500m race time and year is now *negative*." Both kinds of winner have gotten faster; only the combined line said otherwise.
+
+### Exercise 7
+
+Replace the code in that chunk so that it calculates, for each `type` in `men_1500`, the number of races, the first year, and the mean `time_min`. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: simpsons-paradox-7
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: simpsons-paradox-7-test
+#| echo: true
+men_1500 |>
+  summarize(n = n(),
+            first_year = min(year),
+            mean_time = mean(time_min),
+            .by = type)
+```
+
+###
+
+"In the 1500m data, we saw that the T11 runners had fewer observations and their times were both generally slower and more recent than the Olympic runners." Slow, recent points on the right tilt the combined line upward.
+
+### Exercise 8
+
+Replace the summary with the two-line scatterplot again, improved: a title, axis labels, a legend title, a subtitle that states the main finding, and a caption giving the number of races. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: simpsons-paradox-8
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: simpsons-paradox-8-test
+#| echo: true
+men_1500 |>
+  ggplot(aes(x = year, y = time_min, color = type)) +
+  geom_point(size = 2) +
+  geom_smooth(method = "lm", formula = y ~ x, se = FALSE) +
+  labs(title = "Men's Olympic and T11 Paralympic 1500m Gold Medal Times",
+       subtitle = "Winners of both races have gotten faster, though the pooled trend points the other way",
+       x = "Year",
+       y = "Winning Time (minutes)",
+       color = "Race Type",
+       caption = "28 gold medal races since 1952; paralympic.org and Wikipedia")
+```
+
+###
+
+"Simpson's paradox happens when an association or relationship between two variables in one direction (e.g., positive) reverses (e.g., becomes negative) when a third variable is considered." The book's advice here: "report the trends separately for the Olympic and the T11 athletes."
+
+### Exercise 9
+
+The book asks whether the paradox also holds in the Women's division. Start a new chunk with a scatterplot of `time_min` against `year` for Women's Olympic and T11 races, colored by `type`, with a separate trend line for each type. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: simpsons-paradox-9
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: simpsons-paradox-9-test
+#| echo: true
+paralympic_1500 |>
+  filter(division == "Women", type %in% c("Olympic", "T11")) |>
+  ggplot(aes(x = year, y = time_min, color = type)) +
+  geom_point(size = 2) +
+  geom_smooth(method = "lm", formula = y ~ x, se = FALSE)
+```
+
+###
+
+The Women's Olympic line is nearly flat, while T11 times have fallen by more than a minute since 1984. With only 18 races, 5 of them T11, the picture is thinner than the Men's.
+
+### Exercise 10
+
+Replace the code in that chunk so that it calculates, for Women's Olympic and T11 races, the number of races, the first year, and the mean `time_min` for each `type`. Render.
+
+In the R Terminal, run `show_file("analysis.qmd")`.
+
+```{r}
+#| label: simpsons-paradox-10
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```{r}
+#| label: simpsons-paradox-10-test
+#| echo: true
+paralympic_1500 |>
+  filter(division == "Women", type %in% c("Olympic", "T11")) |>
+  summarize(n = n(),
+            first_year = min(year),
+            mean_time = mean(time_min),
+            .by = type)
+```
+
+###
+
+The same imbalance is present, with T11 later and slower by a minute, yet the pooled Women's trend is downward because the T11 drop is so steep. "In other situations, it might be better to aggregate the data and report the overall trend"; which is right depends on the question.
+
+### Exercise 11
+
+Commit `analysis.qmd` and `.gitignore` with the message `"Show Simpson's paradox in 1500m times"` and push. In a bash Terminal, run `git log --oneline -3`.
+
+```{r}
+#| label: simpsons-paradox-11
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+```
+e92b6d0 (HEAD -> main, origin/main) Show Simpson's paradox in 1500m times
+a41f0b3 Explore 1500m gold medal races
+9be04d2 Initial commit
+```
+
+###
+
+"Many additional examples of Simpson's paradox and a further exploration is given in" Witmer's 2021 article in the *Journal of Statistics and Data Science Education*. The most famous is the 1973 Berkeley admissions data, also in **openintro** as `ucb_admit`.
+
+## Summary
+
+This tutorial covered [Chapter 3: Applications: Data](https://openintrostat.github.io/ims/data-applications.html) from [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) by Mine Çetinkaya-Rundel and Johanna Hardin. You have learned what a data scientist does on first meeting a dataset, and how a third variable can reverse the relationship between two others, which the book calls Simpson's paradox.
+
+For more on the paradox, read Jeff Witmer's "[Simpson's Paradox, Visual Displays, and Causal Diagrams](https://doi.org/10.1080/26939169.2021.1917375)," which the chapter cites. For the 2016 race, read the International Paralympic Committee's [report](https://www.paralympic.org/news/remarkable-finish-1500m-rio-2016) on the finish.
+
+### Exercise 1
+
+Render one last time. In the R Terminal, run `show_file("analysis.qmd", start = 0)` to see the whole file.
+
+```{r}
+#| label: summary-1
+#| echo: false
+learnr2::question("CP/CR.", type = "reflection_editable")
+```
+
+###
+
+<pre><code>---
+title: "Applications: Data"
+author: "Your Name"
+format: html
+execute:
+  echo: false
+---
+
+&#96;&#96;&#96;{r}
+#| message: false
+library(tidyverse)
+library(openintro)
+&#96;&#96;&#96;
+
+&#96;&#96;&#96;{r}
+paralympic_1500 |>
+  filter(division == "Men", year > 1950) |>
+  ggplot(aes(x = year, y = time_min, color = type)) +
+  geom_vline(xintercept = 2016, linetype = "dashed", color = "darkgrey") +
+  geom_point(size = 2) +
+  labs(title = "Men's 1500m Gold Medal Times, 1952 to 2020",
+       subtitle = "Olympic winners are faster every year except 2016, when the T13 winner beat them",
+       x = "Year",
+       y = "Winning Time (minutes)",
+       color = "Race Type",
+       caption = "43 gold medal races; paralympic.org and Wikipedia")
+&#96;&#96;&#96;
+
+&#96;&#96;&#96;{r}
+#| cache: true
+men_1500 <- paralympic_1500 |>
+  filter(division == "Men", type %in% c("Olympic", "T11"), year > 1950)
+&#96;&#96;&#96;
+
+&#96;&#96;&#96;{r}
+men_1500 |>
+  ggplot(aes(x = year, y = time_min, color = type)) +
+  geom_point(size = 2) +
+  geom_smooth(method = "lm", formula = y ~ x, se = FALSE) +
+  labs(title = "Men's Olympic and T11 Paralympic 1500m Gold Medal Times",
+       subtitle = "Winners of both races have gotten faster, though the pooled trend points the other way",
+       x = "Year",
+       y = "Winning Time (minutes)",
+       color = "Race Type",
+       caption = "28 gold medal races since 1952; paralympic.org and Wikipedia")
+&#96;&#96;&#96;
+
+&#96;&#96;&#96;{r}
+paralympic_1500 |>
+  filter(division == "Women", type %in% c("Olympic", "T11")) |>
+  summarize(n = n(),
+            first_year = min(year),
+            mean_time = mean(time_min),
+            .by = type)
+&#96;&#96;&#96;
+</code></pre>
+
+###
+
+Two plots carry the chapter: one race that broke the pattern, and one trend line that lied until a third variable was added. "The paradox happens when a third variable reverses the relationship between the first two variables."
+
+### Exercise 2
+
+Publish your analysis to GitHub Pages. In a bash Terminal, run:
+
+```
+quarto publish gh-pages analysis.qmd
+```
+
+```{r}
+#| label: summary-2
+#| echo: false
+learnr2::question("Paste the URL of your published page.", type = "reflection_editable")
+```
+
+###
+
+Your answer should look like `https://your-github-username.github.io/applications-data/`.
+
+###
+
+The chapter closes with a question your page cannot answer: "Is there a biological boundary which establishes a time under which no human could run 1500m?" Winners' times keep falling, but 82 races cannot say where they stop.
+
+### Exercise 3
+
+Commit and push any remaining changes.
+
+```{r}
+#| label: summary-3
+#| echo: false
+learnr2::question("Paste the URL of your GitHub repo.", type = "reflection_editable")
+```
+
+###
+
+Your answer should look like `https://github.com/your-github-username/applications-data`.
+
+###
+
+"In this case study, we introduced you to the very first steps a data scientist takes when they start working with a new dataset." Look at the first rows, the last rows, and the help page, and count the levels of every categorical variable, before trusting any plot.
+
+## Your Answers
+
+```{r}
+#| label: your-answers-1
+#| echo: false
+learnr2::question(
+  "How many minutes, approximately, did it take you to complete this
+  tutorial? For example, an hour and a half would be 90 minutes.",
+  type = "reflection_editable",
+  validate = "integer"
+)
+```
+
+```{r}
+#| label: your-answers-2
+#| echo: false
+learnr2::download_answers_button(filename_prefix = "03-applications-data")
+```
