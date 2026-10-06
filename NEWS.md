@@ -11,7 +11,7 @@
 
 * Added **ggridges** and **maps** to `Suggests`, for the ridge plot in Exploring
   Categorical Data and the county intensity map in Exploring Numerical Data. The
-  student devcontainer image needs both before these tutorials will render there.
+  student devcontainer image already carries both, via `misc.tutorials`.
 
 # stat101.tutorials 0.0.0.9000
 
