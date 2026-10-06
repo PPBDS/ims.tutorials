@@ -42,13 +42,12 @@ Everything happens in the **bash Terminal** (Terminal → New Terminal, in
 the Panel). Each question below shows what a correct run looks like. Paste
 your own command and its response, then continue.
 
+Open a new bash Terminal and run `pwd`, then `ls -a`.
+
 ```{r}
 #| label: connect-to-your-repo-1
 #| echo: false
-learnr2::question(
-  "Open a new bash Terminal and run `pwd`, then `ls -a`. CP/CR.",
-  type = "reflection_editable"
-)
+learnr2::question("CP/CR.", type = "reflection_editable")
 ```
 
 ### What you should see
@@ -68,18 +67,17 @@ This is `codespace-starter` --- the workshop every course Codespace starts
 from, not your project. Nothing you save here is yours; your work will live
 in the repo you create in the next few steps.
 
+Two commands make `gh` and `git` act as you instead of the Codespace.
+Run `unset GITHUB_TOKEN GH_TOKEN`, then `gh auth status`. If it says you
+are not logged in, sign in with
+`gh auth login --hostname github.com --git-protocol https --web --clipboard=false`
+(click Authorize in the browser that opens), then run `gh auth status`
+again.
+
 ```{r}
 #| label: connect-to-your-repo-2
 #| echo: false
-learnr2::question(
-  "Two commands make `gh` and `git` act as you instead of the Codespace.
-  Run `unset GITHUB_TOKEN GH_TOKEN`, then `gh auth status`. If it says you
-  are not logged in, sign in with
-  `gh auth login --hostname github.com --git-protocol https --web --clipboard=false`
-  (click Authorize in the browser that opens), then run `gh auth status`
-  again. CP/CR.",
-  type = "reflection_editable"
-)
+learnr2::question("CP/CR.", type = "reflection_editable")
 ```
 
 ### What you should see
@@ -113,13 +111,12 @@ printf 'https://x-access-token:%s@github.com\n' "$(gh auth token)" > ~/.git-cred
 chmod 600 ~/.git-credentials
 ````
 
+Then run `ls -l ~/.git-credentials`.
+
 ```{r}
 #| label: connect-to-your-repo-3
 #| echo: false
-learnr2::question(
-  "Then run `ls -l ~/.git-credentials`. CP/CR.",
-  type = "reflection_editable"
-)
+learnr2::question("CP/CR.", type = "reflection_editable")
 ```
 
 ### What you should see
@@ -143,14 +140,13 @@ cd /workspaces
 gh repo create histograms --public --clone
 ````
 
+Then run `ls`. (If git says the repository already exists, clone it
+instead with `gh repo clone histograms`.)
+
 ```{r}
 #| label: connect-to-your-repo-4
 #| echo: false
-learnr2::question(
-  "Then run `ls`. CP/CR. (If git says the repository already exists, clone
-  it instead with `gh repo clone histograms`.)",
-  type = "reflection_editable"
-)
+learnr2::question("CP/CR.", type = "reflection_editable")
 ```
 
 ### What you should see
@@ -185,10 +181,7 @@ git remote -v
 ```{r}
 #| label: connect-to-your-repo-5
 #| echo: false
-learnr2::question(
-  "CP/CR the two commands and their output.",
-  type = "reflection_editable"
-)
+learnr2::question("CP/CR.", type = "reflection_editable")
 ```
 
 ### What you should see
@@ -205,17 +198,16 @@ origin  https://github.com/your-username/histograms (push)
 `origin` is git's nickname for the GitHub copy of this repo. From now on
 `git push` sends your commits there and `git pull` brings changes back.
 
+Point VS Code at your repo: File → Open Folder…, then open
+`/workspaces/histograms`. The window reloads and this tutorial stops ---
+that is expected. Restart it exactly as you started it: R Tutorials in
+the Activity Bar, find this tutorial, click the arrow. Your saved answers
+come back. Then open a new bash Terminal and run `pwd`.
+
 ```{r}
 #| label: connect-to-your-repo-6
 #| echo: false
-learnr2::question(
-  "Point VS Code at your repo: File → Open Folder…, then open
-  `/workspaces/histograms`. The window reloads and this tutorial stops ---
-  that is expected. Restart it exactly as you started it: R Tutorials in
-  the Activity Bar, find this tutorial, click the arrow. Your saved answers
-  come back. Then open a new bash Terminal and run `pwd`. CP/CR.",
-  type = "reflection_editable"
-)
+learnr2::question("CP/CR.", type = "reflection_editable")
 ```
 
 ### What you should see
@@ -249,10 +241,7 @@ Server**, keeping that tab open --- it refreshes on every later render.
 ```{r}
 #| label: your-analysis-workspace-1
 #| echo: false
-learnr2::question(
-  "CP/CR the render command and its response.",
-  type = "reflection_editable"
-)
+learnr2::question("CP/CR.", type = "reflection_editable")
 ```
 
 ### What you should see
@@ -270,15 +259,14 @@ the bash Terminal, then a glance at the Live Server tab. The `echo: false`
 setting matters for a document someone else reads: they want the picture,
 not the code that drew it.
 
+Rendering created an `analysis_files` folder full of web assets git has
+no business tracking. Add `analysis_files` to `.gitignore` (create the
+file if there is none).
+
 ```{r}
 #| label: your-analysis-workspace-2
 #| echo: false
-learnr2::question(
-  "Rendering created an `analysis_files` folder full of web assets git has
-  no business tracking. Add `analysis_files` to `.gitignore` (create the
-  file if there is none). Paste the file below.",
-  type = "reflection_editable"
-)
+learnr2::question("Paste the `.gitignore` file.", type = "reflection_editable")
 ```
 
 ### What you should see
@@ -493,15 +481,13 @@ Always report the bin width you used --- a reader who cannot reproduce your
 picture cannot check your claim. When a feature appears at only one bin
 width, treat it as a question, not a finding.
 
+Now put it to work in your repo: add a histogram of `hwy` as the last
+chunk of your `analysis.qmd`, Render, and look at it in Live Server.
+
 ```{r}
 #| label: choosing-the-bins-6
 #| echo: false
-learnr2::question(
-  "Now put it to work in your repo. Add a histogram of `hwy` as the last
-  chunk of your `analysis.qmd`, Render, and look at it in Live Server.
-  Paste the chunk's code below.",
-  type = "reflection_editable"
-)
+learnr2::question("Paste the chunk.", type = "reflection_editable")
 ```
 
 ### What you should see
@@ -526,10 +512,7 @@ git add analysis.qmd && git commit -m "Add hwy histogram" && git push -u origin 
 ```{r}
 #| label: choosing-the-bins-7
 #| echo: false
-learnr2::question(
-  "CP/CR the commit and push.",
-  type = "reflection_editable"
-)
+learnr2::question("CP/CR.", type = "reflection_editable")
 ```
 
 ### What you should see
@@ -630,15 +613,14 @@ diamonds pull the average up. When a distribution is skewed, the median is
 the safer summary of "typical" --- it cannot be moved by a handful of
 extreme values.
 
+Rewrite your working chunk: a histogram of `price` with the mean and
+median lines, axis labels, and the number of diamonds in the title
+(n = 53,940). Render.
+
 ```{r}
 #| label: center-spread-and-shape-5
 #| echo: false
-learnr2::question(
-  "Rewrite your working chunk: a histogram of `price` with the mean and
-  median lines, axis labels, and the number of diamonds in the title
-  (n = 53,940). Render, then paste the chunk below.",
-  type = "reflection_editable"
-)
+learnr2::question("Paste the chunk.", type = "reflection_editable")
 ```
 
 ### What you should see
@@ -729,14 +711,13 @@ and subcompact cars (about 28). Facets share one x-axis, so the panels are
 directly comparable --- but each panel counts only its own group (62 SUVs
 but just 5 two-seaters), so compare shapes, not bar heights.
 
+Add the faceted histogram to `analysis.qmd` as your working chunk ---
+labels and `n` in the title included. Render.
+
 ```{r}
 #| label: comparing-groups-3
 #| echo: false
-learnr2::question(
-  "Add the faceted histogram to `analysis.qmd` as your working chunk ---
-  labels and `n` in the title included. Render, then paste the chunk below.",
-  type = "reflection_editable"
-)
+learnr2::question("Paste the chunk.", type = "reflection_editable")
 ```
 
 ### What you should see
@@ -768,10 +749,7 @@ git add analysis.qmd && git commit -m "Add faceted histogram" && git push
 ```{r}
 #| label: comparing-groups-4
 #| echo: false
-learnr2::question(
-  "CP/CR the commit and push.",
-  type = "reflection_editable"
-)
+learnr2::question("CP/CR.", type = "reflection_editable")
 ```
 
 ### What you should see
@@ -862,15 +840,13 @@ Log transformation does not delete anything and does not change the data:
 it changes the ruler. On a log scale, $1,000 to $10,000 is the same
 distance as $100 to $1,000, because both are a tenfold jump.
 
+Swap the log-scale version into `analysis.qmd` as your working chunk ---
+keep the labels and `n` in the title. Render.
+
 ```{r}
 #| label: transforming-the-scale-4
 #| echo: false
-learnr2::question(
-  "Swap the log-scale version into `analysis.qmd` as your working chunk ---
-  keep the labels and `n` in the title. Render, then paste the chunk
-  below.",
-  type = "reflection_editable"
-)
+learnr2::question("Paste the chunk.", type = "reflection_editable")
 ```
 
 ### What you should see
@@ -898,16 +874,15 @@ Each render redraws every histogram, including the ones built from all
 53,940 diamonds. Quarto can remember a chunk's results and skip re-running
 it --- **caching** --- which you set up in three steps.
 
+Step one, clean up. Find the chunk you want to cache --- the one that
+draws the diamond price histogram --- and delete any exploratory lines
+you left in it (test prints, scratch summaries), so it holds only the
+final plot.
+
 ```{r}
 #| label: caching-1
 #| echo: false
-learnr2::question(
-  "Step one, clean up. Find the chunk you want to cache --- the one that
-  draws the diamond price histogram --- and delete any exploratory lines
-  you left in it (test prints, scratch summaries), so it holds only the
-  final plot. Paste the cleaned chunk below.",
-  type = "reflection_editable"
-)
+learnr2::question("Paste the chunk.", type = "reflection_editable")
 ```
 
 ### What you should see
@@ -928,14 +903,13 @@ ggplot(diamonds, aes(price)) +
 A cached chunk should hold a definition and nothing else --- anything you
 add later invalidates the cache and forces the slow work all over again.
 
+Step two, turn it on. Add `#| cache: true` as that chunk's first line,
+Render, then run `ls` in the bash Terminal.
+
 ```{r}
 #| label: caching-2
 #| echo: false
-learnr2::question(
-  "Step two, turn it on. Add `#| cache: true` as that chunk's first line,
-  Render, then run `ls` in the bash Terminal. CP/CR.",
-  type = "reflection_editable"
-)
+learnr2::question("CP/CR.", type = "reflection_editable")
 ```
 
 ### What you should see
@@ -951,15 +925,14 @@ analysis.html  analysis.qmd  analysis_cache  analysis_files
 that caching is wired up. Quarto now reuses that chunk's results until you
 edit its code.
 
+Step three, keep git clean. The Source Control change count just jumped
+because `analysis_cache/` filled with files git should not track. Add
+`analysis_cache` to `.gitignore`.
+
 ```{r}
 #| label: caching-3
 #| echo: false
-learnr2::question(
-  "Step three, keep git clean. The Source Control change count just jumped
-  because `analysis_cache/` filled with files git should not track. Add
-  `analysis_cache` to `.gitignore`. Paste the file below.",
-  type = "reflection_editable"
-)
+learnr2::question("Paste the `.gitignore` file.", type = "reflection_editable")
 ```
 
 ### What you should see
@@ -976,14 +949,16 @@ products. Add each cache directory once, and the change count drops back.
 
 ## Summary
 
+Final check of the finished document: Render, open `analysis.html` with
+Live Server, and take a screenshot of the page --- `Cmd+Shift+4` on a
+Mac, `Win+Shift+S` on Windows, `Ctrl+Show windows` on a Chromebook.
+Submit, then paste the screenshot into the box (Ctrl/Cmd+V).
+
 ```{r}
 #| label: summary-1
 #| echo: false
 learnr2::question(
-  "Final check of the finished document: Render, open `analysis.html` with
-  Live Server, and take a screenshot of the page --- `Cmd+Shift+4` on a
-  Mac, `Win+Shift+S` on Windows, `Ctrl+Show windows` on a Chromebook.
-  Submit, then paste the screenshot into the box (Ctrl/Cmd+V).",
+  "Paste the screenshot.",
   learnr2::answer(
     "A rendered page of analysis.qmd showing four labeled histograms of
     real data: hwy, price with mean and median lines, hwy faceted by
@@ -1017,10 +992,7 @@ git log --oneline
 ```{r}
 #| label: summary-2
 #| echo: false
-learnr2::question(
-  "CP/CR the log.",
-  type = "reflection_editable"
-)
+learnr2::question("CP/CR.", type = "reflection_editable")
 ```
 
 ### What you should see
@@ -1041,12 +1013,14 @@ Each commit points back at the one before it, so `git log` is a timeline
 of your work rather than a stack of file copies. Push every checkpoint, so
 the timeline lives on GitHub rather than inside a disposable Codespace.
 
+Finally, open your repo on GitHub --- the page someone would open to see
+your work.
+
 ```{r}
 #| label: summary-3
 #| echo: false
 learnr2::question(
-  "Finally: paste the URL of your GitHub repo --- the page someone would
-  open to see your work.",
+  "Paste the URL of your GitHub repo.",
   learnr2::answer(
     "https://github.com/your-username/histograms --- yours will carry your
     own GitHub username in place of `your-username`.",
@@ -1079,5 +1053,5 @@ learnr2::question(
 ```{r}
 #| label: your-answers-2
 #| echo: false
-learnr2::download_answers_button(filename_prefix = "01-histograms")
+learnr2::download_answers_button(filename_prefix = "06-histograms")
 ```
