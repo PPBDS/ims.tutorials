@@ -20,6 +20,13 @@
   Students must also submit each question before the next Continue button works.
   Only the minutes question stays editable.
 
+* Removed the Histograms tutorial (`06-histograms`) merged in pull request #2. It
+  duplicated Chapter 6's slot, which belongs to Applications: Explore, covered
+  ground Exploring Numerical Data already covers, and used in-browser exercises
+  and editable answers that this package does not. Its CLAUDE.md section, which
+  said learnr2 has no `show_file()`, was dropped too. The tutorial remains in the
+  git history.
+
 * Renamed the package from `stat101.tutorials` to `ims.tutorials`, matching the
   GitHub repository.
 

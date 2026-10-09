@@ -11,6 +11,21 @@ test_that("every tutorial directory holds a .qmd", {
   expect_true(all(tutorials$format == "quarto"))
 })
 
+# CLAUDE.md requires each tutorial's .qmd file name and its download-answers
+# filename_prefix to equal the directory name.
+test_that("each tutorial's file name and download prefix match its directory", {
+  tutorials <- learnr2::available_tutorials(package = "ims.tutorials")
+  skip_if(nrow(tutorials) == 0, "No tutorials yet")
+
+  for (i in seq_len(nrow(tutorials))) {
+    name <- tutorials$name[i]
+    expect_equal(basename(tutorials$path[i]), paste0(name, ".qmd"), label = name)
+    contents <- paste(readLines(tutorials$path[i], warn = FALSE), collapse = "\n")
+    expect_match(contents, paste0('filename_prefix = "', name, '"'),
+                 fixed = TRUE, label = name)
+  }
+})
+
 test_that("tutorials can be rendered", {
   testthat::skip_on_cran() # Rendering needs the Quarto CLI.
   skip_if(length(tutorial_names()) == 0, "No tutorials yet")
