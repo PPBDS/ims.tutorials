@@ -8,7 +8,8 @@
 ^pkgdown$
 ^\.github$
 ^README.Rmd$
-^README.html$
+^README\.html$
+^README\.rendered\.html$
 ^CRAN-SUBMISSION$
 ^inst/tutorials/.*\.html$
 ^inst/tutorials/.*_files(/.*)?$
