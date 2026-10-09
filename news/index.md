@@ -2,6 +2,11 @@
 
 ## ims.tutorials 0.0.0.9002
 
+- Tutorial directories drop their two-digit chapter prefix
+  (`01-hello-data` is now `hello-data`); each tutorial’s YAML header
+  sets `learnr2: ordering:` to its chapter number instead, which fixes
+  its place in the tutorial list.
+
 - Added five tutorials, the companions to Chapters 6 through 10 of
   *Introduction to Modern Statistics*: Applications: Explore
   (`06-applications-explore`), Linear Regression with a Single Predictor

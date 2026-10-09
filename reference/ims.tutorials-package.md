@@ -13,42 +13,41 @@ rendered to static web pages. Students do the work in their own
 
 ## Tutorials
 
-- **Hello Data** (01-hello-data): Chapter 1 — cases, variables,
+- **Hello Data** (hello-data): Chapter 1 — cases, variables,
   associations, and experiments versus observational studies
 
-- **Study Design** (02-study-design): Chapter 2 — populations and
-  samples, sampling methods, and the principles of experiments
+- **Study Design** (study-design): Chapter 2 — populations and samples,
+  sampling methods, and the principles of experiments
 
-- **Applications: Data** (03-applications-data): Chapter 3 — getting to
+- **Applications: Data** (applications-data): Chapter 3 — getting to
   know a new dataset, and Simpson's paradox
 
-- **Exploring Categorical Data** (04-exploring-categorical-data):
-  Chapter 4 — contingency tables, bar plots, conditional proportions,
-  and comparing numerical data across groups
+- **Exploring Categorical Data** (exploring-categorical-data): Chapter 4
+  — contingency tables, bar plots, conditional proportions, and
+  comparing numerical data across groups
 
-- **Exploring Numerical Data** (05-exploring-numerical-data): Chapter 5
-  — histograms, shape, mean and standard deviation, box plots and robust
+- **Exploring Numerical Data** (exploring-numerical-data): Chapter 5 —
+  histograms, shape, mean and standard deviation, box plots and robust
   statistics, transformations, and maps
 
-- **Applications: Explore** (06-applications-explore): Chapter 6 —
-  keeping plots simple, color, telling a story, order, labels, and
-  purpose
+- **Applications: Explore** (applications-explore): Chapter 6 — keeping
+  plots simple, color, telling a story, order, labels, and purpose
 
 - **Linear Regression with a Single Predictor**
-  (07-linear-regression-single): Chapter 7 — fitting a line, residuals,
+  (linear-regression-single): Chapter 7 — fitting a line, residuals,
   correlation, least squares, R-squared, categorical predictors, and
   outliers
 
 - **Linear Regression with Multiple Predictors**
-  (08-linear-regression-multiple): Chapter 8 — indicator and categorical
+  (linear-regression-multiple): Chapter 8 — indicator and categorical
   predictors, multiple regression, adjusted R-squared, and stepwise
   model selection
 
-- **Logistic Regression** (09-logistic-regression): Chapter 9 — callback
+- **Logistic Regression** (logistic-regression): Chapter 9 — callback
   rates, the logit, logistic models with one and many predictors,
   predicted probabilities, and groups of different sizes
 
-- **Applications: Model** (10-applications-model): Chapter 10 —
+- **Applications: Model** (applications-model): Chapter 10 —
   correlation, simple and multiple regression of house prices, residual
   plots, and backward elimination
 

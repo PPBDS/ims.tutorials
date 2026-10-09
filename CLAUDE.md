@@ -85,14 +85,16 @@ their structure.
 ### One tutorial per chapter
 
 - **Each chapter gets exactly one tutorial**, in the book’s order. Its
-  directory is the two-digit chapter number plus a slug of the chapter
-  title, and its title is the chapter title in Title Case: Chapter 1,
-  “Hello data,” is `01-hello-data`, titled “Hello Data,” with work repo
-  `hello-data`. Shorten the slug when the full one would push a package
-  path past 100 bytes, the limit for portable tarballs, which R CMD
-  check flags as a NOTE. In practice keep the directory name to 33
-  characters or fewer: Chapter 7 is `07-linear-regression-single` and
-  Chapter 8 is `08-linear-regression-multiple`. Only the directory is
+  directory is a slug of the chapter title, with no chapter-number
+  prefix, and its title is the chapter title in Title Case: Chapter 1,
+  “Hello data,” is `hello-data`, titled “Hello Data,” with work repo
+  `hello-data`. Its place in the list comes from the chapter number, set
+  in the YAML header as `learnr2:` / `ordering: <chapter>` (Chapter 1
+  sets `ordering: 1`). Shorten the slug when the full one would push a
+  package path past 100 bytes, the limit for portable tarballs, which R
+  CMD check flags as a NOTE. In practice keep the directory name to 33
+  characters or fewer: Chapter 7 is `linear-regression-single` and
+  Chapter 8 is `linear-regression-multiple`. Only the directory is
   shortened; the title and the work repo still come from the full
   chapter title.
 - **60 minutes or less**, which generally means **around 40 questions**.
@@ -178,7 +180,7 @@ standard Introduction/Summary structure. Read the base guide first.
 
 ### How the base guide maps onto learnr2
 
-`inst/tutorials/01-hello-data/` is the reference implementation of this
+`inst/tutorials/hello-data/` is the reference implementation of this
 mapping and of everything in this file; copy its patterns.
 
 - **The student workflow is unchanged.** Students work in a Codespace on

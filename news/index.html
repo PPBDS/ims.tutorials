@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ims.tutorials</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9003</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9004</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -34,7 +34,8 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.0.0.9002" id="imstutorials-0009002">ims.tutorials 0.0.0.9002<a class="anchor" aria-label="anchor" href="#imstutorials-0009002"></a></h2>
-<ul><li><p>Added five tutorials, the companions to Chapters 6 through 10 of <em>Introduction to Modern Statistics</em>: Applications: Explore (<code>06-applications-explore</code>), Linear Regression with a Single Predictor (<code>07-linear-regression-single</code>), Linear Regression with Multiple Predictors (<code>08-linear-regression-multiple</code>), Logistic Regression (<code>09-logistic-regression</code>), and Applications: Model (<code>10-applications-model</code>).</p></li>
+<ul><li><p>Tutorial directories drop their two-digit chapter prefix (<code>01-hello-data</code> is now <code>hello-data</code>); each tutorial’s YAML header sets <code>learnr2: ordering:</code> to its chapter number instead, which fixes its place in the tutorial list.</p></li>
+<li><p>Added five tutorials, the companions to Chapters 6 through 10 of <em>Introduction to Modern Statistics</em>: Applications: Explore (<code>06-applications-explore</code>), Linear Regression with a Single Predictor (<code>07-linear-regression-single</code>), Linear Regression with Multiple Predictors (<code>08-linear-regression-multiple</code>), Logistic Regression (<code>09-logistic-regression</code>), and Applications: Model (<code>10-applications-model</code>).</p></li>
 <li><p>Applications: Explore has students download the chapter’s Brexit poll from <code>inst/extdata/brexit.csv</code>. A new test checks that the URL works and that the tutorial’s own copy matches it.</p></li>
 <li><p>Added <strong>broom</strong> and <strong>scales</strong> to <code>Suggests</code>, used by the new tutorials’ answer chunks, and <strong>httr2</strong>, used by the download test.</p></li>
 <li><p>Every question now locks once submitted (<code>type = "reflection"</code>), and its text carries the whole instruction, such as running <code>show_file("analysis.qmd")</code> and pasting the result. This follows learnr2’s “submit once, then locked” rule. Students must also submit each question before the next Continue button works. Only the minutes question stays editable.</p></li>
