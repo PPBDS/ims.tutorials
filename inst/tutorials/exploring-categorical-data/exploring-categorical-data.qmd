@@ -5,6 +5,8 @@ format: live-html
 engine: knitr
 toc: true
 toc-depth: 2
+learnr2:
+  ordering: 4
 ---
 
 {{< include _extensions/r-wasm/live/_knitr.qmd >}}
@@ -1001,5 +1003,5 @@ learnr2::question(
 ```{r}
 #| label: your-answers-2
 #| echo: false
-learnr2::download_answers_button(filename_prefix = "04-exploring-categorical-data")
+learnr2::download_answers_button(filename_prefix = "exploring-categorical-data")
 ```

@@ -28,7 +28,7 @@ check_url_is_plain_text <- function(url, local_path = NULL) {
   expect_match(httr2::resp_content_type(resp), "text/plain")
 }
 
-test_that("06-applications-explore: brexit.csv is downloadable", {
+test_that("applications-explore: brexit.csv is downloadable", {
   testthat::skip_on_cran()
   testthat::skip_if_offline()
   testthat::skip_if_not_installed("httr2")
@@ -38,9 +38,9 @@ test_that("06-applications-explore: brexit.csv is downloadable", {
   )
 })
 
-test_that("06-applications-explore: the tutorial's brexit.csv matches the download", {
+test_that("applications-explore: the tutorial's brexit.csv matches the download", {
   download <- system.file("extdata", "brexit.csv", package = "ims.tutorials")
-  tutorial <- system.file("tutorials", "06-applications-explore", "data", "brexit.csv",
+  tutorial <- system.file("tutorials", "applications-explore", "data", "brexit.csv",
                           package = "ims.tutorials")
   expect_true(nzchar(download))
   expect_true(nzchar(tutorial))

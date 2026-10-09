@@ -45,43 +45,43 @@ As a backup, you can launch a tutorial from the R console with
 `learnr2::run_tutorial()`, providing the short name of the tutorial and
 the package name.
 
-    learnr2::run_tutorial(name = "01-hello-data",
+    learnr2::run_tutorial(name = "hello-data",
                          package = "ims.tutorials")
 
-- *Hello Data* (“01-hello-data”). Chapter 1: the stent experiment, cases
+- *Hello Data* (“hello-data”). Chapter 1: the stent experiment, cases
   and variables in `loan50`, associations among US counties, and
   experiments versus observational studies.
-- *Study Design* (“02-study-design”). Chapter 2: populations and samples
+- *Study Design* (“study-design”). Chapter 2: populations and samples
   using `mlb` salaries, simple random and stratified sampling, and the
   malaria vaccine experiment.
-- *Applications: Data* (“03-applications-data”). Chapter 3: getting to
+- *Applications: Data* (“applications-data”). Chapter 3: getting to
   know `paralympic_1500`, and Simpson’s paradox in 1500m gold medal
   times.
-- *Exploring Categorical Data* (“04-exploring-categorical-data”).
+- *Exploring Categorical Data* (“exploring-categorical-data”).
   Chapter 4: contingency tables, bar plots, and conditional proportions
   in `loans_full_schema`, and comparing county incomes across groups.
-- *Exploring Numerical Data* (“05-exploring-numerical-data”). Chapter 5:
+- *Exploring Numerical Data* (“exploring-numerical-data”). Chapter 5:
   histograms, shape, and summary statistics for `loan50`, and
   transformations and intensity maps of `county`.
-- *Applications: Explore* (“06-applications-explore”). Chapter 6:
+- *Applications: Explore* (“applications-explore”). Chapter 6:
   communicating exploratory results, keeping plots simple, using color
   to draw attention, and telling a story with population change in
   `county`, then order, labels, purpose, and color with the chapter’s
   Brexit poll.
 - *Linear Regression with a Single Predictor*
-  (“07-linear-regression-single”). Chapter 7: fitting a least squares
+  (“linear-regression-single”). Chapter 7: fitting a least squares
   line, residuals, correlation, R-squared, a two-level categorical
   predictor, and outliers, with `possum`, `elmhurst`, and `mariokart`.
 - *Linear Regression with Multiple Predictors*
-  (“08-linear-regression-multiple”). Chapter 8: indicator and
+  (“linear-regression-multiple”). Chapter 8: indicator and
   categorical predictors, many predictors, adjusted R-squared, and
   backward and forward selection, modeling interest rates in
   `loans_full_schema`.
-- *Logistic Regression* (“09-logistic-regression”). Chapter 9: callback
+- *Logistic Regression* (“logistic-regression”). Chapter 9: callback
   rates in the `resume` hiring experiment, the logit, logistic models
   with one and many predictors, predicted probabilities, and groups of
   different sizes.
-- *Applications: Model* (“10-applications-model”). Chapter 10: a case
+- *Applications: Model* (“applications-model”). Chapter 10: a case
   study of house prices in `duke_forest`, from correlation and a
   one-predictor model to a multiple regression chosen by backward
   elimination.
