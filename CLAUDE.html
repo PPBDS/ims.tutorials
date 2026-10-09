@@ -129,7 +129,17 @@
 <strong>Chunk labels</strong> follow the base guide’s <code>section-name-N</code> (question) and <code>section-name-N-test</code> (answer) format. The question’s label is its learnr2 <code>id</code>.</li>
 <li>
 <strong>No install exercises.</strong> Every package a tutorial uses, including the book’s data packages (<strong>openintro</strong>, <strong>usdata</strong>, and others), goes in <code>Suggests</code> in DESCRIPTION. The student image installs each course package’s <code>Suggests</code>, so students never install packages by hand.</li>
-</ul><p>Unlike <code>vscode.tutorials</code>, there is <strong>no mechanics exception</strong>. Students arrive having done <code>vscode.tutorials</code> through the Quarto tutorial — the boundary the base guide assumes — and nothing here re-teaches those mechanics. When a tutorial needs a skill not taught through Quarto, scaffold it explicitly or fix it upstream; never assume it silently.</p>
+</ul></div>
+<div class="section level3">
+<h3 id="departures-recorded-as-of-histograms">Departures recorded (as of “Histograms”)<a class="anchor" aria-label="anchor" href="#departures-recorded-as-of-histograms"></a></h3>
+<p>Per the base guide’s override protocol — name the departure, justify it:</p>
+<ol style="list-style-type: decimal"><li>
+<strong>No <code>show_file()</code>; evidence is submitted in the browser.</strong> learnr2 has no <code>show_file()</code>, so the base guide’s evidence forms map onto question types: QMD-edit and working-chunk evidence becomes a <code>type = "reflection_editable"</code> question where the student pastes their code (CP/CR shorthand still applies to terminal pastes); our answer is a <code>### What you should see</code> block with the faked output or our code, the stand-in for the base guide’s <code>echo = TRUE</code> answer chunk; interpretation questions use <code>type = "reflection"</code> with a model answer. The Summary’s whole-file check (<code>show_file("analysis.qmd")</code>) becomes a screenshot of the rendered page pasted into a <code>reflection_editable</code> question with <code>allow_image = TRUE</code>; the GitHub-based Summary step still ends at the repo URL.</li>
+<li>
+<strong>The intro names its environment.</strong> The base guide says an intro must not mention Codespaces or <code>codespace-starter</code>. This package’s entry point (below) fixes both, and every faked terminal answer needs a real prompt (<code>histograms $</code>) and a real <code>/workspaces/...</code> path, so tutorials here name them.</li>
+<li>
+<strong>Repo setup is taught by hand.</strong> Where the base guide’s standard repo line says “create one and connect to it”, the Histograms tutorial walks the real <code>gh</code>/<code>git</code> sequence and forbids <code>connect-repo</code>, so students practice the commands they will reuse this term. The rest of the base guide’s structure (three-exercise cache arc, per-section commits, <code>###</code>-gated expected output then knowledge drop, Summary sequence) is followed as written.</li>
+</ol><p>Unlike <code>vscode.tutorials</code>, there is <strong>no mechanics exception</strong>. Students arrive having done <code>vscode.tutorials</code> through the Quarto tutorial — the boundary the base guide assumes — and nothing here re-teaches those mechanics. When a tutorial needs a skill not taught through Quarto, scaffold it explicitly or fix it upstream; never assume it silently.</p>
 </div>
 <div class="section level3">
 <h3 id="choosing-topics">Choosing topics<a class="anchor" aria-label="anchor" href="#choosing-topics"></a></h3>
@@ -145,6 +155,8 @@
 <p>The project-wide syntactic conventions apply exactly as in the base guide:</p>
 <ul><li>
 <strong>Per-chunk options use Quarto’s <code>#| key: value</code> syntax</strong>, never inline <code>, key = value</code> on the header — including <code>#| label:</code>, which every chunk needs.</li>
+<li>
+<strong>Hint/solution divs must precede the first <code>###</code> of their <code>##</code> section.</strong> learnr2’s quiz.js excludes any level-3 section containing <code>.exercise-hint</code> or <code>.solution</code> from progressive gating, so an exercise placed after a <code>###</code> heading reveals that knowledge drop without a Continue click. Keep each section’s exercise + hint + solution before its first <code>###</code>; display-only demo cells use <code>#| autorun: true</code> so their output is ready when the section unlocks.</li>
 </ul><div class="section level3">
 <h3 id="terminal-terminology">Terminal terminology<a class="anchor" aria-label="anchor" href="#terminal-terminology"></a></h3>
 <p>Use the fixed vocabulary taught in <code>vscode.tutorials</code>: <strong>Panel</strong> (the bottom region), <strong>the Terminal</strong> (the Terminal view in the Panel), <strong>terminal</strong> (one session, selected by its <strong>tab</strong>), <strong>bash Terminal</strong> / <strong>R Terminal</strong>. Instructions always name which one — “In the bash Terminal, run <code>quarto render analysis.qmd</code>” — never bare “the Terminal.”</p>

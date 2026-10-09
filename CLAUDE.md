@@ -213,6 +213,36 @@ mapping and of everything in this file; copy its patterns.
   `Suggests` in DESCRIPTION. The student image installs each course
   package’s `Suggests`, so students never install packages by hand.
 
+### Departures recorded (as of “Histograms”)
+
+Per the base guide’s override protocol — name the departure, justify it:
+
+1.  **No `show_file()`; evidence is submitted in the browser.** learnr2
+    has no `show_file()`, so the base guide’s evidence forms map onto
+    question types: QMD-edit and working-chunk evidence becomes a
+    `type = "reflection_editable"` question where the student pastes
+    their code (CP/CR shorthand still applies to terminal pastes); our
+    answer is a `### What you should see` block with the faked output or
+    our code, the stand-in for the base guide’s `echo = TRUE` answer
+    chunk; interpretation questions use `type = "reflection"` with a
+    model answer. The Summary’s whole-file check
+    (`show_file("analysis.qmd")`) becomes a screenshot of the rendered
+    page pasted into a `reflection_editable` question with
+    `allow_image = TRUE`; the GitHub-based Summary step still ends at
+    the repo URL.
+2.  **The intro names its environment.** The base guide says an intro
+    must not mention Codespaces or `codespace-starter`. This package’s
+    entry point (below) fixes both, and every faked terminal answer
+    needs a real prompt (`histograms $`) and a real `/workspaces/...`
+    path, so tutorials here name them.
+3.  **Repo setup is taught by hand.** Where the base guide’s standard
+    repo line says “create one and connect to it”, the Histograms
+    tutorial walks the real `gh`/`git` sequence and forbids
+    `connect-repo`, so students practice the commands they will reuse
+    this term. The rest of the base guide’s structure (three-exercise
+    cache arc, per-section commits, `###`-gated expected output then
+    knowledge drop, Summary sequence) is followed as written.
+
 Unlike `vscode.tutorials`, there is **no mechanics exception**. Students
 arrive having done `vscode.tutorials` through the Quarto tutorial — the
 boundary the base guide assumes — and nothing here re-teaches those
@@ -245,6 +275,13 @@ guide:
 - **Per-chunk options use Quarto’s `#| key: value` syntax**, never
   inline `, key = value` on the header — including `#| label:`, which
   every chunk needs.
+- **Hint/solution divs must precede the first `###` of their `##`
+  section.** learnr2’s quiz.js excludes any level-3 section containing
+  `.exercise-hint` or `.solution` from progressive gating, so an
+  exercise placed after a `###` heading reveals that knowledge drop
+  without a Continue click. Keep each section’s exercise + hint +
+  solution before its first `###`; display-only demo cells use
+  `#| autorun: true` so their output is ready when the section unlocks.
 
 ### Terminal terminology
 

@@ -16,6 +16,11 @@ rendered to static web pages. Students do the work in their own
 - **Hello Data** (01-hello-data): Chapter 1 — cases, variables,
   associations, and experiments versus observational studies
 
+- **Histograms** (06-histograms): reading and making histograms with
+  ggplot2, from the bars' count to bin choice, center, spread, shape,
+  facets, and a log scale for skewed data, ending with the student's own
+  repository URL
+
 - **Study Design** (02-study-design): Chapter 2 — populations and
   samples, sampling methods, and the principles of experiments
 
@@ -49,3 +54,8 @@ Useful links:
 
 **Maintainer**: David Kane <dave.kane@gmail.com>
 ([ORCID](https://orcid.org/0000-0002-6660-3934)) \[copyright holder\]
+
+Authors:
+
+- David Kane <dave.kane@gmail.com>
+  ([ORCID](https://orcid.org/0000-0002-6660-3934)) \[copyright holder\]
