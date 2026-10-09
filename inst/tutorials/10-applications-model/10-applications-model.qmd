@@ -1,0 +1,1011 @@
+---
+title: "Applications: Model"
+subtitle: "A case study of house prices: correlation, a one-predictor model, and backward elimination."
+format: live-html
+engine: knitr
+toc: true
+toc-depth: 2
+---
+
+{{< include _extensions/r-wasm/live/_knitr.qmd >}}
+
+```{r}
+#| label: setup
+#| include: false
+library(tidyverse)
+library(openintro)
+library(broom)
+knitr::opts_chunk$set(out.width = "90%")
+```
+
+## Student Information
+
+```{r}
+#| label: student-information-1
+#| echo: false
+learnr2::student_info()
+```
+
+## Introduction
+
+This tutorial covers [Chapter 10: Applications: Model](https://openintrostat.github.io/ims/model-applications.html) from [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) by Mine Çetinkaya-Rundel and Johanna Hardin. You will learn to model the sale price of a house, first from its area alone and then from several of its features at once, using correlation, residuals, adjusted R-squared, and backward elimination.
+
+### Exercise 1
+
+You should be doing this tutorial in a repo named `applications-model`. If you are not, create one and then connect to it. You may need to restart this tutorial after you do so.
+
+Create a new file, `analysis.qmd`, with the title `"Applications: Model"` and your name as the author. In a bash Terminal, render it:
+
+```
+quarto render analysis.qmd
+```
+
+Open `analysis.html` with Live Server (right-click it in the Explorer → **Open with Live Server**) and keep the tab open. It refreshes on every render. Going forward, we will just tell you to "Render" when we want you to take these steps.
+
+Create a `.gitignore` with `analysis_files` followed by a blank line. Commit and push. Use AI however you like.
+
+If `show_file()` fails, it is probably because you have not yet loaded `library(learnr2)` in the R Terminal.
+
+```{r}
+#| label: introduction-1
+#| echo: false
+learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type = "reflection")
+```
+
+###
+
+```
+analysis_files
+```
+
+###
+
+"In this case study we'll formalize the process of determining the listing price of a house by using data on current home sales." The chapter pulls together everything in Part 3 of the book: correlation, simple regression, multiple regression, and model selection.
+
+### Exercise 2
+
+Add a chunk to `analysis.qmd` that loads the **[tidyverse](https://www.tidyverse.org/)**, with `#| message: false` so the startup messages stay out of the rendered page. Add `execute: echo: false` to the YAML header. Render.
+
+```{r}
+#| label: introduction-2
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+<pre><code>#| message: false
+library(tidyverse)
+</code></pre>
+
+###
+
+The **tidyverse** gives us **dplyr** for summaries and **ggplot2** for scatterplots and residual plots. Fitting the models themselves needs nothing extra, because linear regression is built into base R.
+
+### Exercise 3
+
+Add **[openintro](https://openintrostat.github.io/openintro/)** to that chunk. Render.
+
+```{r}
+#| label: introduction-3
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+<pre><code>#| message: false
+library(tidyverse)
+library(openintro)
+</code></pre>
+
+###
+
+**openintro** holds `duke_forest`, the houses sold in the Duke Forest neighborhood of Durham, North Carolina. "The homes were all recently sold at the time of data collection, and the goal of the project was to build a model for predicting the sale price based on a particular home's characteristics."
+
+### Exercise 4
+
+Add **[broom](https://broom.tidymodels.org/)** to that chunk. Render.
+
+```{r}
+#| label: introduction-4
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+<pre><code>#| message: false
+library(tidyverse)
+library(openintro)
+library(broom)
+</code></pre>
+
+###
+
+A fitted model in base R prints as a block of text. **broom** turns it into tibbles: one row per coefficient, one row of fit statistics for the whole model, or one row per house with its fitted value and residual.
+
+## Modeling price with area
+
+The chapter starts with the variables one at a time, asking which of them moves most closely with `price`. The best single predictor turns out to be the size of the house.
+
+### Exercise 1
+
+Add a chunk that prints `duke_forest`. Render.
+
+```{r}
+#| label: modeling-price-with-area-1
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: modeling-price-with-area-1-test
+#| echo: true
+duke_forest
+```
+
+###
+
+Each of the 98 rows is one house, scraped from a Zillow listing. Prices are set by people, not formulas: "house prices are somewhat arbitrary -- the homeowners get to decide the listing price."
+
+### Exercise 2
+
+```{r}
+#| label: modeling-price-with-area-2
+#| echo: false
+learnr2::question("In the R Terminal, run ?duke_forest. Copy and paste the Description, the entries for cooling, lot, and hoa, and the Source.", type = "reflection")
+```
+
+###
+
+```
+Description:
+
+     Data on houses that were recently sold in the Duke Forest
+     neighborhood of Durham, NC in November 2020.
+
+     cooling Cooling system (‘other’ or ‘central’).
+
+     lot Area of the entire property, in acres.
+
+     hoa If the home belongs to an Home Owners Association, the
+          associted fee (‘NA’ otherwise).
+
+Source:
+
+     Data were collected from Zillow in November 2020.
+```
+
+###
+
+Note the difference between `area`, the size of the house in square feet, and `lot`, the size of the whole property in acres. The help page says nothing about missing values, except that `hoa` is `NA` for homes outside a homeowners association.
+
+### Exercise 3
+
+Replace the code in that chunk so that it keeps only the seven variables the chapter models: `price`, `bed`, `bath`, `area`, `year_built`, `cooling`, and `lot`. Render.
+
+```{r}
+#| label: modeling-price-with-area-3
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: modeling-price-with-area-3-test
+#| echo: true
+duke_forest |>
+  select(price, bed, bath, area, year_built, cooling, lot)
+```
+
+###
+
+`price` is the response, and the other six are candidate predictors. Five are numbers, but `cooling` is a factor with two levels.
+
+### Exercise 4
+
+Replace the code in that chunk so that it calculates the number of houses and the mean `price` for each value of `cooling`. Render.
+
+```{r}
+#| label: modeling-price-with-area-4
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: modeling-price-with-area-4-test
+#| echo: true
+duke_forest |>
+  summarize(n = n(), mean_price = mean(price), .by = cooling)
+```
+
+###
+
+The 45 houses with central air sold for about \$94,000 more on average than the 53 without. "The correlation coefficient can only be calculated to describe the relationship between two numerical variables," but `cooling` can still enter a model as an indicator, 1 for central and 0 for other.
+
+### Exercise 5
+
+Replace the code in that chunk so that it calculates the correlation between `price` and each of the five numerical predictors: `bed`, `bath`, `area`, `year_built`, and `lot`. Render.
+
+```{r}
+#| label: modeling-price-with-area-5
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: modeling-price-with-area-5-test
+#| echo: true
+duke_forest |>
+  summarize(across(c(bed, bath, area, year_built, lot), \(x) cor(price, x)))
+```
+
+###
+
+Four correlations came back, but `lot` is `NA`. A single missing value anywhere in a column is enough to make its correlation missing.
+
+### Exercise 6
+
+Replace the code in that chunk so that it shows every house whose `lot` is missing, with its `address`, `price`, `area`, `year_built`, `heating`, `lot`, and `hoa`. Render.
+
+```{r}
+#| label: modeling-price-with-area-6
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: modeling-price-with-area-6-test
+#| echo: true
+duke_forest |>
+  filter(is.na(lot)) |>
+  select(address, price, area, year_built, heating, lot, hoa)
+```
+
+###
+
+Only one house, 1217 Birchbark Rd, lacks a lot size. It is also the newest house in the data, built in 2019, the only one with `"No Data"` for heating, and the only one with a homeowners association fee, which suggests a new development whose listing was incomplete.
+
+### Exercise 7
+
+Replace the code in that chunk so that it calculates the five correlations with `price` again, this time ignoring the missing value. Render.
+
+```{r}
+#| label: modeling-price-with-area-7
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: modeling-price-with-area-7-test
+#| echo: true
+duke_forest |>
+  summarize(across(c(bed, bath, area, year_built, lot),
+                   \(x) cor(price, x, use = "complete.obs")))
+```
+
+###
+
+"All of the variables seem to be positively associated with price (higher values of the variable are matched with higher price values)." At 0.667, "The `area` of the home is the variable which is most highly correlated with `price`."
+
+### Exercise 8
+
+Replace the code in that chunk with a scatterplot of `price` against `area`. Render.
+
+```{r}
+#| label: modeling-price-with-area-8
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: modeling-price-with-area-8-test
+#| echo: true
+duke_forest |>
+  ggplot(aes(x = area, y = price)) +
+  geom_point()
+```
+
+###
+
+"However, recall that the correlation coefficient is very sensitive to outliers, so it is always wise to look at the scatterplot even when the variables are highly correlated." One house near 5,000 square feet sits at the very bottom of the plot, priced like the smallest homes.
+
+### Exercise 9
+
+Replace the code in that chunk so that it shows the five cheapest houses, with their `address`, `price`, `area`, `bed`, and `bath`. Render.
+
+```{r}
+#| label: modeling-price-with-area-9
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: modeling-price-with-area-9-test
+#| echo: true
+duke_forest |>
+  arrange(price) |>
+  select(address, price, area, bed, bath) |>
+  slice_head(n = 5)
+```
+
+###
+
+2832 Mcdowell Rd sold for \$95,000, the lowest price in the data, yet it has 4,894 square feet and 4.5 bathrooms, while the next four cheapest houses are all under 1,800 square feet. Nothing in the data explains the price, so the chapter keeps the house, and so do we.
+
+### Exercise 10
+
+Start a new chunk that fits a linear model of `price` on `area`, saves it as `price_area`, and shows its two coefficients, without any other columns. Render.
+
+```{r}
+#| label: modeling-price-with-area-10
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: modeling-price-with-area-10-test
+#| echo: true
+price_area <- lm(price ~ area, data = duke_forest)
+
+price_area |>
+  tidy() |>
+  select(term, estimate)
+```
+
+###
+
+The fitted line is predicted price = 116,652 + 159 × area. "For each additional square foot of house, we would expect such houses to cost, on average, \$159 more."
+
+### Exercise 11
+
+Replace the coefficients in that chunk with the model's R-squared, its adjusted R-squared, and the number of houses it used. Render.
+
+```{r}
+#| label: modeling-price-with-area-11
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: modeling-price-with-area-11-test
+#| echo: true
+price_area <- lm(price ~ area, data = duke_forest)
+
+price_area |>
+  glance() |>
+  select(r.squared, adj.r.squared, nobs)
+```
+
+###
+
+Area alone accounts for about 45% of the variability in price across all 98 houses. With only one predictor, the adjustment barely matters: 0.439 against 0.445.
+
+### Exercise 12
+
+Replace the fit statistics in that chunk with a table of every house's `address`, `price`, `area`, fitted value, and residual, sorted from the most negative residual. Render.
+
+```{r}
+#| label: modeling-price-with-area-12
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: modeling-price-with-area-12-test
+#| echo: true
+price_area <- lm(price ~ area, data = duke_forest)
+
+price_area |>
+  augment(data = duke_forest) |>
+  select(address, price, area, .fitted, .resid) |>
+  arrange(.resid)
+```
+
+###
+
+"The residuals from the linear model can be used to assess whether a linear model is appropriate." The Mcdowell Rd house tops the list: the model predicts \$897,163 for its size, \$802,163 more than it sold for.
+
+### Exercise 13
+
+Delete everything in that chunk except the line that fits and saves `price_area`. Render.
+
+```{r}
+#| label: modeling-price-with-area-13
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+<pre><code>price_area <- lm(price ~ area, data = duke_forest)
+</code></pre>
+
+###
+
+A chunk that only creates an object is ready to cache. A saved model also lets every later chunk use the same fit rather than refitting it.
+
+### Exercise 14
+
+Add `#| cache: true` to that chunk. Render.
+
+```{r}
+#| label: modeling-price-with-area-14
+#| echo: false
+learnr2::question("In the bash Terminal, run ls. CP/CR.", type = "reflection")
+```
+
+###
+
+```
+analysis.html  analysis.qmd  analysis_cache  analysis_files
+```
+
+###
+
+`analysis_cache` now holds the fitted `price_area`, so later renders load it instead of refitting. A cached chunk only re-runs when its code changes.
+
+### Exercise 15
+
+Your Source Control count just jumped, because Git sees every file in the new cache directory. Add `analysis_cache` to `.gitignore`, and the count drops back.
+
+```{r}
+#| label: modeling-price-with-area-15
+#| echo: false
+learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type = "reflection")
+```
+
+###
+
+```
+analysis_files
+analysis_cache
+```
+
+###
+
+Every house in `duke_forest` is a single-family home; the `type` column has only one value. That keeps the comparison fair, since condos and townhouses are priced differently.
+
+### Exercise 16
+
+Start a new chunk with a residual plot for `price_area`: residuals on the y-axis, fitted values on the x-axis, and a dashed horizontal line at zero. Render.
+
+```{r}
+#| label: modeling-price-with-area-16
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: modeling-price-with-area-16-test
+#| echo: true
+price_area |>
+  augment() |>
+  ggplot(aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed")
+```
+
+###
+
+"The residual plot shows that the relationship between `area` and `price` of a home is indeed linear." "However, the residuals are quite large for expensive homes."
+
+### Exercise 17
+
+Improve the residual plot. Show both axes in thousands of dollars, and add a title, axis labels, a subtitle that states the main finding, and a caption giving the number of houses and the source. Render.
+
+```{r}
+#| label: modeling-price-with-area-17
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: modeling-price-with-area-17-test
+#| echo: true
+price_area |>
+  augment() |>
+  ggplot(aes(x = .fitted, y = .resid)) +
+  geom_point(alpha = 0.7) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  scale_x_continuous(labels = scales::label_dollar(scale = 1 / 1000, suffix = "K")) +
+  scale_y_continuous(labels = scales::label_dollar(scale = 1 / 1000, suffix = "K")) +
+  labs(title = "Residuals from Modeling Price with Area",
+       subtitle = "Errors grow for pricier homes, and one house sold for $802K less than predicted",
+       x = "Predicted Sale Price",
+       y = "Residual",
+       caption = "98 houses sold in Duke Forest, Durham, NC; Zillow, November 2020")
+```
+
+###
+
+"The large residuals indicate potential outliers or increasing variability, either of which could warrant more involved modeling techniques than are presented in this chapter." The spread of the residuals widens from left to right, a fan shape.
+
+### Exercise 18
+
+Commit `analysis.qmd` and `.gitignore` with the message `"Model price with area"` and push.
+
+```{r}
+#| label: modeling-price-with-area-18
+#| echo: false
+learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type = "reflection")
+```
+
+###
+
+```
+4a7c2e1 (HEAD -> main, origin/main) Model price with area
+9be04d2 Initial commit
+```
+
+###
+
+"Note that the correlation coefficient and the scatterplot linearity will often give the same conclusion." Here both pointed to `area`, but only the scatterplot revealed the Mcdowell Rd house.
+
+## Modeling price with multiple variables
+
+"It seems as though the predictions of home price might be more accurate if more than one predictor variable was used in the linear model." This section fits the full model with all six predictors, then prunes it.
+
+### Exercise 1
+
+Start a new chunk that fits a linear model of `price` on all six predictors, `area`, `bed`, `bath`, `year_built`, `cooling`, and `lot`, saves it as `price_full`, and shows its coefficients, without any other columns. Render.
+
+```{r}
+#| label: modeling-price-with-multiple-variables-1
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: modeling-price-with-multiple-variables-1-test
+#| echo: true
+price_full <- lm(price ~ area + bed + bath + year_built + cooling + lot,
+                 data = duke_forest)
+
+price_full |>
+  tidy() |>
+  select(term, estimate)
+```
+
+###
+
+`cooling` became a single row, `coolingcentral`, an indicator for central air with other as the baseline. "The coefficient indicates that if all the other variables are kept constant, homes with central air conditioning cost \$84,065 more, on average."
+
+### Exercise 2
+
+Replace the coefficients in that chunk with the model's R-squared, its adjusted R-squared, and the number of houses it used. Render.
+
+```{r}
+#| label: modeling-price-with-multiple-variables-2
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: modeling-price-with-multiple-variables-2-test
+#| echo: true
+price_full <- lm(price ~ area + bed + bath + year_built + cooling + lot,
+                 data = duke_forest)
+
+price_full |>
+  glance() |>
+  select(r.squared, adj.r.squared, nobs)
+```
+
+###
+
+The model used 97 houses, not 98: it silently dropped 1217 Birchbark Rd, the house with no `lot`. Adjusted R-squared rose from 0.439 with area alone to 0.590 with all six predictors.
+
+### Exercise 3
+
+The full model gives `bed` a negative coefficient, as if each extra bedroom lowered the price by \$13,692. Replace the code in that chunk so that it calculates the correlation between `area` and `bed`. Render.
+
+```{r}
+#| label: modeling-price-with-multiple-variables-3
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: modeling-price-with-multiple-variables-3-test
+#| echo: true
+duke_forest |>
+  summarize(cor_area_bed = cor(area, bed))
+```
+
+###
+
+Bigger houses have more bedrooms, with a correlation of 0.568. Once `area` is in the model, it "already has information on 'how much space is available in the house,'" so `bed` has little left to add.
+
+### Exercise 4
+
+"A friend suggests that maybe you do not need all six variables to have a good model for `price`." Replace the code in that chunk with a table of six models, each leaving out one of the six predictors, showing which predictor was left out and that model's adjusted R-squared. Render.
+
+```{r}
+#| label: modeling-price-with-multiple-variables-4
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: modeling-price-with-multiple-variables-4-test
+#| echo: true
+predictors <- c("area", "bed", "bath", "year_built", "cooling", "lot")
+
+tibble(dropped = predictors) |>
+  mutate(adj_r_squared = map_dbl(dropped, \(x)
+    lm(reformulate(setdiff(predictors, x), response = "price"),
+       data = duke_forest) |>
+      glance() |>
+      pull(adj.r.squared)))
+```
+
+###
+
+This is the first step of **backward elimination**, which starts from the full model and removes one predictor at a time. Leaving out `bed` gives 0.593, higher than the full model's 0.590: "Because eliminating `bed` leads to a model with a higher adjusted $R^2$ than the full model, we drop `bed` from the model."
+
+### Exercise 5
+
+Repeat the last step, starting from the five predictors left after dropping `bed`: build a table of five models, each leaving out one more predictor, with that model's adjusted R-squared. Render.
+
+```{r}
+#| label: modeling-price-with-multiple-variables-5
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: modeling-price-with-multiple-variables-5-test
+#| echo: true
+predictors <- c("area", "bath", "year_built", "cooling", "lot")
+
+tibble(dropped = predictors) |>
+  mutate(adj_r_squared = map_dbl(dropped, \(x)
+    lm(reformulate(setdiff(predictors, x), response = "price"),
+       data = duke_forest) |>
+      glance() |>
+      pull(adj.r.squared)))
+```
+
+###
+
+Every value is below 0.593. "None of these models lead to an improvement in adjusted $R^2$, so we do not eliminate any of the remaining predictors."
+
+### Exercise 6
+
+Replace the code in that chunk so that it fits the model with every predictor except `bed`, saves it as `price_final`, and shows its coefficients, without any other columns. Render.
+
+```{r}
+#| label: modeling-price-with-multiple-variables-6
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: modeling-price-with-multiple-variables-6-test
+#| echo: true
+price_final <- lm(price ~ area + bath + year_built + cooling + lot,
+                  data = duke_forest)
+
+price_final |>
+  tidy() |>
+  select(term, estimate)
+```
+
+###
+
+Holding the other predictors constant, each square foot now adds \$99, down from \$159 in the area-only model, because `bath`, `lot`, and the rest share the credit for size. "It might seem counter-intuitive to exclude number of bedrooms from the model."
+
+### Exercise 7
+
+Replace the coefficients in that chunk with the model's R-squared, its adjusted R-squared, and the number of houses it used. Render.
+
+```{r}
+#| label: modeling-price-with-multiple-variables-7
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: modeling-price-with-multiple-variables-7-test
+#| echo: true
+price_final <- lm(price ~ area + bath + year_built + cooling + lot,
+                  data = duke_forest)
+
+price_final |>
+  glance() |>
+  select(r.squared, adj.r.squared, nobs)
+```
+
+###
+
+Dropping `bed` lowered R-squared slightly, from 0.615 to 0.614, but raised adjusted R-squared, from 0.590 to 0.593. R-squared never falls when a predictor is added; adjusted R-squared does when the predictor does not earn its place.
+
+### Exercise 8
+
+Replace the fit statistics in that chunk with `price_final`'s predicted price for the chapter's example house: 1,803 square feet, 2.5 bathrooms, built in 1941, with central air, on 0.145 acres. Render.
+
+```{r}
+#| label: modeling-price-with-multiple-variables-8
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: modeling-price-with-multiple-variables-8-test
+#| echo: true
+price_final <- lm(price ~ area + bath + year_built + cooling + lot,
+                  data = duke_forest)
+
+price_final |>
+  predict(newdata = tibble(area = 1803, bath = 2.5, year_built = 1941,
+                           cooling = "central", lot = 0.145))
+```
+
+###
+
+The model predicts \$298,152; the book gets \$297,570 because it multiplies by rounded coefficients. If that house had sold for \$804,133 in California, the gap would be no surprise: "The original data are from Durham, NC, and models based on the Durham, NC data should be used only to explore patterns in prices for homes in Durham, NC."
+
+### Exercise 9
+
+Replace the prediction in that chunk with a residual plot for `price_final`: residuals on the y-axis, fitted values on the x-axis, and a dashed horizontal line at zero. Render.
+
+```{r}
+#| label: modeling-price-with-multiple-variables-9
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: modeling-price-with-multiple-variables-9-test
+#| echo: true
+price_final <- lm(price ~ area + bath + year_built + cooling + lot,
+                  data = duke_forest)
+
+price_final |>
+  augment() |>
+  ggplot(aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed")
+```
+
+###
+
+"However, there is one extreme outlier with a residual of -\$750,000, a house whose actual sale price is a lot lower than its predicted price." It is the Mcdowell Rd house again, whose residual is -\$713,675 in this model, smaller than the -\$802,163 from area alone but still about \$300,000 larger than the next biggest miss, +\$407,705 for 1 Learned Pl.
+
+### Exercise 10
+
+Improve the residual plot. Show both axes in thousands of dollars, and add a title, axis labels, a subtitle that states the main finding, and a caption giving the number of houses and the source. Render.
+
+```{r}
+#| label: modeling-price-with-multiple-variables-10
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: modeling-price-with-multiple-variables-10-test
+#| echo: true
+price_final <- lm(price ~ area + bath + year_built + cooling + lot,
+                  data = duke_forest)
+
+price_final |>
+  augment() |>
+  ggplot(aes(x = .fitted, y = .resid)) +
+  geom_point(alpha = 0.7) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  scale_x_continuous(labels = scales::label_dollar(scale = 1 / 1000, suffix = "K")) +
+  scale_y_continuous(labels = scales::label_dollar(scale = 1 / 1000, suffix = "K")) +
+  labs(title = "Residuals from Modeling Price with Five Predictors",
+       subtitle = "Errors still grow for pricier homes, and one house sold for $714K less than predicted",
+       x = "Predicted Sale Price",
+       y = "Residual",
+       caption = "97 houses with a known lot size, Duke Forest, Durham, NC; Zillow, November 2020")
+```
+
+###
+
+The five-predictor model fits better than area alone, yet the residuals still fan out for expensive homes. "After we learn that the house is in California, we realize that the model shouldn't be applied to the new home at all!"
+
+### Exercise 11
+
+Commit `analysis.qmd` with the message `"Model price with multiple variables"` and push.
+
+```{r}
+#| label: modeling-price-with-multiple-variables-11
+#| echo: false
+learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type = "reflection")
+```
+
+###
+
+```
+d81f3b6 (HEAD -> main, origin/main) Model price with multiple variables
+4a7c2e1 Model price with area
+9be04d2 Initial commit
+```
+
+###
+
+Backward elimination is one of two stepwise strategies in [Chapter 8](https://openintrostat.github.io/ims/model-mlr.html#sec-model-selection); the other, forward selection, adds predictors one at a time instead. Both use adjusted R-squared to decide when to stop.
+
+## Summary
+
+This tutorial covered [Chapter 10: Applications: Model](https://openintrostat.github.io/ims/model-applications.html) from [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) by Mine Çetinkaya-Rundel and Johanna Hardin. You have learned to model the sale price of a house, first from its area alone and then from several of its features at once, using correlation, residuals, adjusted R-squared, and backward elimination.
+
+For more on backward elimination and adjusted R-squared, reread the [model selection](https://openintrostat.github.io/ims/model-mlr.html#sec-model-selection) section of Chapter 8. For another regression case study, try the book's R lab, [Introduction to linear regression](https://www.openintro.org/go?id=ims-r-lab-model), which models the Human Freedom Index.
+
+### Exercise 1
+
+Render one last time.
+
+```{r}
+#| label: summary-1
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). CP/CR.', type = "reflection")
+```
+
+###
+
+<pre><code>---
+title: "Applications: Model"
+author: "Your Name"
+format: html
+execute:
+  echo: false
+---
+
+&#96;&#96;&#96;{r}
+#| message: false
+library(tidyverse)
+library(openintro)
+library(broom)
+&#96;&#96;&#96;
+
+&#96;&#96;&#96;{r}
+#| cache: true
+price_area <- lm(price ~ area, data = duke_forest)
+&#96;&#96;&#96;
+
+&#96;&#96;&#96;{r}
+price_area |>
+  augment() |>
+  ggplot(aes(x = .fitted, y = .resid)) +
+  geom_point(alpha = 0.7) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  scale_x_continuous(labels = scales::label_dollar(scale = 1 / 1000, suffix = "K")) +
+  scale_y_continuous(labels = scales::label_dollar(scale = 1 / 1000, suffix = "K")) +
+  labs(title = "Residuals from Modeling Price with Area",
+       subtitle = "Errors grow for pricier homes, and one house sold for $802K less than predicted",
+       x = "Predicted Sale Price",
+       y = "Residual",
+       caption = "98 houses sold in Duke Forest, Durham, NC; Zillow, November 2020")
+&#96;&#96;&#96;
+
+&#96;&#96;&#96;{r}
+price_final <- lm(price ~ area + bath + year_built + cooling + lot,
+                  data = duke_forest)
+
+price_final |>
+  augment() |>
+  ggplot(aes(x = .fitted, y = .resid)) +
+  geom_point(alpha = 0.7) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  scale_x_continuous(labels = scales::label_dollar(scale = 1 / 1000, suffix = "K")) +
+  scale_y_continuous(labels = scales::label_dollar(scale = 1 / 1000, suffix = "K")) +
+  labs(title = "Residuals from Modeling Price with Five Predictors",
+       subtitle = "Errors still grow for pricier homes, and one house sold for $714K less than predicted",
+       x = "Predicted Sale Price",
+       y = "Residual",
+       caption = "97 houses with a known lot size, Duke Forest, Durham, NC; Zillow, November 2020")
+&#96;&#96;&#96;
+</code></pre>
+
+###
+
+The page holds the chapter's two models of the same 98 houses, and the residual plot of each. Adding predictors raised adjusted R-squared from 0.439 to 0.593, but neither model can explain the \$95,000 house on Mcdowell Rd.
+
+### Exercise 2
+
+Publish your analysis to GitHub Pages. In a bash Terminal, run:
+
+```
+quarto publish gh-pages analysis.qmd
+```
+
+```{r}
+#| label: summary-2
+#| echo: false
+learnr2::question("Paste the URL of your published page.", type = "reflection")
+```
+
+###
+
+Your answer should look like `https://your-github-username.github.io/applications-model/`.
+
+###
+
+The data were scraped from [Zillow](https://www.zillow.com), and each row's `url` still points to the original listing. A listing is a record of what a seller reported, which is why one house can lack a lot size and another can sell for a fraction of its predicted price.
+
+### Exercise 3
+
+Commit and push any remaining changes.
+
+```{r}
+#| label: summary-3
+#| echo: false
+learnr2::question("Paste the URL of your GitHub repo.", type = "reflection")
+```
+
+###
+
+Your answer should look like `https://github.com/your-github-username/applications-model`.
+
+###
+
+The largest positive residual in the area-only model belongs to 1803 Woodburn Rd, which sold for \$1,270,000, about \$530,000 more than its size predicts. Underpriced or overpriced, the extreme houses are the ones a listing model gets most wrong.
+
+## Your Answers
+
+```{r}
+#| label: your-answers-1
+#| echo: false
+learnr2::question(
+  "How many minutes, approximately, did it take you to complete this
+  tutorial? For example, an hour and a half would be 90 minutes.",
+  type = "reflection_editable",
+  validate = "integer"
+)
+```
+
+```{r}
+#| label: your-answers-2
+#| echo: false
+learnr2::download_answers_button(filename_prefix = "10-applications-model")
+```

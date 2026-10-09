@@ -25,9 +25,12 @@ URL: https://ppbds.github.io/ims.tutorials/, https://github.com/PPBDS/ims.tutori
 Imports:
     learnr2
 Suggests:
+    broom,
     ggridges,
+    httr2,
     maps,
     openintro,
+    scales,
     testthat,
     tidyverse,
     usdata,

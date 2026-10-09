@@ -63,3 +63,25 @@ the package name.
 - *Exploring Numerical Data* (“05-exploring-numerical-data”). Chapter 5:
   histograms, shape, and summary statistics for `loan50`, and
   transformations and intensity maps of `county`.
+- *Applications: Explore* (“06-applications-explore”). Chapter 6:
+  communicating exploratory results, keeping plots simple, using color
+  to draw attention, and telling a story with population change in
+  `county`, then order, labels, purpose, and color with the chapter’s
+  Brexit poll.
+- *Linear Regression with a Single Predictor*
+  (“07-linear-regression-single”). Chapter 7: fitting a least squares
+  line, residuals, correlation, R-squared, a two-level categorical
+  predictor, and outliers, with `possum`, `elmhurst`, and `mariokart`.
+- *Linear Regression with Multiple Predictors*
+  (“08-linear-regression-multiple”). Chapter 8: indicator and
+  categorical predictors, many predictors, adjusted R-squared, and
+  backward and forward selection, modeling interest rates in
+  `loans_full_schema`.
+- *Logistic Regression* (“09-logistic-regression”). Chapter 9: callback
+  rates in the `resume` hiring experiment, the logit, logistic models
+  with one and many predictors, predicted probabilities, and groups of
+  different sizes.
+- *Applications: Model* (“10-applications-model”). Chapter 10: a case
+  study of house prices in `duke_forest`, from correlation and a
+  one-predictor model to a multiple regression chosen by backward
+  elimination.

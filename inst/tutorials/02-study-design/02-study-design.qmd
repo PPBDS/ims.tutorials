@@ -44,12 +44,12 @@ Open `analysis.html` with Live Server (right-click it in the Explorer → **Open
 
 Create a `.gitignore` with `analysis_files` followed by a blank line. Commit and push. Use AI however you like.
 
-In the R Terminal, run `show_file(".gitignore")`. If that fails, it is probably because you have not yet loaded `library(learnr2)` in the R Terminal.
+If `show_file()` fails, it is probably because you have not yet loaded `library(learnr2)` in the R Terminal.
 
 ```{r}
 #| label: introduction-1
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -66,12 +66,10 @@ analysis_files
 
 Add a chunk to `analysis.qmd` that loads the **[tidyverse](https://www.tidyverse.org/)**, with `#| message: false` so the startup messages stay out of the rendered page. Add `execute: echo: false` to the YAML header. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: introduction-2
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -88,12 +86,10 @@ The **tidyverse** includes **dplyr**, whose verbs draw samples from a data frame
 
 Add **[openintro](https://openintrostat.github.io/openintro/)** to that chunk. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: introduction-3
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -111,12 +107,10 @@ library(openintro)
 
 Add **[usdata](https://openintrostat.github.io/usdata/)** to that chunk. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: introduction-4
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -139,12 +133,10 @@ library(usdata)
 
 Add a chunk that prints `mlb`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: sampling-principles-and-strategies-1
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -161,12 +153,10 @@ Each of the 828 rows is one player on a 2010 Major League roster. "Collecting da
 
 ### Exercise 2
 
-In the R Terminal, run `?mlb` to open the help page. Copy and paste the Description, the entry for `salary`, and the Source.
-
 ```{r}
 #| label: sampling-principles-and-strategies-2
 #| echo: false
-learnr2::question("Paste the three excerpts.", type = "reflection_editable")
+learnr2::question("In the R Terminal, run ?mlb. Copy and paste the Description, the entry for salary, and the Source.", type = "reflection")
 ```
 
 ###
@@ -192,12 +182,10 @@ Salaries are in thousands of dollars, so a value of `8500` means $8.5 million. T
 
 Replace the code in that chunk so that it counts the players on each `team`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: sampling-principles-and-strategies-3
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -217,12 +205,10 @@ There are 30 teams, with 25 to 35 players each. The book's sampling examples all
 
 Replace the code in that chunk so that it calculates the mean `salary` of all 828 players. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: sampling-principles-and-strategies-4
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -242,12 +228,10 @@ The mean salary of the whole population, about $3.28 million, is a **population 
 
 Replace the code in that chunk so that it calculates the mean `salary` for each `team`, from highest to lowest. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: sampling-principles-and-strategies-5
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -268,12 +252,10 @@ The Yankees averaged $8.25 million per player, the Pirates $1.29 million. The bo
 
 Start a new chunk that draws a simple random sample of 120 players from `mlb`, stores it as `mlb_srs`, and prints it. Set the random seed to 42 first, so that the same sample is drawn every time you render. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: sampling-principles-and-strategies-6
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -296,12 +278,10 @@ mlb_srs
 
 Replace the line that prints `mlb_srs` with one that calculates its mean `salary`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: sampling-principles-and-strategies-7
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -325,12 +305,10 @@ Our sample mean, about $3.29 million, is a **sample statistic**, a number "calcu
 
 Replace the summary with a count of how many sampled players come from each `team`, from most to fewest. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: sampling-principles-and-strategies-8
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -354,12 +332,10 @@ A simple random sample does not spread evenly: in ours, the Mariners contributed
 
 Delete the count, so that the chunk only sets the seed and creates `mlb_srs`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: sampling-principles-and-strategies-9
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -375,12 +351,12 @@ mlb_srs <- mlb |>
 
 ### Exercise 10
 
-Add `#| cache: true` to that chunk. Render. In the bash Terminal, run `ls`.
+Add `#| cache: true` to that chunk. Render.
 
 ```{r}
 #| label: sampling-principles-and-strategies-10
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question("In the bash Terminal, run ls. CP/CR.", type = "reflection")
 ```
 
 ###
@@ -397,12 +373,10 @@ analysis.html  analysis.qmd  analysis_cache  analysis_files
 
 Your Source Control count just jumped, because Git sees every file in the new cache directory. Add `analysis_cache` to `.gitignore`, and the count drops back.
 
-In the R Terminal, run `show_file(".gitignore")`.
-
 ```{r}
 #| label: sampling-principles-and-strategies-11
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -420,12 +394,10 @@ Random selection is not the whole story. "Even when people are picked at random,
 
 Start a new chunk that draws a stratified sample, 4 players from each `team`, stores it as `mlb_strat`, and calculates its mean `salary`. Set the random seed to 42 first. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: sampling-principles-and-strategies-12
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -449,12 +421,10 @@ mlb_strat |>
 
 Replace the code in that chunk so that it calculates the mean `salary` of the first 120 rows of `mlb`, a sample of whoever happens to be at the top of the table. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: sampling-principles-and-strategies-13
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -475,12 +445,10 @@ The table is sorted by team, so the first 120 rows are Arizona, Atlanta, Baltimo
 
 Replace the code in that chunk with a bar chart of the mean `salary` for each `team`, with teams sorted by mean salary, and a vertical line at the mean salary of the whole population. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: sampling-principles-and-strategies-14
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -503,12 +471,10 @@ Only 13 of the 30 teams sit above the population mean, because a few very expens
 
 Improve the bar chart. Show salaries in millions of dollars, and add a title, axis labels, a subtitle that states the main finding, and a caption giving the number of players and the source. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: sampling-principles-and-strategies-15
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -535,12 +501,12 @@ mlb |>
 
 ### Exercise 16
 
-Commit `analysis.qmd` and `.gitignore` with the message `"Sample baseball salaries"` and push. In a bash Terminal, run `git log --oneline -3`.
+Commit `analysis.qmd` and `.gitignore` with the message `"Sample baseball salaries"` and push.
 
 ```{r}
 #| label: sampling-principles-and-strategies-16
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type = "reflection")
 ```
 
 ###
@@ -562,12 +528,10 @@ The chapter also describes cluster and multistage samples, which pick whole grou
 
 Start a new chunk that prints `malaria`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: experiments-and-observational-studies-1
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -584,12 +548,10 @@ Each of the 20 rows is a volunteer who received either an experimental vaccine o
 
 ### Exercise 2
 
-In the R Terminal, run `?malaria`. Copy and paste the Description and the Details sections.
-
 ```{r}
 #| label: experiments-and-observational-studies-2
 #| echo: false
-learnr2::question("Paste the Description and Details.", type = "reflection_editable")
+learnr2::question("In the R Terminal, run ?malaria. Copy and paste the Description and the Details sections.", type = "reflection")
 ```
 
 ###
@@ -622,12 +584,10 @@ The placebo is "a fake treatment," and "an effective placebo is the key to makin
 
 Replace the code in that chunk so that it counts volunteers by both `treatment` and `outcome`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: experiments-and-observational-studies-3
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -647,12 +607,10 @@ All 6 placebo volunteers were infected, against 5 of the 14 who got the vaccine.
 
 Replace the code in that chunk so that it calculates, for each `treatment`, the proportion of volunteers who were infected. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: experiments-and-observational-studies-4
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -673,12 +631,10 @@ The vaccine group, the **treatment group**, had a 36% infection rate; the placeb
 
 Replace the summary in that chunk with a bar chart of the proportion infected, by `treatment`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: experiments-and-observational-studies-5
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -701,12 +657,10 @@ The gap is large, but the groups are tiny. The book's third principle, **replica
 
 Improve the bar chart. Put the placebo group first, label each bar with its percentage, show the y-axis as percentages, and add a title, axis labels, a subtitle that states the main finding, and a caption giving the number of volunteers and the source. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: experiments-and-observational-studies-6
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -739,12 +693,10 @@ Because the volunteers were randomized, the vaccine is the only systematic diffe
 
 Start a new chunk with a scatterplot of `homeownership` against `multi_unit`, using `county`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: experiments-and-observational-studies-7
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -765,12 +717,10 @@ Nobody assigned counties their share of apartments, so this is observational dat
 
 Replace the code in that chunk so that it counts the counties with each value of `metro`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: experiments-and-observational-studies-8
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -790,12 +740,10 @@ county |>
 
 Replace the code in that chunk so that it calculates the mean `homeownership` and the mean `multi_unit` for each value of `metro`, ignoring missing values. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: experiments-and-observational-studies-9
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -818,12 +766,10 @@ Metro counties have more multi-unit housing and lower homeownership, so `metro` 
 
 Replace the code in that chunk with the scatterplot of `homeownership` against `multi_unit` again, this time with points colored by `metro` and counties with unknown `metro` dropped. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: experiments-and-observational-studies-10
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -845,12 +791,10 @@ The metro counties crowd the lower right. "Because it is associated with both va
 
 Improve the scatterplot. Add a title, axis labels, a legend title, a subtitle that states the main finding, and a caption giving the number of counties. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: experiments-and-observational-studies-11
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -876,12 +820,12 @@ county |>
 
 ### Exercise 12
 
-Commit `analysis.qmd` with the message `"Compare an experiment with an observational study"` and push. In a bash Terminal, run `git log --oneline -3`.
+Commit `analysis.qmd` with the message `"Compare an experiment with an observational study"` and push.
 
 ```{r}
 #| label: experiments-and-observational-studies-12
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type = "reflection")
 ```
 
 ###
@@ -904,12 +848,12 @@ For the malaria experiment itself, read the original [article](https://doi.org/1
 
 ### Exercise 1
 
-Render one last time. In the R Terminal, run `show_file("analysis.qmd", start = 0)` to see the whole file.
+Render one last time.
 
 ```{r}
 #| label: summary-1
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -997,7 +941,7 @@ quarto publish gh-pages analysis.qmd
 ```{r}
 #| label: summary-2
 #| echo: false
-learnr2::question("Paste the URL of your published page.", type = "reflection_editable")
+learnr2::question("Paste the URL of your published page.", type = "reflection")
 ```
 
 ###
@@ -1015,7 +959,7 @@ Commit and push any remaining changes.
 ```{r}
 #| label: summary-3
 #| echo: false
-learnr2::question("Paste the URL of your GitHub repo.", type = "reflection_editable")
+learnr2::question("Paste the URL of your GitHub repo.", type = "reflection")
 ```
 
 ###

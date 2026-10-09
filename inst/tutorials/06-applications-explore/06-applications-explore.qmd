@@ -1,0 +1,1067 @@
+---
+title: "Applications: Explore"
+subtitle: "Communicating exploratory results: simplicity, color, story, order, labels, purpose."
+format: live-html
+engine: knitr
+toc: true
+toc-depth: 2
+---
+
+{{< include _extensions/r-wasm/live/_knitr.qmd >}}
+
+```{r}
+#| label: setup
+#| include: false
+library(tidyverse)
+library(usdata)
+knitr::opts_chunk$set(out.width = "90%")
+```
+
+## Student Information
+
+```{r}
+#| label: student-information-1
+#| echo: false
+learnr2::student_info()
+```
+
+## Introduction
+
+This tutorial covers [Chapter 6: Applications: Explore](https://openintrostat.github.io/ims/explore-applications.html) from [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) by Mine Çetinkaya-Rundel and Johanna Hardin. You will learn the chapter's principles for communicating exploratory results: keep it simple, use color to draw attention, tell a story, put categories in a meaningful order, make labels easy to read, pick a purpose, and select meaningful colors.
+
+### Exercise 1
+
+You should be doing this tutorial in a repo named `applications-explore`. If you are not, create one and then connect to it. You may need to restart this tutorial after you do so.
+
+Create a new file, `analysis.qmd`, with the title `"Applications: Explore"` and your name as the author. In a bash Terminal, render it:
+
+```
+quarto render analysis.qmd
+```
+
+Open `analysis.html` with Live Server (right-click it in the Explorer → **Open with Live Server**) and keep the tab open. It refreshes on every render. Going forward, we will just tell you to "Render" when we want you to take these steps.
+
+Create a `.gitignore` with `analysis_files` followed by a blank line. Commit and push. Use AI however you like.
+
+If `show_file()` fails, it is probably because you have not yet loaded `library(learnr2)` in the R Terminal.
+
+```{r}
+#| label: introduction-1
+#| echo: false
+learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type = "reflection")
+```
+
+###
+
+```
+analysis_files
+```
+
+###
+
+"This chapter focuses on how graphs can best be utilized to present data accurately and effectively." It is a case study with no new statistics, only better and worse ways to show the same numbers.
+
+### Exercise 2
+
+Add a chunk to `analysis.qmd` that loads the **[tidyverse](https://www.tidyverse.org/)**, with `#| message: false` so the startup messages stay out of the rendered page. Add `execute: echo: false` to the YAML header. Render.
+
+```{r}
+#| label: introduction-2
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+<pre><code>#| message: false
+library(tidyverse)
+</code></pre>
+
+###
+
+The **tidyverse** includes **[ggplot2](https://ggplot2.tidyverse.org/)**, which drew every figure in this chapter, including the color-blind-friendly cividis scale it recommends. Base R graphics and **lattice** are older alternatives, but **ggplot2** is the standard.
+
+### Exercise 3
+
+Add **[usdata](https://openintrostat.github.io/usdata/)** to that chunk. Render.
+
+```{r}
+#| label: introduction-3
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+<pre><code>#| message: false
+library(tidyverse)
+library(usdata)
+</code></pre>
+
+###
+
+**usdata** holds `county`, the 3,142 US counties you met in the Hello Data and Exploring Numerical Data tutorials. Here it supplies the population changes to which we apply the chapter's first three principles.
+
+### Exercise 4
+
+The chapter's main example is a poll that is in no R package, so you will download it. Create a `data` directory at the top level of the `applications-explore` repo.
+
+```{r}
+#| label: introduction-4
+#| echo: false
+learnr2::question("In the bash Terminal, run ls. CP/CR.", type = "reflection")
+```
+
+###
+
+```
+analysis.html  analysis.qmd  analysis_files  data
+```
+
+###
+
+The book builds its Brexit poll by hand, typing in YouGov's published counts. We have saved the same counts as a CSV file, which is how most data you find outside R packages will arrive.
+
+### Exercise 5
+
+Download the file at
+
+```
+https://raw.githubusercontent.com/PPBDS/ims.tutorials/main/inst/extdata/brexit.csv
+```
+
+into your `data` directory, keeping the name `brexit.csv`.
+
+```{r}
+#| label: introduction-5
+#| echo: false
+learnr2::question("In the bash Terminal, run ls data. CP/CR.", type = "reflection")
+```
+
+###
+
+```
+brexit.csv
+```
+
+###
+
+The file is a count table: one row for each combination of region and answer, with the number of respondents in `n`. The poll's 1,643 people become just 25 rows.
+
+## Simplicity, color, and story
+
+"Graphs can powerfully communicate ideas directly and quickly." This section applies the chapter's first three principles, keep it simple, use color to draw attention, and tell a story, to the change in population of US counties from 2010 to 2017.
+
+### Exercise 1
+
+```{r}
+#| label: simplicity-color-and-story-1
+#| echo: false
+learnr2::question("In the R Terminal, run ?county. Copy and paste the Description, the entries for pop2010, pop2017, and pop_change, and the Source.", type = "reflection")
+```
+
+###
+
+```
+Description:
+
+     Data for 3142 counties in the United States. See the
+     ‘county_complete’ data set for additional variables.
+
+     pop2010 Population in 2010.
+
+     pop2017 Population in 2017.
+
+     pop_change Population change from 2010 to 2017.
+
+Source:
+
+     These data were collected from Census Quick Facts (no longer
+     available as of 2020) and its accompanying pages. Smoking ban data
+     were from a variety of sources.
+```
+
+###
+
+The help page does not say what units `pop_change` is in, or how it was calculated. A variable that sounds obvious is worth checking against the columns it should agree with.
+
+### Exercise 2
+
+Add a chunk that shows `name`, `state`, `pop2010`, `pop2017`, and `pop_change` for the first ten counties, along with the percent change in population that you calculate yourself from `pop2010` and `pop2017`. Render.
+
+```{r}
+#| label: simplicity-color-and-story-2
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: simplicity-color-and-story-2-test
+#| echo: true
+county |>
+  select(name, state, pop2010, pop2017, pop_change) |>
+  mutate(pct_change = 100 * (pop2017 - pop2010) / pop2010) |>
+  slice_head(n = 10)
+```
+
+###
+
+Bibb County, Alabama, lost 247 people between 2010 and 2017, yet its `pop_change` is a gain of 0.73%. The two measures disagree about whether a county grew at all in 389 of the 3,139 counties with both populations, so we use `pop2010` and `pop2017` directly.
+
+### Exercise 3
+
+Replace the code in that chunk so that it counts how many counties grew and how many shrank between 2010 and 2017. Render.
+
+```{r}
+#| label: simplicity-color-and-story-3
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: simplicity-color-and-story-3-test
+#| echo: true
+county |>
+  count(grew = pop2017 > pop2010)
+```
+
+###
+
+1,678 counties shrank and 1,461 grew, even though the total population of the counties rose from 308.7 million to 325.7 million. Three counties have no answer at all.
+
+### Exercise 4
+
+Replace the code in that chunk so that it shows `name`, `state`, `pop2010`, and `pop2017` for the counties that are missing `pop2017`. Render.
+
+```{r}
+#| label: simplicity-color-and-story-4
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: simplicity-color-and-story-4-test
+#| echo: true
+county |>
+  filter(is.na(pop2017)) |>
+  select(name, state, pop2010, pop2017)
+```
+
+###
+
+All three are small areas of Alaska, with between 968 and 2,369 people in 2010. Any plot of `pop2017` will drop them, so drop them yourself and say so, rather than let a plot do it with only a warning.
+
+### Exercise 5
+
+Replace the code in that chunk with a pie chart of the number of counties at each level of `median_edu`. Render.
+
+```{r}
+#| label: simplicity-color-and-story-5
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: simplicity-color-and-story-5-test
+#| echo: true
+county |>
+  ggplot(aes(x = "", fill = median_edu)) +
+  geom_bar() +
+  coord_polar(theta = "y")
+```
+
+###
+
+The `some_college` and `hs_diploma` slices hold 1,695 and 1,397 counties, a gap of about 300 that the pie barely shows. The book's complaint is that the magnitudes in a pie chart "are difficult for the eye to compare."
+
+### Exercise 6
+
+Replace the pie chart with a bar chart of the same counts. Render.
+
+```{r}
+#| label: simplicity-color-and-story-6
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: simplicity-color-and-story-6-test
+#| echo: true
+county |>
+  ggplot(aes(x = median_edu)) +
+  geom_bar()
+```
+
+###
+
+"Typically, a bar plot will be easier for the reader to digest than a pie chart, especially if the categorical data being plotted has more than just a few levels." The gap between the two big bars is now plain, and so are the two tiny levels, `below_hs` and missing, with 2 counties each.
+
+### Exercise 7
+
+Replace the code in that chunk with a bar chart of the proportion of counties that grew from 2010 to 2017, for the counties whose `median_edu` is `hs_diploma`, `some_college`, or `bachelors`. Give each bar its own color. Drop the counties that are missing `pop2017` first. Render.
+
+```{r}
+#| label: simplicity-color-and-story-7
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: simplicity-color-and-story-7-test
+#| echo: true
+county |>
+  drop_na(pop2017) |>
+  filter(median_edu %in% c("hs_diploma", "some_college", "bachelors")) |>
+  summarize(prop_grew = mean(pop2017 > pop2010), .by = median_edu) |>
+  ggplot(aes(x = median_edu, y = prop_grew, fill = median_edu)) +
+  geom_col()
+```
+
+###
+
+"Colors can be distracting when they are only used to brighten up the plot." These three colors, and the legend that explains them, repeat what the x-axis already says.
+
+### Exercise 8
+
+Color the `bachelors` bar to draw attention to it, make the other two bars gray, and remove the legend. Render.
+
+```{r}
+#| label: simplicity-color-and-story-8
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: simplicity-color-and-story-8-test
+#| echo: true
+county |>
+  drop_na(pop2017) |>
+  filter(median_edu %in% c("hs_diploma", "some_college", "bachelors")) |>
+  summarize(prop_grew = mean(pop2017 > pop2010), .by = median_edu) |>
+  ggplot(aes(x = median_edu, y = prop_grew, fill = median_edu == "bachelors")) +
+  geom_col(show.legend = FALSE) +
+  scale_fill_manual(values = c("grey70", "firebrick"))
+```
+
+###
+
+"An important principle to keep in mind is to use color to draw attention." 45 of the 46 counties where the median adult has a bachelor's degree grew, against about 30% of the counties where it is a high school diploma.
+
+### Exercise 9
+
+Replace the code in that chunk with a scatterplot of `pop2017` against `pop2010`, with both axes on a log scale. Drop the counties that are missing `pop2017` first. Render.
+
+```{r}
+#| label: simplicity-color-and-story-9
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: simplicity-color-and-story-9-test
+#| echo: true
+county |>
+  drop_na(pop2017) |>
+  ggplot(aes(x = pop2010, y = pop2017)) +
+  geom_point(alpha = 0.3) +
+  scale_x_log10() +
+  scale_y_log10()
+```
+
+###
+
+County populations in 2010 run from 82 in Loving County, Texas, to 9.8 million in Los Angeles County, so only a log scale shows them all. The points hug a diagonal because most counties changed by only a few percent in seven years.
+
+### Exercise 10
+
+Add a line where `pop2017` equals `pop2010`. Render.
+
+```{r}
+#| label: simplicity-color-and-story-10
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: simplicity-color-and-story-10-test
+#| echo: true
+county |>
+  drop_na(pop2017) |>
+  ggplot(aes(x = pop2010, y = pop2017)) +
+  geom_point(alpha = 0.3) +
+  geom_abline(slope = 1, intercept = 0) +
+  scale_x_log10() +
+  scale_y_log10()
+```
+
+###
+
+"Sometimes the additional information may be a diagonal line," the chapter says, and here a county above the line grew while "points below the line show the opposite." The line turns a cloud of points into a yes-or-no answer for every county.
+
+### Exercise 11
+
+Color the points by whether the county grew or shrank. Render.
+
+```{r}
+#| label: simplicity-color-and-story-11
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: simplicity-color-and-story-11-test
+#| echo: true
+county |>
+  drop_na(pop2017) |>
+  mutate(change = if_else(pop2017 > pop2010, "Grew", "Shrank")) |>
+  ggplot(aes(x = pop2010, y = pop2017, color = change)) +
+  geom_point(alpha = 0.3) +
+  geom_abline(slope = 1, intercept = 0) +
+  scale_x_log10() +
+  scale_y_log10()
+```
+
+###
+
+The shrinking counties pile up on the left, among the small ones. The chapter notes that "not everyone sees color the same way," so a second cue helps; here the line itself is that cue, since every red point also sits on one side of it.
+
+### Exercise 12
+
+Improve the scatterplot. Make the shrinking counties a color that draws attention and the growing ones gray, use commas in the axis labels, and add a label pointing to McKenzie County, North Dakota, which doubled in size during the Bakken oil boom. Add a title, axis labels, a subtitle that states the main finding, and a caption giving the number of counties and the source. Render.
+
+```{r}
+#| label: simplicity-color-and-story-12
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: simplicity-color-and-story-12-test
+#| echo: true
+county |>
+  drop_na(pop2017) |>
+  mutate(change = if_else(pop2017 > pop2010, "Grew", "Shrank")) |>
+  ggplot(aes(x = pop2010, y = pop2017, color = change)) +
+  geom_point(alpha = 0.3) +
+  geom_abline(slope = 1, intercept = 0) +
+  annotate("label", x = 6360, y = 12724, hjust = 1.05, size = 3,
+           label = "McKenzie County, ND, doubled\nin the Bakken oil boom") +
+  scale_x_log10(labels = scales::label_comma()) +
+  scale_y_log10(labels = scales::label_comma()) +
+  scale_color_manual(values = c(Grew = "grey60", Shrank = "firebrick")) +
+  labs(title = "Population of US Counties, 2010 and 2017",
+       subtitle = "More than half of counties lost people, mostly the smaller ones",
+       x = "Population in 2010",
+       y = "Population in 2017",
+       color = NULL,
+       caption = "3,139 US counties; Census Quick Facts, via usdata")
+```
+
+###
+
+"For many graphs, an important aspect is the inclusion of information which is not provided in the dataset that is being plotted." Nothing in `county` mentions oil, but the label explains the most extreme point on the page.
+
+### Exercise 13
+
+Commit `analysis.qmd` and the `data` directory with the message `"Plot county population change"` and push.
+
+```{r}
+#| label: simplicity-color-and-story-13
+#| echo: false
+learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type = "reflection")
+```
+
+###
+
+```
+3f8a2c1 (HEAD -> main, origin/main) Plot county population change
+9be04d2 Initial commit
+```
+
+###
+
+"The external information serves to contextualize the data and helps communicate the narrative of the research." A reference line, a highlight color, and one well-chosen label do more for a reader than any number of extra colors.
+
+## Order, labels, purpose, and color
+
+The chapter's last four principles, order matters, make the labels easy to read, pick a purpose, and select meaningful colors, all use one poll about Brexit, Britain's exit from the European Union. Every plot in this section shows the same 25 counts.
+
+### Exercise 1
+
+```{r}
+#| label: order-labels-purpose-and-color-1
+#| echo: false
+learnr2::question("In the bash Terminal, run head data/brexit.csv. CP/CR.", type = "reflection")
+```
+
+###
+
+```
+region,opinion,n
+London,Very well,10
+London,Fairly well,18
+London,Fairly badly,33
+London,Very badly,118
+London,Don't know,16
+Rest of South,Very well,49
+Rest of South,Fairly well,93
+Rest of South,Fairly badly,126
+```
+
+###
+
+The poll has no help page, so the chapter is its documentation: YouGov asked, "How well or badly do you think the government are doing at handling Britain's exit from the European Union?" The five answers appear in each region in the order they were offered: Very well, Fairly well, Fairly badly, Very badly, and Don't know.
+
+### Exercise 2
+
+Start a new chunk that reads `data/brexit.csv` and prints it. Render.
+
+```{r}
+#| label: order-labels-purpose-and-color-2
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: order-labels-purpose-and-color-2-test
+#| echo: true
+read_csv("data/brexit.csv", show_col_types = FALSE)
+```
+
+###
+
+"The Brexit survey results were additionally broken down by region in Great Britain." Five regions times five answers makes 25 rows, and Northern Ireland, which is in the United Kingdom but not Great Britain, is not among them.
+
+### Exercise 3
+
+Replace the printing so that the chunk calculates the total number of respondents giving each `opinion`. Render.
+
+```{r}
+#| label: order-labels-purpose-and-color-3
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: order-labels-purpose-and-color-3-test
+#| echo: true
+read_csv("data/brexit.csv", show_col_types = FALSE) |>
+  summarize(n = sum(n), .by = opinion)
+```
+
+###
+
+818 people, nearly half, said Very badly, and only 123 said Very well. The table keeps the answers in the order they first appear in the file, which is the survey's order.
+
+### Exercise 4
+
+Replace the code in that chunk so that it calculates the total number of respondents. Render.
+
+```{r}
+#| label: order-labels-purpose-and-color-4
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: order-labels-purpose-and-color-4-test
+#| echo: true
+read_csv("data/brexit.csv", show_col_types = FALSE) |>
+  summarize(n = sum(n))
+```
+
+###
+
+The chapter says "YouGov survey asked 1,639 Great Britain adults," but its own counts add up to 1,643. Text and data disagree by four people, a reminder to total the data yourself before quoting a sample size.
+
+### Exercise 5
+
+Replace the code in that chunk with a bar chart of the total number of respondents giving each `opinion`, with the answers on the y-axis. Render.
+
+```{r}
+#| label: order-labels-purpose-and-color-5
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: order-labels-purpose-and-color-5-test
+#| echo: true
+read_csv("data/brexit.csv", show_col_types = FALSE) |>
+  summarize(n = sum(n), .by = opinion) |>
+  ggplot(aes(x = n, y = opinion)) +
+  geom_col()
+```
+
+###
+
+The table's order is gone: the plot sorts the answers alphabetically, with Don't know at the bottom and Very well at the top. As the book says of its own version of this plot, "the alphabetical ordering isn't particularly meaningful for describing the data."
+
+### Exercise 6
+
+Order the bars by the number of respondents, with the longest bar at the top. Render.
+
+```{r}
+#| label: order-labels-purpose-and-color-6
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: order-labels-purpose-and-color-6-test
+#| echo: true
+read_csv("data/brexit.csv", show_col_types = FALSE) |>
+  summarize(n = sum(n), .by = opinion) |>
+  ggplot(aes(x = n, y = fct_reorder(opinion, n))) +
+  geom_col()
+```
+
+###
+
+"Sometimes it makes sense to" sort bars "from tallest to shortest (or vice versa)," and this order makes the winning answer obvious. But it scatters the two positive answers and the two negative ones, which belong together.
+
+### Exercise 7
+
+Put the bars in the order the survey offered the answers, with Very well at the top and Don't know at the bottom. Render.
+
+```{r}
+#| label: order-labels-purpose-and-color-7
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: order-labels-purpose-and-color-7-test
+#| echo: true
+read_csv("data/brexit.csv", show_col_types = FALSE) |>
+  summarize(n = sum(n), .by = opinion) |>
+  mutate(opinion = fct_relevel(opinion, "Very well", "Fairly well",
+                               "Fairly badly", "Very badly", "Don't know")) |>
+  ggplot(aes(x = n, y = fct_rev(opinion))) +
+  geom_col()
+```
+
+###
+
+"But in this case, the best ordering is probably the one in which the questions were asked." "An ordering which does not make sense in the context of the problem (e.g., alphabetically here), can mislead the reader who might take a quick glance at the axes and not read the bar labels carefully."
+
+### Exercise 8
+
+Replace the code in that chunk so that it only reads `data/brexit.csv` and stores it as `brexit`, with `opinion` in the survey's order and `region` ordered from south to north: London, Rest of South, Midlands / Wales, North, and Scotland. Render.
+
+```{r}
+#| label: order-labels-purpose-and-color-8
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: order-labels-purpose-and-color-8-test
+#| echo: true
+brexit <- read_csv("data/brexit.csv", show_col_types = FALSE) |>
+  mutate(opinion = fct_relevel(opinion, "Very well", "Fairly well",
+                               "Fairly badly", "Very badly", "Don't know"),
+         region = fct_relevel(region, "London", "Rest of South",
+                              "Midlands / Wales", "North", "Scotland"))
+```
+
+###
+
+A categorical variable stored with its levels in a fixed order carries that order into every later table and plot. "Most software programs have built in methods for some of the plot details -- some order levels alphabetically, some provide functionality for arranging them in a custom order."
+
+### Exercise 9
+
+Add `#| cache: true` to that chunk. Render.
+
+```{r}
+#| label: order-labels-purpose-and-color-9
+#| echo: false
+learnr2::question("In the bash Terminal, run ls. CP/CR.", type = "reflection")
+```
+
+###
+
+```
+analysis.html  analysis.qmd  analysis_cache  analysis_files  data
+```
+
+###
+
+`analysis_cache` now holds `brexit`, so later renders load it from disk instead of reading the file again. A cached chunk only re-runs when its code changes.
+
+### Exercise 10
+
+Your Source Control count just jumped, because Git sees every file in the new cache directory. Add `analysis_cache` to `.gitignore`, and the count drops back.
+
+```{r}
+#| label: order-labels-purpose-and-color-10
+#| echo: false
+learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type = "reflection")
+```
+
+###
+
+```
+analysis_files
+analysis_cache
+```
+
+###
+
+"The stacked bar plot allows for comparison of Brexit opinion across the five regions." Each bar is a region, and its segments are the five answers.
+
+### Exercise 11
+
+Start a new chunk with a stacked bar chart of `brexit`, with one vertical bar for each `region`, divided into segments by `opinion`. Render.
+
+```{r}
+#| label: order-labels-purpose-and-color-11
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: order-labels-purpose-and-color-11-test
+#| echo: true
+brexit |>
+  ggplot(aes(x = region, y = n, fill = opinion)) +
+  geom_col()
+```
+
+###
+
+The bars' heights mostly show how many people were polled in each region: 552 in the Rest of South, 142 in Scotland. The region names have to squeeze in side by side along the x-axis.
+
+### Exercise 12
+
+Make the bars horizontal, with the regions on the y-axis. Render.
+
+```{r}
+#| label: order-labels-purpose-and-color-12
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: order-labels-purpose-and-color-12-test
+#| echo: true
+brexit |>
+  ggplot(aes(x = n, y = region, fill = opinion)) +
+  geom_col()
+```
+
+###
+
+"The easier the categories are to read, the more the reader will learn from the visualization." With London at the bottom and Scotland at the top, the regions now also run from south to north, as on a map.
+
+### Exercise 13
+
+Make each bar show the proportion of the region's respondents giving each answer, so that every bar has the same length. Render.
+
+```{r}
+#| label: order-labels-purpose-and-color-13
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: order-labels-purpose-and-color-13-test
+#| echo: true
+brexit |>
+  ggplot(aes(x = n, y = region, fill = opinion)) +
+  geom_col(position = "fill")
+```
+
+###
+
+"Stacked bar plots tell one part of a story." Counts told us where the poll found its people; proportions show that Scotland and London were the most negative, despite their small samples.
+
+### Exercise 14
+
+Replace the code in that chunk with a separate bar chart of the number of respondents giving each `opinion` for each `region`, side by side, with the answers on the y-axis in the survey's order. Use few enough tick marks that the numbers on the x-axes do not run together. Render.
+
+```{r}
+#| label: order-labels-purpose-and-color-14
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: order-labels-purpose-and-color-14-test
+#| echo: true
+brexit |>
+  ggplot(aes(x = n, y = fct_rev(opinion))) +
+  geom_col() +
+  facet_wrap(~ region, nrow = 1) +
+  scale_x_continuous(breaks = c(0, 100, 200))
+```
+
+###
+
+Splitting one plot into a panel for each group is called faceting, and it shows the shape of opinion within each region. "Depending on your research question, they may not tell the part of the story most important to the research," which is why the chapter asks you to pick a purpose before picking a plot.
+
+### Exercise 15
+
+Return to the stacked bar chart of proportions, and color its segments with the cividis color scale. Render.
+
+```{r}
+#| label: order-labels-purpose-and-color-15
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: order-labels-purpose-and-color-15-test
+#| echo: true
+brexit |>
+  ggplot(aes(x = n, y = region, fill = opinion)) +
+  geom_col(position = "fill") +
+  scale_fill_viridis_d(option = "cividis")
+```
+
+###
+
+"Default or rainbow colors are not always the choice which will best distinguish the level of your variables." "The cividis scale works well with ordinal data," and it was designed by Nuñez and colleagues to look the same to people with and without color vision deficiency.
+
+### Exercise 16
+
+Improve the plot. Put Very well at the left end of each bar, show the x-axis as percentages, and put the legend on top. Use the survey question as the title, and add a subtitle that states the main finding and a caption giving the number of respondents and the source. Remove the axis titles. Render.
+
+```{r}
+#| label: order-labels-purpose-and-color-16
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: order-labels-purpose-and-color-16-test
+#| echo: true
+brexit |>
+  ggplot(aes(x = n, y = region, fill = opinion)) +
+  geom_col(position = position_fill(reverse = TRUE)) +
+  scale_fill_viridis_d(option = "cividis") +
+  scale_x_continuous(labels = scales::label_percent()) +
+  labs(title = "How well or badly do you think the government are doing\nat handling Britain's exit from the European Union?",
+       subtitle = "Very badly was the top answer in every region, from 43% in Midlands / Wales to 63% in Scotland",
+       x = NULL,
+       y = NULL,
+       fill = NULL,
+       caption = "1,643 Great Britain adults; YouGov, 2-3 September 2019") +
+  theme(legend.position = "top",
+        plot.title.position = "plot")
+```
+
+###
+
+"Labels should be clear and oriented horizontally for the reader." "Don't forget titles and, if possible, include the source of the data."
+
+### Exercise 17
+
+Commit `analysis.qmd` and `.gitignore` with the message `"Plot Brexit opinion by region"` and push.
+
+```{r}
+#| label: order-labels-purpose-and-color-17
+#| echo: false
+learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type = "reflection")
+```
+
+###
+
+```
+b71e4d9 (HEAD -> main, origin/main) Plot Brexit opinion by region
+3f8a2c1 Plot county population change
+9be04d2 Initial commit
+```
+
+###
+
+"The fundamental principle is that your graph should provide maximal information succinctly and clearly." Order, orientation, proportion, and color each changed what the same 25 numbers said.
+
+## Summary
+
+This tutorial covered [Chapter 6: Applications: Explore](https://openintrostat.github.io/ims/explore-applications.html) from [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) by Mine Çetinkaya-Rundel and Johanna Hardin. You have learned the chapter's principles for communicating exploratory results: keep it simple, use color to draw attention, tell a story, put categories in a meaningful order, make labels easy to read, pick a purpose, and select meaningful colors.
+
+For the research behind the cividis scale, read "[Optimizing colormaps with consideration for color vision deficiency to enable accurate interpretation of scientific data](https://doi.org/10.1371/journal.pone.0199239)" by Nuñez, Anderton, and Renslow, which the chapter cites. For the poll itself, see YouGov's [survey results](https://d25d2506sfb94s.cloudfront.net/cumulus_uploads/document/x0msmggx08/YouGov%20-%20Brexit%20and%202019%20election.pdf).
+
+### Exercise 1
+
+Render one last time.
+
+```{r}
+#| label: summary-1
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). CP/CR.', type = "reflection")
+```
+
+###
+
+<pre><code>---
+title: "Applications: Explore"
+author: "Your Name"
+format: html
+execute:
+  echo: false
+---
+
+&#96;&#96;&#96;{r}
+#| message: false
+library(tidyverse)
+library(usdata)
+&#96;&#96;&#96;
+
+&#96;&#96;&#96;{r}
+county |>
+  drop_na(pop2017) |>
+  mutate(change = if_else(pop2017 > pop2010, "Grew", "Shrank")) |>
+  ggplot(aes(x = pop2010, y = pop2017, color = change)) +
+  geom_point(alpha = 0.3) +
+  geom_abline(slope = 1, intercept = 0) +
+  annotate("label", x = 6360, y = 12724, hjust = 1.05, size = 3,
+           label = "McKenzie County, ND, doubled\nin the Bakken oil boom") +
+  scale_x_log10(labels = scales::label_comma()) +
+  scale_y_log10(labels = scales::label_comma()) +
+  scale_color_manual(values = c(Grew = "grey60", Shrank = "firebrick")) +
+  labs(title = "Population of US Counties, 2010 and 2017",
+       subtitle = "More than half of counties lost people, mostly the smaller ones",
+       x = "Population in 2010",
+       y = "Population in 2017",
+       color = NULL,
+       caption = "3,139 US counties; Census Quick Facts, via usdata")
+&#96;&#96;&#96;
+
+&#96;&#96;&#96;{r}
+#| cache: true
+brexit <- read_csv("data/brexit.csv", show_col_types = FALSE) |>
+  mutate(opinion = fct_relevel(opinion, "Very well", "Fairly well",
+                               "Fairly badly", "Very badly", "Don't know"),
+         region = fct_relevel(region, "London", "Rest of South",
+                              "Midlands / Wales", "North", "Scotland"))
+&#96;&#96;&#96;
+
+&#96;&#96;&#96;{r}
+brexit |>
+  ggplot(aes(x = n, y = region, fill = opinion)) +
+  geom_col(position = position_fill(reverse = TRUE)) +
+  scale_fill_viridis_d(option = "cividis") +
+  scale_x_continuous(labels = scales::label_percent()) +
+  labs(title = "How well or badly do you think the government are doing\nat handling Britain's exit from the European Union?",
+       subtitle = "Very badly was the top answer in every region, from 43% in Midlands / Wales to 63% in Scotland",
+       x = NULL,
+       y = NULL,
+       fill = NULL,
+       caption = "1,643 Great Britain adults; YouGov, 2-3 September 2019") +
+  theme(legend.position = "top",
+        plot.title.position = "plot")
+&#96;&#96;&#96;
+</code></pre>
+
+###
+
+The page holds two finished graphics, each built by removing distractions and adding context. "In this chapter different representations are contrasted to demonstrate best practices in creating graphs."
+
+### Exercise 2
+
+Publish your analysis to GitHub Pages. In a bash Terminal, run:
+
+```
+quarto publish gh-pages analysis.qmd
+```
+
+```{r}
+#| label: summary-2
+#| echo: false
+learnr2::question("Paste the URL of your published page.", type = "reflection")
+```
+
+###
+
+Your answer should look like `https://your-github-username.github.io/applications-explore/`.
+
+###
+
+"Unfortunately, however, there are times when an image conveys a message which is inaccurate or misleading." A published page reaches readers who will never see your code, so the plot has to carry its own title, labels, and source.
+
+### Exercise 3
+
+Commit and push any remaining changes.
+
+```{r}
+#| label: summary-3
+#| echo: false
+learnr2::question("Paste the URL of your GitHub repo.", type = "reflection")
+```
+
+###
+
+Your answer should look like `https://github.com/your-github-username/applications-explore`.
+
+###
+
+"Along with data modeling, creative visualization is somewhat of an art." "However, even with an art, there are recommended guiding principles."
+
+## Your Answers
+
+```{r}
+#| label: your-answers-1
+#| echo: false
+learnr2::question(
+  "How many minutes, approximately, did it take you to complete this
+  tutorial? For example, an hour and a half would be 90 minutes.",
+  type = "reflection_editable",
+  validate = "integer"
+)
+```
+
+```{r}
+#| label: your-answers-2
+#| echo: false
+learnr2::download_answers_button(filename_prefix = "06-applications-explore")
+```

@@ -45,12 +45,12 @@ Open `analysis.html` with Live Server (right-click it in the Explorer → **Open
 
 Create a `.gitignore` with `analysis_files` followed by a blank line. Commit and push. Use AI however you like.
 
-In the R Terminal, run `show_file(".gitignore")`. If that fails, it is probably because you have not yet loaded `library(learnr2)` in the R Terminal.
+If `show_file()` fails, it is probably because you have not yet loaded `library(learnr2)` in the R Terminal.
 
 ```{r}
 #| label: introduction-1
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -67,12 +67,10 @@ analysis_files
 
 Add a chunk to `analysis.qmd` that loads the **[tidyverse](https://www.tidyverse.org/)**, with `#| message: false` so the startup messages stay out of the rendered page. Add `execute: echo: false` to the YAML header. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: introduction-2
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -89,12 +87,10 @@ Every plot in this chapter, from dot plots to intensity maps, is a **ggplot2** p
 
 Add **[openintro](https://openintrostat.github.io/openintro/)** to that chunk. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: introduction-3
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -112,12 +108,10 @@ library(openintro)
 
 Add **[usdata](https://openintrostat.github.io/usdata/)** to that chunk. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: introduction-4
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -136,12 +130,10 @@ library(usdata)
 
 Add **[maps](https://cran.r-project.org/package=maps)** to that chunk. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: introduction-5
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -163,12 +155,10 @@ library(maps)
 
 ### Exercise 1
 
-In the R Terminal, run `?loan50` to open the help page. Copy and paste the entries for `loan_amount` and `interest_rate` from the Format section.
-
 ```{r}
 #| label: center-spread-and-shape-1
 #| echo: false
-learnr2::question("Paste the two entries.", type = "reflection_editable")
+learnr2::question("In the R Terminal, run ?loan50. Copy and paste the entries for loan_amount and interest_rate from the Format section.", type = "reflection")
 ```
 
 ###
@@ -187,12 +177,10 @@ The help page is shared with `loans_full_schema`, the 10,000-loan dataset that `
 
 Add a chunk with a scatterplot of `loan_amount` against `total_income`, using `loan50`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: center-spread-and-shape-2
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -213,12 +201,10 @@ loan50 |>
 
 Replace the code in that chunk with a dot plot of `interest_rate`: one dot per loan, stacked where rates coincide. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: center-spread-and-shape-3
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -239,12 +225,10 @@ loan50 |>
 
 Replace the code in that chunk so that it calculates the mean of `interest_rate`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: center-spread-and-shape-4
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -264,12 +248,10 @@ loan50 |>
 
 Replace the code in that chunk with a histogram of `interest_rate`, with bins 2.5 percentage points wide starting at 5. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: center-spread-and-shape-5
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -290,12 +272,10 @@ loan50 |>
 
 Replace the histogram with a density plot of `interest_rate`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: center-spread-and-shape-6
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -316,12 +296,10 @@ A **density plot** "is a smoothed out histogram." It has one prominent peak, so 
 
 Replace the code in that chunk so that it calculates the variance and the standard deviation of `interest_rate`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: center-spread-and-shape-7
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -342,12 +320,10 @@ loan50 |>
 
 Replace the code in that chunk so that it counts how many loans have an `interest_rate` within one standard deviation of the mean, and how many within two. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: center-spread-and-shape-8
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -369,12 +345,10 @@ loan50 |>
 
 Replace the code in that chunk with a box plot of `interest_rate`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: center-spread-and-shape-9
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -395,12 +369,10 @@ loan50 |>
 
 Replace the code in that chunk so that it calculates the median, the first quartile, the third quartile, and the interquartile range of `interest_rate`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: center-spread-and-shape-10
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -423,12 +395,10 @@ loan50 |>
 
 Replace the code in that chunk so that it changes the largest `interest_rate`, 26.3%, to 35%, and then calculates the median, IQR, mean, and standard deviation of the altered rates. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: center-spread-and-shape-11
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -452,12 +422,10 @@ The median and IQR did not move; the mean rose from 11.57 to 11.74 and the stand
 
 Replace the code in that chunk with the histogram of `interest_rate` from before, with a vertical line at the mean and another at the median. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: center-spread-and-shape-12
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -480,12 +448,10 @@ The mean sits to the right of the median, pulled by the long right tail. "If you
 
 Improve the histogram. Show rates as percentages, label the two lines, and add a title, axis labels, a subtitle that states the main finding, and a caption giving the number of loans. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: center-spread-and-shape-13
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -514,12 +480,12 @@ loan50 |>
 
 ### Exercise 14
 
-Commit `analysis.qmd` with the message `"Describe loan interest rates"` and push. In a bash Terminal, run `git log --oneline -3`.
+Commit `analysis.qmd` with the message `"Describe loan interest rates"` and push.
 
 ```{r}
 #| label: center-spread-and-shape-14
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type = "reflection")
 ```
 
 ###
@@ -539,12 +505,10 @@ learnr2::question("CP/CR.", type = "reflection_editable")
 
 ### Exercise 1
 
-In the R Terminal, run `?county`. Copy and paste the entries for `pop2010`, `poverty`, and `unemployment_rate` from the Format section.
-
 ```{r}
 #| label: transforming-and-mapping-data-1
 #| echo: false
-learnr2::question("Paste the three entries.", type = "reflection_editable")
+learnr2::question("In the R Terminal, run ?county. Copy and paste the entries for pop2010, poverty, and unemployment_rate from the Format section.", type = "reflection")
 ```
 
 ###
@@ -565,12 +529,10 @@ Populations are counts of people; poverty and unemployment are percentages. A va
 
 Start a new chunk with a histogram of `pop2017`, using the counties in `county` where it is known. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: transforming-and-mapping-data-2
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -592,12 +554,10 @@ county |>
 
 Change the histogram so that the x-axis shows `pop2017` on a base-10 logarithmic scale. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: transforming-and-mapping-data-3
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -620,12 +580,10 @@ county |>
 
 Replace the code in that chunk with a scatterplot of `pop_change` against `pop2010`, for the counties where `pop_change` is known. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: transforming-and-mapping-data-4
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -647,12 +605,10 @@ county |>
 
 Put the x-axis of that scatterplot on a base-10 logarithmic scale. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: transforming-and-mapping-data-5
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -675,12 +631,10 @@ county |>
 
 Replace the code in that chunk with a scatterplot of `median_hh_income` against `poverty`, with a smooth curve through the points. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: transforming-and-mapping-data-6
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -703,12 +657,10 @@ county |>
 
 Start a new chunk that joins `county` to the county outlines from **maps**, matching on state and county name, stores the result as `county_map`, and prints it. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: transforming-and-mapping-data-7
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -734,12 +686,10 @@ Each of the 87,949 rows is one corner of one county's outline, with that county'
 
 Delete the line that prints `county_map`, so that the chunk only creates it. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: transforming-and-mapping-data-8
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -758,12 +708,12 @@ The **maps** outlines cover 3,076 counties in the lower 48 states; Alaska and Ha
 
 ### Exercise 9
 
-Add `#| cache: true` to that chunk. Render. In the bash Terminal, run `ls`.
+Add `#| cache: true` to that chunk. Render.
 
 ```{r}
 #| label: transforming-and-mapping-data-9
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question("In the bash Terminal, run ls. CP/CR.", type = "reflection")
 ```
 
 ###
@@ -780,12 +730,10 @@ analysis.html  analysis.qmd  analysis_cache  analysis_files
 
 Your Source Control count just jumped, because Git sees every file in the new cache directory. Add `analysis_cache` to `.gitignore`, and the count drops back.
 
-In the R Terminal, run `show_file(".gitignore")`.
-
 ```{r}
 #| label: transforming-and-mapping-data-10
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -803,12 +751,10 @@ analysis_cache
 
 Start a new chunk that draws `county_map` as a map of county outlines, each filled by its `poverty` rate. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: transforming-and-mapping-data-11
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -830,12 +776,10 @@ county_map |>
 
 Improve the map. Use a color scale that runs from light to dark, label the legend in percentages, remove the axes and grid, and add a title, a subtitle that states the main finding, and a caption giving the source. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: transforming-and-mapping-data-12
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -861,12 +805,12 @@ county_map |>
 
 ### Exercise 13
 
-Commit `analysis.qmd` and `.gitignore` with the message `"Transform and map county data"` and push. In a bash Terminal, run `git log --oneline -3`.
+Commit `analysis.qmd` and `.gitignore` with the message `"Transform and map county data"` and push.
 
 ```{r}
 #| label: transforming-and-mapping-data-13
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type = "reflection")
 ```
 
 ###
@@ -889,12 +833,12 @@ For the history of the box plot, which the chapter credits to Mary Eleanor Spear
 
 ### Exercise 1
 
-Render one last time. In the R Terminal, run `show_file("analysis.qmd", start = 0)` to see the whole file.
+Render one last time.
 
 ```{r}
 #| label: summary-1
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -978,7 +922,7 @@ quarto publish gh-pages analysis.qmd
 ```{r}
 #| label: summary-2
 #| echo: false
-learnr2::question("Paste the URL of your published page.", type = "reflection_editable")
+learnr2::question("Paste the URL of your published page.", type = "reflection")
 ```
 
 ###
@@ -996,7 +940,7 @@ Commit and push any remaining changes.
 ```{r}
 #| label: summary-3
 #| echo: false
-learnr2::question("Paste the URL of your GitHub repo.", type = "reflection_editable")
+learnr2::question("Paste the URL of your GitHub repo.", type = "reflection")
 ```
 
 ###

@@ -44,12 +44,12 @@ Open `analysis.html` with Live Server (right-click it in the Explorer → **Open
 
 Create a `.gitignore` with `analysis_files` followed by a blank line. Commit and push. Use AI however you like.
 
-In the R Terminal, run `show_file(".gitignore")`. If that fails, it is probably because you have not yet loaded `library(learnr2)` in the R Terminal.
+If `show_file()` fails, it is probably because you have not yet loaded `library(learnr2)` in the R Terminal.
 
 ```{r}
 #| label: introduction-1
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -66,12 +66,10 @@ analysis_files
 
 Add a chunk to `analysis.qmd` that loads the **[tidyverse](https://www.tidyverse.org/)**, with `#| message: false` so the startup messages stay out of the rendered page. Add `execute: echo: false` to the YAML header. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: introduction-2
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -88,12 +86,10 @@ The **tidyverse** is a family of packages for importing, reshaping, summarizing,
 
 Add **[openintro](https://openintrostat.github.io/openintro/)** to that chunk. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: introduction-3
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -111,12 +107,10 @@ library(openintro)
 
 Add **[usdata](https://openintrostat.github.io/usdata/)** to that chunk. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: introduction-4
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -139,12 +133,10 @@ Stents are small mesh tubes placed inside narrow or weak arteries. Researchers e
 
 Add a chunk that prints `stent365`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: case-study-using-stents-to-prevent-strokes-1
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -161,12 +153,10 @@ Each row is one patient: `group` records whether they received a stent, and `out
 
 ### Exercise 2
 
-In the R Terminal, run `?stent365` to open the help page. Copy and paste the Description and the Source sections.
-
 ```{r}
 #| label: case-study-using-stents-to-prevent-strokes-2
 #| echo: false
-learnr2::question("Paste the Description and Source.", type = "reflection_editable")
+learnr2::question("In the R Terminal, run ?stent365. Copy and paste the Description and the Source sections.", type = "reflection")
 ```
 
 ###
@@ -194,12 +184,10 @@ Read the description closely: the results are measured 30 and 365 days after eac
 
 Replace the code in that chunk so that it counts the number of patients in each `group`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: case-study-using-stents-to-prevent-strokes-3
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -219,12 +207,10 @@ Researchers randomly assigned 224 patients to the treatment group, who received 
 
 Replace the code in that chunk so that it counts patients by both `group` and `outcome`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: case-study-using-stents-to-prevent-strokes-4
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -244,12 +230,10 @@ stent365 |>
 
 Replace the code in that chunk so that it calculates, for each `group`, the proportion of patients who had a stroke. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: case-study-using-stents-to-prevent-strokes-5
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -270,12 +254,10 @@ stent365 |>
 
 The study also recorded outcomes 30 days after enrollment, in `stent30`. Start a new chunk that stacks `stent30` and `stent365` into one tibble named `stent`, with a `time` column recording `"30 days"` or `"365 days"`. In the same chunk, calculate the proportion of patients who had a stroke for each combination of `time` and `group`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: case-study-using-stents-to-prevent-strokes-6
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -298,12 +280,10 @@ The gap opened early: within 30 days, 14.7% of the treatment group had a stroke,
 
 Replace the summary in that chunk with a bar chart of the proportion of patients who had a stroke, by `group`, with one panel for each `time`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: case-study-using-stents-to-prevent-strokes-7
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -327,12 +307,10 @@ The treatment bar is taller in both panels, the opposite of what doctors expecte
 
 Improve the bar chart. Put the 30-day panel first, label each bar with its percentage, and show the y-axis as percentages. Add a title, axis labels, a subtitle that states the main finding, and a caption giving the number of patients and the source. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: case-study-using-stents-to-prevent-strokes-8
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -363,12 +341,12 @@ stent |>
 
 ### Exercise 9
 
-Commit `analysis.qmd` with the message `"Analyze the stent experiment"` and push. In a bash Terminal, run `git log --oneline -3`.
+Commit `analysis.qmd` with the message `"Analyze the stent experiment"` and push.
 
 ```{r}
 #| label: case-study-using-stents-to-prevent-strokes-9
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type = "reflection")
 ```
 
 ###
@@ -390,12 +368,10 @@ Even if stents did nothing, the two groups would rarely have exactly equal strok
 
 Start a new chunk that prints `loan50`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: data-basics-1
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -412,12 +388,10 @@ loan50
 
 ### Exercise 2
 
-In the R Terminal, run `?loan50`. Copy and paste the Description and the first line of the Format section.
-
 ```{r}
 #| label: data-basics-2
 #| echo: false
-learnr2::question("Paste the Description and the first line of Format.", type = "reflection_editable")
+learnr2::question("In the R Terminal, run ?loan50. Copy and paste the Description and the first line of the Format section.", type = "reflection")
 ```
 
 ###
@@ -446,12 +420,10 @@ This page also documents `loans_full_schema`, with 10,000 loans and 55 variables
 
 Replace the code in that chunk so that it prints the names of all 18 variables. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: data-basics-3
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -470,12 +442,10 @@ names(loan50)
 
 Replace the code in that chunk so that it keeps only `loan_amount`, `interest_rate`, `term`, `grade`, `state`, `total_income`, and `homeownership`, and shows the type and first few values of each. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: data-basics-4
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -496,12 +466,10 @@ The first loan is for $22,000 at 10.90% interest, to a borrower in New Jersey wi
 
 Replace the code in that chunk so that it calculates the mean and the median of `interest_rate`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: data-basics-5
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -522,12 +490,10 @@ A variable is *numerical* when "it is sensible to add, subtract, or take average
 
 Replace the code in that chunk so that it counts the loans from each `state`, from most to fewest. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: data-basics-6
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -547,12 +513,10 @@ You can count states but not average them, which makes `state` a *categorical* v
 
 Replace the code in that chunk so that it counts the loans in each `grade`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: data-basics-7
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -572,12 +536,10 @@ Grade B is the most common, with 19 loans. The book says grades run from A throu
 
 Replace the code in that chunk so that it prints the levels of `grade`: every value it is allowed to take, not just the ones that appear. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: data-basics-8
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -596,12 +558,10 @@ levels(loan50$grade)
 
 Replace the code in that chunk so that it counts the loans with each `term`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: data-basics-9
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -621,12 +581,10 @@ loan50 |>
 
 Start a new chunk that prints `county`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: data-basics-10
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -643,12 +601,10 @@ Each of the 3,142 rows is a county, described by 15 variables covering populatio
 
 ### Exercise 11
 
-In the R Terminal, run `?county`. Copy and paste the first line of the Format section, the entry for `smoking_ban`, and the Source section.
-
 ```{r}
 #| label: data-basics-11
 #| echo: false
-learnr2::question("Paste the three excerpts.", type = "reflection_editable")
+learnr2::question("In the R Terminal, run ?county. Copy and paste the first line of the Format section, the entry for smoking_ban, and the Source section.", type = "reflection")
 ```
 
 ###
@@ -677,12 +633,10 @@ The page says 14 variables, but it documents 15, as many as the data frame has. 
 
 Replace the code in that chunk so that it counts the missing values in each column of `county`, with one row per column. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: data-basics-12
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -703,12 +657,10 @@ No column is missing more than three values except `smoking_ban`, which is missi
 
 Replace the code in that chunk so that it counts the counties with each value of `smoking_ban`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: data-basics-13
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -728,12 +680,10 @@ The help page promises none, partial, or comprehensive, yet not one county is co
 
 Replace the code in that chunk so that it counts the counties with each value of `median_edu`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: data-basics-14
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -753,12 +703,10 @@ county |>
 
 Replace the code in that chunk so that it keeps `name`, `state`, `homeownership`, `multi_unit`, `pop_change`, and `median_hh_income`, drops every county with a missing value in any of them, and stores the result as `county_clean`. Print `county_clean`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: data-basics-15
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -781,12 +729,10 @@ county_clean
 
 Delete the line that prints `county_clean`, so that the chunk only creates it. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: data-basics-16
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -802,12 +748,12 @@ learnr2::question("CP/CR.", type = "reflection_editable")
 
 ### Exercise 17
 
-Add `#| cache: true` to that chunk. Render. In the bash Terminal, run `ls`.
+Add `#| cache: true` to that chunk. Render.
 
 ```{r}
 #| label: data-basics-17
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question("In the bash Terminal, run ls. CP/CR.", type = "reflection")
 ```
 
 ###
@@ -824,12 +770,10 @@ analysis.html  analysis.qmd  analysis_cache  analysis_files
 
 Your Source Control count just jumped, because Git sees every file in the new cache directory. Add `analysis_cache` to `.gitignore`, and the count drops back.
 
-In the R Terminal, run `show_file(".gitignore")`.
-
 ```{r}
 #| label: data-basics-18
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -847,12 +791,10 @@ Each row of `county` describes a whole county. A relationship you find in this d
 
 Start a new chunk with a scatterplot of `homeownership` against `multi_unit`, using `county_clean`. Add a title, axis labels, a subtitle that states the main finding, and a caption giving the number of counties. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: data-basics-19
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -878,12 +820,10 @@ Counties with more multi-unit housing tend to have lower homeownership, a *negat
 
 One county sits alone at 0% homeownership. Start a new chunk that shows the three counties in `county_clean` with the lowest homeownership rates, along with their `state`, `homeownership`, and `multi_unit`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: data-basics-20
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -904,12 +844,10 @@ Kalawao County, Hawaii, has 88 residents: it is a former settlement for people w
 
 Replace the code in that chunk with a scatterplot of `pop_change` against `median_hh_income`, using `county_clean`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: data-basics-21
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -930,12 +868,10 @@ Counties with higher median household incomes tend to have grown faster, a *posi
 
 Improve the scatterplot. Add a trend line, show income in dollars, and add a title, axis labels, a subtitle that states the main finding, and a caption giving the number of counties. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: data-basics-22
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -961,12 +897,12 @@ Income sits on the x-axis because, if we suspect it drives growth, it is the *ex
 
 ### Exercise 23
 
-Commit `analysis.qmd` and `.gitignore` with the message `"Explore loans and counties"` and push. In a bash Terminal, run `git log --oneline -3`.
+Commit `analysis.qmd` and `.gitignore` with the message `"Explore loans and counties"` and push.
 
 ```{r}
 #| label: data-basics-23
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type = "reflection")
 ```
 
 ###
@@ -989,12 +925,12 @@ For more on organizing data, read Hadley Wickham's "[Tidy Data](https://doi.org/
 
 ### Exercise 1
 
-Render one last time. In the R Terminal, run `show_file("analysis.qmd", start = 0)` to see the whole file.
+Render one last time.
 
 ```{r}
 #| label: summary-1
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -1097,7 +1033,7 @@ quarto publish gh-pages analysis.qmd
 ```{r}
 #| label: summary-2
 #| echo: false
-learnr2::question("Paste the URL of your published page.", type = "reflection_editable")
+learnr2::question("Paste the URL of your published page.", type = "reflection")
 ```
 
 ###
@@ -1115,7 +1051,7 @@ Commit and push any remaining changes.
 ```{r}
 #| label: summary-3
 #| echo: false
-learnr2::question("Paste the URL of your GitHub repo.", type = "reflection_editable")
+learnr2::question("Paste the URL of your GitHub repo.", type = "reflection")
 ```
 
 ###

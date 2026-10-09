@@ -45,12 +45,12 @@ Open `analysis.html` with Live Server (right-click it in the Explorer → **Open
 
 Create a `.gitignore` with `analysis_files` followed by a blank line. Commit and push. Use AI however you like.
 
-In the R Terminal, run `show_file(".gitignore")`. If that fails, it is probably because you have not yet loaded `library(learnr2)` in the R Terminal.
+If `show_file()` fails, it is probably because you have not yet loaded `library(learnr2)` in the R Terminal.
 
 ```{r}
 #| label: introduction-1
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -67,12 +67,10 @@ analysis_files
 
 Add a chunk to `analysis.qmd` that loads the **[tidyverse](https://www.tidyverse.org/)**, with `#| message: false` so the startup messages stay out of the rendered page. Add `execute: echo: false` to the YAML header. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: introduction-2
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -89,12 +87,10 @@ The **tidyverse** includes **forcats**, for working with *factors*, R's type for
 
 Add **[openintro](https://openintrostat.github.io/openintro/)** to that chunk. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: introduction-3
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -112,12 +108,10 @@ library(openintro)
 
 Add **[usdata](https://openintrostat.github.io/usdata/)** to that chunk. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: introduction-4
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -136,12 +130,10 @@ library(usdata)
 
 Add **[ggridges](https://wilkelab.org/ggridges/)** to that chunk. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: introduction-5
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -165,12 +157,10 @@ library(ggridges)
 
 Add a chunk that prints `loans_full_schema`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: contingency-tables-and-bar-plots-1
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -187,12 +177,10 @@ loans_full_schema
 
 ### Exercise 2
 
-In the R Terminal, run `?loans_full_schema` to open the help page. Copy and paste the entries for `homeownership` and `application_type` from the Format section.
-
 ```{r}
 #| label: contingency-tables-and-bar-plots-2
 #| echo: false
-learnr2::question("Paste the two entries.", type = "reflection_editable")
+learnr2::question("In the R Terminal, run ?loans_full_schema. Copy and paste the entries for homeownership and application_type from the Format section.", type = "reflection")
 ```
 
 ###
@@ -212,12 +200,10 @@ learnr2::question("Paste the two entries.", type = "reflection_editable")
 
 Replace the code in that chunk so that it counts the loans with each value of `homeownership`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: contingency-tables-and-bar-plots-3
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -237,12 +223,10 @@ The levels arrive in capitals and in alphabetical order: MORTGAGE, OWN, RENT. Th
 
 Replace the code in that chunk so that it counts the loans with each value of `application_type`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: contingency-tables-and-bar-plots-4
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -262,12 +246,10 @@ loans_full_schema |>
 
 Start a new chunk that creates `loans` from `loans_full_schema`, with `homeownership` converted to lowercase and its levels ordered rent, mortgage, own. Print `loans`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: contingency-tables-and-bar-plots-5
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -290,12 +272,10 @@ loans
 
 Delete the line that prints `loans`, so that the chunk only creates it. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: contingency-tables-and-bar-plots-6
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -311,12 +291,12 @@ Every table and plot in the rest of this section starts from `loans`, so it earn
 
 ### Exercise 7
 
-Add `#| cache: true` to that chunk. Render. In the bash Terminal, run `ls`.
+Add `#| cache: true` to that chunk. Render.
 
 ```{r}
 #| label: contingency-tables-and-bar-plots-7
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question("In the bash Terminal, run ls. CP/CR.", type = "reflection")
 ```
 
 ###
@@ -333,12 +313,10 @@ analysis.html  analysis.qmd  analysis_cache  analysis_files
 
 Your Source Control count just jumped, because Git sees every file in the new cache directory. Add `analysis_cache` to `.gitignore`, and the count drops back.
 
-In the R Terminal, run `show_file(".gitignore")`.
-
 ```{r}
 #| label: contingency-tables-and-bar-plots-8
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -356,12 +334,10 @@ analysis_cache
 
 Start a new chunk that counts the loans in each combination of `application_type` and `homeownership`, then spreads the result into a table with one row per `application_type` and one column per level of `homeownership`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: contingency-tables-and-bar-plots-9
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -382,12 +358,10 @@ loans |>
 
 Replace the code in that chunk with a bar plot of the number of loans at each level of `homeownership`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: contingency-tables-and-bar-plots-10
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -408,12 +382,10 @@ loans |>
 
 Change the bar plot so that it shows the proportion of loans at each level of `homeownership` rather than the count. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: contingency-tables-and-bar-plots-11
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -436,12 +408,10 @@ Nearly half of borrowers, 47.9%, have a mortgage; 38.6% rent and 13.5% own outri
 
 Replace the code in that chunk with a stacked bar plot: the count of loans at each level of `homeownership`, with each bar filled by `application_type`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: contingency-tables-and-bar-plots-12
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -462,12 +432,10 @@ loans |>
 
 Change the stacked bar plot so that every bar is stretched to the same height, showing the proportion of each `application_type` within each level of `homeownership`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: contingency-tables-and-bar-plots-13
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -488,12 +456,10 @@ This is a **standardized bar plot**, also called a filled bar plot. "Since the p
 
 Change the plot so that the two application types sit side by side within each level of `homeownership` instead of on top of each other. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: contingency-tables-and-bar-plots-14
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -514,12 +480,10 @@ A **dodged bar plot** "most clearly displays that within each level of homeowner
 
 Replace the plot with a table of row proportions: for each `application_type`, the proportion of its loans at each level of `homeownership`, spread into one column per level. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: contingency-tables-and-bar-plots-15
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -542,12 +506,10 @@ loans |>
 
 Change the table to column proportions: for each level of `homeownership`, the proportion of its loans with each `application_type`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: contingency-tables-and-bar-plots-16
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -570,12 +532,10 @@ loans |>
 
 Replace the code in that chunk so that it uses `email` to calculate, for each email `format`, the proportion of messages that are `spam`. Label the formats `"text"` and `"HTML"`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: contingency-tables-and-bar-plots-17
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -596,12 +556,10 @@ email |>
 
 Replace the code in that chunk with the standardized bar plot of `application_type` within `homeownership` again, improved: show the y-axis as percentages, and add a title, axis labels, a legend title, a subtitle that states the main finding, and a caption giving the number of loans. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: contingency-tables-and-bar-plots-18
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -627,12 +585,12 @@ loans |>
 
 ### Exercise 19
 
-Commit `analysis.qmd` and `.gitignore` with the message `"Summarize homeownership and application type"` and push. In a bash Terminal, run `git log --oneline -3`.
+Commit `analysis.qmd` and `.gitignore` with the message `"Summarize homeownership and application type"` and push.
 
 ```{r}
 #| label: contingency-tables-and-bar-plots-19
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type = "reflection")
 ```
 
 ###
@@ -654,12 +612,10 @@ The chapter also shows mosaic plots, pie charts, and waffle charts of the same d
 
 Start a new chunk that drops the counties with a missing `pop_change` or `median_hh_income`, adds a variable `change` equal to `"gain"` when `pop_change` is positive and `"no gain"` otherwise, stores the result as `county_change`, and counts the counties in each `change` group. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: comparing-numerical-data-across-groups-1
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -683,12 +639,10 @@ county_change |>
 
 Replace the count with a calculation of the median `median_hh_income` for each `change` group. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: comparing-numerical-data-across-groups-2
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -713,12 +667,10 @@ Growing counties have a median household income of $52,080, against $44,842 for 
 
 Replace the summary with a histogram of `median_hh_income` from `county_change`, filled by `change`, with the two groups overlapping and semi-transparent. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: comparing-numerical-data-across-groups-3
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -743,12 +695,10 @@ county_change |>
 
 Replace the histogram with side-by-side box plots of `median_hh_income`, one for each `change` group. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: comparing-numerical-data-across-groups-4
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -773,12 +723,10 @@ county_change |>
 
 Replace the box plots with a ridge plot: a density curve of `median_hh_income` for each `change` group, stacked on the same scale. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: comparing-numerical-data-across-groups-5
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -803,12 +751,10 @@ county_change |>
 
 Replace the ridge plot with a count of counties in each combination of `change` and `metro`, dropping counties with unknown `metro`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: comparing-numerical-data-across-groups-6
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -833,12 +779,10 @@ Most metro counties grew, 829 of 1,165, while most non-metro counties did not, 1
 
 Replace the count with histograms of `median_hh_income`, one panel for each combination of `change` and `metro`, laid out with `change` in rows and `metro` in columns. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: comparing-numerical-data-across-groups-7
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -865,12 +809,10 @@ This is **faceting**: "we split (facet) the graphical display of the data across
 
 Improve the faceted histograms. Show income in dollars, and add a title, axis labels, a subtitle that states the main finding, and a caption giving the number of counties. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: comparing-numerical-data-across-groups-8
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -901,12 +843,12 @@ The medians run from $43,674 for non-metro counties that did not grow to $57,302
 
 ### Exercise 9
 
-Commit `analysis.qmd` with the message `"Compare county incomes across groups"` and push. In a bash Terminal, run `git log --oneline -3`.
+Commit `analysis.qmd` with the message `"Compare county incomes across groups"` and push.
 
 ```{r}
 #| label: comparing-numerical-data-across-groups-9
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type = "reflection")
 ```
 
 ###
@@ -929,12 +871,12 @@ For more on choosing among bar plots, read the "[Visualizing amounts](https://cl
 
 ### Exercise 1
 
-Render one last time. In the R Terminal, run `show_file("analysis.qmd", start = 0)` to see the whole file.
+Render one last time.
 
 ```{r}
 #| label: summary-1
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -1014,7 +956,7 @@ quarto publish gh-pages analysis.qmd
 ```{r}
 #| label: summary-2
 #| echo: false
-learnr2::question("Paste the URL of your published page.", type = "reflection_editable")
+learnr2::question("Paste the URL of your published page.", type = "reflection")
 ```
 
 ###
@@ -1032,7 +974,7 @@ Commit and push any remaining changes.
 ```{r}
 #| label: summary-3
 #| echo: false
-learnr2::question("Paste the URL of your GitHub repo.", type = "reflection_editable")
+learnr2::question("Paste the URL of your GitHub repo.", type = "reflection")
 ```
 
 ###

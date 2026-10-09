@@ -1,0 +1,26 @@
+region,opinion,n
+London,Very well,10
+London,Fairly well,18
+London,Fairly badly,33
+London,Very badly,118
+London,Don't know,16
+Rest of South,Very well,49
+Rest of South,Fairly well,93
+Rest of South,Fairly badly,126
+Rest of South,Very badly,246
+Rest of South,Don't know,38
+Midlands / Wales,Very well,32
+Midlands / Wales,Fairly well,50
+Midlands / Wales,Fairly badly,74
+Midlands / Wales,Very badly,152
+Midlands / Wales,Don't know,46
+North,Very well,24
+North,Fairly well,48
+North,Fairly badly,76
+North,Very badly,212
+North,Don't know,40
+Scotland,Very well,8
+Scotland,Fairly well,10
+Scotland,Fairly badly,23
+Scotland,Very badly,90
+Scotland,Don't know,11

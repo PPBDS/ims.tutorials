@@ -17,6 +17,11 @@
 #'   \item \strong{Applications: Data} (03-applications-data): Chapter 3 --- getting to know a new dataset, and Simpson's paradox
 #'   \item \strong{Exploring Categorical Data} (04-exploring-categorical-data): Chapter 4 --- contingency tables, bar plots, conditional proportions, and comparing numerical data across groups
 #'   \item \strong{Exploring Numerical Data} (05-exploring-numerical-data): Chapter 5 --- histograms, shape, mean and standard deviation, box plots and robust statistics, transformations, and maps
+#'   \item \strong{Applications: Explore} (06-applications-explore): Chapter 6 --- keeping plots simple, color, telling a story, order, labels, and purpose
+#'   \item \strong{Linear Regression with a Single Predictor} (07-linear-regression-single): Chapter 7 --- fitting a line, residuals, correlation, least squares, R-squared, categorical predictors, and outliers
+#'   \item \strong{Linear Regression with Multiple Predictors} (08-linear-regression-multiple): Chapter 8 --- indicator and categorical predictors, multiple regression, adjusted R-squared, and stepwise model selection
+#'   \item \strong{Logistic Regression} (09-logistic-regression): Chapter 9 --- callback rates, the logit, logistic models with one and many predictors, predicted probabilities, and groups of different sizes
+#'   \item \strong{Applications: Model} (10-applications-model): Chapter 10 --- correlation, simple and multiple regression of house prices, residual plots, and backward elimination
 #' }
 #'
 #' @section Running Tutorials:

@@ -43,12 +43,12 @@ Open `analysis.html` with Live Server (right-click it in the Explorer → **Open
 
 Create a `.gitignore` with `analysis_files` followed by a blank line. Commit and push. Use AI however you like.
 
-In the R Terminal, run `show_file(".gitignore")`. If that fails, it is probably because you have not yet loaded `library(learnr2)` in the R Terminal.
+If `show_file()` fails, it is probably because you have not yet loaded `library(learnr2)` in the R Terminal.
 
 ```{r}
 #| label: introduction-1
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -65,12 +65,10 @@ analysis_files
 
 Add a chunk to `analysis.qmd` that loads the **[tidyverse](https://www.tidyverse.org/)**, with `#| message: false` so the startup messages stay out of the rendered page. Add `execute: echo: false` to the YAML header. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: introduction-2
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -87,12 +85,10 @@ The **tidyverse** includes **ggplot2**, which draws every plot in the book, incl
 
 Add **[openintro](https://openintrostat.github.io/openintro/)** to that chunk. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: introduction-3
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -114,12 +110,10 @@ library(openintro)
 
 Add a chunk that prints `paralympic_1500`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: case-study-olympic-1500m-1
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -138,12 +132,10 @@ paralympic_1500
 
 Replace the code in that chunk so that it prints the last five rows of `paralympic_1500`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: case-study-olympic-1500m-2
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -161,12 +153,10 @@ paralympic_1500 |>
 
 ### Exercise 3
 
-In the R Terminal, run `?paralympic_1500` to open the help page. Copy and paste the Description and the first line of the Format section.
-
 ```{r}
 #| label: case-study-olympic-1500m-3
 #| echo: false
-learnr2::question("Paste the Description and the first line of Format.", type = "reflection_editable")
+learnr2::question("In the R Terminal, run ?paralympic_1500. Copy and paste the Description and the first line of the Format section.", type = "reflection")
 ```
 
 ###
@@ -194,12 +184,10 @@ The help page promises 83 rows and 10 variables, but the data frame has 82 and 9
 
 Replace the code in that chunk so that it counts the races in each combination of `division` and `type`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: case-study-olympic-1500m-4
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -219,12 +207,10 @@ The Men's Olympic race accounts for 29 of the 82 rows; no other combination has 
 
 Replace the code in that chunk so that it shows the first year each combination of `division` and `type` appears in the data. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: case-study-olympic-1500m-5
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -244,12 +230,10 @@ The Men's Olympic 1500m dates from 1896, the Women's from 1972, and every Paraly
 
 Replace the code in that chunk so that it counts the gold medals won by each `country_of_athlete`, from most to fewest. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: case-study-olympic-1500m-6
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -269,12 +253,10 @@ Great Britain has 11 gold medals and Kenya 10, with a long tail of countries tha
 
 Replace the code in that chunk so that it counts how many times each `country_of_games` has hosted, counting each year once, from most to fewest. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: case-study-olympic-1500m-7
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -295,12 +277,10 @@ A single Games can contribute up to eight rows, one per division and race type, 
 
 Replace the code in that chunk so that it calculates the mean, minimum, and maximum of `time_min` for each combination of `division` and `type`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: case-study-olympic-1500m-8
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -323,12 +303,10 @@ The slowest Men's Olympic time, 4.55 minutes, is from 1896, while every T11 race
 
 Replace the code in that chunk so that it shows the type and first few values of every variable. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: case-study-olympic-1500m-9
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -348,12 +326,10 @@ paralympic_1500 |>
 
 Replace the code in that chunk with a scatterplot of `time_min` against `year` for Men's races after 1950, with points colored by `type`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: case-study-olympic-1500m-10
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -375,12 +351,10 @@ paralympic_1500 |>
 
 Replace the code in that chunk so that it shows the Men's races in 2016, with `type`, `name`, `time`, and `time_min`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: case-study-olympic-1500m-11
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -401,12 +375,10 @@ paralympic_1500 |>
 
 Replace the code in that chunk with the scatterplot from before, improved: a dashed vertical line at 2016, a title, axis labels, a legend title, a subtitle that states the main finding, and a caption giving the number of races. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: case-study-olympic-1500m-12
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -433,12 +405,12 @@ paralympic_1500 |>
 
 ### Exercise 13
 
-Commit `analysis.qmd` with the message `"Explore 1500m gold medal races"` and push. In a bash Terminal, run `git log --oneline -3`.
+Commit `analysis.qmd` with the message `"Explore 1500m gold medal races"` and push.
 
 ```{r}
 #| label: case-study-olympic-1500m-13
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type = "reflection")
 ```
 
 ###
@@ -460,12 +432,10 @@ a41f0b3 (HEAD -> main, origin/main) Explore 1500m gold medal races
 
 Start a new chunk that keeps only the Men's races after 1950 whose `type` is Olympic or T11, stores them as `men_1500`, and prints the result. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: simpsons-paradox-1
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -487,12 +457,10 @@ men_1500
 
 Delete the line that prints `men_1500`, so that the chunk only creates it. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: simpsons-paradox-2
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -507,12 +475,12 @@ The book restricts the comparison to Olympic and T11 because they are the two ex
 
 ### Exercise 3
 
-Add `#| cache: true` to that chunk. Render. In the bash Terminal, run `ls`.
+Add `#| cache: true` to that chunk. Render.
 
 ```{r}
 #| label: simpsons-paradox-3
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question("In the bash Terminal, run ls. CP/CR.", type = "reflection")
 ```
 
 ###
@@ -529,12 +497,10 @@ analysis.html  analysis.qmd  analysis_cache  analysis_files
 
 Your Source Control count just jumped, because Git sees every file in the new cache directory. Add `analysis_cache` to `.gitignore`, and the count drops back.
 
-In the R Terminal, run `show_file(".gitignore")`.
-
 ```{r}
 #| label: simpsons-paradox-4
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -552,12 +518,10 @@ analysis_cache
 
 Start a new chunk with a scatterplot of `time_min` against `year` for `men_1500`, with a single straight trend line fit to all the points. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: simpsons-paradox-5
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -579,12 +543,10 @@ men_1500 |>
 
 Color the points by `type` and fit a separate trend line to each type. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: simpsons-paradox-6
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -606,12 +568,10 @@ men_1500 |>
 
 Replace the code in that chunk so that it calculates, for each `type` in `men_1500`, the number of races, the first year, and the mean `time_min`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: simpsons-paradox-7
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -634,12 +594,10 @@ men_1500 |>
 
 Replace the summary with the two-line scatterplot again, improved: a title, axis labels, a legend title, a subtitle that states the main finding, and a caption giving the number of races. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: simpsons-paradox-8
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -667,12 +625,10 @@ men_1500 |>
 
 The book asks whether the paradox also holds in the Women's division. Start a new chunk with a scatterplot of `time_min` against `year` for Women's Olympic and T11 races, colored by `type`, with a separate trend line for each type. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: simpsons-paradox-9
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -695,12 +651,10 @@ The Women's Olympic line is nearly flat, while T11 times have fallen by more tha
 
 Replace the code in that chunk so that it calculates, for Women's Olympic and T11 races, the number of races, the first year, and the mean `time_min` for each `type`. Render.
 
-In the R Terminal, run `show_file("analysis.qmd")`.
-
 ```{r}
 #| label: simpsons-paradox-10
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -722,12 +676,12 @@ The same imbalance is present, with T11 later and slower by a minute, yet the po
 
 ### Exercise 11
 
-Commit `analysis.qmd` and `.gitignore` with the message `"Show Simpson's paradox in 1500m times"` and push. In a bash Terminal, run `git log --oneline -3`.
+Commit `analysis.qmd` and `.gitignore` with the message `"Show Simpson's paradox in 1500m times"` and push.
 
 ```{r}
 #| label: simpsons-paradox-11
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type = "reflection")
 ```
 
 ###
@@ -750,12 +704,12 @@ For more on the paradox, read Jeff Witmer's "[Simpson's Paradox, Visual Displays
 
 ### Exercise 1
 
-Render one last time. In the R Terminal, run `show_file("analysis.qmd", start = 0)` to see the whole file.
+Render one last time.
 
 ```{r}
 #| label: summary-1
 #| echo: false
-learnr2::question("CP/CR.", type = "reflection_editable")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). CP/CR.', type = "reflection")
 ```
 
 ###
@@ -832,7 +786,7 @@ quarto publish gh-pages analysis.qmd
 ```{r}
 #| label: summary-2
 #| echo: false
-learnr2::question("Paste the URL of your published page.", type = "reflection_editable")
+learnr2::question("Paste the URL of your published page.", type = "reflection")
 ```
 
 ###
@@ -850,7 +804,7 @@ Commit and push any remaining changes.
 ```{r}
 #| label: summary-3
 #| echo: false
-learnr2::question("Paste the URL of your GitHub repo.", type = "reflection_editable")
+learnr2::question("Paste the URL of your GitHub repo.", type = "reflection")
 ```
 
 ###

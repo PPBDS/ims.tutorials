@@ -1,0 +1,1166 @@
+---
+title: "Linear Regression with a Single Predictor"
+subtitle: "Fitting a line, residuals, correlation, least squares, R-squared, a categorical predictor, and outliers."
+format: live-html
+engine: knitr
+toc: true
+toc-depth: 2
+---
+
+{{< include _extensions/r-wasm/live/_knitr.qmd >}}
+
+```{r}
+#| label: setup
+#| include: false
+library(tidyverse)
+library(openintro)
+library(broom)
+knitr::opts_chunk$set(out.width = "90%")
+```
+
+## Student Information
+
+```{r}
+#| label: student-information-1
+#| echo: false
+learnr2::student_info()
+```
+
+## Introduction
+
+This tutorial covers [Chapter 7: Linear regression with a single predictor](https://openintrostat.github.io/ims/model-slr.html) from [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) by Mine Çetinkaya-Rundel and Johanna Hardin. You will learn to fit a least squares line, to read its slope, intercept, fitted values, and residuals, to measure a linear relationship with the correlation and $R^2$, to use a categorical predictor with two levels, and to judge how much outliers move the line.
+
+### Exercise 1
+
+You should be doing this tutorial in a repo named `linear-regression-with-a-single-predictor`. If you are not, create one and then connect to it. You may need to restart this tutorial after you do so.
+
+Create a new file, `analysis.qmd`, with the title `"Linear Regression with a Single Predictor"` and your name as the author. In a bash Terminal, render it:
+
+```
+quarto render analysis.qmd
+```
+
+Open `analysis.html` with Live Server (right-click it in the Explorer → **Open with Live Server**) and keep the tab open. It refreshes on every render. Going forward, we will just tell you to "Render" when we want you to take these steps.
+
+Create a `.gitignore` with `analysis_files` followed by a blank line. Commit and push. Use AI however you like.
+
+If `show_file()` fails, it is probably because you have not yet loaded `library(learnr2)` in the R Terminal.
+
+```{r}
+#| label: introduction-1
+#| echo: false
+learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type = "reflection")
+```
+
+###
+
+```
+analysis_files
+```
+
+###
+
+"Linear regression is a very powerful statistical technique." "Linear models can be used for prediction or to describe the relationship between two numerical variables, assuming there is a linear relationship between them."
+
+### Exercise 2
+
+Add a chunk to `analysis.qmd` that loads the **[tidyverse](https://www.tidyverse.org/)**, with `#| message: false` so the startup messages stay out of the rendered page. Add `execute: echo: false` to the YAML header. Render.
+
+```{r}
+#| label: introduction-2
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+<pre><code>#| message: false
+library(tidyverse)
+</code></pre>
+
+###
+
+**ggplot2**, part of the **tidyverse**, can draw a least squares line on a scatterplot in one layer. Every straight line in this chapter's figures was drawn that way.
+
+### Exercise 3
+
+Add **[openintro](https://openintrostat.github.io/openintro/)** to that chunk. Render.
+
+```{r}
+#| label: introduction-3
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+<pre><code>#| message: false
+library(tidyverse)
+library(openintro)
+</code></pre>
+
+###
+
+**openintro** holds the chapter's three datasets: `possum`, body measurements of Australian possums; `elmhurst`, family income and gift aid for 50 college students; and `mariokart`, eBay auctions of a video game.
+
+### Exercise 4
+
+Add **[broom](https://broom.tidymodels.org/)** to that chunk. Render.
+
+```{r}
+#| label: introduction-4
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+<pre><code>#| message: false
+library(tidyverse)
+library(openintro)
+library(broom)
+</code></pre>
+
+###
+
+**broom** turns a fitted model into tibbles: one row per coefficient, one row per observation with its fitted value and residual, or one row of fit statistics like $R^2$. Base R's model summary prints the same numbers as text, and **parameters** and **modelsummary** are popular alternatives.
+
+## Fitting a line, residuals, and correlation
+
+"When considering linear regression, it's helpful to think deeply about the line fitting process." Our line describes brushtail possums, a marsupial for which "researchers captured 104 of these animals and took body measurements before releasing the animals back into the wild."
+
+### Exercise 1
+
+Add a chunk that prints `possum`. Render.
+
+```{r}
+#| label: fitting-a-line-residuals-and-correlation-1
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: fitting-a-line-residuals-and-correlation-1-test
+#| echo: true
+possum
+```
+
+###
+
+Each of the 104 rows is one possum, with eight measurements. This section models just two of them: `head_l`, the length of the head, and `total_l`, the length of the whole animal.
+
+### Exercise 2
+
+```{r}
+#| label: fitting-a-line-residuals-and-correlation-2
+#| echo: false
+learnr2::question("In the R Terminal, run ?possum. Copy and paste the Description, the entries for head_l and total_l, and the Source.", type = "reflection")
+```
+
+###
+
+```
+Description:
+
+     Data representing possums in Australia and New Guinea. This is a
+     copy of the dataset by the same name in the ‘DAAG’ package,
+     however, the dataset included here includes fewer variables.
+
+     head_l Head length, in mm.
+
+     total_l Total length, in cm.
+
+Source:
+
+     Lindenmayer, D. B., Viggers, K. L., Cunningham, R. B., and
+     Donnelly, C. F. 1995. Morphological variation among columns of the
+     mountain brushtail possum, Trichosurus caninus Ogilby
+     (Phalangeridae: Marsupiala). Australian Journal of Zoology 43:
+     449-458.
+```
+
+###
+
+Head length is in millimeters but total length is in centimeters, so any slope we fit will be millimeters of head per centimeter of body. Despite the Description, every possum here comes from Australia: the `pop` variable is either Victoria or "other," meaning New South Wales or Queensland.
+
+### Exercise 3
+
+Replace the code in that chunk with a scatterplot of `head_l` against `total_l`. Render.
+
+```{r}
+#| label: fitting-a-line-residuals-and-correlation-3
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: fitting-a-line-residuals-and-correlation-3-test
+#| echo: true
+possum |>
+  ggplot(aes(x = total_l, y = head_l)) +
+  geom_point()
+```
+
+###
+
+"The head and total length variables are associated: possums with an above average total length also tend to have above average head lengths." No line runs through every point, but the cloud clearly rises from left to right.
+
+### Exercise 4
+
+Add the least squares line to the scatterplot, without a shaded band around it. Render.
+
+```{r}
+#| label: fitting-a-line-residuals-and-correlation-4
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: fitting-a-line-residuals-and-correlation-4-test
+#| echo: true
+possum |>
+  ggplot(aes(x = total_l, y = head_l)) +
+  geom_point() +
+  geom_smooth(method = "lm", formula = y ~ x, se = FALSE)
+```
+
+###
+
+"Linear regression is the statistical method for fitting a line to data where the relationship between two variables, *x* and *y*, can be modeled by a straight line with some error." Here `total_l` is the **predictor** and `head_l` is the **outcome**.
+
+### Exercise 5
+
+Color the points by `sex`. Render.
+
+```{r}
+#| label: fitting-a-line-residuals-and-correlation-5
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: fitting-a-line-residuals-and-correlation-5-test
+#| echo: true
+possum |>
+  ggplot(aes(x = total_l, y = head_l)) +
+  geom_point(aes(color = sex)) +
+  geom_smooth(method = "lm", formula = y ~ x, se = FALSE)
+```
+
+###
+
+The chapter reads this plot as showing that "Male possums (represented by blue triangles) seem to be larger in terms of total length and head length than female possums." The two colors overlap so much that only an average can settle it.
+
+### Exercise 6
+
+Replace the code in that chunk so that it calculates the mean `head_l` and the mean `total_l` for each `sex`. Render.
+
+```{r}
+#| label: fitting-a-line-residuals-and-correlation-6
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: fitting-a-line-residuals-and-correlation-6-test
+#| echo: true
+possum |>
+  summarize(head_l = mean(head_l),
+            total_l = mean(total_l),
+            .by = sex)
+```
+
+###
+
+Males do have longer heads, 92.9 mm against 92.1 mm, but females are longer overall, 87.9 cm against 86.5 cm. The book's claim holds for heads, not bodies, which is why you check a figure's story against the numbers.
+
+### Exercise 7
+
+Replace the code in that chunk so that it calculates the correlation between `total_l` and `head_l`. Render.
+
+```{r}
+#| label: fitting-a-line-residuals-and-correlation-7
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: fitting-a-line-residuals-and-correlation-7-test
+#| echo: true
+possum |>
+  summarize(r = cor(total_l, head_l))
+```
+
+###
+
+"Correlation which always takes values between -1 and 1, describes the strength and direction of the linear relationship between two variables." At 0.691, the possum relationship is positive and moderately strong.
+
+### Exercise 8
+
+Change the calculation so that it uses total length in inches, not centimeters. There are 2.54 centimeters in an inch. Render.
+
+```{r}
+#| label: fitting-a-line-residuals-and-correlation-8
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: fitting-a-line-residuals-and-correlation-8-test
+#| echo: true
+possum |>
+  mutate(total_in = total_l / 2.54) |>
+  summarize(r = cor(total_in, head_l))
+```
+
+###
+
+Still 0.691. "The correlation value has no units and will not be affected by a linear change in the units (e.g., going from inches to centimeters)."
+
+### Exercise 9
+
+Start a new chunk that fits a linear model predicting `head_l` from `total_l`, stores it as `possum_fit`, and shows only the term names and the estimates of its coefficients. Render.
+
+```{r}
+#| label: fitting-a-line-residuals-and-correlation-9
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: fitting-a-line-residuals-and-correlation-9-test
+#| echo: true
+possum_fit <- lm(head_l ~ total_l, data = possum)
+
+possum_fit |>
+  tidy() |>
+  select(term, estimate)
+```
+
+###
+
+The least squares line is $\hat{y} = 42.7 + 0.573x$, close to the book's line fit by eye, $41 + 0.59x$. "These values are calculated based on the data, i.e., they are sample statistics."
+
+### Exercise 10
+
+Replace the coefficient table with the predicted head length of a possum whose total length is 80 cm. Render.
+
+```{r}
+#| label: fitting-a-line-residuals-and-correlation-10
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: fitting-a-line-residuals-and-correlation-10-test
+#| echo: true
+possum_fit <- lm(head_l ~ total_l, data = possum)
+
+possum_fit |>
+  augment(newdata = tibble(total_l = 80))
+```
+
+###
+
+Our line predicts 88.5 mm; the book's line by eye gives 88.2 mm. "The estimate may be viewed as an average: the equation predicts that possums with a total length of 80 cm will have an average head length of 88.2 mm."
+
+### Exercise 11
+
+Replace the prediction with a table showing, for every possum, its `head_l`, its `total_l`, its fitted value, and its residual. Render.
+
+```{r}
+#| label: fitting-a-line-residuals-and-correlation-11
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: fitting-a-line-residuals-and-correlation-11-test
+#| echo: true
+possum_fit <- lm(head_l ~ total_l, data = possum)
+
+possum_fit |>
+  augment() |>
+  select(head_l, total_l, .fitted, .resid)
+```
+
+###
+
+"Residuals are the leftover variation in the data after accounting for the model fit": the first possum's head, 94.1 mm, sits above its fitted 93.7 mm, so its residual is positive, 0.402. The second possum's head is below the line, so its residual, -2.63, is negative.
+
+### Exercise 12
+
+Delete the table, so that the chunk only fits `possum_fit`. Render.
+
+```{r}
+#| label: fitting-a-line-residuals-and-correlation-12
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+<pre><code>possum_fit <- lm(head_l ~ total_l, data = possum)
+</code></pre>
+
+###
+
+"One goal in picking the right linear model is for residuals to be as small as possible." The least squares line makes them as small as possible in one particular sense, which the next section defines.
+
+### Exercise 13
+
+Add `#| cache: true` to that chunk. Render.
+
+```{r}
+#| label: fitting-a-line-residuals-and-correlation-13
+#| echo: false
+learnr2::question("In the bash Terminal, run ls. CP/CR.", type = "reflection")
+```
+
+###
+
+```
+analysis.html  analysis.qmd  analysis_cache  analysis_files
+```
+
+###
+
+`analysis_cache` now holds `possum_fit`, so later renders load the fitted model from disk instead of fitting it again. The rest of this section builds on it.
+
+### Exercise 14
+
+Your Source Control count just jumped, because Git sees every file in the new cache directory. Add `analysis_cache` to `.gitignore`, and the count drops back.
+
+```{r}
+#| label: fitting-a-line-residuals-and-correlation-14
+#| echo: false
+learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type = "reflection")
+```
+
+###
+
+```
+analysis_files
+analysis_cache
+```
+
+###
+
+"The size of a residual is usually discussed in terms of its absolute value." So the second possum's residual of -2.63 is larger than the first's 0.402, even though it is negative.
+
+### Exercise 15
+
+Start a new chunk with a residual plot for `possum_fit`: each possum's residual against its fitted value, with a dashed horizontal line at zero. Render.
+
+```{r}
+#| label: fitting-a-line-residuals-and-correlation-15
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: fitting-a-line-residuals-and-correlation-15-test
+#| echo: true
+possum_fit |>
+  augment() |>
+  ggplot(aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed")
+```
+
+###
+
+"Creating a residual plot is sort of like tipping the scatterplot over so the regression line is horizontal." The residuals scatter evenly around zero with no curve, so a straight line is a reasonable summary of these possums.
+
+### Exercise 16
+
+Replace the residual plot with a scatterplot of `head_l` against `total_l`, with the fitted values from `possum_fit` drawn as a line. Render.
+
+```{r}
+#| label: fitting-a-line-residuals-and-correlation-16
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: fitting-a-line-residuals-and-correlation-16-test
+#| echo: true
+possum_fit |>
+  augment(data = possum) |>
+  ggplot(aes(x = total_l, y = head_l)) +
+  geom_point() +
+  geom_line(aes(y = .fitted))
+```
+
+###
+
+Every fitted value lies on one straight line, and each point's vertical distance from it is that possum's residual. "Data = Fit + Residual" is the whole idea in three words.
+
+### Exercise 17
+
+Improve the scatterplot. Color the points by sex, and add a title, axis labels, a legend title, a subtitle that states the main finding, and a caption giving the number of possums and the source. Render.
+
+```{r}
+#| label: fitting-a-line-residuals-and-correlation-17
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: fitting-a-line-residuals-and-correlation-17-test
+#| echo: true
+possum_fit |>
+  augment(data = possum) |>
+  ggplot(aes(x = total_l, y = head_l)) +
+  geom_point(aes(color = sex)) +
+  geom_line(aes(y = .fitted)) +
+  scale_color_discrete(labels = c("Female", "Male")) +
+  labs(title = "Head Length and Total Length of Brushtail Possums",
+       subtitle = "Each extra 10 cm of body goes with about 5.7 mm more head, on average",
+       x = "Total Length (cm)",
+       y = "Head Length (mm)",
+       color = "Sex",
+       caption = "104 possums; Lindenmayer et al. (1995)")
+```
+
+###
+
+The slope of 0.573 mm per cm becomes 5.7 mm per 10 cm, a unit a reader can picture. Still, "a perfect linear relationship is unrealistic in almost any natural process," and the points scatter well away from the line.
+
+### Exercise 18
+
+Commit `analysis.qmd` and `.gitignore` with the message `"Fit a line to possum lengths"` and push.
+
+```{r}
+#| label: fitting-a-line-residuals-and-correlation-18
+#| echo: false
+learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type = "reflection")
+```
+
+###
+
+```
+3f8a1c2 (HEAD -> main, origin/main) Fit a line to possum lengths
+9be04d2 Initial commit
+```
+
+###
+
+A line is not always the answer. "There are also cases where fitting a straight line to the data, even if there is a clear relationship between the variables, is not helpful," and a curve in the residual plot is the usual warning sign.
+
+## Least squares regression and outliers
+
+"Fitting linear models by eye is open to criticism since it is based on an individual's preference." This section fits the least squares line to Elmhurst College's gift aid, measures how well it fits, and then watches two eBay auctions drag a line around.
+
+### Exercise 1
+
+```{r}
+#| label: least-squares-regression-and-outliers-1
+#| echo: false
+learnr2::question("In the R Terminal, run ?elmhurst. Copy and paste the Description, the Format section, and the Source.", type = "reflection")
+```
+
+###
+
+```
+Description:
+
+     A random sample of 50 students gift aid for students at Elmhurst
+     College.
+
+Format:
+
+     A data frame with 50 observations on the following 3 variables.
+
+     family_income Family income of the student.
+
+     gift_aid Gift aid, in $1000s.
+
+     price_paid Price paid by the student (tuition - gift aid).
+
+Source:
+
+     These data were sampled from a table of data for all freshman from
+     the 2011 class at Elmhurst College that accompanied an article
+     titled What Students Really Pay to Go to College published online
+     by The Chronicle of Higher Education:
+     <https://www.chronicle.com/article/what-students-really-pay-to-go-to-college/?sra=true>.
+```
+
+###
+
+The help page gives units only for `gift_aid`, but the book says "all monetary amounts are given in \$1,000s," so a `family_income` of 92.9 means \$92,900. "Gift aid is financial aid that does not need to be paid back, as opposed to a loan."
+
+### Exercise 2
+
+Replace the code in the working chunk with a scatterplot of `gift_aid` against `family_income`, with the least squares line and no shaded band. Render.
+
+```{r}
+#| label: least-squares-regression-and-outliers-2
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: least-squares-regression-and-outliers-2-test
+#| echo: true
+elmhurst |>
+  ggplot(aes(x = family_income, y = gift_aid)) +
+  geom_point() +
+  geom_smooth(method = "lm", formula = y ~ x, se = FALSE)
+```
+
+###
+
+"The line follows a negative trend in the data; students who have higher family incomes tended to have lower gift aid from the university." This line is "the least squares line," the one that minimizes the sum of the squared residuals.
+
+### Exercise 3
+
+Replace the code in that chunk so that it calculates the mean and standard deviation of both `family_income` and `gift_aid`, and the correlation between them. Render.
+
+```{r}
+#| label: least-squares-regression-and-outliers-3
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: least-squares-regression-and-outliers-3-test
+#| echo: true
+elmhurst |>
+  summarize(mean_income = mean(family_income),
+            sd_income = sd(family_income),
+            mean_aid = mean(gift_aid),
+            sd_aid = sd(gift_aid),
+            r = cor(family_income, gift_aid))
+```
+
+###
+
+These five numbers are enough to find the line. The slope is $b_1 = (s_y / s_x) r = (5.46 / 63.2)(-0.499) = -0.0431$, and the line passes through the point of means, (102, 19.9).
+
+### Exercise 4
+
+Replace the code in that chunk so that it fits a linear model predicting `gift_aid` from `family_income` and shows only the term names and the estimates of its coefficients. Render.
+
+```{r}
+#| label: least-squares-regression-and-outliers-4
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: least-squares-regression-and-outliers-4-test
+#| echo: true
+lm(gift_aid ~ family_income, data = elmhurst) |>
+  tidy() |>
+  select(term, estimate)
+```
+
+###
+
+"The slope describes the estimated difference in the predicted average outcome of *y* if the predictor variable *x* happened to be one unit larger." Both variables are in thousands of dollars, so each extra \$1,000 of family income goes with \$43.10 less aid, on average, though "we cannot interpret a causal connection between the variables because these data are observational."
+
+### Exercise 5
+
+Replace the coefficient table with the model's predicted gift aid for a family income of \$0 and for a family income of \$1 million. Render.
+
+```{r}
+#| label: least-squares-regression-and-outliers-5
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: least-squares-regression-and-outliers-5-test
+#| echo: true
+lm(gift_aid ~ family_income, data = elmhurst) |>
+  augment(newdata = tibble(family_income = c(0, 1000)))
+```
+
+###
+
+The intercept, \$24,300 for a family with no income, makes sense because one student's family reported \$0. The \$1 million family gets -\$18,800, and "applying a model estimate to values outside of the realm of the original data is called extrapolation."
+
+### Exercise 6
+
+Replace the predictions with the variance of `gift_aid` and the variance of the model's residuals. Render.
+
+```{r}
+#| label: least-squares-regression-and-outliers-6
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: least-squares-regression-and-outliers-6-test
+#| echo: true
+lm(gift_aid ~ family_income, data = elmhurst) |>
+  augment() |>
+  summarize(var_aid = var(gift_aid),
+            var_resid = var(.resid))
+```
+
+###
+
+Knowing family income shrinks the variance from 29.8 to 22.4, a reduction of (29.8 - 22.4) / 29.8, about 25%. "The $R^2$ of a linear model describes the amount of variation in the outcome variable that is explained by the least squares line."
+
+### Exercise 7
+
+Replace the variances with the model's $R^2$. Render.
+
+```{r}
+#| label: least-squares-regression-and-outliers-7
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: least-squares-regression-and-outliers-7-test
+#| echo: true
+lm(gift_aid ~ family_income, data = elmhurst) |>
+  glance() |>
+  select(r.squared)
+```
+
+###
+
+"It turns out that $R^2$ corresponds exactly to the squared value of the correlation": $(-0.499)^2 = 0.249$. $R^2$ "is also called the coefficient of determination."
+
+### Exercise 8
+
+Replace the code in that chunk with a histogram of `total_pr` from `mariokart`. Render.
+
+```{r}
+#| label: least-squares-regression-and-outliers-8
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: least-squares-regression-and-outliers-8-test
+#| echo: true
+mariokart |>
+  ggplot(aes(x = total_pr)) +
+  geom_histogram(binwidth = 5)
+```
+
+###
+
+Nearly every auction sold for under \$80, but two sit far off to the right, stretching the axis past \$300. In a regression, outliers "are observations that fall far from the cloud of points."
+
+### Exercise 9
+
+Replace the histogram with the auctions whose `total_pr` is above \$100, showing their `cond`, `total_pr`, and `title`. Render.
+
+```{r}
+#| label: least-squares-regression-and-outliers-9
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: least-squares-regression-and-outliers-9-test
+#| echo: true
+mariokart |>
+  filter(total_pr > 100) |>
+  select(cond, total_pr, title)
+```
+
+###
+
+The \$327 auction was a whole Wii console bundled with Guitar Hero 5, and the \$118 one was ten Wii games. Neither is a price for *Mario Kart* alone, which is why the book limits its analysis to the 141 games that sold below \$100.
+
+### Exercise 10
+
+```{r}
+#| label: least-squares-regression-and-outliers-10
+#| echo: false
+learnr2::question("In the R Terminal, run ?mariokart. Copy and paste the first paragraph of the Details section.", type = "reflection")
+```
+
+###
+
+```
+Details:
+
+     There are several interesting features in the data. First off,
+     note that there are two outliers in the data. These serve as a
+     nice example of what one should do when encountering an outlier:
+     examine the data point and remove it only if there is a good
+     reason. In these two cases, we can see from the auction titles
+     that they included other items in their auctions besides the game,
+     which justifies removing them from the dataset.
+```
+
+###
+
+The same help page says auctions were kept only if "there were no other items included in the auction with the exception of racing wheels," yet these two bundles made it in. When documentation and data disagree, the data are what your model sees.
+
+### Exercise 11
+
+Replace the code in that chunk so that it fits a linear model predicting `total_pr` from `cond`, using only the auctions under \$100, and shows only the term names and the estimates. Render.
+
+```{r}
+#| label: least-squares-regression-and-outliers-11
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: least-squares-regression-and-outliers-11-test
+#| echo: true
+mariokart |>
+  filter(total_pr < 100) |>
+  lm(total_pr ~ cond, data = _) |>
+  tidy() |>
+  select(term, estimate)
+```
+
+###
+
+"The estimated intercept is the value of the outcome variable for the first category (i.e., the category corresponding to an indicator value of 0)." R puts the levels in alphabetical order, so `new` came first: new games averaged \$53.80, and used ones \$10.90 less.
+
+### Exercise 12
+
+Change the model so that `used` is the first category of `cond`, as in the book. Render.
+
+```{r}
+#| label: least-squares-regression-and-outliers-12
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: least-squares-regression-and-outliers-12-test
+#| echo: true
+mariokart |>
+  filter(total_pr < 100) |>
+  mutate(cond = fct_relevel(cond, "used")) |>
+  lm(total_pr ~ cond, data = _) |>
+  tidy() |>
+  select(term, estimate)
+```
+
+###
+
+Now `condnew` is an **indicator variable**, "which takes value 1 when the game is new and 0 when the game is used." Used games averaged \$42.90, and "the estimated slope is the average change in the outcome variable between the two categories," \$10.90.
+
+### Exercise 13
+
+Fit the same model to all 143 auctions, including the two bundles. Render.
+
+```{r}
+#| label: least-squares-regression-and-outliers-13
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: least-squares-regression-and-outliers-13-test
+#| echo: true
+mariokart |>
+  mutate(cond = fct_relevel(cond, "used")) |>
+  lm(total_pr ~ cond, data = _) |>
+  tidy() |>
+  select(term, estimate)
+```
+
+###
+
+Two auctions out of 143 cut the gap between new and used from \$10.90 to \$6.62. "A good practice for dealing with outlying observations is to produce two analyses: one with and one without the outlying observations."
+
+### Exercise 14
+
+Replace the coefficient table with a table showing the $R^2$ of both models: one fit to all auctions and one fit to the auctions under \$100. Render.
+
+```{r}
+#| label: least-squares-regression-and-outliers-14
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: least-squares-regression-and-outliers-14-test
+#| echo: true
+bind_rows(
+  all = lm(total_pr ~ cond, data = mariokart) |>
+    glance(),
+  under_100 = lm(total_pr ~ cond, data = filter(mariokart, total_pr < 100)) |>
+    glance(),
+  .id = "auctions"
+) |>
+  select(auctions, r.squared)
+```
+
+###
+
+With the bundles, condition explains 1.6% of the variation in price; without them, 35.1%. Two auctions hid most of the relationship, which is why the book warns: "It is tempting to remove outliers. Don't do this without a very good reason."
+
+### Exercise 15
+
+Replace the table with a scatterplot of `total_pr` against an indicator equal to 1 for new games and 0 for used ones, for the auctions under \$100. Jitter the points a little horizontally, and add the least squares line. Render.
+
+```{r}
+#| label: least-squares-regression-and-outliers-15
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: least-squares-regression-and-outliers-15-test
+#| echo: true
+mariokart |>
+  filter(total_pr < 100) |>
+  mutate(new = if_else(cond == "new", 1, 0)) |>
+  ggplot(aes(x = new, y = total_pr)) +
+  geom_jitter(width = 0.05, height = 0) +
+  geom_smooth(method = "lm", formula = y ~ x, se = FALSE)
+```
+
+###
+
+"To incorporate the game condition variable into a regression equation, we must convert the categories into a numerical form." Once condition is 0 or 1, the least squares line runs from the used mean at 0 to the new mean at 1.
+
+### Exercise 16
+
+Improve the scatterplot. Label the x-axis ticks with the condition names, show prices in dollars, and add a title, axis labels, a subtitle that states the main finding, and a caption giving the number of auctions and the source. Render.
+
+```{r}
+#| label: least-squares-regression-and-outliers-16
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: least-squares-regression-and-outliers-16-test
+#| echo: true
+mariokart |>
+  filter(total_pr < 100) |>
+  mutate(new = if_else(cond == "new", 1, 0)) |>
+  ggplot(aes(x = new, y = total_pr)) +
+  geom_jitter(width = 0.05, height = 0, alpha = 0.6) +
+  geom_smooth(method = "lm", formula = y ~ x, se = FALSE) +
+  scale_x_continuous(breaks = c(0, 1),
+                     labels = c("Used (0)", "New (1)")) +
+  scale_y_continuous(labels = scales::label_dollar()) +
+  labs(title = "Mario Kart Wii Prices on eBay by Condition",
+       subtitle = "New copies sold for about $10.90 more than used ones",
+       x = "Condition",
+       y = "Total Price (Auction plus Shipping)",
+       caption = "141 eBay auctions under $100, October 2009; two bundles removed")
+```
+
+###
+
+The slope of this line is the \$10.90 difference between conditions, and its intercept is the used average. "Note that, fundamentally, the intercept and slope interpretations do not change when modeling categorical variables with two levels."
+
+### Exercise 17
+
+Commit `analysis.qmd` with the message `"Fit least squares lines and check outliers"` and push.
+
+```{r}
+#| label: least-squares-regression-and-outliers-17
+#| echo: false
+learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type = "reflection")
+```
+
+###
+
+```
+7c41e9d (HEAD -> main, origin/main) Fit least squares lines and check outliers
+3f8a1c2 Fit a line to possum lengths
+9be04d2 Initial commit
+```
+
+###
+
+"Points that fall horizontally away from the center of the cloud tend to pull harder on the line, so we call them points with high leverage or leverage points." The two bundles were not leverage points, since every auction sits at 0 or 1, but they still moved the line by sitting far above the used games.
+
+## Summary
+
+This tutorial covered [Chapter 7: Linear regression with a single predictor](https://openintrostat.github.io/ims/model-slr.html) from [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) by Mine Çetinkaya-Rundel and Johanna Hardin. You have learned to fit a least squares line, to read its slope, intercept, fitted values, and residuals, to measure a linear relationship with the correlation and $R^2$, to use a categorical predictor with two levels, and to judge how much outliers move the line.
+
+For the possums themselves, read the original [article](https://doi.org/10.1071/ZO9950449) by Lindenmayer and colleagues in the *Australian Journal of Zoology*. For the college aid data, read "[What Students Really Pay to Go to College](https://www.chronicle.com/article/what-students-really-pay-to-go-to-college/?sra=true)" in *The Chronicle of Higher Education*.
+
+### Exercise 1
+
+Render one last time.
+
+```{r}
+#| label: summary-1
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). CP/CR.', type = "reflection")
+```
+
+###
+
+<pre><code>---
+title: "Linear Regression with a Single Predictor"
+author: "Your Name"
+format: html
+execute:
+  echo: false
+---
+
+&#96;&#96;&#96;{r}
+#| message: false
+library(tidyverse)
+library(openintro)
+library(broom)
+&#96;&#96;&#96;
+
+&#96;&#96;&#96;{r}
+#| cache: true
+possum_fit <- lm(head_l ~ total_l, data = possum)
+&#96;&#96;&#96;
+
+&#96;&#96;&#96;{r}
+possum_fit |>
+  augment(data = possum) |>
+  ggplot(aes(x = total_l, y = head_l)) +
+  geom_point(aes(color = sex)) +
+  geom_line(aes(y = .fitted)) +
+  scale_color_discrete(labels = c("Female", "Male")) +
+  labs(title = "Head Length and Total Length of Brushtail Possums",
+       subtitle = "Each extra 10 cm of body goes with about 5.7 mm more head, on average",
+       x = "Total Length (cm)",
+       y = "Head Length (mm)",
+       color = "Sex",
+       caption = "104 possums; Lindenmayer et al. (1995)")
+&#96;&#96;&#96;
+
+&#96;&#96;&#96;{r}
+mariokart |>
+  filter(total_pr < 100) |>
+  mutate(new = if_else(cond == "new", 1, 0)) |>
+  ggplot(aes(x = new, y = total_pr)) +
+  geom_jitter(width = 0.05, height = 0, alpha = 0.6) +
+  geom_smooth(method = "lm", formula = y ~ x, se = FALSE) +
+  scale_x_continuous(breaks = c(0, 1),
+                     labels = c("Used (0)", "New (1)")) +
+  scale_y_continuous(labels = scales::label_dollar()) +
+  labs(title = "Mario Kart Wii Prices on eBay by Condition",
+       subtitle = "New copies sold for about $10.90 more than used ones",
+       x = "Condition",
+       y = "Total Price (Auction plus Shipping)",
+       caption = "141 eBay auctions under $100, October 2009; two bundles removed")
+&#96;&#96;&#96;
+</code></pre>
+
+###
+
+The page holds one numerical predictor and one categorical predictor, each with its least squares line. "Throughout this chapter, the nuances of the linear model have been described."
+
+### Exercise 2
+
+Publish your analysis to GitHub Pages. In a bash Terminal, run:
+
+```
+quarto publish gh-pages analysis.qmd
+```
+
+```{r}
+#| label: summary-2
+#| echo: false
+learnr2::question("Paste the URL of your published page.", type = "reflection")
+```
+
+###
+
+Your answer should look like `https://your-github-username.github.io/linear-regression-with-a-single-predictor/`.
+
+###
+
+"Correlation is a measure of the strength and direction of the linear relationship of two variables, without specifying which variable is the explanatory and which is the outcome." A regression line, unlike a correlation, does depend on which variable predicts which.
+
+### Exercise 3
+
+Commit and push any remaining changes.
+
+```{r}
+#| label: summary-3
+#| echo: false
+learnr2::question("Paste the URL of your GitHub repo.", type = "reflection")
+```
+
+###
+
+Your answer should look like `https://github.com/your-github-username/linear-regression-with-a-single-predictor`.
+
+###
+
+"Linear regression is simply a modeling framework. The truth is almost always much more complex than a simple line."
+
+## Your Answers
+
+```{r}
+#| label: your-answers-1
+#| echo: false
+learnr2::question(
+  "How many minutes, approximately, did it take you to complete this
+  tutorial? For example, an hour and a half would be 90 minutes.",
+  type = "reflection_editable",
+  validate = "integer"
+)
+```
+
+```{r}
+#| label: your-answers-2
+#| echo: false
+learnr2::download_answers_button(filename_prefix = "07-linear-regression-single")
+```
