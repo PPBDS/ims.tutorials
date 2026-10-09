@@ -88,7 +88,13 @@ their structure.
   directory is the two-digit chapter number plus a slug of the chapter
   title, and its title is the chapter title in Title Case: Chapter 1,
   “Hello data,” is `01-hello-data`, titled “Hello Data,” with work repo
-  `hello-data`.
+  `hello-data`. Shorten the slug when the full one would push a package
+  path past 100 bytes, the limit for portable tarballs, which R CMD
+  check flags as a NOTE. In practice keep the directory name to 33
+  characters or fewer: Chapter 7 is `07-linear-regression-single` and
+  Chapter 8 is `08-linear-regression-multiple`. Only the directory is
+  shortened; the title and the work repo still come from the full
+  chapter title.
 - **60 minutes or less**, which generally means **around 40 questions**.
   A chapter with more material than that gets its most important ideas,
   not all of them.
@@ -177,8 +183,9 @@ mapping and of everything in this file; copy its patterns.
 
 - **The student workflow is unchanged.** Students work in a Codespace on
   their own `analysis.qmd`, render with Live Server, commit, and submit
-  `show_file()` output with CP/CR. This overrides learnr2’s “no local R
-  dependency” rule, which assumes a reader with nothing but a browser.
+  `show_file()` output with CP/CR. learnr2’s “no local R dependency”
+  rule is about the tutorial *page*, not the student; its AGENTS.md says
+  so explicitly.
 - **`show_file()` comes from learnr2, not tutorial.helpers.** It is
   installed with this package (learnr2 is in `Imports`), and the
   standing note on the first `show_file()` exercise names
@@ -188,11 +195,21 @@ mapping and of everything in this file; copy its patterns.
   `show_file("analysis.qmd")`, never `chunk = "Last"`, and the Summary’s
   whole-file check is `show_file("analysis.qmd", start = 0)`. Files
   without chunks, like `.gitignore`, print whole by default.
-- **Questions** are
-  `learnr2::question("CP/CR.", type = "reflection_editable")`, the
-  equivalent of the base guide’s no-answer `question_text()`. URL and
-  interpretation questions use the same type with a different prompt
-  (“Paste the URL of your published page.”).
+- **Questions** are `type = "reflection"`, which locks the answer once
+  submitted, and the question’s text carries the whole instruction:
+  `learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")`.
+  This follows learnr2’s “submit once, then locked” rule: we show our
+  answer right after the student’s, and an editable box invites copying
+  ours back in. Question text is plain text, so commands in it have no
+  backticks; quote the R string with single quotes when the command
+  contains double quotes. The exercise’s prose above the chunk states
+  the goal (“Render.”), and the question says what to run and paste.
+  Help-page questions put the whole instruction in the text (“In the R
+  Terminal, run ?mlb. Copy and paste the Description.”), and URL
+  questions are just “Paste the URL of your published page.” Only the
+  minutes question at the end uses `type = "reflection_editable"`.
+  learnr2 disables each Continue button until every question above it is
+  submitted.
 - **Pacing.** learnr2 gates every `##`/`###` section behind a Continue
   button, and a bare `###` line renders as an empty section, so the base
   guide’s two `###` dividers (question → our answer → knowledge drop)
@@ -200,48 +217,19 @@ mapping and of everything in this file; copy its patterns.
   headings out of the sidebar.
 - **Our answers** are render-time `{r}` chunks with `#| echo: true`, as
   in the base guide, backed by a hidden setup chunk
-  (`#| include: false`) that loads the tidyverse. This overrides
-  learnr2’s rule that `{r}` chunks hold only widget calls: every package
-  these chunks use must be in `Suggests`. No
+  (`#| include: false`) that loads the tidyverse. learnr2 allows these
+  “our answer” chunks; every package they use must be in `Suggests`. No
   [webr](https://github.com/cardiomoon/webr) cells; the base guide’s ban
   on exercise code chunks stands.
 - **Chunk labels** follow the base guide’s `section-name-N` (question)
   and `section-name-N-test` (answer) format. The question’s label is its
-  learnr2 `id`.
+  learnr2 `id`. learnr2’s vignette suggests `-answer` for the answer
+  chunk; we keep `-test`, which is only cosmetic, so existing tutorials
+  need no renaming.
 - **No install exercises.** Every package a tutorial uses, including the
   book’s data packages (**openintro**, **usdata**, and others), goes in
   `Suggests` in DESCRIPTION. The student image installs each course
   package’s `Suggests`, so students never install packages by hand.
-
-### Departures recorded (as of “Histograms”)
-
-Per the base guide’s override protocol — name the departure, justify it:
-
-1.  **No `show_file()`; evidence is submitted in the browser.** learnr2
-    has no `show_file()`, so the base guide’s evidence forms map onto
-    question types: QMD-edit and working-chunk evidence becomes a
-    `type = "reflection_editable"` question where the student pastes
-    their code (CP/CR shorthand still applies to terminal pastes); our
-    answer is a `### What you should see` block with the faked output or
-    our code, the stand-in for the base guide’s `echo = TRUE` answer
-    chunk; interpretation questions use `type = "reflection"` with a
-    model answer. The Summary’s whole-file check
-    (`show_file("analysis.qmd")`) becomes a screenshot of the rendered
-    page pasted into a `reflection_editable` question with
-    `allow_image = TRUE`; the GitHub-based Summary step still ends at
-    the repo URL.
-2.  **The intro names its environment.** The base guide says an intro
-    must not mention Codespaces or `codespace-starter`. This package’s
-    entry point (below) fixes both, and every faked terminal answer
-    needs a real prompt (`histograms $`) and a real `/workspaces/...`
-    path, so tutorials here name them.
-3.  **Repo setup is taught by hand.** Where the base guide’s standard
-    repo line says “create one and connect to it”, the Histograms
-    tutorial walks the real `gh`/`git` sequence and forbids
-    `connect-repo`, so students practice the commands they will reuse
-    this term. The rest of the base guide’s structure (three-exercise
-    cache arc, per-section commits, `###`-gated expected output then
-    knowledge drop, Summary sequence) is followed as written.
 
 Unlike `vscode.tutorials`, there is **no mechanics exception**. Students
 arrive having done `vscode.tutorials` through the Quarto tutorial — the
@@ -275,13 +263,6 @@ guide:
 - **Per-chunk options use Quarto’s `#| key: value` syntax**, never
   inline `, key = value` on the header — including `#| label:`, which
   every chunk needs.
-- **Hint/solution divs must precede the first `###` of their `##`
-  section.** learnr2’s quiz.js excludes any level-3 section containing
-  `.exercise-hint` or `.solution` from progressive gating, so an
-  exercise placed after a `###` heading reveals that knowledge drop
-  without a Continue click. Keep each section’s exercise + hint +
-  solution before its first `###`; display-only demo cells use
-  `#| autorun: true` so their output is ready when the section unlocks.
 
 ### Terminal terminology
 
