@@ -56,12 +56,25 @@ How the book shapes a tutorial:
   through randomization and the bootstrap (Part 4) and only then through
   the normal model. Tutorials should do the same: students simulate
   first, then check the result against the formula.
-- **Data.** The book’s examples use real datasets, mostly from the
+- **Data comes from the chapter.** Every dataset a tutorial uses is one
+  the chapter itself uses, so the tutorial and the chapter tell the same
+  story. Most are in the
   **[openintro](https://openintrostat.github.io/openintro/)** R package
-  (also **usdata**, **cherryblossom**, **palmerpenguins**). Prefer the
-  chapter’s own dataset, or another from these packages, so the tutorial
-  and the chapter tell the same story. Add any package used to
-  `Suggests`.
+  (also **usdata**, **cherryblossom**, **palmerpenguins**); add any
+  package used to `Suggests`. When the chapter gives its data only as a
+  table or counts (the Brexit poll in Chapter 6, the medical
+  consultant’s 3 of 62 in Chapter 12), build it as a small CSV with the
+  chapter’s exact numbers, shipped in `inst/extdata/` and in the
+  tutorial’s `data/` directory (see *Adding a tutorial*). Do not reach
+  for a dataset from another chapter or from outside the book, and never
+  use data the book simulates (Chapter 6’s Duke hires).
+- **Use the book’s own words.** The book’s license lets us copy its
+  text, and the more of the book that reaches students through the
+  tutorial, the better. The limit is the reader, not the license: a
+  knowledge drop is still at most two sentences, so the job is to pick
+  the chapter’s *best* two sentences for each exercise. The exception is
+  the chapter’s own Summary paragraph, which appears whole in the
+  tutorial’s Summary section (see *One tutorial per chapter*).
 - **The book shows no R code.** It teaches concepts with tables and
   figures. Our tutorials supply the R work, done by students with AI in
   `analysis.qmd`.
@@ -119,6 +132,21 @@ their structure.
   directly, in quotation marks, so the student meets the book’s exact
   wording. The other drop sentence ties the quote to what the student’s
   output just showed. Never more than two sentences.
+- **The chapter’s own summary appears in the tutorial.** Most chapters
+  end with a “Chapter review” whose Summary paragraph is the authors’
+  own statement of what the chapter taught. The tutorial’s Summary
+  section quotes it whole, as a block quote introduced by “The chapter’s
+  own summary, in the authors’ words:”, between the past-tense paragraph
+  and the further readings. Cross-references the quote makes to figures
+  or later chapters are replaced in square brackets (“\[Chapter 11\]”).
+  The Applications chapters have no Chapter review, so their tutorials
+  have no such quote.
+- **Simulation uses infer.** Part 4 teaches inference by randomization
+  and the bootstrap before the mathematical model. Our answer chunks
+  simulate with **[infer](https://infer.netlify.app/)**, whose verbs
+  (specify, hypothesize, generate, calculate) match the book’s
+  vocabulary and OpenIntro’s own tutorials. Students’ AI may write the
+  simulation any way it likes; what they compare is the result.
 - **Students only code, using AI.** There are no multiple-choice or quiz
   questions (base guide §3). Each concept the chapter defines is taught
   by an exercise whose output displays it: averaging `interest_rate`
@@ -157,7 +185,7 @@ before writing a tutorial** — it is the authoring guide for the file
 format (frontmatter, chunk labels, exercises, hints, solutions, quizzes,
 the `webr: packages:` list, and the traps). Use
 [`learnr2::create_tutorial()`](https://ppbds.github.io/learnr2/reference/create_tutorial.html)
-or the bundled `intro-vectors` tutorial as a starting point. Never add
+or copy an existing tutorial here as a starting point. Never add
 [`library(learnr)`](https://rstudio.github.io/learnr/),
 [`library(tutorial.helpers)`](https://ppbds.github.io/tutorial.helpers/),
 child documents, or a `tutorial: id:` field.
@@ -191,12 +219,12 @@ mapping and of everything in this file; copy its patterns.
 - **`show_file()` comes from learnr2, not tutorial.helpers.** It is
   installed with this package (learnr2 is in `Imports`), and the
   standing note on the first `show_file()` exercise names
-  [`library(learnr2)`](https://github.com/PPBDS/learnr2). Its default
-  differs from the base guide’s version: for a file with code chunks it
-  shows only the last chunk. So the evidence call is
-  `show_file("analysis.qmd")`, never `chunk = "Last"`, and the Summary’s
-  whole-file check is `show_file("analysis.qmd", start = 0)`. Files
-  without chunks, like `.gitignore`, print whole by default.
+  [`library(learnr2)`](https://github.com/PPBDS/learnr2). For a file
+  with code chunks it shows only the last chunk by default, so the
+  evidence call is `show_file("analysis.qmd")`, with no `chunk`
+  argument, and the Summary’s whole-file check is
+  `show_file("analysis.qmd", start = 0)`. Files without chunks, like
+  `.gitignore`, print whole by default.
 - **Questions** are `type = "reflection"`, which locks the answer once
   submitted, and the question’s text carries the whole instruction:
   `learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")`.
@@ -228,6 +256,17 @@ mapping and of everything in this file; copy its patterns.
   learnr2 `id`. learnr2’s vignette suggests `-answer` for the answer
   chunk; we keep `-test`, which is only cosmetic, so existing tutorials
   need no renaming.
+- **Code blocks follow learnr2’s convention**, which `check_tutorial()`
+  enforces. A command to type is tagged with its language
+  (```` ```bash ```` for `quarto render` and `quarto publish`);
+  something to type with no language, like a URL to download, is tagged
+  `default`; anything the student compares against (an `ls` listing, a
+  help page excerpt, the `.gitignore` answer, a `git log`) is tagged
+  `{.output}`. Our answer for a `show_file()` question that is not a
+  live chunk (the setup chunk, a cleaned-up cached chunk, the whole-file
+  check) goes in a four-backtick ````` ````{verbatim} ````` block, which
+  shows chunk fences without running them. Never a bare ```` ``` ````
+  fence, and never `<pre><code>` with `&#96;` entities.
 - **No install exercises.** Every package a tutorial uses, including the
   book’s data packages (**openintro**, **usdata**, and others), goes in
   `Suggests` in DESCRIPTION. The student image installs each course
@@ -297,24 +336,26 @@ title must never map to `codespace-starter`.
 
 ### Refer to tutorials by title, not number
 
-In prose, refer to a tutorial by its **title**, never its `NN-slug`
-directory name. Reserve the directory name for paths, URLs,
-`run_tutorial()` calls, and ids. Quote a title written out as a title
-(*the next tutorial, “Study Design,” covers…*); short attributive
-references (the Hello Data tutorial) stay unquoted.
+In prose, refer to a tutorial by its **title**, never its directory
+name. Reserve the directory name for paths, URLs, `run_tutorial()`
+calls, and ids. Quote a title written out as a title (*the next
+tutorial, “Study Design,” covers…*); short attributive references (the
+Hello Data tutorial) stay unquoted.
 
-### Renumbering tutorials (directory renames)
+### Renaming tutorials (directory renames)
 
-Tutorial directories are `inst/tutorials/NN-slug/`, holding
-`NN-slug.qmd`. Renaming one fans out:
+Tutorial directories are `inst/tutorials/<slug>/`, holding `<slug>.qmd`.
+A tutorial’s place in the list is its YAML `ordering:`, so reordering
+never renames anything. Renaming a directory fans out:
 
-1.  `learnr2::run_tutorial(name = "NN-slug", ...)` calls in README.Rmd
+1.  `learnr2::run_tutorial(name = "<slug>", ...)` calls in README.Rmd
     (re-render README.md after editing) and inside tutorials.
 2.  Files students download from GitHub must **not** live under a
-    numbered tutorial directory. Keep them in `inst/extdata/` or at the
-    repo root, so a rename never changes the URL. Add a check for each
-    such URL in `tests/testthat/test-downloads.R` (see the
-    `vscode.tutorials` version for the pattern).
+    tutorial directory. Keep them in `inst/extdata/`, so a rename never
+    changes the URL, with an identical copy in the tutorial’s `data/`
+    directory for its answer chunks to read. Add a check for each such
+    URL, and for the two copies matching, in
+    `tests/testthat/test-downloads.R`.
 3.  Cross-references in prose, README.Rmd’s tutorial list, the tutorial
     list in `R/ims.tutorials-package.R` (run `devtools::document()`
     after), and this file.
@@ -326,8 +367,9 @@ NEWS.md entries are historical records — never retro-renumber them.
 
 ### Adding a tutorial
 
-1.  Create `inst/tutorials/NN-slug/NN-slug.qmd`, with
-    `download_answers_button(filename_prefix = "NN-slug")`.
+1.  Create `inst/tutorials/<slug>/<slug>.qmd`, with `learnr2:` /
+    `ordering: <chapter>` in the YAML header and
+    `download_answers_button(filename_prefix = "<slug>")`.
 2.  List every non-base package its
     [webr](https://github.com/cardiomoon/webr) cells use under
     `webr: packages:` in the frontmatter, and add any package its `{r}`
@@ -337,6 +379,14 @@ NEWS.md entries are historical records — never retro-renumber them.
     undeclared.
 3.  List it in README.Rmd (re-render README.md) and in
     `R/ims.tutorials-package.R` (re-run `devtools::document()`).
+4.  If the chapter gives its data only as a table or counts, write it as
+    a CSV with the chapter’s exact numbers to both `inst/extdata/<file>`
+    and `inst/tutorials/<slug>/data/<file>`, with a `data/README.txt`
+    recording where the numbers come from (build-ignored, so it stays in
+    the repo but not the package). The tutorial downloads it from
+    `https://raw.githubusercontent.com/PPBDS/ims.tutorials/main/inst/extdata/<file>`
+    and reads `data/<file>`; add both checks to
+    `tests/testthat/test-downloads.R`.
 
 ### The devcontainer image pin (`ghcr.io/ppbds/devcontainer:X.Y.Z`)
 

@@ -1,5 +1,54 @@
 # Changelog
 
+## ims.tutorials 0.0.0.9004
+
+- Tutorial directories no longer carry a chapter-number prefix
+  (`hello-data`, not `01-hello-data`); each tutorial’s place in the list
+  is the `ordering:` field in its YAML header, read by learnr2 0.1.3.
+  Chapter 7 is `linear-regression-single` and Chapter 8
+  `linear-regression-multiple`, keeping package paths under the 100-byte
+  limit for portable tarballs.
+
+- Code blocks follow learnr2’s convention: commands are tagged with
+  their language, expected output is tagged `{.output}`, and displayed
+  chunks use `{verbatim}` blocks instead of `<pre><code>`.
+
+- Each tutorial’s Summary now quotes the chapter’s own Summary
+  paragraph, for the chapters that have one.
+
+- Added six tutorials, the companions to Chapters 11 through 16:
+  Hypothesis Testing with Randomization
+  (`hypothesis-testing-randomization`), Confidence Intervals with
+  Bootstrapping (`confidence-intervals-bootstrap`), Inference with
+  Mathematical Models (`inference-mathematical-models`), Decision Errors
+  (`decision-errors`), Applications: Foundations
+  (`applications-foundations`), and Inference for a Single Proportion
+  (`inference-for-a-single-proportion`).
+
+- Added eleven tutorials, the companions to Chapters 17 through 27, so
+  every chapter of the book now has one: Inference for Comparing Two
+  Proportions, Inference for Two-Way Tables, Inference for a Single
+  Mean, Inference for Comparing Two Independent Means, Inference for
+  Comparing Paired Means, Inference for Comparing Many Means,
+  Applications: Infer, Inference for Linear Regression with a Single
+  Predictor, Inference for Linear Regression with Multiple Predictors,
+  Inference for Logistic Regression, and Applications: Model and Infer.
+
+- Added **cherryblossom** and **palmerpenguins** to `Suggests`, for
+  `run17` in Chapter 19 and `penguins` in Chapter 25.
+
+- Every tutorial now uses only its own chapter’s data. Study Design
+  replaces `malaria`, which Chapter 2 never uses, with the stent study
+  it discusses, and Applications: Explore replaces `county` with Chapter
+  6’s company expenses and its real 2010 Duke hiring counts. Chapters
+  that give data only as counts ship them as CSVs in `inst/extdata/`,
+  and `test-downloads.R` now checks every such file.
+
+- Trimmed the knowledge drops that ran past two sentences.
+
+- Added **infer** to `Suggests`, used by the simulation answer chunks
+  from Chapter 11 on.
+
 ## ims.tutorials 0.0.0.9002
 
 - Tutorial directories drop their two-digit chapter prefix

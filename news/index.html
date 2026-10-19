@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ims.tutorials</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9004</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -33,6 +33,18 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.0.0.9004" id="imstutorials-0009004">ims.tutorials 0.0.0.9004<a class="anchor" aria-label="anchor" href="#imstutorials-0009004"></a></h2>
+<ul><li><p>Tutorial directories no longer carry a chapter-number prefix (<code>hello-data</code>, not <code>01-hello-data</code>); each tutorial’s place in the list is the <code>ordering:</code> field in its YAML header, read by learnr2 0.1.3. Chapter 7 is <code>linear-regression-single</code> and Chapter 8 <code>linear-regression-multiple</code>, keeping package paths under the 100-byte limit for portable tarballs.</p></li>
+<li><p>Code blocks follow learnr2’s convention: commands are tagged with their language, expected output is tagged <code>{.output}</code>, and displayed chunks use <code>{verbatim}</code> blocks instead of <code>&lt;pre&gt;&lt;code&gt;</code>.</p></li>
+<li><p>Each tutorial’s Summary now quotes the chapter’s own Summary paragraph, for the chapters that have one.</p></li>
+<li><p>Added six tutorials, the companions to Chapters 11 through 16: Hypothesis Testing with Randomization (<code>hypothesis-testing-randomization</code>), Confidence Intervals with Bootstrapping (<code>confidence-intervals-bootstrap</code>), Inference with Mathematical Models (<code>inference-mathematical-models</code>), Decision Errors (<code>decision-errors</code>), Applications: Foundations (<code>applications-foundations</code>), and Inference for a Single Proportion (<code>inference-for-a-single-proportion</code>).</p></li>
+<li><p>Added eleven tutorials, the companions to Chapters 17 through 27, so every chapter of the book now has one: Inference for Comparing Two Proportions, Inference for Two-Way Tables, Inference for a Single Mean, Inference for Comparing Two Independent Means, Inference for Comparing Paired Means, Inference for Comparing Many Means, Applications: Infer, Inference for Linear Regression with a Single Predictor, Inference for Linear Regression with Multiple Predictors, Inference for Logistic Regression, and Applications: Model and Infer.</p></li>
+<li><p>Added <strong>cherryblossom</strong> and <strong>palmerpenguins</strong> to <code>Suggests</code>, for <code>run17</code> in Chapter 19 and <code>penguins</code> in Chapter 25.</p></li>
+<li><p>Every tutorial now uses only its own chapter’s data. Study Design replaces <code>malaria</code>, which Chapter 2 never uses, with the stent study it discusses, and Applications: Explore replaces <code>county</code> with Chapter 6’s company expenses and its real 2010 Duke hiring counts. Chapters that give data only as counts ship them as CSVs in <code>inst/extdata/</code>, and <code>test-downloads.R</code> now checks every such file.</p></li>
+<li><p>Trimmed the knowledge drops that ran past two sentences.</p></li>
+<li><p>Added <strong>infer</strong> to <code>Suggests</code>, used by the simulation answer chunks from Chapter 11 on.</p></li>
+</ul></div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.0.0.9002" id="imstutorials-0009002">ims.tutorials 0.0.0.9002<a class="anchor" aria-label="anchor" href="#imstutorials-0009002"></a></h2>
 <ul><li><p>Tutorial directories drop their two-digit chapter prefix (<code>01-hello-data</code> is now <code>hello-data</code>); each tutorial’s YAML header sets <code>learnr2: ordering:</code> to its chapter number instead, which fixes its place in the tutorial list.</p></li>
 <li><p>Added five tutorials, the companions to Chapters 6 through 10 of <em>Introduction to Modern Statistics</em>: Applications: Explore (<code>06-applications-explore</code>), Linear Regression with a Single Predictor (<code>07-linear-regression-single</code>), Linear Regression with Multiple Predictors (<code>08-linear-regression-multiple</code>), Logistic Regression (<code>09-logistic-regression</code>), and Applications: Model (<code>10-applications-model</code>).</p></li>
@@ -44,7 +56,8 @@
 <li><p>Added four tutorials, the companions to Chapters 2 through 5 of <em>Introduction to Modern Statistics</em>: Study Design (<code>02-study-design</code>), Applications: Data (<code>03-applications-data</code>), Exploring Categorical Data (<code>04-exploring-categorical-data</code>), and Exploring Numerical Data (<code>05-exploring-numerical-data</code>).</p></li>
 <li><p>Added <strong>ggridges</strong> and <strong>maps</strong> to <code>Suggests</code>, for the ridge plot in Exploring Categorical Data and the county intensity map in Exploring Numerical Data. The student devcontainer image already carries both, via <code>misc.tutorials</code>.</p></li>
 </ul></div>
-  </main></div>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">
