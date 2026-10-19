@@ -1,0 +1,1188 @@
+---
+title: "Applications: Infer"
+subtitle: "Redundant adjectives in English and Spanish: a bootstrap interval, a paired test, and two independent-means tests."
+format: live-html
+engine: knitr
+toc: true
+toc-depth: 2
+learnr2:
+  ordering: 23
+---
+
+{{< include _extensions/r-wasm/live/_knitr.qmd >}}
+
+```{r}
+#| label: setup
+#| include: false
+library(tidyverse)
+library(infer)
+knitr::opts_chunk$set(out.width = "90%")
+```
+
+## Student Information
+
+```{r}
+#| label: student-information-1
+#| echo: false
+learnr2::student_info()
+```
+
+## Introduction
+
+This tutorial covers [Chapter 23: Applications: Infer](https://openintrostat.github.io/ims/inference-applications.html) from [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) by Mine Çetinkaya-Rundel and Johanna Hardin. You will learn to carry a real experiment on redundant adjectives through the computational methods of inference, a bootstrap confidence interval for one mean, a randomization test for paired means, and randomization tests for two independent means, checking each against the $t$-distribution.
+
+### Exercise 1
+
+You should be doing this tutorial in a repo named `applications-infer`. If you are not, create one and then connect to it. You may need to restart this tutorial after you do so.
+
+Create a new file, `analysis.qmd`, with the title `"Applications: Infer"` and your name as the author. In a bash Terminal, render it:
+
+```bash
+quarto render analysis.qmd
+```
+
+Open `analysis.html` with Live Server (right-click it in the Explorer → **Open with Live Server**) and keep the tab open. It refreshes on every render. Going forward, we will just tell you to "Render" when we want you to take these steps.
+
+Create a `.gitignore` with `analysis_files` followed by a blank line. Commit and push. Use AI however you like.
+
+If `show_file()` fails, it is probably because you have not yet loaded `library(learnr2)` in the R Terminal.
+
+```{r}
+#| label: introduction-1
+#| echo: false
+learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{.output}
+analysis_files
+```
+
+###
+
+"The computational methods we have presented are used in two settings." "First, in many real life applications (as in those covered here), the mathematical model and computational model give identical conclusions."
+
+### Exercise 2
+
+Add a chunk to `analysis.qmd` that loads the **[tidyverse](https://www.tidyverse.org/)**, with `#| message: false` so the startup messages stay out of the rendered page. Add `execute: echo: false` to the YAML header. Render.
+
+```{r}
+#| label: introduction-2
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+````{verbatim}
+#| message: false
+library(tidyverse)
+````
+
+###
+
+The chapter's data arrive as a CSV file, so **[readr](https://readr.tidyverse.org/)** reads them, **dplyr** and **tidyr** reshape them, and **ggplot2** draws every figure. All four come with the **tidyverse**.
+
+### Exercise 3
+
+Add **[infer](https://infer.tidymodels.org/)** to that chunk. Render.
+
+```{r}
+#| label: introduction-3
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+````{verbatim}
+#| message: false
+library(tidyverse)
+library(infer)
+````
+
+###
+
+The chapter's own code builds every bootstrap and randomization distribution with **infer**, the same four steps each time: specify the variables, state the null hypothesis, generate simulated data, and calculate a statistic. "When there are no differences in conclusions, the advantage of the computational method is that it gives the analyst a good sense for the logic of the statistical inference process."
+
+### Exercise 4
+
+The chapter's data are in no R package, so you will download them. Create a `data` directory at the top level of the `applications-infer` repo.
+
+```{r}
+#| label: introduction-4
+#| echo: false
+learnr2::question("In the bash Terminal, run ls. CP/CR.", type = "reflection")
+```
+
+###
+
+```{.output}
+analysis.html  analysis.qmd  analysis_files  data
+```
+
+###
+
+"In this case study we will examine data from redundant adjective study, which the authors have made available on Open Science Framework at [osf.io/9hw68](https://osf.io/9hw68/)." The book keeps a copy in its own repository, and we keep an identical copy in ours.
+
+### Exercise 5
+
+Download the file at
+
+```default
+https://raw.githubusercontent.com/PPBDS/ims.tutorials/main/inst/extdata/redundant_adjectives.csv
+```
+
+into your `data` directory, keeping the name `redundant_adjectives.csv`.
+
+```{r}
+#| label: introduction-5
+#| echo: false
+learnr2::question("In the bash Terminal, run ls data. CP/CR.", type = "reflection")
+```
+
+###
+
+```{.output}
+redundant_adjectives.csv
+```
+
+###
+
+The book's copy is called `ENGLISH-SPANISH PRODUCTION.csv`, a name with a space in it, which makes every command that touches it harder to type. We renamed it and changed nothing else.
+
+## A confidence interval for one mean
+
+"Bootstrapping, in contrast to randomization tests, represents a proxy sampling of the original population." This section turns the study's 880 answers into one percentage per speaker and display, then bootstraps a confidence interval for the mean of one group, as the chapter does.
+
+### Exercise 1
+
+```{r}
+#| label: a-confidence-interval-for-one-mean-1
+#| echo: false
+learnr2::question("In the bash Terminal, run head data/redundant_adjectives.csv. CP/CR.", type = "reflection")
+```
+
+###
+
+```{.output}
+Language,Subject,Question,Color Response
+English,1,1,1
+English,1,2,1
+English,1,3,1
+English,1,4,1
+English,1,5,1
+English,1,6,1
+English,1,7,1
+English,1,8,1
+English,1,9,1
+```
+
+###
+
+The file has no help page, so the chapter is its documentation: researchers "showed the following two images to 22 native English speakers (undergraduates from University College London) and 22 native Spanish speakers (undergraduates from the Universidad de las Islas Baleares)." A `Color Response` of 1 means the speaker said "the blue triangle" when "the triangle" was enough, a redundant adjective.
+
+### Exercise 2
+
+Add a chunk that reads `data/redundant_adjectives.csv` and prints it. Render.
+
+```{r}
+#| label: a-confidence-interval-for-one-mean-2
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: a-confidence-interval-for-one-mean-2-test
+#| echo: true
+read_csv("data/redundant_adjectives.csv", show_col_types = FALSE)
+```
+
+###
+
+There are 880 rows, one per answer: 44 speakers times 20 questions each. The column `Color Response` has a space in its name, so R code can only refer to it wrapped in backticks.
+
+### Exercise 3
+
+Change the code so that the columns get short lowercase names with no spaces: `language`, `subject`, `question`, and `color_response`. Render.
+
+```{r}
+#| label: a-confidence-interval-for-one-mean-3
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: a-confidence-interval-for-one-mean-3-test
+#| echo: true
+read_csv("data/redundant_adjectives.csv", show_col_types = FALSE) |>
+  rename(language = Language, subject = Subject,
+         question = Question, color_response = `Color Response`)
+```
+
+###
+
+The chapter's code does the same cleanup in one step with the **[janitor](https://sfirke.github.io/janitor/)** package, which converts every column name to lowercase snake case. Renaming by hand works just as well when there are only four columns.
+
+### Exercise 4
+
+Replace the printing so that the code counts the number of distinct values of `subject`. Render.
+
+```{r}
+#| label: a-confidence-interval-for-one-mean-4
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: a-confidence-interval-for-one-mean-4-test
+#| echo: true
+read_csv("data/redundant_adjectives.csv", show_col_types = FALSE) |>
+  rename(language = Language, subject = Subject,
+         question = Question, color_response = `Color Response`) |>
+  summarize(n_subjects = n_distinct(subject))
+```
+
+###
+
+Only 22, but "Remember that there are a total of 44 subjects in the study (22 English and 22 Spanish speakers)." The subjects are numbered 1 to 22 within each language, so `subject` 1 is two different people, and any summary by speaker must group by `language` as well.
+
+### Exercise 5
+
+The file does not say which display each question used. Following the authors' own analysis script, the chapter treats questions 1 to 10 as the 4-item displays and questions 11 to 20 as the 16-item displays. Replace the count with a new column, `items`, that records 4 or 16 for each question, and then count the rows for each combination of `language` and `items`. Render.
+
+```{r}
+#| label: a-confidence-interval-for-one-mean-5
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: a-confidence-interval-for-one-mean-5-test
+#| echo: true
+read_csv("data/redundant_adjectives.csv", show_col_types = FALSE) |>
+  rename(language = Language, subject = Subject,
+         question = Question, color_response = `Color Response`) |>
+  mutate(items = if_else(question > 10, 16, 4)) |>
+  count(language, items)
+```
+
+###
+
+Each cell holds 220 answers, 22 speakers times 10 questions. "Each subject was asked 10 questions for each type of image (with a different layout of items on the image for each question)."
+
+### Exercise 6
+
+Replace the count so that the code creates `redundant`, a tibble with one row for each speaker and display size: `language`, `subject`, `items`, and `redundant_perc`, the percentage of that speaker's 10 answers that used a redundant adjective. Print `redundant`. Render.
+
+```{r}
+#| label: a-confidence-interval-for-one-mean-6
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: a-confidence-interval-for-one-mean-6-test
+#| echo: true
+redundant <- read_csv("data/redundant_adjectives.csv", show_col_types = FALSE) |>
+  rename(language = Language, subject = Subject,
+         question = Question, color_response = `Color Response`) |>
+  mutate(items = if_else(question > 10, 16, 4)) |>
+  summarize(redundant_perc = sum(color_response) * 100 / n(),
+            .by = c(language, subject, items))
+
+redundant
+```
+
+###
+
+The unit of observation has changed from an answer to a speaker shown one display size, so 880 rows have become 88. "Note that the variable is "percentage", and we are interested in the average percentage." "Therefore, we will use methods for means."
+
+### Exercise 7
+
+Delete the line that prints `redundant`, so that the chunk only creates it. Render.
+
+```{r}
+#| label: a-confidence-interval-for-one-mean-7
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+````{verbatim}
+redundant <- read_csv("data/redundant_adjectives.csv", show_col_types = FALSE) |>
+  rename(language = Language, subject = Subject,
+         question = Question, color_response = `Color Response`) |>
+  mutate(items = if_else(question > 10, 16, 4)) |>
+  summarize(redundant_perc = sum(color_response) * 100 / n(),
+            .by = c(language, subject, items))
+````
+
+###
+
+This chunk is now the analysis's data chunk: every later chunk starts from `redundant`. Keeping the reading and the preparation in one place means a fix to the data needs to be made only once.
+
+### Exercise 8
+
+Start a new chunk that calculates the mean of `redundant_perc` for each combination of `language` and `items`. Render.
+
+```{r}
+#| label: a-confidence-interval-for-one-mean-8
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: a-confidence-interval-for-one-mean-8-test
+#| echo: true
+redundant |>
+  summarize(mean_redundant_perc = mean(redundant_perc),
+            .by = c(language, items))
+```
+
+###
+
+English speakers used a redundant adjective in 37.3% of 4-item displays and 80.5% of 16-item displays, Spanish speakers in 2.7% and 61.4%. "We can see that English speakers are more likely than Spanish speakers to use redundant adjectives, and that in both languages, subjects are more likely to use a redundant adjective when there are more items in the image (i.e., in a denser display)."
+
+### Exercise 9
+
+Replace the code in that chunk so that it counts how many English speakers had each value of `redundant_perc` with the 4-item displays. Render.
+
+```{r}
+#| label: a-confidence-interval-for-one-mean-9
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: a-confidence-interval-for-one-mean-9-test
+#| echo: true
+redundant |>
+  filter(language == "English", items == 4) |>
+  count(redundant_perc)
+```
+
+###
+
+Of 22 English speakers, 12 never used the redundant adjective, 8 always did, and only 2 did so once in 10 tries. The mean of 37.3% describes almost no one: most speakers have a habit, and the data are about as far from a bell shape as 22 numbers can be.
+
+### Exercise 10
+
+Replace the code in that chunk so that it creates `boot_eng_4`, the means of 1,000 bootstrap resamples of `redundant_perc` for English speakers with 4-item displays. Set the seed to 74 first, as the chapter's code does. Print `boot_eng_4`. Render.
+
+```{r}
+#| label: a-confidence-interval-for-one-mean-10
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: a-confidence-interval-for-one-mean-10-test
+#| echo: true
+set.seed(74)
+boot_eng_4 <- redundant |>
+  filter(language == "English", items == 4) |>
+  specify(response = redundant_perc) |>
+  generate(reps = 1000, type = "bootstrap") |>
+  calculate(stat = "mean")
+
+boot_eng_4
+```
+
+###
+
+Each row is the mean of one resample: "Repeatedly resample the original data, with replacement, using the same sample size as the original data." "With bootstrapping, the analyst is not forcing the null hypothesis to be true (or false, for that matter), but instead, they are replicating the variability seen in taking repeated samples from a population."
+
+### Exercise 11
+
+Delete the line that prints `boot_eng_4`, so that the chunk only creates it. Render.
+
+```{r}
+#| label: a-confidence-interval-for-one-mean-11
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+````{verbatim}
+set.seed(74)
+boot_eng_4 <- redundant |>
+  filter(language == "English", items == 4) |>
+  specify(response = redundant_perc) |>
+  generate(reps = 1000, type = "bootstrap") |>
+  calculate(stat = "mean")
+````
+
+###
+
+The seed fixes the 1,000 resamples, so every render gives the same interval. "Because there is no underlying true (or false) null hypothesis, bootstrapping is typically used for creating confidence intervals for the parameter of interest."
+
+### Exercise 12
+
+Add `#| cache: true` to that chunk. Render.
+
+```{r}
+#| label: a-confidence-interval-for-one-mean-12
+#| echo: false
+learnr2::question("In the bash Terminal, run ls. CP/CR.", type = "reflection")
+```
+
+###
+
+```{.output}
+analysis.html  analysis.qmd  analysis_cache  analysis_files  data
+```
+
+###
+
+`analysis_cache` now holds the 1,000 bootstrap means, so later renders reuse them instead of resampling again. A cached chunk only re-runs when its code changes.
+
+### Exercise 13
+
+Your Source Control count just jumped, because Git sees every file in the new cache directory. Add `analysis_cache` to `.gitignore`, and the count drops back.
+
+```{r}
+#| label: a-confidence-interval-for-one-mean-13
+#| echo: false
+learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{.output}
+analysis_files
+analysis_cache
+```
+
+###
+
+The cache is rebuilt from your code on any machine that renders the file, so it does not belong on GitHub. The data file in `data/` is different: it cannot be rebuilt from anything in the repo, so it stays.
+
+### Exercise 14
+
+Start a new chunk that uses `boot_eng_4` to calculate a 95% bootstrap percentile interval. Render.
+
+```{r}
+#| label: a-confidence-interval-for-one-mean-14
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: a-confidence-interval-for-one-mean-14-test
+#| echo: true
+boot_eng_4 |>
+  get_confidence_interval(level = 0.95, type = "percentile")
+```
+
+###
+
+Our interval, 19.1% to 56.4%, is the chapter's to the decimal, because we used the same seed and the same steps; with another seed yours will differ slightly. "Note that this interval for the true population parameter is only valid if we can assume that the sample of English speakers are representative of the population of all English speakers."
+
+### Exercise 15
+
+The chapter's recap describes a second bootstrap interval: "The confidence interval will be given by the original observed statistic plus or minus some multiple (e.g., 2) of SEs." Replace the code in that chunk so that it calculates the observed mean for English speakers with 4-item displays, the standard deviation of the bootstrap means as the SE, and the interval from the mean minus 2 SEs to the mean plus 2 SEs. Render.
+
+```{r}
+#| label: a-confidence-interval-for-one-mean-15
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: a-confidence-interval-for-one-mean-15-test
+#| echo: true
+redundant |>
+  filter(language == "English", items == 4) |>
+  summarize(mean = mean(redundant_perc)) |>
+  mutate(se = sd(boot_eng_4$stat),
+         lower = mean - 2 * se,
+         upper = mean + 2 * se)
+```
+
+###
+
+The SE interval, 17.1% to 57.4%, is a little wider than the percentile interval and centered exactly on the observed 37.3%. "Bootstrap percentile interval: Obtain the endpoints representing the middle (e.g., 95%) of the bootstrapped statistics."
+
+### Exercise 16
+
+Check the bootstrap against the mathematical model. Replace the code in that chunk with a 95% confidence interval for the same mean from the $t$-distribution, done by a single function built for it. Render.
+
+```{r}
+#| label: a-confidence-interval-for-one-mean-16
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: a-confidence-interval-for-one-mean-16-test
+#| echo: true
+redundant |>
+  filter(language == "English", items == 4) |>
+  t_test(response = redundant_perc, conf_level = 0.95)
+```
+
+###
+
+The $t$-interval, 15.7% to 58.8% on 21 degrees of freedom, is wider still, and its conditions are shaky: "slight skew is okay for sample sizes of 15, moderate skew for sample sizes of 30, and strong skew for sample sizes of 60," and these 22 values sit in two clumps at 0 and 100. "Second, when there is a difference in the conclusions (seen primarily in methods beyond the scope of this text), it is often the case that the computational method relies on fewer technical conditions and is therefore more appropriate to use."
+
+### Exercise 17
+
+Replace the code in that chunk with a histogram of the 1,000 bootstrap means in `boot_eng_4`, with vertical lines at the two ends of the 95% percentile interval. Render.
+
+```{r}
+#| label: a-confidence-interval-for-one-mean-17
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: a-confidence-interval-for-one-mean-17-test
+#| echo: true
+ci_eng_4 <- boot_eng_4 |>
+  get_confidence_interval(level = 0.95, type = "percentile")
+
+boot_eng_4 |>
+  ggplot(aes(x = stat)) +
+  geom_histogram(binwidth = 5) +
+  geom_vline(xintercept = c(ci_eng_4$lower_ci, ci_eng_4$upper_ci))
+```
+
+###
+
+The bootstrap means pile up around 37 even though no single English speaker scored anywhere near 37. Averaging 22 speakers smooths two clumps into one hump, which is why a mean can have a well-behaved bootstrap distribution when the data do not.
+
+### Exercise 18
+
+Improve the plot. Shade the interval between the two lines, show the x-axis as percentages, and add a title, axis labels, a subtitle that states the interval, and a caption giving the number of speakers, the number of resamples, and the source. Render.
+
+```{r}
+#| label: a-confidence-interval-for-one-mean-18
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: a-confidence-interval-for-one-mean-18-test
+#| echo: true
+ci_eng_4 <- boot_eng_4 |>
+  get_confidence_interval(level = 0.95, type = "percentile")
+
+boot_eng_4 |>
+  ggplot(aes(x = stat)) +
+  annotate("rect", xmin = ci_eng_4$lower_ci, xmax = ci_eng_4$upper_ci,
+           ymin = -Inf, ymax = Inf, fill = "steelblue", alpha = 0.2) +
+  geom_histogram(binwidth = 5, fill = "steelblue") +
+  geom_vline(xintercept = c(ci_eng_4$lower_ci, ci_eng_4$upper_ci),
+             color = "navy") +
+  scale_x_continuous(labels = scales::label_percent(scale = 1)) +
+  labs(title = "Redundant Adjectives Among English Speakers, 4-Item Displays",
+       subtitle = "95% confidence interval for the mean usage: 19.1% to 56.4%",
+       x = "Mean Percentage of Answers With a Redundant Adjective",
+       y = "Number of Bootstrap Resamples",
+       caption = "22 English speakers, 1,000 bootstrap resamples\nRubio-Fernandez, Mollica, and Jara-Ettinger (2021), via Introduction to Modern Statistics")
+```
+
+###
+
+This is the chapter's bootstrap figure, built with a seed of 74 as the chapter's was. "Put the conclusions in context and in plain language so even non-statisticians and data scientists can understand the results."
+
+### Exercise 19
+
+Commit `analysis.qmd` and `.gitignore` with the message `"Bootstrap a confidence interval"` and push.
+
+```{r}
+#| label: a-confidence-interval-for-one-mean-19
+#| echo: false
+learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type = "reflection")
+```
+
+###
+
+```{.output}
+5c21e0a (HEAD -> main, origin/main) Bootstrap a confidence interval
+9be04d2 Initial commit
+```
+
+###
+
+"However, these confidence intervals are not very meaningful to compare to one another as the interpretation of the "true mean redundant adjective usage percentage" is quite an abstract concept." Comparisons, between display sizes and between languages, call for hypothesis tests.
+
+###
+
+A confidence interval for one mean takes three steps by bootstrap: resample, recompute the mean, and keep the middle 95%. The same steps work for a median or any other statistic, which is why the bootstrap is the more general tool even when the $t$-interval agrees with it.
+
+## Testing paired and independent means
+
+"An important feature of randomization tests is that the data are permuted in such a way that the null hypothesis is true." This section runs the chapter's two kinds of test: a paired test comparing each English speaker with themselves, and independent-means tests comparing English speakers with Spanish speakers.
+
+### Exercise 1
+
+Start a new chunk that keeps only the English speakers in `redundant` and reshapes them so that each speaker is one row, with their 4-item and 16-item percentages in two columns, `perc_4` and `perc_16`. Add a column `diff`, the 16-item percentage minus the 4-item percentage. Render.
+
+```{r}
+#| label: testing-paired-and-independent-means-1
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: testing-paired-and-independent-means-1-test
+#| echo: true
+redundant |>
+  filter(language == "English") |>
+  pivot_wider(id_cols = subject, names_from = items,
+              names_prefix = "perc_", values_from = redundant_perc) |>
+  mutate(diff = perc_16 - perc_4)
+```
+
+###
+
+"Note that the English speaking participants were each evaluated on both the 4 item and the 16 item displays." "Therefore, the variable of interest is the difference in redundant percentage."
+
+### Exercise 2
+
+Change the code so that it ends by counting how many speakers had each value of `diff`. Render.
+
+```{r}
+#| label: testing-paired-and-independent-means-2
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: testing-paired-and-independent-means-2-test
+#| echo: true
+redundant |>
+  filter(language == "English") |>
+  pivot_wider(id_cols = subject, names_from = items,
+              names_prefix = "perc_", values_from = redundant_perc) |>
+  mutate(diff = perc_16 - perc_4) |>
+  count(diff)
+```
+
+###
+
+Eleven speakers did not change at all, and all 11 who did change used more redundant adjectives with 16 items, by 70 to 100 points. Not one English speaker went the other way.
+
+### Exercise 3
+
+Replace the count with the mean of `diff`. Render.
+
+```{r}
+#| label: testing-paired-and-independent-means-3
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: testing-paired-and-independent-means-3-test
+#| echo: true
+redundant |>
+  filter(language == "English") |>
+  pivot_wider(id_cols = subject, names_from = items,
+              names_prefix = "perc_", values_from = redundant_perc) |>
+  mutate(diff = perc_16 - perc_4) |>
+  summarize(mean_diff = mean(diff))
+```
+
+###
+
+The mean difference is 43.18 percentage points, the chapter's $\bar{x}_{diff}$. "Although the redundancy percentages seem higher in the 16 item task, a hypothesis test will tell us whether the differences observed in the data could be due to natural variability."
+
+### Exercise 4
+
+Replace the mean so that the code creates `null_eng`, the mean differences from 1,000 shuffles under the null hypothesis that display size makes no difference, shuffling each speaker's two percentages between the displays. Set the seed to 74 first. Print `null_eng`. Render.
+
+```{r}
+#| label: testing-paired-and-independent-means-4
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: testing-paired-and-independent-means-4-test
+#| echo: true
+set.seed(74)
+null_eng <- redundant |>
+  filter(language == "English") |>
+  pivot_wider(id_cols = subject, names_from = items,
+              names_prefix = "perc_", values_from = redundant_perc) |>
+  mutate(diff = perc_16 - perc_4) |>
+  specify(response = diff) |>
+  hypothesize(null = "paired independence") |>
+  generate(reps = 1000, type = "permute") |>
+  calculate(stat = "mean")
+
+null_eng
+```
+
+###
+
+The paired test "shuffles the observed percentage across the two groups (4 item vs 16 item) but **within** a single participant." Swapping a speaker's two percentages just flips the sign of their difference, so each shuffle is a random choice of plus or minus for each of the 22 differences.
+
+### Exercise 5
+
+Replace the line that prints `null_eng` with one that calculates the mean, the smallest, and the largest of the 1,000 shuffled mean differences. Render.
+
+```{r}
+#| label: testing-paired-and-independent-means-5
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: testing-paired-and-independent-means-5-test
+#| echo: true
+null_eng |>
+  summarize(mean = mean(stat), min = min(stat), max = max(stat))
+```
+
+###
+
+"Note that the distribution is centered at 0, since the structure of randomly assigning redundancy percentages to each item display will balance the data out such that the average of any differences will be zero." Our shuffles ranged from -43.18 to 36.8: none reached the observed 43.18, and just one matched it in the other direction.
+
+### Exercise 6
+
+Replace that line with one that calculates the p-value: the proportion of shuffles whose mean difference is at least as far from 0 as the observed 43.18, in either direction. Render.
+
+```{r}
+#| label: testing-paired-and-independent-means-6
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: testing-paired-and-independent-means-6-test
+#| echo: true
+null_eng |>
+  summarize(p_value = mean(abs(stat) >= 43.18))
+```
+
+###
+
+Our p-value is 0.001, one shuffle in 1,000, and the chapter reports "a p-value that is approximately 0." With all 11 nonzero differences positive, the observed 43.18 is the most extreme mean a shuffle can produce, so the exact p-value is 2 in $2^{11}$, about 0.001.
+
+### Exercise 7
+
+Check the randomization test against the mathematical model. Replace the code in that chunk with a paired $t$-test of `diff` against a null value of 0, done by a single function built for it. Render.
+
+```{r}
+#| label: testing-paired-and-independent-means-7
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: testing-paired-and-independent-means-7-test
+#| echo: true
+redundant |>
+  filter(language == "English") |>
+  pivot_wider(id_cols = subject, names_from = items,
+              names_prefix = "perc_", values_from = redundant_perc) |>
+  mutate(diff = perc_16 - perc_4) |>
+  t_test(response = diff, mu = 0)
+```
+
+###
+
+The $t$-test gives T = 4.48 on 21 degrees of freedom and a p-value of 0.0002, the same conclusion as the shuffles. "With such a small p-value, we reject the null hypothesis and conclude that the data provide convincing evidence of a difference in mean redundant adjective usage percentages across different displays for English speakers."
+
+### Exercise 8
+
+Now compare the languages. Replace the code in that chunk with the observed difference in mean `redundant_perc`, English minus Spanish, for the 4-item displays only. Use **infer**. Render.
+
+```{r}
+#| label: testing-paired-and-independent-means-8
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: testing-paired-and-independent-means-8-test
+#| echo: true
+redundant |>
+  filter(items == 4) |>
+  specify(redundant_perc ~ language) |>
+  calculate(stat = "diff in means", order = c("English", "Spanish"))
+```
+
+###
+
+English speakers were 34.5 points more redundant than Spanish speakers with 4 items. "The English speakers are independent from the Spanish speakers, but since the same subjects were shown the two types of displays, we can't combine data from the two display types (4 objects and 16 objects) together while maintaining independence of observations."
+
+### Exercise 9
+
+Change the code so that, after setting the seed to 74, it shuffles the language labels among the 44 speakers 1,000 times, calculates the difference in means for each shuffle, and returns the two-sided p-value for the observed difference of 34.5. Render.
+
+```{r}
+#| label: testing-paired-and-independent-means-9
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: testing-paired-and-independent-means-9-test
+#| echo: true
+set.seed(74)
+redundant |>
+  filter(items == 4) |>
+  specify(redundant_perc ~ language) |>
+  hypothesize(null = "independence") |>
+  generate(reps = 1000, type = "permute") |>
+  calculate(stat = "diff in means", order = c("English", "Spanish")) |>
+  get_p_value(obs_stat = 34.5, direction = "two-sided")
+```
+
+###
+
+Our p-value is 0.002: 2 of 1,000 shuffles were as far from 0 as 34.5, and yours will be close. "Here, the randomization process is slightly different than the paired setting (because the English and Spanish speakers do not have a natural pairing across the two groups)."
+
+### Exercise 10
+
+Change the code to run the same test for the 16-item displays, where the observed difference is 19.1. Render.
+
+```{r}
+#| label: testing-paired-and-independent-means-10
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: testing-paired-and-independent-means-10-test
+#| echo: true
+set.seed(74)
+redundant |>
+  filter(items == 16) |>
+  specify(redundant_perc ~ language) |>
+  hypothesize(null = "independence") |>
+  generate(reps = 1000, type = "permute") |>
+  calculate(stat = "diff in means", order = c("English", "Spanish")) |>
+  get_p_value(obs_stat = 19, direction = "two-sided")
+```
+
+###
+
+Our p-value is 0.114, where the chapter's own code, with the same seed, gets 0.102: six shuffles tie the observed 19.09 exactly, but rounding inside the computer made them a hair smaller, so a cutoff of exactly 19.09 misses them. Either way, "the data provide convincing evidence of a difference in mean redundant adjective usage percentages between languages in 4 item displays (small p-value) but not in 16 item displays (not small p-value)."
+
+### Exercise 11
+
+Check both language comparisons against the mathematical model. Replace the code in that chunk with a two-sample $t$-test, English minus Spanish, for each display size, with the two results stacked in one table and labeled by display size. Render.
+
+```{r}
+#| label: testing-paired-and-independent-means-11
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: testing-paired-and-independent-means-11-test
+#| echo: true
+bind_rows(
+  "4 items" = redundant |>
+    filter(items == 4) |>
+    t_test(redundant_perc ~ language, order = c("English", "Spanish")),
+  "16 items" = redundant |>
+    filter(items == 16) |>
+    t_test(redundant_perc ~ language, order = c("English", "Spanish")),
+  .id = "display"
+)
+```
+
+###
+
+The $t$-tests give p-values of 0.003 and 0.094, against our 0.002 and 0.114 by simulation, so the two methods reach the same conclusions. "For a difference of means when the data are not paired: each sample mean must separately satisfy the one-sample conditions for the $t$-distribution, and the data in the groups must also be independent."
+
+### Exercise 12
+
+Replace the code in that chunk with a bar plot of the mean `redundant_perc` for each display size and language: one bar for each language, side by side, within each display size. Render.
+
+```{r}
+#| label: testing-paired-and-independent-means-12
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: testing-paired-and-independent-means-12-test
+#| echo: true
+redundant |>
+  summarize(mean_redundant_perc = mean(redundant_perc),
+            .by = c(language, items)) |>
+  ggplot(aes(x = factor(items), y = mean_redundant_perc, fill = language)) +
+  geom_col(position = "dodge")
+```
+
+###
+
+Two gaps show at once: the rise from 4 to 16 items within each language, which the paired test confirmed for English, and the gap between the languages, which is wide with 4 items and narrower with 16. Treating `items` as a category keeps the axis from inventing display sizes between 4 and 16.
+
+### Exercise 13
+
+Improve the plot. Show the y-axis as percentages, label each bar with its value, move the legend below the plot, and add a title, axis labels, a subtitle that states the main finding, and a caption giving the number of speakers and the source. Render.
+
+```{r}
+#| label: testing-paired-and-independent-means-13
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: testing-paired-and-independent-means-13-test
+#| echo: true
+redundant |>
+  summarize(mean_redundant_perc = mean(redundant_perc),
+            .by = c(language, items)) |>
+  ggplot(aes(x = factor(items), y = mean_redundant_perc, fill = language)) +
+  geom_col(position = position_dodge(width = 0.9)) +
+  geom_text(aes(label = scales::label_percent(scale = 1, accuracy = 0.1)(mean_redundant_perc)),
+            position = position_dodge(width = 0.9), vjust = -0.4) +
+  scale_y_continuous(labels = scales::label_percent(scale = 1),
+                     limits = c(0, 100)) +
+  labs(title = "Redundant Color Adjectives in English and Spanish",
+       subtitle = "English speakers were more redundant with 4 items (p = 0.002), but the gap was not\nclear with 16 (p = 0.11)",
+       x = "Number of Items in the Display",
+       y = "Mean Redundant Adjective Use",
+       fill = "Language",
+       caption = "22 English and 22 Spanish speakers, 10 answers per display size\nRubio-Fernandez, Mollica, and Jara-Ettinger (2021), via Introduction to Modern Statistics") +
+  theme(legend.position = "bottom")
+```
+
+###
+
+This is the chapter's bar chart, with the test results in the subtitle. "The results suggests that language patterns around redundant adjective usage might be more similar for denser displays than sparser displays across English and Spanish speakers."
+
+### Exercise 14
+
+Commit `analysis.qmd` with the message `"Test paired and independent means"` and push.
+
+```{r}
+#| label: testing-paired-and-independent-means-14
+#| echo: false
+learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type = "reflection")
+```
+
+###
+
+```{.output}
+a8d4f17 (HEAD -> main, origin/main) Test paired and independent means
+5c21e0a Bootstrap a confidence interval
+9be04d2 Initial commit
+```
+
+###
+
+"In approaching research questions with a randomization test, be sure to ask yourself what the null hypothesis represents and how it is that permuting the data is creating different possible null data representations." The paired test shuffled within each speaker and the language tests shuffled across speakers, because the null hypotheses were different.
+
+###
+
+Every test in this section followed the same recipe: compute the observed statistic, shuffle the data so that the null hypothesis is true, recompute, and see how often the shuffles are as extreme. Only the shuffle changes with the design of the study, and choosing it correctly is the part no software can do for you.
+
+## Summary
+
+This tutorial covered [Chapter 23: Applications: Infer](https://openintrostat.github.io/ims/inference-applications.html) from [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) by Mine Çetinkaya-Rundel and Johanna Hardin. You have learned to carry a real experiment on redundant adjectives through the computational methods of inference, a bootstrap confidence interval for one mean, a randomization test for paired means, and randomization tests for two independent means, checking each against the $t$-distribution.
+
+For the study itself, read "[Speakers and listeners exploit word order for communicative efficiency: A cross-linguistic investigation](https://doi.org/10.1037/xge0000963)" by Paula Rubio-Fernandez, Francis Mollica, and Julian Jara-Ettinger, whose data the authors share on the [Open Science Framework](https://osf.io/9hw68/). For more practice with this part of the book, the chapter points to OpenIntro's [Tutorial 5: Statistical inference](https://openintrostat.github.io/ims-tutorials/05-infer/).
+
+### Exercise 1
+
+Render one last time.
+
+```{r}
+#| label: summary-1
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). CP/CR.', type = "reflection")
+```
+
+###
+
+````{verbatim}
+---
+title: "Applications: Infer"
+author: "Your Name"
+format: html
+execute:
+  echo: false
+---
+
+```{r}
+#| message: false
+library(tidyverse)
+library(infer)
+```
+
+```{r}
+redundant <- read_csv("data/redundant_adjectives.csv", show_col_types = FALSE) |>
+  rename(language = Language, subject = Subject,
+         question = Question, color_response = `Color Response`) |>
+  mutate(items = if_else(question > 10, 16, 4)) |>
+  summarize(redundant_perc = sum(color_response) * 100 / n(),
+            .by = c(language, subject, items))
+```
+
+```{r}
+#| cache: true
+set.seed(74)
+boot_eng_4 <- redundant |>
+  filter(language == "English", items == 4) |>
+  specify(response = redundant_perc) |>
+  generate(reps = 1000, type = "bootstrap") |>
+  calculate(stat = "mean")
+```
+
+```{r}
+ci_eng_4 <- boot_eng_4 |>
+  get_confidence_interval(level = 0.95, type = "percentile")
+
+boot_eng_4 |>
+  ggplot(aes(x = stat)) +
+  annotate("rect", xmin = ci_eng_4$lower_ci, xmax = ci_eng_4$upper_ci,
+           ymin = -Inf, ymax = Inf, fill = "steelblue", alpha = 0.2) +
+  geom_histogram(binwidth = 5, fill = "steelblue") +
+  geom_vline(xintercept = c(ci_eng_4$lower_ci, ci_eng_4$upper_ci),
+             color = "navy") +
+  scale_x_continuous(labels = scales::label_percent(scale = 1)) +
+  labs(title = "Redundant Adjectives Among English Speakers, 4-Item Displays",
+       subtitle = "95% confidence interval for the mean usage: 19.1% to 56.4%",
+       x = "Mean Percentage of Answers With a Redundant Adjective",
+       y = "Number of Bootstrap Resamples",
+       caption = "22 English speakers, 1,000 bootstrap resamples\nRubio-Fernandez, Mollica, and Jara-Ettinger (2021), via Introduction to Modern Statistics")
+```
+
+```{r}
+redundant |>
+  summarize(mean_redundant_perc = mean(redundant_perc),
+            .by = c(language, items)) |>
+  ggplot(aes(x = factor(items), y = mean_redundant_perc, fill = language)) +
+  geom_col(position = position_dodge(width = 0.9)) +
+  geom_text(aes(label = scales::label_percent(scale = 1, accuracy = 0.1)(mean_redundant_perc)),
+            position = position_dodge(width = 0.9), vjust = -0.4) +
+  scale_y_continuous(labels = scales::label_percent(scale = 1),
+                     limits = c(0, 100)) +
+  labs(title = "Redundant Color Adjectives in English and Spanish",
+       subtitle = "English speakers were more redundant with 4 items (p = 0.002), but the gap was not\nclear with 16 (p = 0.11)",
+       x = "Number of Items in the Display",
+       y = "Mean Redundant Adjective Use",
+       fill = "Language",
+       caption = "22 English and 22 Spanish speakers, 10 answers per display size\nRubio-Fernandez, Mollica, and Jara-Ettinger (2021), via Introduction to Modern Statistics") +
+  theme(legend.position = "bottom")
+```
+````
+
+###
+
+The finished page holds one interval and the summary behind three tests, each built from the same 88-row `redundant`. "Make a conclusion based on the p-value, and write the conclusion in context and in plain language so anyone can understand the result."
+
+### Exercise 2
+
+Publish your analysis to GitHub Pages. In a bash Terminal, run:
+
+```bash
+quarto publish gh-pages analysis.qmd
+```
+
+```{r}
+#| label: summary-2
+#| echo: false
+learnr2::question("Paste the URL of your published page.", type = "reflection")
+```
+
+###
+
+Your answer should look like `https://your-github-username.github.io/applications-infer/`.
+
+###
+
+"Your answers to the above questions might be different if you're answering in a different language than English." In English the color comes before the noun, "the blue triangle," but in Spanish it comes after, "el triángulo azul," and the study's title credits that word order for the difference between the languages.
+
+### Exercise 3
+
+Commit and push any remaining changes.
+
+```{r}
+#| label: summary-3
+#| echo: false
+learnr2::question("Paste the URL of your GitHub repo.", type = "reflection")
+```
+
+###
+
+Your answer should look like `https://github.com/your-github-username/applications-infer`.
+
+###
+
+"They found that in both languages, the subjects used more redundant color adjectives in denser displays where it would be more efficient." Your two plots show both halves of that sentence: the interval for one group, and the comparisons across languages and displays.
+
+## Your Answers
+
+```{r}
+#| label: your-answers-1
+#| echo: false
+learnr2::question(
+  "How many minutes, approximately, did it take you to complete this
+  tutorial? For example, an hour and a half would be 90 minutes.",
+  type = "reflection_editable",
+  validate = "integer"
+)
+```
+
+```{r}
+#| label: your-answers-2
+#| echo: false
+learnr2::download_answers_button(filename_prefix = "applications-infer")
+```

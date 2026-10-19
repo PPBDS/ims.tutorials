@@ -1,0 +1,1194 @@
+---
+title: "Inference for Comparing Two Proportions"
+subtitle: "Blood thinners after CPR, fish oil and heart attacks, mammograms, and the difference between two proportions."
+format: live-html
+engine: knitr
+toc: true
+toc-depth: 2
+learnr2:
+  ordering: 17
+---
+
+{{< include _extensions/r-wasm/live/_knitr.qmd >}}
+
+```{r}
+#| label: setup
+#| include: false
+library(tidyverse)
+library(openintro)
+library(infer)
+knitr::opts_chunk$set(out.width = "90%")
+```
+
+## Student Information
+
+```{r}
+#| label: student-information-1
+#| echo: false
+learnr2::student_info()
+```
+
+## Introduction
+
+This tutorial covers [Chapter 17: Inference for comparing two proportions](https://openintrostat.github.io/ims/inference-two-props.html) from [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) by Mine Çetinkaya-Rundel and Johanna Hardin. You will learn to compare two proportions with a randomization test and a bootstrap confidence interval, and then with the normal model, using the unpooled standard error for confidence intervals and the pooled proportion for hypothesis tests, in experiments on blood thinners after CPR, fish oil supplements, and mammograms.
+
+### Exercise 1
+
+You should be doing this tutorial in a repo named `inference-for-comparing-two-proportions`. If you are not, create one and then connect to it. You may need to restart this tutorial after you do so.
+
+Create a new file, `analysis.qmd`, with the title `"Inference for Comparing Two Proportions"` and your name as the author. In a bash Terminal, render it:
+
+```bash
+quarto render analysis.qmd
+```
+
+Open `analysis.html` with Live Server (right-click it in the Explorer → **Open with Live Server**) and keep the tab open. It refreshes on every render. Going forward, we will just tell you to "Render" when we want you to take these steps.
+
+Create a `.gitignore` with `analysis_files` followed by a blank line. Commit and push. Use AI however you like.
+
+If `show_file()` fails, it is probably because you have not yet loaded `library(learnr2)` in the R Terminal.
+
+```{r}
+#| label: introduction-1
+#| echo: false
+learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{.output}
+analysis_files
+```
+
+###
+
+The chapter looks at "the inferential analysis in three different ways: using a randomization test, applying bootstrapping for interval estimates, and, if we verify that the point estimate can be modeled using a normal distribution, we compute the estimate's standard error, and we apply the mathematical framework." All three answer the same question about two groups: how far apart are their proportions?
+
+### Exercise 2
+
+Add a chunk to `analysis.qmd` that loads the **[tidyverse](https://www.tidyverse.org/)**, with `#| message: false` so the startup messages stay out of the rendered page. Add `execute: echo: false` to the YAML header. Render.
+
+```{r}
+#| label: introduction-2
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+````{verbatim}
+#| message: false
+library(tidyverse)
+````
+
+###
+
+The **tidyverse** does the counting, the proportions, and the plots in this tutorial. The chapter's own tables, like its two-by-two summary of the CPR study, were built with **[dplyr](https://dplyr.tidyverse.org/)** and **[tidyr](https://tidyr.tidyverse.org/)**, two of its packages.
+
+### Exercise 3
+
+Add **[openintro](https://openintrostat.github.io/openintro/)** to that chunk. Render.
+
+```{r}
+#| label: introduction-3
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+````{verbatim}
+#| message: false
+library(tidyverse)
+library(openintro)
+````
+
+###
+
+**openintro** holds all three of the chapter's datasets: `cpr`, `fish_oil_18`, and `mammogram`. Each comes from a randomized experiment, so a difference between the groups can be read as an effect of the treatment.
+
+### Exercise 4
+
+Add **[infer](https://infer.tidymodels.org/)** to that chunk. Render.
+
+```{r}
+#| label: introduction-4
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+````{verbatim}
+#| message: false
+library(tidyverse)
+library(openintro)
+library(infer)
+````
+
+###
+
+**infer** shuffles for randomization tests and resamples for bootstrap intervals with the same steps, changing only the kind of simulation it generates. The chapter's own figures of shuffled and bootstrapped differences were drawn with it.
+
+## Randomization and bootstrapping
+
+"Each patient was randomly assigned to either receive a blood thinner (treatment group) or not receive a blood thinner (control group)." This section tests whether the blood thinner made a difference by shuffling, then estimates how big the difference might be by bootstrapping.
+
+### Exercise 1
+
+Add a chunk that prints `cpr`. Render.
+
+```{r}
+#| label: randomization-and-bootstrapping-1
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: randomization-and-bootstrapping-1-test
+#| echo: true
+cpr
+```
+
+###
+
+Each of the 90 rows is one patient. "The experiment consisted of two treatments on patients who underwent CPR for a heart attack and were subsequently admitted to a hospital."
+
+### Exercise 2
+
+```{r}
+#| label: randomization-and-bootstrapping-2
+#| echo: false
+learnr2::question("In the R Terminal, run ?cpr. Copy and paste the Format.", type = "reflection")
+```
+
+###
+
+```{.output}
+Format:
+
+     A data frame with 90 observations on the following 2 variables.
+
+     group a factor with levels ‘control’ and ‘treatment’
+
+     outcome a factor with levels ‘died’ and ‘survived’
+```
+
+###
+
+`control` comes before `treatment`, so software that subtracts the second level from the first would report control minus treatment. The chapter reports treatment minus control, and so will you, by naming the order every time.
+
+### Exercise 3
+
+Replace the code in that chunk so that it counts the patients by `group` and `outcome`. Render.
+
+```{r}
+#| label: randomization-and-bootstrapping-3
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: randomization-and-bootstrapping-3-test
+#| echo: true
+cpr |>
+  count(group, outcome)
+```
+
+###
+
+"11 out of the 50 patients in the control group and 14 out of the 40 patients in the treatment group survived." "The outcome variable of interest was whether the patient survived for at least 24 hours."
+
+### Exercise 4
+
+Replace the code in that chunk so that it calculates the proportion of patients who survived in each `group`. Render.
+
+```{r}
+#| label: randomization-and-bootstrapping-4
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: randomization-and-bootstrapping-4-test
+#| echo: true
+cpr |>
+  summarize(prop_survived = mean(outcome == "survived"),
+            .by = group)
+```
+
+###
+
+Survival was 0.35 with a blood thinner and 0.22 without, a gap of 0.13. But from these proportions alone, the chapter says, "we cannot determine whether the difference" "provides *convincing evidence* that blood thinner usage after CPR is effective."
+
+### Exercise 5
+
+Replace the code in that chunk so that it uses **infer** to calculate the observed difference in the proportion who survived, treatment minus control. Store the result as `cpr_obs` and print it. Render.
+
+```{r}
+#| label: randomization-and-bootstrapping-5
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: randomization-and-bootstrapping-5-test
+#| echo: true
+cpr_obs <- cpr |>
+  specify(outcome ~ group, success = "survived") |>
+  calculate(stat = "diff in props", order = c("treatment", "control"))
+
+cpr_obs
+```
+
+###
+
+The difference of two sample proportions is the **point estimate** of the difference between the two population proportions. Here it is 0.13: 13 more survivors per 100 patients given a blood thinner.
+
+### Exercise 6
+
+Replace the line that prints `cpr_obs` with code that creates `cpr_null`, the differences in survival proportions from 1,000 shuffles of the `group` labels, assuming blood thinners have no effect on survival. Set a seed of 47 first, the seed the chapter used. Then calculate how many of the shuffled differences are at least as large as `cpr_obs`, and what proportion of the 1,000 that is. Render.
+
+```{r}
+#| label: randomization-and-bootstrapping-6
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: randomization-and-bootstrapping-6-test
+#| echo: true
+set.seed(47)
+cpr_null <- cpr |>
+  specify(outcome ~ group, success = "survived") |>
+  hypothesize(null = "independence") |>
+  generate(reps = 1000, type = "permute") |>
+  calculate(stat = "diff in props", order = c("treatment", "control"))
+
+cpr_null |>
+  summarize(n_extreme = sum(stat >= cpr_obs$stat),
+            prop_extreme = mean(stat >= cpr_obs$stat))
+```
+
+###
+
+"We simulated the differences assuming that the independence model was true, that blood thinners after CPR have no effect on survival." In 135 of our 1,000 shuffles, chance alone produced a gap of at least 0.13.
+
+### Exercise 7
+
+Replace the code that calculates the proportion with **infer**'s own tool for the p-value. The alternative hypothesis is that blood thinners increase survival. Render.
+
+```{r}
+#| label: randomization-and-bootstrapping-7
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: randomization-and-bootstrapping-7-test
+#| echo: true
+cpr_null |>
+  get_p_value(obs_stat = cpr_obs, direction = "greater")
+```
+
+###
+
+Our p-value is 0.135, and the chapter's 100 shuffles gave about 12%: either way, "This is not a very rare event." "This does not mean that we have proved that blood thinners are not effective, it just means that this study does not provide convincing evidence that they are effective in this setting."
+
+### Exercise 8
+
+A bootstrap resample draws patients, with replacement, from the patients in the study. Replace the p-value code with code that draws one bootstrap resample of the 90 patients, with a seed of 47 set first, and counts the resampled patients by `group` and `outcome`. Render.
+
+```{r}
+#| label: randomization-and-bootstrapping-8
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: randomization-and-bootstrapping-8-test
+#| echo: true
+set.seed(47)
+cpr |>
+  specify(outcome ~ group, success = "survived") |>
+  generate(reps = 1, type = "bootstrap") |>
+  count(group, outcome)
+```
+
+###
+
+Our resample has 53 control patients and 37 treated ones, not 50 and 40. The chapter's diagrams resample each group separately, "taking one bootstrap resample from Sample 1 and one bootstrap resample from Sample 2" to keep each group's size. Its own code, like ours, resamples all 90 patients at once, so the group sizes wobble.
+
+### Exercise 9
+
+Replace the code that draws one resample with code that creates `cpr_boot`, the differences in survival proportions, treatment minus control, from 1,000 bootstrap resamples, with a seed of 47 set first. Print `cpr_boot`. Render.
+
+```{r}
+#| label: randomization-and-bootstrapping-9
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: randomization-and-bootstrapping-9-test
+#| echo: true
+set.seed(47)
+cpr_boot <- cpr |>
+  specify(outcome ~ group, success = "survived") |>
+  generate(reps = 1000, type = "bootstrap") |>
+  calculate(stat = "diff in props", order = c("treatment", "control"))
+
+cpr_boot
+```
+
+###
+
+Unlike the shuffles, these differences scatter around 0.13, not 0: 0.085, 0.102, 0.167, and so on. "Repeated bootstrap simulations lead to a bootstrap sampling distribution of the statistic of interest, here the difference in sample proportions."
+
+### Exercise 10
+
+Replace the line that prints `cpr_boot` with a 90% percentile confidence interval from `cpr_boot`. Render.
+
+```{r}
+#| label: randomization-and-bootstrapping-10
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: randomization-and-bootstrapping-10-test
+#| echo: true
+cpr_boot |>
+  get_confidence_interval(level = 0.90, type = "percentile")
+```
+
+###
+
+The chapter's interval matches ours exactly, because the same seed gives the same 1,000 resamples: "The bootstrap 5 percentile proportion is -0.032 and the 95 percentile is 0.284." "The interval shows that we do not have much definitive evidence of the effect of blood thinners, one way or another."
+
+### Exercise 11
+
+Replace the confidence interval code with code that calculates the standard deviation of the 1,000 bootstrap differences, which estimates the standard error, and a 95% interval that runs from two standard errors below `cpr_obs` to two standard errors above it. Render.
+
+```{r}
+#| label: randomization-and-bootstrapping-11
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: randomization-and-bootstrapping-11-test
+#| echo: true
+cpr_boot |>
+  summarize(se = sd(stat)) |>
+  mutate(lower = cpr_obs$stat - 2 * se,
+         upper = cpr_obs$stat + 2 * se)
+```
+
+###
+
+Ours, -0.067 to 0.327 with a standard error of 0.098, is the chapter's: "The resulting interval is called the **SE interval**." "Again, the wide confidence interval that contains zero indicates that the study provides very little evidence about the effectiveness of blood thinners."
+
+### Exercise 12
+
+Replace the standard error code with two histograms, one above the other: the shuffled differences in `cpr_null` and the bootstrap differences in `cpr_boot`, each with a vertical line at the observed difference. Render.
+
+```{r}
+#| label: randomization-and-bootstrapping-12
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: randomization-and-bootstrapping-12-test
+#| echo: true
+bind_rows(Shuffled = cpr_null, Bootstrapped = cpr_boot, .id = "simulation") |>
+  ggplot(aes(x = stat)) +
+  geom_histogram(binwidth = 0.045) +
+  geom_vline(xintercept = cpr_obs$stat) +
+  facet_wrap(~ simulation, ncol = 1)
+```
+
+###
+
+The two distributions have about the same spread but different centers: the shuffles sit on 0 and the resamples on 0.13. "Note that the distribution of these simulated differences is centered around 0." Shuffling assumes the null hypothesis, and bootstrapping does not.
+
+### Exercise 13
+
+Improve the plot. Put the shuffled panel on top, add a dotted line at zero, make the observed line dashed, show the x-axis as percentage points, and add a title, axis labels, a subtitle that states the main finding, and a caption giving the number of patients, the number of simulations, and the source. Render.
+
+```{r}
+#| label: randomization-and-bootstrapping-13
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: randomization-and-bootstrapping-13-test
+#| echo: true
+bind_rows(Shuffled = cpr_null, Bootstrapped = cpr_boot, .id = "simulation") |>
+  mutate(simulation = fct_relevel(simulation, "Shuffled")) |>
+  ggplot(aes(x = stat)) +
+  geom_histogram(binwidth = 0.045, fill = "steelblue") +
+  geom_vline(xintercept = 0, linetype = "dotted") +
+  geom_vline(xintercept = cpr_obs$stat, linetype = "dashed") +
+  facet_wrap(~ simulation, ncol = 1) +
+  scale_x_continuous(labels = scales::label_percent(suffix = " pts")) +
+  labs(title = "Blood Thinners After CPR: Shuffled and Bootstrapped Differences",
+       subtitle = "Chance often gives a 13-point gap; the 90% interval, -3 to 28 points, includes 0",
+       x = "Difference in Survival Rates, Treatment Minus Control",
+       y = "Number of Simulations",
+       caption = "90 patients, 14 of 40 treated and 11 of 50 controls survived; 1,000 shuffles and 1,000 resamples\nBottiger et al. (2001), via Introduction to Modern Statistics, Chapter 17")
+```
+
+###
+
+"Statistical inference, is built on evaluating how likely such differences are to occur due to chance if in fact the null hypothesis is true." The top panel does that, and the bottom panel shows the range of differences the data can support without assuming anything about the null.
+
+### Exercise 14
+
+Commit `analysis.qmd` with the message `"Shuffle and bootstrap the CPR study"` and push.
+
+```{r}
+#| label: randomization-and-bootstrapping-14
+#| echo: false
+learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type = "reflection")
+```
+
+###
+
+```{.output}
+5e2a9c1 (HEAD -> main, origin/main) Shuffle and bootstrap the CPR study
+9be04d2 Initial commit
+```
+
+###
+
+"Surprisingly, the percentage does not describe the dataset at hand, it describes many possible datasets." "If we are making 95% intervals, then about 5% of the intervals we create over our lifetime will *not* capture the parameter of interest".
+
+## Mathematical model
+
+The difference of two sample proportions "can be modeled using a normal distribution when certain conditions are met." This section checks those conditions, builds confidence intervals for the CPR and fish oil studies, and tests the mammogram study with the pooled proportion, checking the formulas against simulation.
+
+### Exercise 1
+
+Start a new chunk that calculates, for each `group` in `cpr`, the number of patients, the number who survived, and the number who died. Render.
+
+```{r}
+#| label: mathematical-model-1
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: mathematical-model-1-test
+#| echo: true
+cpr |>
+  summarize(n = n(),
+            survived = sum(outcome == "survived"),
+            died = sum(outcome == "died"),
+            .by = group)
+```
+
+###
+
+"First, we require a broader independence condition, and secondly, the success-failure condition must be met by both groups." The experiment was randomized, and the four counts, 11, 39, 14, and 26, all reach the required "at least 10 successes and 10 failures in each of the two groups."
+
+### Exercise 2
+
+Replace the code in that chunk so that it calculates, in a single row, the difference in survival proportions, treatment minus control, and its standard error from the formula that uses each group's sample proportion and size. Render.
+
+```{r}
+#| label: mathematical-model-2
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: mathematical-model-2-test
+#| echo: true
+cpr |>
+  summarize(n = n(),
+            p_hat = mean(outcome == "survived"),
+            .by = group) |>
+  summarize(diff = p_hat[group == "treatment"] - p_hat[group == "control"],
+            se = sqrt(sum(p_hat * (1 - p_hat) / n)))
+```
+
+###
+
+The formula gives a standard error of 0.0955, close to the 0.098 from the bootstrap. The formula is what the bootstrap estimates, and the bootstrap "typically does an excellent job of estimating the variability of the sampling distribution of the sample statistic."
+
+### Exercise 3
+
+Add the z-star value for a 90% confidence interval from the normal distribution, and the lower and upper ends of that interval. Render.
+
+```{r}
+#| label: mathematical-model-3
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: mathematical-model-3-test
+#| echo: true
+cpr |>
+  summarize(n = n(),
+            p_hat = mean(outcome == "survived"),
+            .by = group) |>
+  summarize(diff = p_hat[group == "treatment"] - p_hat[group == "control"],
+            se = sqrt(sum(p_hat * (1 - p_hat) / n))) |>
+  mutate(z_star = qnorm(0.95),
+         lower = diff - z_star * se,
+         upper = diff + z_star * se)
+```
+
+###
+
+"We are 90% confident that individuals receiving blood thinners have between a 2.7% less chance of survival to a 28.7% greater chance of survival than those in the control group." The bootstrap's 90% interval, -3.2 to 28.4 points, tells nearly the same story.
+
+### Exercise 4
+
+```{r}
+#| label: mathematical-model-4
+#| echo: false
+learnr2::question("In the R Terminal, run ?fish_oil_18. Copy and paste the Description and the first three outcomes listed under Format.", type = "reflection")
+```
+
+###
+
+```{.output}
+Description:
+
+     The results summarize each of the health outcomes for an
+     experiment where 12,933 subjects received a 1g fish oil supplement
+     daily and 12,938 received a placebo daily.  The experiment's
+     duration was 5-years.
+
+Format:
+
+     The format is a list of 24 matrices.  Each matrix is a 2x2 table,
+     and below are the named items in the list, which also represent
+     the outcomes.
+
+     major_cardio_event Major cardiovascular event. (Primary end
+          point.)
+
+     cardio_event_expanded Cardiovascular event in expanded composite
+          endpoint.
+
+     myocardioal_infarction Total myocardial infarction. (Heart
+          attack.)
+```
+
+###
+
+"A 5-year experiment was conducted to evaluate the effectiveness of fish oils on reducing cardiovascular events, where each subject was randomized into one of two treatment groups". Unlike `cpr`, `fish_oil_18` is not a data frame with one row per subject but a list of 24 tables of counts, one per outcome.
+
+### Exercise 5
+
+Replace the code in that chunk so that it prints the table of heart attacks from `fish_oil_18`. Render.
+
+```{r}
+#| label: mathematical-model-5
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: mathematical-model-5-test
+#| echo: true
+fish_oil_18$myocardioal_infarction
+```
+
+###
+
+The heart attack table is named `myocardioal_infarction`, a misspelling, so asking for `myocardial_infarction` prints `NULL`, and the chapter's own code has to use the misspelled name too. If your render showed `NULL`, look at the names in the help page and try again.
+
+### Exercise 6
+
+Replace the code in that chunk so that it turns the table into a tibble with one row per group, adding the number of subjects in each group and the proportion who had a heart attack. Render.
+
+```{r}
+#| label: mathematical-model-6
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: mathematical-model-6-test
+#| echo: true
+fish_oil_18$myocardioal_infarction |>
+  as_tibble(rownames = "group") |>
+  mutate(n = myocardioal_infarction + no_event,
+         p_hat = myocardioal_infarction / n)
+```
+
+###
+
+Heart attacks struck 1.12% of the fish oil group and 1.55% of the placebo group. With 145 and 200 heart attacks and thousands without: "The success-failure condition is also met for both groups as all counts are at least 10."
+
+### Exercise 7
+
+Add code that calculates, in a single row, the difference in heart attack proportions, fish oil minus placebo, its standard error from the formula, and a 95% confidence interval using 1.96 standard errors. Render.
+
+```{r}
+#| label: mathematical-model-7
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: mathematical-model-7-test
+#| echo: true
+fish_oil_18$myocardioal_infarction |>
+  as_tibble(rownames = "group") |>
+  mutate(n = myocardioal_infarction + no_event,
+         p_hat = myocardioal_infarction / n) |>
+  summarize(diff = p_hat[group == "fish_oil"] - p_hat[group == "placebo"],
+            se = sqrt(sum(p_hat * (1 - p_hat) / n)),
+            lower = diff - 1.96 * se,
+            upper = diff + 1.96 * se)
+```
+
+###
+
+"We are 95% confident that fish oils decreases heart attacks by 0.15 to 0.71 percentage points (off of a baseline of about 1.55%) over a 5-year period for subjects who are similar to those in the study." Our interval, -0.70 to -0.15 points, differs slightly because the chapter rounded the proportions before computing its standard error of 0.00145.
+
+### Exercise 8
+
+Replace the code in that chunk so that it prints `mammogram`. Render.
+
+```{r}
+#| label: mathematical-model-8
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: mathematical-model-8-test
+#| echo: true
+mammogram
+```
+
+###
+
+Each of the 89,835 rows is one participant. "A mammogram is an X-ray procedure used to check for breast cancer."
+
+### Exercise 9
+
+```{r}
+#| label: mathematical-model-9
+#| echo: false
+learnr2::question("In the R Terminal, run ?mammogram. Copy and paste the Description and the Source.", type = "reflection")
+```
+
+###
+
+```{.output}
+Description:
+
+     An experiment where 89,835 women were randomized to either get a
+     mammogram or a non-mammogram breast screening. The response
+     measured was whether they had died from breast cancer within 25
+     years.
+
+Source:
+
+     Miller AB. 2014. Twenty five year follow-up for breast cancer
+     incidence and mortality of the Canadian National Breast Screening
+     Study: randomised screening trial. BMJ 2014;348:g366.
+```
+
+###
+
+The help page says deaths "within 25 years", but the chapter says "we'll consider death resulting from breast cancer over the full 30-year period": a 5-year screening period plus 25 more years. The source's title, "Twenty five year follow-up", suggests where the help page's number came from.
+
+### Exercise 10
+
+Replace the code in that chunk so that it calculates, for each `treatment`, the number of participants, the number who died from breast cancer, and the proportion who did. Render.
+
+```{r}
+#| label: mathematical-model-10
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: mathematical-model-10-test
+#| echo: true
+mammogram |>
+  summarize(n = n(),
+            deaths = sum(breast_cancer_death == "yes"),
+            p_hat = mean(breast_cancer_death == "yes"),
+            .by = treatment)
+```
+
+###
+
+Breast cancer killed 500 of the 44,925 women screened by mammogram and 505 of the 44,910 controls, 1.11% and 1.12%. "If mammograms are much more effective than non-mammogram breast cancer exams, then we would expect to see additional deaths from breast cancer in the control group."
+
+### Exercise 11
+
+Add the pooled proportion, the deaths in the whole study divided by its participants, and the number of deaths and of survivors we would expect in each group if both groups died at that pooled rate. Render.
+
+```{r}
+#| label: mathematical-model-11
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: mathematical-model-11-test
+#| echo: true
+mammogram |>
+  summarize(n = n(),
+            deaths = sum(breast_cancer_death == "yes"),
+            p_hat = mean(breast_cancer_death == "yes"),
+            .by = treatment) |>
+  mutate(p_pool = sum(deaths) / sum(n),
+         expected_deaths = n * p_pool,
+         expected_survivors = n * (1 - p_pool))
+```
+
+###
+
+"When the null hypothesis is that the proportions are equal, use the pooled proportion" "of successes to verify the success-failure condition and estimate the standard error". The pooled rate is 1.12%, and both groups expect about 503 deaths and more than 44,000 survivors: "The success-failure condition is satisfied since all values are at least 10."
+
+### Exercise 12
+
+Simulate first. Replace the code in that chunk with code that creates `mammo_obs`, the observed difference in the proportion who died from breast cancer, mammogram minus control, and `mammo_null`, the differences from 1,000 shuffles of the `treatment` labels, assuming mammograms have no effect. Set a seed first. Then calculate the two-sided p-value. Render. The shuffling takes a few seconds.
+
+```{r}
+#| label: mathematical-model-12
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: mathematical-model-12-test
+#| echo: true
+mammo_obs <- mammogram |>
+  specify(breast_cancer_death ~ treatment, success = "yes") |>
+  calculate(stat = "diff in props", order = c("mammogram", "control"))
+
+set.seed(17)
+mammo_null <- mammogram |>
+  specify(breast_cancer_death ~ treatment, success = "yes") |>
+  hypothesize(null = "independence") |>
+  generate(reps = 1000, type = "permute") |>
+  calculate(stat = "diff in props", order = c("mammogram", "control"))
+
+mammo_null |>
+  get_p_value(obs_stat = mammo_obs, direction = "two-sided")
+```
+
+###
+
+The observed difference is -0.00012, about one death per 10,000 women, and our p-value is 0.862; yours will be close. The alternative is two-sided because "if mammograms are not as effective as regular breast cancer exams, we would expect to see an increase in breast cancer deaths in the mammogram group."
+
+### Exercise 13
+
+Delete the p-value code at the bottom of that chunk, so that the chunk only creates `mammo_obs` and `mammo_null`. Render.
+
+```{r}
+#| label: mathematical-model-13
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+````{verbatim}
+mammo_obs <- mammogram |>
+  specify(breast_cancer_death ~ treatment, success = "yes") |>
+  calculate(stat = "diff in props", order = c("mammogram", "control"))
+
+set.seed(17)
+mammo_null <- mammogram |>
+  specify(breast_cancer_death ~ treatment, success = "yes") |>
+  hypothesize(null = "independence") |>
+  generate(reps = 1000, type = "permute") |>
+  calculate(stat = "diff in props", order = c("mammogram", "control"))
+````
+
+###
+
+Each of the 1,000 shuffles reassigns 89,835 treatment labels, so `mammo_null` is far slower to build than the CPR shuffles. That makes this chunk the one worth saving between renders.
+
+### Exercise 14
+
+Add `#| cache: true` to that chunk. Render.
+
+```{r}
+#| label: mathematical-model-14
+#| echo: false
+learnr2::question("In the bash Terminal, run ls. CP/CR.", type = "reflection")
+```
+
+###
+
+```{.output}
+analysis.html  analysis.qmd  analysis_cache  analysis_files
+```
+
+###
+
+`analysis_cache` now holds `mammo_obs` and the 1,000 shuffled differences, so later renders skip the shuffling. Because the seed is inside the cached chunk, a rebuilt cache gives the same 1,000 shuffles.
+
+### Exercise 15
+
+Your Source Control count just jumped, because Git sees every file in the new cache directory. Add `analysis_cache` to `.gitignore`, and the count drops back.
+
+```{r}
+#| label: mathematical-model-15
+#| echo: false
+learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{.output}
+analysis_files
+analysis_cache
+```
+
+###
+
+"Randomization and the mathematical model will have similar null distributions, as long as the sample size is large enough to fulfill the success-failure conditions." With about 503 expected deaths in each group, the mammogram study is a good place to check.
+
+### Exercise 16
+
+Now the formula. Start a new chunk that calculates, in a single row from `mammogram`, the difference in breast cancer death proportions, mammogram minus control, the pooled proportion, the standard error using the pooled proportion, the Z score of the difference, and the two-sided p-value from the standard normal distribution. Render.
+
+```{r}
+#| label: mathematical-model-16
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: mathematical-model-16-test
+#| echo: true
+mammogram |>
+  summarize(n = n(),
+            deaths = sum(breast_cancer_death == "yes"),
+            .by = treatment) |>
+  summarize(diff = deaths[treatment == "mammogram"] / n[treatment == "mammogram"] -
+              deaths[treatment == "control"] / n[treatment == "control"],
+            p_pool = sum(deaths) / sum(n),
+            se = sqrt(p_pool * (1 - p_pool) * sum(1 / n))) |>
+  mutate(z = diff / se,
+         p_value = 2 * pnorm(-abs(z)))
+```
+
+###
+
+"The Z score is a ratio of how the two sample proportions differ as compared to the expected variability of difference between the proportions." Our Z of -0.164 gives a p-value of 0.870, close to the simulation's 0.862; the chapter's -0.17 and 0.865 come from rounding the difference and standard error first.
+
+### Exercise 17
+
+Replace the code in that chunk with a histogram of the shuffled differences in `mammo_null`, on a density scale, with the normal curve that the null hypothesis implies drawn over it, centered at zero with the pooled standard error, and a dashed line at `mammo_obs`. Render.
+
+```{r}
+#| label: mathematical-model-17
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: mathematical-model-17-test
+#| echo: true
+mammo_null |>
+  ggplot(aes(x = stat)) +
+  geom_histogram(aes(y = after_stat(density)),
+                 binwidth = 1 / 44925 + 1 / 44910, center = mammo_obs$stat) +
+  geom_function(fun = dnorm,
+                args = list(mean = 0,
+                            sd = sqrt(1005 / 89835 * (1 - 1005 / 89835) *
+                                        (1 / 44925 + 1 / 44910)))) +
+  geom_vline(xintercept = mammo_obs$stat, linetype = "dashed")
+```
+
+###
+
+The normal curve traces the shuffled differences closely, and the observed difference sits almost exactly in the middle. The standard deviation of our 1,000 shuffles, 0.00070, matches the pooled standard error of 0.00070.
+
+### Exercise 18
+
+Improve the plot. Shade the bars at least as far from zero as the observed difference, in either direction, in a different color, show the x-axis as percentage points, and add a title, axis labels, a subtitle that states the main finding, and a caption giving the number of participants, the number of shuffles, and the source. Render.
+
+```{r}
+#| label: mathematical-model-18
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: mathematical-model-18-test
+#| echo: true
+mammo_null |>
+  ggplot(aes(x = stat)) +
+  geom_histogram(aes(y = after_stat(count / sum(count) / width),
+                     fill = abs(stat) >= abs(mammo_obs$stat)),
+                 binwidth = 1 / 44925 + 1 / 44910, center = mammo_obs$stat) +
+  geom_function(fun = dnorm,
+                args = list(mean = 0,
+                            sd = sqrt(1005 / 89835 * (1 - 1005 / 89835) *
+                                        (1 / 44925 + 1 / 44910))),
+                linewidth = 1) +
+  geom_vline(xintercept = mammo_obs$stat, linetype = "dashed") +
+  scale_fill_manual(values = c("gray70", "steelblue"), guide = "none") +
+  scale_x_continuous(labels = scales::label_percent(accuracy = 0.1, suffix = " pts")) +
+  labs(title = "Breast Cancer Deaths If Mammograms Made No Difference",
+       subtitle = "Shuffles and the normal curve agree: the observed gap is ordinary (p near 0.87)",
+       x = "Difference in Breast Cancer Death Rates, Mammogram Minus Control",
+       y = "Density",
+       caption = "89,835 participants, 500 and 505 breast cancer deaths; 1,000 shuffles\nMiller et al. (2014), via Introduction to Modern Statistics, Chapter 17")
+```
+
+###
+
+"Thus, we do not observe benefits or harm from mammograms relative to a regular breast exam." "If mammograms are helpful or harmful, the data suggest the effect isn't very large."
+
+### Exercise 19
+
+Commit `analysis.qmd` and `.gitignore` with the message `"Model the mammogram study"` and push.
+
+```{r}
+#| label: mathematical-model-19
+#| echo: false
+learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type = "reflection")
+```
+
+###
+
+```{.output}
+8c3f1b7 (HEAD -> main, origin/main) Model the mammogram study
+5e2a9c1 Shuffle and bootstrap the CPR study
+9be04d2 Initial commit
+```
+
+###
+
+"The study's authors also found that mammograms led to over-diagnosis of breast cancer, which means some breast cancers were found (or thought to be found) but that these cancers would not cause symptoms during patients' lifetimes." "These considerations highlight the complexity around medical care and treatment recommendations."
+
+## Summary
+
+This tutorial covered [Chapter 17: Inference for comparing two proportions](https://openintrostat.github.io/ims/inference-two-props.html) from [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) by Mine Çetinkaya-Rundel and Johanna Hardin. You have learned to compare two proportions with a randomization test and a bootstrap confidence interval, and then with the normal model, using the unpooled standard error for confidence intervals and the pooled proportion for hypothesis tests, in experiments on blood thinners after CPR, fish oil supplements, and mammograms.
+
+The chapter's own summary, in the authors' words:
+
+> When the parameter of interest is the difference in population proportions across two groups, randomization tests, bootstrapping, and mathematical modeling can be applied. For confidence intervals, bootstrapping from each group separately will provide a sampling distribution for the difference in sample proportions; the mathematical model shows a similar distributional shape as long as the sample size is large enough to fulfill the success-failure conditions and so that the data are representative of the entire population. Keep in mind that some datasets will produce a confidence interval which does not capture the true parameter, this is the nature of variability! Over your lifetime, about 95% of the confidence intervals you create will capture the parameter of interest, and about 5% won't. For hypothesis testing, repeated randomization of the explanatory variable creates a null distribution of differences in sample proportions that could have occurred under the null hypothesis. Randomization and the mathematical model will have similar null distributions, as long as the sample size is large enough to fulfill the success-failure conditions.
+
+For the mammogram study, read "[Twenty five year follow-up for breast cancer incidence and mortality of the Canadian National Breast Screening Study](https://doi.org/10.1136/bmj.g366)" by Anthony Miller and colleagues, the source the `mammogram` help page cites, which also reports the over-diagnosis the chapter mentions. For the fish oil experiment, read "[Marine n-3 Fatty Acids and Prevention of Cardiovascular Disease and Cancer](https://doi.org/10.1056/NEJMoa1811403)" by JoAnn Manson and colleagues, the source of all 24 tables in `fish_oil_18`.
+
+### Exercise 1
+
+Render one last time.
+
+```{r}
+#| label: summary-1
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). CP/CR.', type = "reflection")
+```
+
+###
+
+````{verbatim}
+---
+title: "Inference for Comparing Two Proportions"
+author: "Your Name"
+format: html
+execute:
+  echo: false
+---
+
+```{r}
+#| message: false
+library(tidyverse)
+library(openintro)
+library(infer)
+```
+
+```{r}
+cpr_obs <- cpr |>
+  specify(outcome ~ group, success = "survived") |>
+  calculate(stat = "diff in props", order = c("treatment", "control"))
+
+set.seed(47)
+cpr_null <- cpr |>
+  specify(outcome ~ group, success = "survived") |>
+  hypothesize(null = "independence") |>
+  generate(reps = 1000, type = "permute") |>
+  calculate(stat = "diff in props", order = c("treatment", "control"))
+
+set.seed(47)
+cpr_boot <- cpr |>
+  specify(outcome ~ group, success = "survived") |>
+  generate(reps = 1000, type = "bootstrap") |>
+  calculate(stat = "diff in props", order = c("treatment", "control"))
+
+bind_rows(Shuffled = cpr_null, Bootstrapped = cpr_boot, .id = "simulation") |>
+  mutate(simulation = fct_relevel(simulation, "Shuffled")) |>
+  ggplot(aes(x = stat)) +
+  geom_histogram(binwidth = 0.045, fill = "steelblue") +
+  geom_vline(xintercept = 0, linetype = "dotted") +
+  geom_vline(xintercept = cpr_obs$stat, linetype = "dashed") +
+  facet_wrap(~ simulation, ncol = 1) +
+  scale_x_continuous(labels = scales::label_percent(suffix = " pts")) +
+  labs(title = "Blood Thinners After CPR: Shuffled and Bootstrapped Differences",
+       subtitle = "Chance often gives a 13-point gap; the 90% interval, -3 to 28 points, includes 0",
+       x = "Difference in Survival Rates, Treatment Minus Control",
+       y = "Number of Simulations",
+       caption = "90 patients, 14 of 40 treated and 11 of 50 controls survived; 1,000 shuffles and 1,000 resamples\nBottiger et al. (2001), via Introduction to Modern Statistics, Chapter 17")
+```
+
+```{r}
+#| cache: true
+mammo_obs <- mammogram |>
+  specify(breast_cancer_death ~ treatment, success = "yes") |>
+  calculate(stat = "diff in props", order = c("mammogram", "control"))
+
+set.seed(17)
+mammo_null <- mammogram |>
+  specify(breast_cancer_death ~ treatment, success = "yes") |>
+  hypothesize(null = "independence") |>
+  generate(reps = 1000, type = "permute") |>
+  calculate(stat = "diff in props", order = c("mammogram", "control"))
+```
+
+```{r}
+mammo_null |>
+  ggplot(aes(x = stat)) +
+  geom_histogram(aes(y = after_stat(count / sum(count) / width),
+                     fill = abs(stat) >= abs(mammo_obs$stat)),
+                 binwidth = 1 / 44925 + 1 / 44910, center = mammo_obs$stat) +
+  geom_function(fun = dnorm,
+                args = list(mean = 0,
+                            sd = sqrt(1005 / 89835 * (1 - 1005 / 89835) *
+                                        (1 / 44925 + 1 / 44910))),
+                linewidth = 1) +
+  geom_vline(xintercept = mammo_obs$stat, linetype = "dashed") +
+  scale_fill_manual(values = c("gray70", "steelblue"), guide = "none") +
+  scale_x_continuous(labels = scales::label_percent(accuracy = 0.1, suffix = " pts")) +
+  labs(title = "Breast Cancer Deaths If Mammograms Made No Difference",
+       subtitle = "Shuffles and the normal curve agree: the observed gap is ordinary (p near 0.87)",
+       x = "Difference in Breast Cancer Death Rates, Mammogram Minus Control",
+       y = "Density",
+       caption = "89,835 participants, 500 and 505 breast cancer deaths; 1,000 shuffles\nMiller et al. (2014), via Introduction to Modern Statistics, Chapter 17")
+```
+````
+
+###
+
+"For confidence intervals, bootstrapping from each group separately will provide a sampling distribution for the difference in sample proportions". Your file holds the CPR study's shuffles and resamples, and the mammogram study's shuffles drawn against the normal model.
+
+### Exercise 2
+
+Publish your analysis to GitHub Pages. In a bash Terminal, run:
+
+```bash
+quarto publish gh-pages analysis.qmd
+```
+
+```{r}
+#| label: summary-2
+#| echo: false
+learnr2::question("Paste the URL of your published page.", type = "reflection")
+```
+
+###
+
+Your answer should look like `https://your-github-username.github.io/inference-for-comparing-two-proportions/`.
+
+###
+
+"Keep in mind that some datasets will produce a confidence interval which does not capture the true parameter, this is the nature of variability!" "Over your lifetime, about 95% of the confidence intervals you create will capture the parameter of interest, and about 5% won't."
+
+### Exercise 3
+
+Commit and push any remaining changes.
+
+```{r}
+#| label: summary-3
+#| echo: false
+learnr2::question("Paste the URL of your GitHub repo.", type = "reflection")
+```
+
+###
+
+Your answer should look like `https://github.com/your-github-username/inference-for-comparing-two-proportions`.
+
+###
+
+"Experts and medical boards who study medical treatments use considerations like those above to provide their best recommendation based on the current evidence." A p-value or an interval is one input to such a recommendation, alongside cost, harm, and over-diagnosis.
+
+## Your Answers
+
+```{r}
+#| label: your-answers-1
+#| echo: false
+learnr2::question(
+  "How many minutes, approximately, did it take you to complete this
+  tutorial? For example, an hour and a half would be 90 minutes.",
+  type = "reflection_editable",
+  validate = "integer"
+)
+```
+
+```{r}
+#| label: your-answers-2
+#| echo: false
+learnr2::download_answers_button(filename_prefix = "comparing-two-proportions")
+```

@@ -37,7 +37,7 @@ You should be doing this tutorial in a repo named `applications-data`. If you ar
 
 Create a new file, `analysis.qmd`, with the title `"Applications: Data"` and your name as the author. In a bash Terminal, render it:
 
-```
+```bash
 quarto render analysis.qmd
 ```
 
@@ -55,7 +55,7 @@ learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type
 
 ###
 
-```
+```{.output}
 analysis_files
 ```
 
@@ -75,9 +75,10 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-<pre><code>#| message: false
+````{verbatim}
+#| message: false
 library(tidyverse)
-</code></pre>
+````
 
 ###
 
@@ -95,10 +96,11 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-<pre><code>#| message: false
+````{verbatim}
+#| message: false
 library(tidyverse)
 library(openintro)
-</code></pre>
+````
 
 ###
 
@@ -163,7 +165,7 @@ learnr2::question("In the R Terminal, run ?paralympic_1500. Copy and paste the D
 
 ###
 
-```
+```{.output}
 Description:
 
      Compiled gold medal times for the 1500m race in the Olympic Games
@@ -203,7 +205,7 @@ paralympic_1500 |>
 
 ###
 
-The Men's Olympic race accounts for 29 of the 82 rows; no other combination has more than 13. "This is an observational study. Researchers collected data on past gold medal race times in both Olympic and Paralympic Games."
+The Men's Olympic race accounts for 29 of the 82 rows; no other combination has more than 13. "This is an observational study," so what follows can show patterns but not causes.
 
 ### Exercise 5
 
@@ -417,7 +419,7 @@ learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type
 
 ###
 
-```
+```{.output}
 a41f0b3 (HEAD -> main, origin/main) Explore 1500m gold medal races
 9be04d2 Initial commit
 ```
@@ -467,9 +469,10 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-<pre><code>men_1500 <- paralympic_1500 |>
+````{verbatim}
+men_1500 <- paralympic_1500 |>
   filter(division == "Men", type %in% c("Olympic", "T11"), year > 1950)
-</code></pre>
+````
 
 ###
 
@@ -487,7 +490,7 @@ learnr2::question("In the bash Terminal, run ls. CP/CR.", type = "reflection")
 
 ###
 
-```
+```{.output}
 analysis.html  analysis.qmd  analysis_cache  analysis_files
 ```
 
@@ -507,7 +510,7 @@ learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type
 
 ###
 
-```
+```{.output}
 analysis_files
 analysis_cache
 ```
@@ -688,7 +691,7 @@ learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type
 
 ###
 
-```
+```{.output}
 e92b6d0 (HEAD -> main, origin/main) Show Simpson's paradox in 1500m times
 a41f0b3 Explore 1500m gold medal races
 9be04d2 Initial commit
@@ -716,7 +719,8 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). 
 
 ###
 
-<pre><code>---
+````{verbatim}
+---
 title: "Applications: Data"
 author: "Your Name"
 format: html
@@ -724,13 +728,13 @@ execute:
   echo: false
 ---
 
-&#96;&#96;&#96;{r}
+```{r}
 #| message: false
 library(tidyverse)
 library(openintro)
-&#96;&#96;&#96;
+```
 
-&#96;&#96;&#96;{r}
+```{r}
 paralympic_1500 |>
   filter(division == "Men", year > 1950) |>
   ggplot(aes(x = year, y = time_min, color = type)) +
@@ -742,15 +746,15 @@ paralympic_1500 |>
        y = "Winning Time (minutes)",
        color = "Race Type",
        caption = "43 gold medal races; paralympic.org and Wikipedia")
-&#96;&#96;&#96;
+```
 
-&#96;&#96;&#96;{r}
+```{r}
 #| cache: true
 men_1500 <- paralympic_1500 |>
   filter(division == "Men", type %in% c("Olympic", "T11"), year > 1950)
-&#96;&#96;&#96;
+```
 
-&#96;&#96;&#96;{r}
+```{r}
 men_1500 |>
   ggplot(aes(x = year, y = time_min, color = type)) +
   geom_point(size = 2) +
@@ -761,17 +765,17 @@ men_1500 |>
        y = "Winning Time (minutes)",
        color = "Race Type",
        caption = "28 gold medal races since 1952; paralympic.org and Wikipedia")
-&#96;&#96;&#96;
+```
 
-&#96;&#96;&#96;{r}
+```{r}
 paralympic_1500 |>
   filter(division == "Women", type %in% c("Olympic", "T11")) |>
   summarize(n = n(),
             first_year = min(year),
             mean_time = mean(time_min),
             .by = type)
-&#96;&#96;&#96;
-</code></pre>
+```
+````
 
 ###
 
@@ -781,7 +785,7 @@ Two plots carry the chapter: one race that broke the pattern, and one trend line
 
 Publish your analysis to GitHub Pages. In a bash Terminal, run:
 
-```
+```bash
 quarto publish gh-pages analysis.qmd
 ```
 

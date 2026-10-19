@@ -46,7 +46,7 @@ You should be doing this tutorial in a repo named `logistic-regression`. If you 
 
 Create a new file, `analysis.qmd`, with the title `"Logistic Regression"` and your name as the author. In a bash Terminal, render it:
 
-```
+```bash
 quarto render analysis.qmd
 ```
 
@@ -64,7 +64,7 @@ learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type
 
 ###
 
-```
+```{.output}
 analysis_files
 ```
 
@@ -84,9 +84,10 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-<pre><code>#| message: false
+````{verbatim}
+#| message: false
 library(tidyverse)
-</code></pre>
+````
 
 ###
 
@@ -104,10 +105,11 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-<pre><code>#| message: false
+````{verbatim}
+#| message: false
 library(tidyverse)
 library(openintro)
-</code></pre>
+````
 
 ###
 
@@ -125,11 +127,12 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-<pre><code>#| message: false
+````{verbatim}
+#| message: false
 library(tidyverse)
 library(openintro)
 library(broom)
-</code></pre>
+````
 
 ###
 
@@ -171,7 +174,7 @@ learnr2::question("In the R Terminal, run ?resume. Copy and paste the first two 
 
 ###
 
-```
+```{.output}
 Description:
 
      This experiment data comes from a study that sought to understand
@@ -356,14 +359,15 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-<pre><code>resume_data <- resume |>
+````{verbatim}
+resume_data <- resume |>
   select(received_callback, job_city, college_degree, years_experience,
          honors, military, has_email_address, race, sex = gender) |>
   mutate(sex = fct_relevel(if_else(sex == "m", "man", "woman"), "woman", "man"),
          race = if_else(race == "black", "Black", "White"),
          across(c(received_callback, college_degree, honors, military,
                   has_email_address), as.factor))
-</code></pre>
+````
 
 ###
 
@@ -381,7 +385,7 @@ learnr2::question("In the bash Terminal, run ls. CP/CR.", type = "reflection")
 
 ###
 
-```
+```{.output}
 analysis.html  analysis.qmd  analysis_cache  analysis_files
 ```
 
@@ -401,7 +405,7 @@ learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type
 
 ###
 
-```
+```{.output}
 analysis_files
 analysis_cache
 ```
@@ -587,7 +591,7 @@ learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type
 
 ###
 
-```
+```{.output}
 5b2e9c1 (HEAD -> main, origin/main) Model callbacks with honors
 9be04d2 Initial commit
 ```
@@ -947,7 +951,7 @@ learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type
 
 ###
 
-```
+```{.output}
 c7d10e4 (HEAD -> main, origin/main) Model callbacks with many variables
 5b2e9c1 Model callbacks with honors
 9be04d2 Initial commit
@@ -960,6 +964,10 @@ c7d10e4 (HEAD -> main, origin/main) Model callbacks with many variables
 ## Summary
 
 This tutorial covered [Chapter 9: Logistic regression](https://openintrostat.github.io/ims/model-logistic.html) from [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) by Mine Çetinkaya-Rundel and Johanna Hardin. You have learned to model the probability of a two-level outcome with logistic regression, to move between the logit and probability scales, and to choose among models with AIC, using a field experiment on discrimination in hiring.
+
+The chapter's own summary, in the authors' words:
+
+> Logistic and linear regression models have many similarities. The strongest of which is the linear combination of the explanatory variables which is used to form predictions related to the response variable. However, with logistic regression, the response variable is binary and therefore a prediction is given on the probability of a successful event. Logistic model fit and variable selection can be carried out in similar ways as multiple linear regression.
 
 For the experiment itself, read "[Are Emily and Greg More Employable than Lakisha and Jamal?](https://doi.org/10.3386/w9873)" by Marianne Bertrand and Sendhil Mullainathan, the source the `resume` help page cites. It answers many of the objections a skeptical reader might raise.
 
@@ -975,7 +983,8 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). 
 
 ###
 
-<pre><code>---
+````{verbatim}
+---
 title: "Logistic Regression"
 author: "Your Name"
 format: html
@@ -983,14 +992,14 @@ execute:
   echo: false
 ---
 
-&#96;&#96;&#96;{r}
+```{r}
 #| message: false
 library(tidyverse)
 library(openintro)
 library(broom)
-&#96;&#96;&#96;
+```
 
-&#96;&#96;&#96;{r}
+```{r}
 #| cache: true
 resume_data <- resume |>
   select(received_callback, job_city, college_degree, years_experience,
@@ -999,9 +1008,9 @@ resume_data <- resume |>
          race = if_else(race == "black", "Black", "White"),
          across(c(received_callback, college_degree, honors, military,
                   has_email_address), as.factor))
-&#96;&#96;&#96;
+```
 
-&#96;&#96;&#96;{r}
+```{r}
 resume_data |>
   summarize(callback_rate = mean(received_callback == "1"), .by = honors) |>
   mutate(logit = log(callback_rate / (1 - callback_rate)),
@@ -1019,9 +1028,9 @@ resume_data |>
        x = "Logit of the Callback Probability",
        y = "Callback Probability",
        caption = "4,870 resumes; Bertrand and Mullainathan (2004)")
-&#96;&#96;&#96;
+```
 
-&#96;&#96;&#96;{r}
+```{r}
 glm(received_callback ~ job_city + years_experience + honors +
       military + has_email_address + race + sex,
     data = resume_data, family = binomial) |>
@@ -1040,8 +1049,8 @@ glm(received_callback ~ job_city + years_experience + honors +
        color = "Race Implied by Name",
        caption = "Men applying in Chicago with an email address, no honors, no military service\n4,870 resumes; Bertrand and Mullainathan (2004)") +
   theme(legend.position = "bottom")
-&#96;&#96;&#96;
-</code></pre>
+```
+````
 
 ###
 
@@ -1051,7 +1060,7 @@ glm(received_callback ~ job_city + years_experience + honors +
 
 Publish your analysis to GitHub Pages. In a bash Terminal, run:
 
-```
+```bash
 quarto publish gh-pages analysis.qmd
 ```
 

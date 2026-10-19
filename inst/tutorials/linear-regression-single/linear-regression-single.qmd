@@ -38,7 +38,7 @@ You should be doing this tutorial in a repo named `linear-regression-with-a-sing
 
 Create a new file, `analysis.qmd`, with the title `"Linear Regression with a Single Predictor"` and your name as the author. In a bash Terminal, render it:
 
-```
+```bash
 quarto render analysis.qmd
 ```
 
@@ -56,7 +56,7 @@ learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type
 
 ###
 
-```
+```{.output}
 analysis_files
 ```
 
@@ -76,9 +76,10 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-<pre><code>#| message: false
+````{verbatim}
+#| message: false
 library(tidyverse)
-</code></pre>
+````
 
 ###
 
@@ -96,10 +97,11 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-<pre><code>#| message: false
+````{verbatim}
+#| message: false
 library(tidyverse)
 library(openintro)
-</code></pre>
+````
 
 ###
 
@@ -117,11 +119,12 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-<pre><code>#| message: false
+````{verbatim}
+#| message: false
 library(tidyverse)
 library(openintro)
 library(broom)
-</code></pre>
+````
 
 ###
 
@@ -163,7 +166,7 @@ learnr2::question("In the R Terminal, run ?possum. Copy and paste the Descriptio
 
 ###
 
-```
+```{.output}
 Description:
 
      Data representing possums in Australia and New Guinea. This is a
@@ -422,8 +425,9 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-<pre><code>possum_fit <- lm(head_l ~ total_l, data = possum)
-</code></pre>
+````{verbatim}
+possum_fit <- lm(head_l ~ total_l, data = possum)
+````
 
 ###
 
@@ -441,7 +445,7 @@ learnr2::question("In the bash Terminal, run ls. CP/CR.", type = "reflection")
 
 ###
 
-```
+```{.output}
 analysis.html  analysis.qmd  analysis_cache  analysis_files
 ```
 
@@ -461,7 +465,7 @@ learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type
 
 ###
 
-```
+```{.output}
 analysis_files
 analysis_cache
 ```
@@ -567,7 +571,7 @@ learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type
 
 ###
 
-```
+```{.output}
 3f8a1c2 (HEAD -> main, origin/main) Fit a line to possum lengths
 9be04d2 Initial commit
 ```
@@ -590,7 +594,7 @@ learnr2::question("In the R Terminal, run ?elmhurst. Copy and paste the Descript
 
 ###
 
-```
+```{.output}
 Description:
 
      A random sample of 50 students gift aid for students at Elmhurst
@@ -825,7 +829,7 @@ learnr2::question("In the R Terminal, run ?mariokart. Copy and paste the first p
 
 ###
 
-```
+```{.output}
 Details:
 
      There are several interesting features in the data. First off,
@@ -947,7 +951,7 @@ bind_rows(
 
 ###
 
-With the bundles, condition explains 1.6% of the variation in price; without them, 35.1%. Two auctions hid most of the relationship, which is why the book warns: "It is tempting to remove outliers. Don't do this without a very good reason."
+Two auctions hid most of the relationship: with them, condition explains 1.6% of the variation in price, without them 35.1%. Removing outliers is tempting, but "don't do this without a very good reason."
 
 ### Exercise 15
 
@@ -1023,7 +1027,7 @@ learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type
 
 ###
 
-```
+```{.output}
 7c41e9d (HEAD -> main, origin/main) Fit least squares lines and check outliers
 3f8a1c2 Fit a line to possum lengths
 9be04d2 Initial commit
@@ -1036,6 +1040,10 @@ learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type
 ## Summary
 
 This tutorial covered [Chapter 7: Linear regression with a single predictor](https://openintrostat.github.io/ims/model-slr.html) from [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) by Mine Çetinkaya-Rundel and Johanna Hardin. You have learned to fit a least squares line, to read its slope, intercept, fitted values, and residuals, to measure a linear relationship with the correlation and $R^2$, to use a categorical predictor with two levels, and to judge how much outliers move the line.
+
+The chapter's own summary, in the authors' words:
+
+> Throughout this chapter, the nuances of the linear model have been described. You have learned how to create a linear model with explanatory variables that are numerical (e.g., total possum length) and those that are categorical (e.g., whether a video game was new). The residuals in a linear model are an important metric used to understand how well a model fits; high leverage points, influential points, and other types of outliers can impact the fit of a model. Correlation is a measure of the strength and direction of the linear relationship of two variables, without specifying which variable is the explanatory and which is the outcome. Future chapters will focus on generalizing the linear model from the sample of data to claims about the population of interest.
 
 For the possums themselves, read the original [article](https://doi.org/10.1071/ZO9950449) by Lindenmayer and colleagues in the *Australian Journal of Zoology*. For the college aid data, read "[What Students Really Pay to Go to College](https://www.chronicle.com/article/what-students-really-pay-to-go-to-college/?sra=true)" in *The Chronicle of Higher Education*.
 
@@ -1051,7 +1059,8 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). 
 
 ###
 
-<pre><code>---
+````{verbatim}
+---
 title: "Linear Regression with a Single Predictor"
 author: "Your Name"
 format: html
@@ -1059,19 +1068,19 @@ execute:
   echo: false
 ---
 
-&#96;&#96;&#96;{r}
+```{r}
 #| message: false
 library(tidyverse)
 library(openintro)
 library(broom)
-&#96;&#96;&#96;
+```
 
-&#96;&#96;&#96;{r}
+```{r}
 #| cache: true
 possum_fit <- lm(head_l ~ total_l, data = possum)
-&#96;&#96;&#96;
+```
 
-&#96;&#96;&#96;{r}
+```{r}
 possum_fit |>
   augment(data = possum) |>
   ggplot(aes(x = total_l, y = head_l)) +
@@ -1084,9 +1093,9 @@ possum_fit |>
        y = "Head Length (mm)",
        color = "Sex",
        caption = "104 possums; Lindenmayer et al. (1995)")
-&#96;&#96;&#96;
+```
 
-&#96;&#96;&#96;{r}
+```{r}
 mariokart |>
   filter(total_pr < 100) |>
   mutate(new = if_else(cond == "new", 1, 0)) |>
@@ -1101,8 +1110,8 @@ mariokart |>
        x = "Condition",
        y = "Total Price (Auction plus Shipping)",
        caption = "141 eBay auctions under $100, October 2009; two bundles removed")
-&#96;&#96;&#96;
-</code></pre>
+```
+````
 
 ###
 
@@ -1112,7 +1121,7 @@ The page holds one numerical predictor and one categorical predictor, each with 
 
 Publish your analysis to GitHub Pages. In a bash Terminal, run:
 
-```
+```bash
 quarto publish gh-pages analysis.qmd
 ```
 

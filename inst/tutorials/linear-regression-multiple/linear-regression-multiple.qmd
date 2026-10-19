@@ -38,7 +38,7 @@ You should be doing this tutorial in a repo named `linear-regression-with-multip
 
 Create a new file, `analysis.qmd`, with the title `"Linear Regression with Multiple Predictors"` and your name as the author. In a bash Terminal, render it:
 
-```
+```bash
 quarto render analysis.qmd
 ```
 
@@ -56,7 +56,7 @@ learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type
 
 ###
 
-```
+```{.output}
 analysis_files
 ```
 
@@ -76,9 +76,10 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-<pre><code>#| message: false
+````{verbatim}
+#| message: false
 library(tidyverse)
-</code></pre>
+````
 
 ###
 
@@ -96,10 +97,11 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-<pre><code>#| message: false
+````{verbatim}
+#| message: false
 library(tidyverse)
 library(openintro)
-</code></pre>
+````
 
 ###
 
@@ -117,11 +119,12 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-<pre><code>#| message: false
+````{verbatim}
+#| message: false
 library(tidyverse)
 library(openintro)
 library(broom)
-</code></pre>
+````
 
 ###
 
@@ -163,7 +166,7 @@ learnr2::question("In the R Terminal, run ?loans_full_schema. Copy and paste the
 
 ###
 
-```
+```{.output}
      inquiries_last_12m Inquiries into the applicant's credit during
           the last 12 months.
 
@@ -354,14 +357,15 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-<pre><code>loans <- loans_full_schema |>
+````{verbatim}
+loans <- loans_full_schema |>
   mutate(credit_util = total_credit_utilized / total_credit_limit,
          bankruptcy = as.factor(if_else(public_record_bankrupt == 0, 0, 1)),
          verified_income = droplevels(verified_income)) |>
   rename(credit_checks = inquiries_last_12m) |>
   select(interest_rate, verified_income, debt_to_income, credit_util,
          bankruptcy, term, credit_checks, issue_month)
-</code></pre>
+````
 
 ###
 
@@ -379,7 +383,7 @@ learnr2::question("In the bash Terminal, run ls. CP/CR.", type = "reflection")
 
 ###
 
-```
+```{.output}
 analysis.html  analysis.qmd  analysis_cache  analysis_files
 ```
 
@@ -399,7 +403,7 @@ learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type
 
 ###
 
-```
+```{.output}
 analysis_files
 analysis_cache
 ```
@@ -649,7 +653,7 @@ learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type
 
 ###
 
-```
+```{.output}
 3f8a1c2 (HEAD -> main, origin/main) Fit models with categorical and many predictors
 9be04d2 Initial commit
 ```
@@ -1005,7 +1009,7 @@ learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type
 
 ###
 
-```
+```{.output}
 a41d7e9 (HEAD -> main, origin/main) Select a model with adjusted R-squared
 3f8a1c2 Fit models with categorical and many predictors
 9be04d2 Initial commit
@@ -1018,6 +1022,10 @@ Adjusted R-squared is only one yardstick. "In fact, many statisticians discourag
 ## Summary
 
 This tutorial covered [Chapter 8: Linear regression with multiple predictors](https://openintrostat.github.io/ims/model-mlr.html) from [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) by Mine Çetinkaya-Rundel and Johanna Hardin. You have learned how a regression model uses indicator and categorical predictors, how to fit and read a model with many predictors at once, and how to choose among models with adjusted R-squared, using backward elimination and forward selection.
+
+The chapter's own summary, in the authors' words:
+
+> With real data, there is often a need to describe how multiple variables can be modeled together. In this chapter, we have presented one approach using multiple linear regression. Each coefficient represents how the model predicts the outcome might change with one unit increase of that predictor *given* the rest of the predictor variables in the model. Working with and interpreting multivariable models can be tricky, especially when the predictor variables show multicollinearity. There is often no perfect or "right" final model, however, using the adjusted $R^2$ value is one way to identify important predictor variables for a final regression model. In later chapters we will generalize multiple linear regression models to a larger population of interest from which the dataset was sampled.
 
 For what these same models say about the population the loans came from, read [Chapter 25: Inference for regression with multiple predictors](https://openintrostat.github.io/ims/inf-model-mlr.html), which returns to the `loans` data. For more on turning models into tidy tables, see the **broom** [introduction](https://broom.tidymodels.org/articles/broom.html).
 
@@ -1033,7 +1041,8 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). 
 
 ###
 
-<pre><code>---
+````{verbatim}
+---
 title: "Linear Regression with Multiple Predictors"
 author: "Your Name"
 format: html
@@ -1041,14 +1050,14 @@ execute:
   echo: false
 ---
 
-&#96;&#96;&#96;{r}
+```{r}
 #| message: false
 library(tidyverse)
 library(openintro)
 library(broom)
-&#96;&#96;&#96;
+```
 
-&#96;&#96;&#96;{r}
+```{r}
 #| cache: true
 loans <- loans_full_schema |>
   mutate(credit_util = total_credit_utilized / total_credit_limit,
@@ -1057,9 +1066,9 @@ loans <- loans_full_schema |>
   rename(credit_checks = inquiries_last_12m) |>
   select(interest_rate, verified_income, debt_to_income, credit_util,
          bankruptcy, term, credit_checks, issue_month)
-&#96;&#96;&#96;
+```
 
-&#96;&#96;&#96;{r}
+```{r}
 lm(interest_rate ~ credit_util + verified_income, data = loans) |>
   augment() |>
   ggplot(aes(x = credit_util, color = verified_income)) +
@@ -1073,9 +1082,9 @@ lm(interest_rate ~ credit_util + verified_income, data = loans) |>
        color = "Income Verification",
        caption = "9,998 Lending Club loans, January to March 2018; openintro package") +
   theme(legend.position = "bottom")
-&#96;&#96;&#96;
+```
 
-&#96;&#96;&#96;{r}
+```{r}
 predictors <- c("term", "credit_util", "verified_income", "credit_checks",
                 "debt_to_income", "bankruptcy", "issue_month")
 
@@ -1095,8 +1104,8 @@ tibble(step = 1:7, added = predictors) |>
        x = "Predictor Added",
        y = "Adjusted R-squared",
        caption = "Up to 10,000 Lending Club loans, January to March 2018; openintro package")
-&#96;&#96;&#96;
-</code></pre>
+```
+````
 
 ###
 
@@ -1106,7 +1115,7 @@ The page holds the chapter's two halves: a model with several kinds of predictor
 
 Publish your analysis to GitHub Pages. In a bash Terminal, run:
 
-```
+```bash
 quarto publish gh-pages analysis.qmd
 ```
 

@@ -24,3 +24,4 @@
 # it does not report that .tar.qz file size, which is what matters
 # to CRAN.
 # ^inst/tutorials/.*/data(/.*)?$
+^inst/tutorials/.*/data/README\.txt$

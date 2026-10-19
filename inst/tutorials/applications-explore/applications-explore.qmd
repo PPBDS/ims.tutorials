@@ -15,7 +15,6 @@ learnr2:
 #| label: setup
 #| include: false
 library(tidyverse)
-library(usdata)
 knitr::opts_chunk$set(out.width = "90%")
 ```
 
@@ -37,7 +36,7 @@ You should be doing this tutorial in a repo named `applications-explore`. If you
 
 Create a new file, `analysis.qmd`, with the title `"Applications: Explore"` and your name as the author. In a bash Terminal, render it:
 
-```
+```bash
 quarto render analysis.qmd
 ```
 
@@ -55,7 +54,7 @@ learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type
 
 ###
 
-```
+```{.output}
 analysis_files
 ```
 
@@ -75,9 +74,10 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-<pre><code>#| message: false
+````{verbatim}
+#| message: false
 library(tidyverse)
-</code></pre>
+````
 
 ###
 
@@ -85,54 +85,59 @@ The **tidyverse** includes **[ggplot2](https://ggplot2.tidyverse.org/)**, which 
 
 ### Exercise 3
 
-Add **[usdata](https://openintrostat.github.io/usdata/)** to that chunk. Render.
+The chapter's data are in no R package, so you will download them. Create a `data` directory at the top level of the `applications-explore` repo.
 
 ```{r}
 #| label: introduction-3
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-<pre><code>#| message: false
-library(tidyverse)
-library(usdata)
-</code></pre>
-
-###
-
-**usdata** holds `county`, the 3,142 US counties you met in the Hello Data and Exploring Numerical Data tutorials. Here it supplies the population changes to which we apply the chapter's first three principles.
-
-### Exercise 4
-
-The chapter's main example is a poll that is in no R package, so you will download it. Create a `data` directory at the top level of the `applications-explore` repo.
-
-```{r}
-#| label: introduction-4
 #| echo: false
 learnr2::question("In the bash Terminal, run ls. CP/CR.", type = "reflection")
 ```
 
 ###
 
-```
+```{.output}
 analysis.html  analysis.qmd  analysis_files  data
 ```
 
 ###
 
-The book builds its Brexit poll by hand, typing in YouGov's published counts. We have saved the same counts as a CSV file, which is how most data you find outside R packages will arrive.
+The book types its small datasets in by hand, inside its own code. We have saved the same numbers as CSV files, which is how most data you find outside R packages will arrive.
+
+### Exercise 4
+
+Download the file at
+
+```default
+https://raw.githubusercontent.com/PPBDS/ims.tutorials/main/inst/extdata/expenses.csv
+```
+
+into your `data` directory, keeping the name `expenses.csv`.
+
+```{r}
+#| label: introduction-4
+#| echo: false
+learnr2::question("In the bash Terminal, run ls data. CP/CR.", type = "reflection")
+```
+
+###
+
+```{.output}
+expenses.csv
+```
+
+###
+
+The file holds the costs of a manufacturing company, split into five categories. The chapter shows the same five numbers twice, once as a pie chart and once as a bar plot.
 
 ### Exercise 5
 
 Download the file at
 
-```
-https://raw.githubusercontent.com/PPBDS/ims.tutorials/main/inst/extdata/brexit.csv
+```default
+https://raw.githubusercontent.com/PPBDS/ims.tutorials/main/inst/extdata/duke_hires_2010.csv
 ```
 
-into your `data` directory, keeping the name `brexit.csv`.
+into your `data` directory, keeping the name `duke_hires_2010.csv`.
 
 ```{r}
 #| label: introduction-5
@@ -142,8 +147,34 @@ learnr2::question("In the bash Terminal, run ls data. CP/CR.", type = "reflectio
 
 ###
 
+```{.output}
+duke_hires_2010.csv  expenses.csv
 ```
-brexit.csv
+
+###
+
+The file holds the number of people Duke University hired in each month of 2010. The book's own data file has columns for 2011 to 2015 too, but they are empty, and the book's code fills them with simulated numbers, so we keep only the twelve real counts.
+
+### Exercise 6
+
+Download the file at
+
+```default
+https://raw.githubusercontent.com/PPBDS/ims.tutorials/main/inst/extdata/brexit.csv
+```
+
+into your `data` directory, keeping the name `brexit.csv`.
+
+```{r}
+#| label: introduction-6
+#| echo: false
+learnr2::question("In the bash Terminal, run ls data. CP/CR.", type = "reflection")
+```
+
+###
+
+```{.output}
+brexit.csv  duke_hires_2010.csv  expenses.csv
 ```
 
 ###
@@ -152,44 +183,34 @@ The file is a count table: one row for each combination of region and answer, wi
 
 ## Simplicity, color, and story
 
-"Graphs can powerfully communicate ideas directly and quickly." This section applies the chapter's first three principles, keep it simple, use color to draw attention, and tell a story, to the change in population of US counties from 2010 to 2017.
+"Graphs can powerfully communicate ideas directly and quickly." This section applies the chapter's first three principles, keep it simple, use color to draw attention, and tell a story, to the chapter's own examples: a company's expenses and Duke University's monthly hires.
 
 ### Exercise 1
 
 ```{r}
 #| label: simplicity-color-and-story-1
 #| echo: false
-learnr2::question("In the R Terminal, run ?county. Copy and paste the Description, the entries for pop2010, pop2017, and pop_change, and the Source.", type = "reflection")
+learnr2::question("In the bash Terminal, run cat data/expenses.csv. CP/CR.", type = "reflection")
 ```
 
 ###
 
-```
-Description:
-
-     Data for 3142 counties in the United States. See the
-     ‘county_complete’ data set for additional variables.
-
-     pop2010 Population in 2010.
-
-     pop2017 Population in 2017.
-
-     pop_change Population change from 2010 to 2017.
-
-Source:
-
-     These data were collected from Census Quick Facts (no longer
-     available as of 2020) and its accompanying pages. Smoking ban data
-     were from a variety of sources.
+```{.output}
+category,percent
+Cutting tools,3
+Buildings and Administration,22
+Labor,31
+Machinery,27
+Workplace materials,17
 ```
 
 ###
 
-The help page does not say what units `pop_change` is in, or how it was calculated. A variable that sounds obvious is worth checking against the columns it should agree with.
+The file has no help page, so the chapter is its documentation: "Consider a manufacturing company that has summarized its costs into five different categories." Each number is a percent of the company's total costs, and the five add up to 100.
 
 ### Exercise 2
 
-Add a chunk that shows `name`, `state`, `pop2010`, `pop2017`, and `pop_change` for the first ten counties, along with the percent change in population that you calculate yourself from `pop2010` and `pop2017`. Render.
+Add a chunk that reads `data/expenses.csv` and prints it. Render.
 
 ```{r}
 #| label: simplicity-color-and-story-2
@@ -202,19 +223,16 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: simplicity-color-and-story-2-test
 #| echo: true
-county |>
-  select(name, state, pop2010, pop2017, pop_change) |>
-  mutate(pct_change = 100 * (pop2017 - pop2010) / pop2010) |>
-  slice_head(n = 10)
+read_csv("data/expenses.csv", show_col_types = FALSE)
 ```
 
 ###
 
-Bibb County, Alabama, lost 247 people between 2010 and 2017, yet its `pop_change` is a gain of 0.73%. The two measures disagree about whether a county grew at all in 389 of the 3,139 counties with both populations, so we use `pop2010` and `pop2017` directly.
+Labor, at 31%, is the biggest cost, and cutting tools, at 3%, the smallest. Buildings and Administration (22%) and Workplace materials (17%) differ by 5 percentage points, the comparison the chapter asks you to make by eye.
 
 ### Exercise 3
 
-Replace the code in that chunk so that it counts how many counties grew and how many shrank between 2010 and 2017. Render.
+Replace the printing so that the chunk draws a pie chart of `percent`, with one slice for each `category`. Render.
 
 ```{r}
 #| label: simplicity-color-and-story-3
@@ -227,17 +245,19 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: simplicity-color-and-story-3-test
 #| echo: true
-county |>
-  count(grew = pop2017 > pop2010)
+read_csv("data/expenses.csv", show_col_types = FALSE) |>
+  ggplot(aes(x = "", y = percent, fill = category)) +
+  geom_col() +
+  coord_polar(theta = "y")
 ```
 
 ###
 
-1,678 counties shrank and 1,461 grew, even though the total population of the counties rose from 308.7 million to 325.7 million. Three counties have no answer at all.
+The book asks, "can your eye tell how different 'Buildings and administration' is from 'Workplace materials' when looking at the slices of pie?" "Additionally, the colors in the pie chart do not mean anything and are therefore distracting."
 
 ### Exercise 4
 
-Replace the code in that chunk so that it shows `name`, `state`, `pop2010`, and `pop2017` for the counties that are missing `pop2017`. Render.
+Replace the pie chart with a bar plot of the same numbers, with horizontal bars sorted from the largest cost to the smallest. Render.
 
 ```{r}
 #| label: simplicity-color-and-story-4
@@ -250,18 +270,18 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: simplicity-color-and-story-4-test
 #| echo: true
-county |>
-  filter(is.na(pop2017)) |>
-  select(name, state, pop2010, pop2017)
+read_csv("data/expenses.csv", show_col_types = FALSE) |>
+  ggplot(aes(x = percent, y = fct_reorder(category, percent))) +
+  geom_col()
 ```
 
 ###
 
-All three are small areas of Alaska, with between 968 and 2,369 people in 2010. Any plot of `pop2017` will drop them, so drop them yourself and say so, rather than let a plot do it with only a warning.
+"Notice how much easier it is to identify the magnitude of the differences across categories while not being distracted by other aspects of the image." "Typically, a bar plot will be easier for the reader to digest than a pie chart, especially if the categorical data being plotted has more than just a few levels."
 
 ### Exercise 5
 
-Replace the code in that chunk with a pie chart of the number of counties at each level of `median_edu`. Render.
+Give each bar its own color. Render.
 
 ```{r}
 #| label: simplicity-color-and-story-5
@@ -274,19 +294,18 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: simplicity-color-and-story-5-test
 #| echo: true
-county |>
-  ggplot(aes(x = "", fill = median_edu)) +
-  geom_bar() +
-  coord_polar(theta = "y")
+read_csv("data/expenses.csv", show_col_types = FALSE) |>
+  ggplot(aes(x = percent, y = fct_reorder(category, percent), fill = category)) +
+  geom_col()
 ```
 
 ###
 
-The `some_college` and `hs_diploma` slices hold 1,695 and 1,397 counties, a gap of about 300 that the pie barely shows. The book's complaint is that the magnitudes in a pie chart "are difficult for the eye to compare."
+"Colors can be distracting when they are only used to brighten up the plot." These five colors, and the legend that explains them, repeat what the y-axis already says.
 
 ### Exercise 6
 
-Replace the pie chart with a bar chart of the same counts. Render.
+Color the Buildings and Administration bar to draw attention to it, make the other four bars gray, and remove the legend. Render.
 
 ```{r}
 #| label: simplicity-color-and-story-6
@@ -299,45 +318,50 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: simplicity-color-and-story-6-test
 #| echo: true
-county |>
-  ggplot(aes(x = median_edu)) +
-  geom_bar()
+read_csv("data/expenses.csv", show_col_types = FALSE) |>
+  ggplot(aes(x = percent, y = fct_reorder(category, percent),
+             fill = category == "Buildings and Administration")) +
+  geom_col(show.legend = FALSE) +
+  scale_fill_manual(values = c("grey70", "firebrick"))
 ```
 
 ###
 
-"Typically, a bar plot will be easier for the reader to digest than a pie chart, especially if the categorical data being plotted has more than just a few levels." The gap between the two big bars is now plain, and so are the two tiny levels, `below_hs` and missing, with 2 counties each.
+"An important principle to keep in mind is to use color to draw attention." The red bar is now the first thing a reader sees, and the gray bars give it context without competing with it.
 
 ### Exercise 7
-
-Replace the code in that chunk with a bar chart of the proportion of counties that grew from 2010 to 2017, for the counties whose `median_edu` is `hs_diploma`, `some_college`, or `bachelors`. Give each bar its own color. Drop the counties that are missing `pop2017` first. Render.
 
 ```{r}
 #| label: simplicity-color-and-story-7
 #| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+learnr2::question("In the bash Terminal, run cat data/duke_hires_2010.csv. CP/CR.", type = "reflection")
 ```
 
 ###
 
-```{r}
-#| label: simplicity-color-and-story-7-test
-#| echo: true
-county |>
-  drop_na(pop2017) |>
-  filter(median_edu %in% c("hs_diploma", "some_college", "bachelors")) |>
-  summarize(prop_grew = mean(pop2017 > pop2010), .by = median_edu) |>
-  ggplot(aes(x = median_edu, y = prop_grew, fill = median_edu)) +
-  geom_col()
+```{.output}
+month,hires
+1,300
+2,200
+3,250
+4,190
+5,210
+6,530
+7,780
+8,610
+9,530
+10,350
+11,230
+12,200
 ```
 
 ###
 
-"Colors can be distracting when they are only used to brighten up the plot." These three colors, and the legend that explains them, repeat what the x-axis already says.
+The chapter's figure plots five years of Duke hiring, but only these twelve 2010 counts are real. Months are stored as the numbers 1 to 12, so a plot will need help to show their names.
 
 ### Exercise 8
 
-Color the `bachelors` bar to draw attention to it, make the other two bars gray, and remove the legend. Render.
+Start a new chunk that reads `data/duke_hires_2010.csv` into an object called `duke_hires` and then sorts the months from the most hires to the fewest. Render.
 
 ```{r}
 #| label: simplicity-color-and-story-8
@@ -350,22 +374,19 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: simplicity-color-and-story-8-test
 #| echo: true
-county |>
-  drop_na(pop2017) |>
-  filter(median_edu %in% c("hs_diploma", "some_college", "bachelors")) |>
-  summarize(prop_grew = mean(pop2017 > pop2010), .by = median_edu) |>
-  ggplot(aes(x = median_edu, y = prop_grew, fill = median_edu == "bachelors")) +
-  geom_col(show.legend = FALSE) +
-  scale_fill_manual(values = c("grey70", "firebrick"))
+duke_hires <- read_csv("data/duke_hires_2010.csv", show_col_types = FALSE)
+
+duke_hires |>
+  arrange(desc(hires))
 ```
 
 ###
 
-"An important principle to keep in mind is to use color to draw attention." 45 of the 46 counties where the median adult has a bachelor's degree grew, against about 30% of the counties where it is a high school diploma.
+July, with 780 hires, and August, with 610, top the list, and together they account for 1,390 of the year's 4,380 hires, nearly a third. A sorted table finds the peak, but it hides the shape of the year.
 
 ### Exercise 9
 
-Replace the code in that chunk with a scatterplot of `pop2017` against `pop2010`, with both axes on a log scale. Drop the counties that are missing `pop2017` first. Render.
+Replace the sorting with a line plot of `hires` by `month`. Keep the line that reads the file. Render.
 
 ```{r}
 #| label: simplicity-color-and-story-9
@@ -378,21 +399,20 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: simplicity-color-and-story-9-test
 #| echo: true
-county |>
-  drop_na(pop2017) |>
-  ggplot(aes(x = pop2010, y = pop2017)) +
-  geom_point(alpha = 0.3) +
-  scale_x_log10() +
-  scale_y_log10()
+duke_hires <- read_csv("data/duke_hires_2010.csv", show_col_types = FALSE)
+
+duke_hires |>
+  ggplot(aes(x = month, y = hires)) +
+  geom_line()
 ```
 
 ###
 
-County populations in 2010 run from 82 in Loving County, Texas, to 9.8 million in Los Angeles County, so only a log scale shows them all. The points hug a diagonal because most counties changed by only a few percent in seven years.
+Hiring is flat at about 200 to 300 a month, jumps in June, peaks in July, and falls back by November. Nothing in the data says why.
 
 ### Exercise 10
 
-Add a line where `pop2017` equals `pop2010`. Render.
+Add a large point that marks July in a color that draws attention. Render.
 
 ```{r}
 #| label: simplicity-color-and-story-10
@@ -405,22 +425,22 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: simplicity-color-and-story-10-test
 #| echo: true
-county |>
-  drop_na(pop2017) |>
-  ggplot(aes(x = pop2010, y = pop2017)) +
-  geom_point(alpha = 0.3) +
-  geom_abline(slope = 1, intercept = 0) +
-  scale_x_log10() +
-  scale_y_log10()
+duke_hires <- read_csv("data/duke_hires_2010.csv", show_col_types = FALSE)
+
+duke_hires |>
+  ggplot(aes(x = month, y = hires)) +
+  geom_line() +
+  geom_point(data = filter(duke_hires, month == 7),
+             color = "firebrick", size = 3)
 ```
 
 ###
 
-"Sometimes the additional information may be a diagonal line," the chapter says, and here a county above the line grew while "points below the line show the opposite." The line turns a cloud of points into a yes-or-no answer for every county.
+One colored point does what the chapter's red bar did: it tells the reader where to look. It still does not tell them why to look there.
 
 ### Exercise 11
 
-Color the points by whether the county grew or shrank. Render.
+Add a vertical line at July and a text annotation beside it that explains the spike: July is the start of Duke's fiscal year. Render.
 
 ```{r}
 #| label: simplicity-color-and-story-11
@@ -433,23 +453,25 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: simplicity-color-and-story-11-test
 #| echo: true
-county |>
-  drop_na(pop2017) |>
-  mutate(change = if_else(pop2017 > pop2010, "Grew", "Shrank")) |>
-  ggplot(aes(x = pop2010, y = pop2017, color = change)) +
-  geom_point(alpha = 0.3) +
-  geom_abline(slope = 1, intercept = 0) +
-  scale_x_log10() +
-  scale_y_log10()
+duke_hires <- read_csv("data/duke_hires_2010.csv", show_col_types = FALSE)
+
+duke_hires |>
+  ggplot(aes(x = month, y = hires)) +
+  geom_vline(xintercept = 7, linetype = "dashed", color = "grey50") +
+  geom_line() +
+  geom_point(data = filter(duke_hires, month == 7),
+             color = "firebrick", size = 3) +
+  annotate("text", x = 7.3, y = 760, hjust = 0, size = 3.5,
+           label = "Hires peak in July, which\nis the start of Duke's\nfiscal year.")
 ```
 
 ###
 
-The shrinking counties pile up on the left, among the small ones. The chapter notes that "not everyone sees color the same way," so a second cue helps; here the line itself is that cue, since every red point also sits on one side of it.
+"For many graphs, an important aspect is the inclusion of information which is not provided in the dataset that is being plotted." The book's graph "is **annotated** with information about the start of the university's fiscal year which contextualizes the information provided by the data."
 
 ### Exercise 12
 
-Improve the scatterplot. Make the shrinking counties a color that draws attention and the growing ones gray, use commas in the axis labels, and add a label pointing to McKenzie County, North Dakota, which doubled in size during the Bakken oil boom. Add a title, axis labels, a subtitle that states the main finding, and a caption giving the number of counties and the source. Render.
+Improve the plot. Label the months by name, start the y-axis at zero, and add a title, axis labels, a subtitle that states the main finding, and a caption giving the number of months and the source. Render.
 
 ```{r}
 #| label: simplicity-color-and-story-12
@@ -462,32 +484,32 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: simplicity-color-and-story-12-test
 #| echo: true
-county |>
-  drop_na(pop2017) |>
-  mutate(change = if_else(pop2017 > pop2010, "Grew", "Shrank")) |>
-  ggplot(aes(x = pop2010, y = pop2017, color = change)) +
-  geom_point(alpha = 0.3) +
-  geom_abline(slope = 1, intercept = 0) +
-  annotate("label", x = 6360, y = 12724, hjust = 1.05, size = 3,
-           label = "McKenzie County, ND, doubled\nin the Bakken oil boom") +
-  scale_x_log10(labels = scales::label_comma()) +
-  scale_y_log10(labels = scales::label_comma()) +
-  scale_color_manual(values = c(Grew = "grey60", Shrank = "firebrick")) +
-  labs(title = "Population of US Counties, 2010 and 2017",
-       subtitle = "More than half of counties lost people, mostly the smaller ones",
-       x = "Population in 2010",
-       y = "Population in 2017",
-       color = NULL,
-       caption = "3,139 US counties; Census Quick Facts, via usdata")
+duke_hires <- read_csv("data/duke_hires_2010.csv", show_col_types = FALSE)
+
+duke_hires |>
+  ggplot(aes(x = month, y = hires)) +
+  geom_vline(xintercept = 7, linetype = "dashed", color = "grey50") +
+  geom_line() +
+  geom_point(data = filter(duke_hires, month == 7),
+             color = "firebrick", size = 3) +
+  annotate("text", x = 7.3, y = 760, hjust = 0, size = 3.5,
+           label = "Hires peak in July, which\nis the start of Duke's\nfiscal year.") +
+  scale_x_continuous(breaks = 1:12, labels = month.abb, minor_breaks = NULL) +
+  expand_limits(y = 0) +
+  labs(title = "Duke Hires by Month, 2010",
+       subtitle = "July and August alone brought nearly a third of the year's 4,380 hires",
+       x = NULL,
+       y = "Hires",
+       caption = "12 monthly counts; Duke University, via Introduction to Modern Statistics")
 ```
 
 ###
 
-"For many graphs, an important aspect is the inclusion of information which is not provided in the dataset that is being plotted." Nothing in `county` mentions oil, but the label explains the most extreme point on the page.
+The chapter's own annotation says hires "always" peak in July, a claim that needs more than one year; with only 2010's real counts, we say they peaked. "The external information serves to contextualize the data and helps communicate the narrative of the research."
 
 ### Exercise 13
 
-Commit `analysis.qmd` and the `data` directory with the message `"Plot county population change"` and push.
+Commit `analysis.qmd` and the `data` directory with the message `"Plot Duke hires by month"` and push.
 
 ```{r}
 #| label: simplicity-color-and-story-13
@@ -497,14 +519,14 @@ learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type
 
 ###
 
-```
-3f8a2c1 (HEAD -> main, origin/main) Plot county population change
+```{.output}
+3f8a2c1 (HEAD -> main, origin/main) Plot Duke hires by month
 9be04d2 Initial commit
 ```
 
 ###
 
-"The external information serves to contextualize the data and helps communicate the narrative of the research." A reference line, a highlight color, and one well-chosen label do more for a reader than any number of extra colors.
+"When creating a graphic, keep in mind what it is that you'd like your reader to see." A sorted bar, one highlight color, and one sentence of context do more for a reader than any number of extra colors.
 
 ## Order, labels, purpose, and color
 
@@ -520,7 +542,7 @@ learnr2::question("In the bash Terminal, run head data/brexit.csv. CP/CR.", type
 
 ###
 
-```
+```{.output}
 region,opinion,n
 London,Very well,10
 London,Fairly well,18
@@ -719,7 +741,7 @@ learnr2::question("In the bash Terminal, run ls. CP/CR.", type = "reflection")
 
 ###
 
-```
+```{.output}
 analysis.html  analysis.qmd  analysis_cache  analysis_files  data
 ```
 
@@ -739,7 +761,7 @@ learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type
 
 ###
 
-```
+```{.output}
 analysis_files
 analysis_cache
 ```
@@ -917,9 +939,9 @@ learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type
 
 ###
 
-```
+```{.output}
 b71e4d9 (HEAD -> main, origin/main) Plot Brexit opinion by region
-3f8a2c1 Plot county population change
+3f8a2c1 Plot Duke hires by month
 9be04d2 Initial commit
 ```
 
@@ -945,7 +967,8 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). 
 
 ###
 
-<pre><code>---
+````{verbatim}
+---
 title: "Applications: Explore"
 author: "Your Name"
 format: html
@@ -953,42 +976,49 @@ execute:
   echo: false
 ---
 
-&#96;&#96;&#96;{r}
+```{r}
 #| message: false
 library(tidyverse)
-library(usdata)
-&#96;&#96;&#96;
+```
 
-&#96;&#96;&#96;{r}
-county |>
-  drop_na(pop2017) |>
-  mutate(change = if_else(pop2017 > pop2010, "Grew", "Shrank")) |>
-  ggplot(aes(x = pop2010, y = pop2017, color = change)) +
-  geom_point(alpha = 0.3) +
-  geom_abline(slope = 1, intercept = 0) +
-  annotate("label", x = 6360, y = 12724, hjust = 1.05, size = 3,
-           label = "McKenzie County, ND, doubled\nin the Bakken oil boom") +
-  scale_x_log10(labels = scales::label_comma()) +
-  scale_y_log10(labels = scales::label_comma()) +
-  scale_color_manual(values = c(Grew = "grey60", Shrank = "firebrick")) +
-  labs(title = "Population of US Counties, 2010 and 2017",
-       subtitle = "More than half of counties lost people, mostly the smaller ones",
-       x = "Population in 2010",
-       y = "Population in 2017",
-       color = NULL,
-       caption = "3,139 US counties; Census Quick Facts, via usdata")
-&#96;&#96;&#96;
+```{r}
+read_csv("data/expenses.csv", show_col_types = FALSE) |>
+  ggplot(aes(x = percent, y = fct_reorder(category, percent),
+             fill = category == "Buildings and Administration")) +
+  geom_col(show.legend = FALSE) +
+  scale_fill_manual(values = c("grey70", "firebrick"))
+```
 
-&#96;&#96;&#96;{r}
+```{r}
+duke_hires <- read_csv("data/duke_hires_2010.csv", show_col_types = FALSE)
+
+duke_hires |>
+  ggplot(aes(x = month, y = hires)) +
+  geom_vline(xintercept = 7, linetype = "dashed", color = "grey50") +
+  geom_line() +
+  geom_point(data = filter(duke_hires, month == 7),
+             color = "firebrick", size = 3) +
+  annotate("text", x = 7.3, y = 760, hjust = 0, size = 3.5,
+           label = "Hires peak in July, which\nis the start of Duke's\nfiscal year.") +
+  scale_x_continuous(breaks = 1:12, labels = month.abb, minor_breaks = NULL) +
+  expand_limits(y = 0) +
+  labs(title = "Duke Hires by Month, 2010",
+       subtitle = "July and August alone brought nearly a third of the year's 4,380 hires",
+       x = NULL,
+       y = "Hires",
+       caption = "12 monthly counts; Duke University, via Introduction to Modern Statistics")
+```
+
+```{r}
 #| cache: true
 brexit <- read_csv("data/brexit.csv", show_col_types = FALSE) |>
   mutate(opinion = fct_relevel(opinion, "Very well", "Fairly well",
                                "Fairly badly", "Very badly", "Don't know"),
          region = fct_relevel(region, "London", "Rest of South",
                               "Midlands / Wales", "North", "Scotland"))
-&#96;&#96;&#96;
+```
 
-&#96;&#96;&#96;{r}
+```{r}
 brexit |>
   ggplot(aes(x = n, y = region, fill = opinion)) +
   geom_col(position = position_fill(reverse = TRUE)) +
@@ -1002,18 +1032,18 @@ brexit |>
        caption = "1,643 Great Britain adults; YouGov, 2-3 September 2019") +
   theme(legend.position = "top",
         plot.title.position = "plot")
-&#96;&#96;&#96;
-</code></pre>
+```
+````
 
 ###
 
-The page holds two finished graphics, each built by removing distractions and adding context. "In this chapter different representations are contrasted to demonstrate best practices in creating graphs."
+The page holds three finished graphics, each built by removing distractions and adding context. "In this chapter different representations are contrasted to demonstrate best practices in creating graphs."
 
 ### Exercise 2
 
 Publish your analysis to GitHub Pages. In a bash Terminal, run:
 
-```
+```bash
 quarto publish gh-pages analysis.qmd
 ```
 

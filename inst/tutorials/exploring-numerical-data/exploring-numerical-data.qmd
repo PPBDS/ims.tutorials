@@ -39,7 +39,7 @@ You should be doing this tutorial in a repo named `exploring-numerical-data`. If
 
 Create a new file, `analysis.qmd`, with the title `"Exploring Numerical Data"` and your name as the author. In a bash Terminal, render it:
 
-```
+```bash
 quarto render analysis.qmd
 ```
 
@@ -57,7 +57,7 @@ learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type
 
 ###
 
-```
+```{.output}
 analysis_files
 ```
 
@@ -77,9 +77,10 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-<pre><code>#| message: false
+````{verbatim}
+#| message: false
 library(tidyverse)
-</code></pre>
+````
 
 ###
 
@@ -97,10 +98,11 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-<pre><code>#| message: false
+````{verbatim}
+#| message: false
 library(tidyverse)
 library(openintro)
-</code></pre>
+````
 
 ###
 
@@ -118,11 +120,12 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-<pre><code>#| message: false
+````{verbatim}
+#| message: false
 library(tidyverse)
 library(openintro)
 library(usdata)
-</code></pre>
+````
 
 ###
 
@@ -140,12 +143,13 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-<pre><code>#| message: false
+````{verbatim}
+#| message: false
 library(tidyverse)
 library(openintro)
 library(usdata)
 library(maps)
-</code></pre>
+````
 
 ###
 
@@ -165,7 +169,7 @@ learnr2::question("In the R Terminal, run ?loan50. Copy and paste the entries fo
 
 ###
 
-```
+```{.output}
      loan_amount The amount of the loan the applicant received.
 
      interest_rate Interest rate of the loan the applicant received.
@@ -391,7 +395,7 @@ loan50 |>
 
 ###
 
-"The IQR interquartile range is the length of the box in a box plot. It is computed as IQR = Q3 − Q1," here 13.72 − 7.96 = 5.76. "Any observation beyond 1.5 × IQR away from the first or the third quartile is considered an outlier," which is why 24.85% and 26.3% were dotted.
+"The IQR interquartile range is the length of the box in a box plot," here 13.72 − 7.96 = 5.76. "Any observation beyond 1.5 × IQR away from the first or the third quartile is considered an outlier," which is why 24.85% and 26.3% were dotted.
 
 ### Exercise 11
 
@@ -444,7 +448,7 @@ loan50 |>
 
 ###
 
-The mean sits to the right of the median, pulled by the long right tail. "If you were wanting to understand the typical loan size, should you be more interested in the mean or median?" The book's answer: "the median is probably more useful."
+The mean sits to the right of the median, pulled by the long right tail. For "the typical loan size," the book's answer is that "the median is probably more useful."
 
 ### Exercise 13
 
@@ -478,7 +482,7 @@ loan50 |>
 
 ###
 
-"The distribution of interest rates is unimodal and skewed to the high end. Many of the rates fall near the mean at 11.57%, and most fall within one standard deviation (5.05%) of the mean. There are a few exceptionally large interest rates in the sample that are above 20%."
+"The distribution of interest rates is unimodal and skewed to the high end. Many of the rates fall near the mean at 11.57%, and most fall within one standard deviation (5.05%) of the mean."
 
 ### Exercise 14
 
@@ -492,7 +496,7 @@ learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type
 
 ###
 
-```
+```{.output}
 2f8e7a9 (HEAD -> main, origin/main) Describe loan interest rates
 9be04d2 Initial commit
 ```
@@ -515,7 +519,7 @@ learnr2::question("In the R Terminal, run ?county. Copy and paste the entries fo
 
 ###
 
-```
+```{.output}
      pop2010 Population in 2010.
 
      poverty Percent of population in poverty in 2017.
@@ -653,7 +657,7 @@ county |>
 
 ###
 
-"The relationship is evidently nonlinear, as highlighted by the dashed line. This is different from previous scatterplots we have seen, which indicate very little, if any, curvature in the trend." Income falls steeply at low poverty rates, then flattens.
+"The relationship is evidently nonlinear, as highlighted by the dashed line," unlike the straight trends in earlier scatterplots. Income falls steeply at low poverty rates, then flattens.
 
 ### Exercise 7
 
@@ -696,13 +700,14 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-<pre><code>county_map <- map_data("county") |>
+````{verbatim}
+county_map <- map_data("county") |>
   as_tibble() |>
   left_join(county |>
               mutate(region = str_to_lower(state),
                      subregion = str_to_lower(str_remove(name, " County| Parish"))),
             by = c("region", "subregion"))
-</code></pre>
+````
 
 ###
 
@@ -720,7 +725,7 @@ learnr2::question("In the bash Terminal, run ls. CP/CR.", type = "reflection")
 
 ###
 
-```
+```{.output}
 analysis.html  analysis.qmd  analysis_cache  analysis_files
 ```
 
@@ -740,7 +745,7 @@ learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type
 
 ###
 
-```
+```{.output}
 analysis_files
 analysis_cache
 ```
@@ -772,7 +777,7 @@ county_map |>
 
 ###
 
-"Poverty rates are evidently higher in a few locations. Notably, the deep south shows higher poverty rates, as does much of Arizona and New Mexico." The gray counties are the ones whose names did not match.
+"Notably, the deep south shows higher poverty rates, as does much of Arizona and New Mexico." The gray counties are the ones whose names did not match.
 
 ### Exercise 12
 
@@ -817,7 +822,7 @@ learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type
 
 ###
 
-```
+```{.output}
 b3e1d57 (HEAD -> main, origin/main) Transform and map county data
 2f8e7a9 Describe loan interest rates
 9be04d2 Initial commit
@@ -830,6 +835,10 @@ b3e1d57 (HEAD -> main, origin/main) Transform and map county data
 ## Summary
 
 This tutorial covered [Chapter 5: Exploring numerical data](https://openintrostat.github.io/ims/explore-numerical.html) from [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) by Mine Çetinkaya-Rundel and Johanna Hardin. You have learned to describe a numerical variable's shape, center, and spread with histograms, box plots, the mean, the median, the standard deviation, and the interquartile range, and to tame a skewed variable with a transformation or a map.
+
+The chapter's own summary, in the authors' words:
+
+> Fluently working with numerical variables is an important skill for data analysts. In this chapter we have introduced different visualizations and numerical summaries applied to numeric variables. The graphical visualizations are even more descriptive when two variables are presented simultaneously. We presented scatterplots, dot plots, histograms, and box plots. Numerical variables can be summarized using the mean, median, quartiles, standard deviation, and variance.
 
 For the history of the box plot, which the chapter credits to Mary Eleanor Spear rather than John Tukey, see her 1952 book [*Charting Statistics*](https://archive.org/details/ChartingStatistics_201801). For more on intensity maps, called *choropleths*, read the "[Geospatial data](https://clauswilke.com/dataviz/geospatial-data.html)" chapter of Claus Wilke's *Fundamentals of Data Visualization*.
 
@@ -845,7 +854,8 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). 
 
 ###
 
-<pre><code>---
+````{verbatim}
+---
 title: "Exploring Numerical Data"
 author: "Your Name"
 format: html
@@ -853,15 +863,15 @@ execute:
   echo: false
 ---
 
-&#96;&#96;&#96;{r}
+```{r}
 #| message: false
 library(tidyverse)
 library(openintro)
 library(usdata)
 library(maps)
-&#96;&#96;&#96;
+```
 
-&#96;&#96;&#96;{r}
+```{r}
 loan50 |>
   ggplot(aes(x = interest_rate)) +
   geom_histogram(breaks = seq(5, 27.5, 2.5)) +
@@ -875,17 +885,17 @@ loan50 |>
        x = "Interest Rate",
        y = "Loans",
        caption = "50 loans sampled from Lending Club")
-&#96;&#96;&#96;
+```
 
-&#96;&#96;&#96;{r}
+```{r}
 county |>
   drop_na(poverty, median_hh_income) |>
   ggplot(aes(x = poverty, y = median_hh_income)) +
   geom_point(alpha = 0.3) +
   geom_smooth(formula = y ~ x, method = "loess", se = FALSE)
-&#96;&#96;&#96;
+```
 
-&#96;&#96;&#96;{r}
+```{r}
 #| cache: true
 county_map <- map_data("county") |>
   as_tibble() |>
@@ -893,9 +903,9 @@ county_map <- map_data("county") |>
               mutate(region = str_to_lower(state),
                      subregion = str_to_lower(str_remove(name, " County| Parish"))),
             by = c("region", "subregion"))
-&#96;&#96;&#96;
+```
 
-&#96;&#96;&#96;{r}
+```{r}
 county_map |>
   ggplot(aes(x = long, y = lat, group = group, fill = poverty)) +
   geom_polygon() +
@@ -906,8 +916,8 @@ county_map |>
        subtitle = "Poverty is concentrated in the Deep South, the Mississippi Delta, Appalachia, and the Southwest",
        fill = "Poverty",
        caption = "US counties in the lower 48 states; Census Quick Facts")
-&#96;&#96;&#96;
-</code></pre>
+```
+````
 
 ###
 
@@ -917,7 +927,7 @@ Your page describes one variable from every angle the chapter offers, then shows
 
 Publish your analysis to GitHub Pages. In a bash Terminal, run:
 
-```
+```bash
 quarto publish gh-pages analysis.qmd
 ```
 

@@ -38,7 +38,7 @@ You should be doing this tutorial in a repo named `applications-model`. If you a
 
 Create a new file, `analysis.qmd`, with the title `"Applications: Model"` and your name as the author. In a bash Terminal, render it:
 
-```
+```bash
 quarto render analysis.qmd
 ```
 
@@ -56,7 +56,7 @@ learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type
 
 ###
 
-```
+```{.output}
 analysis_files
 ```
 
@@ -76,9 +76,10 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-<pre><code>#| message: false
+````{verbatim}
+#| message: false
 library(tidyverse)
-</code></pre>
+````
 
 ###
 
@@ -96,10 +97,11 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-<pre><code>#| message: false
+````{verbatim}
+#| message: false
 library(tidyverse)
 library(openintro)
-</code></pre>
+````
 
 ###
 
@@ -117,11 +119,12 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-<pre><code>#| message: false
+````{verbatim}
+#| message: false
 library(tidyverse)
 library(openintro)
 library(broom)
-</code></pre>
+````
 
 ###
 
@@ -163,7 +166,7 @@ learnr2::question("In the R Terminal, run ?duke_forest. Copy and paste the Descr
 
 ###
 
-```
+```{.output}
 Description:
 
      Data on houses that were recently sold in the Duke Forest
@@ -442,8 +445,9 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-<pre><code>price_area <- lm(price ~ area, data = duke_forest)
-</code></pre>
+````{verbatim}
+price_area <- lm(price ~ area, data = duke_forest)
+````
 
 ###
 
@@ -461,7 +465,7 @@ learnr2::question("In the bash Terminal, run ls. CP/CR.", type = "reflection")
 
 ###
 
-```
+```{.output}
 analysis.html  analysis.qmd  analysis_cache  analysis_files
 ```
 
@@ -481,7 +485,7 @@ learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type
 
 ###
 
-```
+```{.output}
 analysis_files
 analysis_cache
 ```
@@ -561,7 +565,7 @@ learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type
 
 ###
 
-```
+```{.output}
 4a7c2e1 (HEAD -> main, origin/main) Model price with area
 9be04d2 Initial commit
 ```
@@ -867,7 +871,7 @@ learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type
 
 ###
 
-```
+```{.output}
 d81f3b6 (HEAD -> main, origin/main) Model price with multiple variables
 4a7c2e1 Model price with area
 9be04d2 Initial commit
@@ -895,7 +899,8 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). 
 
 ###
 
-<pre><code>---
+````{verbatim}
+---
 title: "Applications: Model"
 author: "Your Name"
 format: html
@@ -903,19 +908,19 @@ execute:
   echo: false
 ---
 
-&#96;&#96;&#96;{r}
+```{r}
 #| message: false
 library(tidyverse)
 library(openintro)
 library(broom)
-&#96;&#96;&#96;
+```
 
-&#96;&#96;&#96;{r}
+```{r}
 #| cache: true
 price_area <- lm(price ~ area, data = duke_forest)
-&#96;&#96;&#96;
+```
 
-&#96;&#96;&#96;{r}
+```{r}
 price_area |>
   augment() |>
   ggplot(aes(x = .fitted, y = .resid)) +
@@ -928,9 +933,9 @@ price_area |>
        x = "Predicted Sale Price",
        y = "Residual",
        caption = "98 houses sold in Duke Forest, Durham, NC; Zillow, November 2020")
-&#96;&#96;&#96;
+```
 
-&#96;&#96;&#96;{r}
+```{r}
 price_final <- lm(price ~ area + bath + year_built + cooling + lot,
                   data = duke_forest)
 
@@ -946,8 +951,8 @@ price_final |>
        x = "Predicted Sale Price",
        y = "Residual",
        caption = "97 houses with a known lot size, Duke Forest, Durham, NC; Zillow, November 2020")
-&#96;&#96;&#96;
-</code></pre>
+```
+````
 
 ###
 
@@ -957,7 +962,7 @@ The page holds the chapter's two models of the same 98 houses, and the residual 
 
 Publish your analysis to GitHub Pages. In a bash Terminal, run:
 
-```
+```bash
 quarto publish gh-pages analysis.qmd
 ```
 

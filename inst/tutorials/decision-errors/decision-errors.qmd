@@ -1,0 +1,1141 @@
+---
+title: "Decision Errors"
+subtitle: "Type I and Type II errors, two-sided tests, the discernibility level, and power, with an experiment on blood thinners after CPR."
+format: live-html
+engine: knitr
+toc: true
+toc-depth: 2
+learnr2:
+  ordering: 14
+---
+
+{{< include _extensions/r-wasm/live/_knitr.qmd >}}
+
+```{r}
+#| label: setup
+#| include: false
+library(tidyverse)
+library(openintro)
+library(infer)
+knitr::opts_chunk$set(out.width = "90%")
+```
+
+## Student Information
+
+```{r}
+#| label: student-information-1
+#| echo: false
+learnr2::student_info()
+```
+
+## Introduction
+
+This tutorial covers [Chapter 14: Decision errors](https://openintrostat.github.io/ims/foundations-errors.html) from [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) by Mine Çetinkaya-Rundel and Johanna Hardin. You will learn to run a two-sided hypothesis test by simulation, to see how the discernibility level controls the rate of Type I errors, and to estimate the power of a test and how it grows with sample size, using a randomized experiment on blood thinners for patients who received CPR.
+
+### Exercise 1
+
+You should be doing this tutorial in a repo named `decision-errors`. If you are not, create one and then connect to it. You may need to restart this tutorial after you do so.
+
+Create a new file, `analysis.qmd`, with the title `"Decision Errors"` and your name as the author. In a bash Terminal, render it:
+
+```bash
+quarto render analysis.qmd
+```
+
+Open `analysis.html` with Live Server (right-click it in the Explorer → **Open with Live Server**) and keep the tab open. It refreshes on every render. Going forward, we will just tell you to "Render" when we want you to take these steps.
+
+Create a `.gitignore` with `analysis_files` followed by a blank line. Commit and push. Use AI however you like.
+
+If `show_file()` fails, it is probably because you have not yet loaded `library(learnr2)` in the R Terminal.
+
+```{r}
+#| label: introduction-1
+#| echo: false
+learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{.output}
+analysis_files
+```
+
+###
+
+"Hypothesis tests are not flawless." "Just think of the court system: innocent people are sometimes wrongly convicted and the guilty sometimes walk free."
+
+### Exercise 2
+
+Add a chunk to `analysis.qmd` that loads the **[tidyverse](https://www.tidyverse.org/)**, with `#| message: false` so the startup messages stay out of the rendered page. Add `execute: echo: false` to the YAML header. Render.
+
+```{r}
+#| label: introduction-2
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+````{verbatim}
+#| message: false
+library(tidyverse)
+````
+
+###
+
+"However, what distinguishes statistical hypothesis tests from a court system is that our framework allows us to quantify and control how often the data lead us to the incorrect conclusion." The **tidyverse** does that quantifying here: **dplyr** counts how often a simulated test goes wrong, and **ggplot2** draws the results.
+
+### Exercise 3
+
+Add **[openintro](https://openintrostat.github.io/openintro/)** to that chunk. Render.
+
+```{r}
+#| label: introduction-3
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+````{verbatim}
+#| message: false
+library(tidyverse)
+library(openintro)
+````
+
+###
+
+**openintro** holds `cpr`, the chapter's experiment "with patients who underwent CPR for a heart attack and were subsequently admitted to a hospital." It is the only dataset the chapter uses.
+
+### Exercise 4
+
+Add **[infer](https://infer.tidymodels.org/)** to that chunk. Render.
+
+```{r}
+#| label: introduction-4
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+````{verbatim}
+#| message: false
+library(tidyverse)
+library(openintro)
+library(infer)
+````
+
+###
+
+**infer** writes a simulation-based test as four steps: specify the variables, state the null hypothesis, generate simulated data, and calculate a statistic from each. The chapter's own figures were built with **infer**, though the book never shows its code.
+
+## Two-sided hypotheses
+
+"In a hypothesis test, there are two competing hypotheses: the null and the alternative." "We make a statement about which one might be true, but we might choose incorrectly." This section runs the chapter's two-sided test on the blood-thinner experiment and asks which error its conclusion risks.
+
+### Exercise 1
+
+Add a chunk that prints `cpr`. Render.
+
+```{r}
+#| label: two-sided-hypotheses-1
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: two-sided-hypotheses-1-test
+#| echo: true
+cpr
+```
+
+###
+
+Each of the 90 rows is one patient, and the first ten are all control patients who survived, because the rows are sorted, not because everyone lived. "Each patient was randomly assigned to either receive a blood thinner (treatment group) or not receive a blood thinner (control group)."
+
+### Exercise 2
+
+```{r}
+#| label: two-sided-hypotheses-2
+#| echo: false
+learnr2::question("In the R Terminal, run ?cpr. Copy and paste the Description and the Source.", type = "reflection")
+```
+
+###
+
+```{.output}
+Description:
+
+     These patients were randomly divided into a treatment group where
+     they received a blood thinner or the control group where they did
+     not receive a blood thinner. The outcome variable of interest was
+     whether the patients survived for at least 24 hours.
+
+Source:
+
+     Efficacy and safety of thrombolytic therapy after initially
+     unsuccessful cardiopulmonary resuscitation: a prospective clinical
+     trial, by Bottiger et al., The Lancet, 2001.
+```
+
+###
+
+"Thrombolytic therapy," in the source's title, is the medical name for the clot-dissolving blood thinners the chapter describes. "For instance, blood thinners may be used to help release a clot that is causing the heart attack once a patient arrives in the hospital. However, blood thinners negatively affect internal injuries."
+
+### Exercise 3
+
+Replace the code in that chunk so that it counts the patients by `group` and `outcome`. Render.
+
+```{r}
+#| label: two-sided-hypotheses-3
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: two-sided-hypotheses-3-test
+#| echo: true
+cpr |>
+  count(group, outcome)
+```
+
+###
+
+"There were 50 patients in the experiment who did not receive a blood thinner and 40 patients who did." Of the 90, only 25 survived for 24 hours.
+
+### Exercise 4
+
+Replace the code in that chunk so that it calculates the number of patients and the survival rate in each `group`. Render.
+
+```{r}
+#| label: two-sided-hypotheses-4
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: two-sided-hypotheses-4-test
+#| echo: true
+cpr |>
+  summarize(n = n(),
+            survival_rate = mean(outcome == "survived"),
+            .by = group)
+```
+
+###
+
+The survival rates are 22% (11 of 50) without a blood thinner and 35% (14 of 40) with one, exactly the chapter's. "We want to understand whether blood thinners are helpful or harmful," so the alternative hypothesis allows a difference in either direction.
+
+### Exercise 5
+
+Replace the code in that chunk so that it uses **infer** to calculate the observed difference in the proportion who survived, treatment minus control. Render.
+
+```{r}
+#| label: two-sided-hypotheses-5
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: two-sided-hypotheses-5-test
+#| echo: true
+cpr |>
+  specify(outcome ~ group, success = "survived") |>
+  calculate(stat = "diff in props", order = c("treatment", "control"))
+```
+
+###
+
+"According to the point estimate, for patients who have undergone CPR outside of the hospital, an additional 13% of these patients survive when they are treated with blood thinners." "However, we wonder if this difference could be easily explainable by chance, if the treatment has no effect on survival."
+
+### Exercise 6
+
+Replace the code in that chunk so that it builds a null distribution: shuffle the `group` labels 1,000 times, assuming blood thinners have no effect on survival, and calculate the difference in survival proportions, treatment minus control, for each shuffle. Use a seed of 47. Save the result as `cpr_null` and print it. Render.
+
+```{r}
+#| label: two-sided-hypotheses-6
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: two-sided-hypotheses-6-test
+#| echo: true
+set.seed(47)
+cpr_null <- cpr |>
+  specify(outcome ~ group, success = "survived") |>
+  hypothesize(null = "independence") |>
+  generate(reps = 1000, type = "permute") |>
+  calculate(stat = "diff in props", order = c("treatment", "control"))
+
+cpr_null
+```
+
+###
+
+"By randomly assigning each of the patient's files to a 'simulated treatment' or 'simulated control' allocation, we get a new grouping." Each of the 1,000 rows is one such grouping, and its `stat` is the difference that chance alone produced.
+
+### Exercise 7
+
+Replace the line that prints `cpr_null` with code that counts how many times each value of `stat` appears. Render.
+
+```{r}
+#| label: two-sided-hypotheses-7
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: two-sided-hypotheses-7-test
+#| echo: true
+cpr_null |>
+  count(stat)
+```
+
+###
+
+With only 25 survivors to shuffle, the 1,000 differences take just 15 values, and 84 of them land exactly on the observed 0.13. Adding the counts at 0.13 and above, 84 + 29 + 15 + 5 + 2, gives 135 shuffles at least as large as the observed difference.
+
+### Exercise 8
+
+Replace the counting code with code that calculates the proportion of the 1,000 differences that are greater than or equal to the observed difference, 0.13. Render.
+
+```{r}
+#| label: two-sided-hypotheses-8
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: two-sided-hypotheses-8-test
+#| echo: true
+cpr_null |>
+  summarize(right_tail = mean(stat >= 0.13))
+```
+
+###
+
+The answer, 0.051, contradicts the count you just made: 135 of 1,000, or 0.135, should be at or above 0.13. The 84 differences that print as 0.13 are each stored as a number a hair below 0.13, because a computer cannot store most decimals exactly, so the comparison quietly drops them.
+
+### Exercise 9
+
+Change the code that builds `cpr_null` so that it rounds each difference to three decimal places, as the chapter's own code does. Keep calculating the proportion at or above 0.13. Render.
+
+```{r}
+#| label: two-sided-hypotheses-9
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: two-sided-hypotheses-9-test
+#| echo: true
+set.seed(47)
+cpr_null <- cpr |>
+  specify(outcome ~ group, success = "survived") |>
+  hypothesize(null = "independence") |>
+  generate(reps = 1000, type = "permute") |>
+  calculate(stat = "diff in props", order = c("treatment", "control")) |>
+  mutate(stat = round(stat, 3))
+
+cpr_null |>
+  summarize(right_tail = mean(stat >= 0.13))
+```
+
+###
+
+Our right tail is 0.135, close to the chapter's 0.131, and your own will differ slightly with a different random draw. "However, contrary to how we calculated the p-value in previous studies, the p-value of this test is not actually the tail area we calculated."
+
+### Exercise 10
+
+Delete the lines that calculate the proportion, so that the chunk only creates `cpr_null`. Render.
+
+```{r}
+#| label: two-sided-hypotheses-10
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+````{verbatim}
+set.seed(47)
+cpr_null <- cpr |>
+  specify(outcome ~ group, success = "survived") |>
+  hypothesize(null = "independence") |>
+  generate(reps = 1000, type = "permute") |>
+  calculate(stat = "diff in props", order = c("treatment", "control")) |>
+  mutate(stat = round(stat, 3))
+````
+
+###
+
+"If we repeat this simulation 1,000 times, we can build a **null distribution**" of differences like `cpr_null`. Every later step, the p-value and all of the next section, is measured against these 1,000 differences.
+
+### Exercise 11
+
+Add `#| cache: true` to that chunk. Render.
+
+```{r}
+#| label: two-sided-hypotheses-11
+#| echo: false
+learnr2::question("In the bash Terminal, run ls. CP/CR.", type = "reflection")
+```
+
+###
+
+```{.output}
+analysis.html  analysis.qmd  analysis_cache  analysis_files
+```
+
+###
+
+`analysis_cache` now holds the 1,000 shuffled differences, so later renders reuse them instead of shuffling again. Because the seed is set inside the chunk, a rebuilt cache gives the same 1,000 differences.
+
+### Exercise 12
+
+Your Source Control count just jumped, because Git sees every file in the new cache directory. Add `analysis_cache` to `.gitignore`, and the count drops back.
+
+```{r}
+#| label: two-sided-hypotheses-12
+#| echo: false
+learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{.output}
+analysis_files
+analysis_cache
+```
+
+###
+
+"The original hypotheses we have seen are called **one-sided hypothesis tests** because they only explored one direction of possibilities." The blood-thinner study needs both directions, since a treatment that harms patients matters as much as one that helps.
+
+### Exercise 13
+
+Start a new chunk that uses `cpr_null` to calculate the proportion of differences at or above 0.13, the proportion at or below -0.13, and the two-sided p-value: the right tail doubled. Render.
+
+```{r}
+#| label: two-sided-hypotheses-13
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: two-sided-hypotheses-13-test
+#| echo: true
+cpr_null |>
+  summarize(right_tail = mean(stat >= 0.13),
+            left_tail = mean(stat <= -0.13),
+            p_value = 2 * right_tail)
+```
+
+###
+
+"In this case, any differences less than or equal to -0.13 would also provide equally strong evidence favoring the alternative hypothesis as a difference of +0.13 did." Our left tail, 0.097, is smaller than the right, 0.135, because the differences fall on an uneven grid, which is why the chapter doubles one tail rather than adding the two.
+
+### Exercise 14
+
+Replace the code in that chunk so that it uses **infer** to calculate the two-sided p-value of the observed difference against `cpr_null`. Render.
+
+```{r}
+#| label: two-sided-hypotheses-14
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: two-sided-hypotheses-14-test
+#| echo: true
+cpr_null |>
+  get_p_value(obs_stat = 0.13, direction = "two-sided")
+```
+
+###
+
+**infer** agrees with our doubled tail: 0.27, against the chapter's 0.262. "First compute the p-value for one tail of the distribution, then double that value to get the two-sided p-value."
+
+### Exercise 15
+
+Replace the code in that chunk with a small table of three discernibility levels, 0.01, 0.05, and 0.10, the two-sided p-value of 0.27, and the decision at each level: reject the null hypothesis if the p-value is at or below the level, and fail to reject it otherwise. Render.
+
+```{r}
+#| label: two-sided-hypotheses-15
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: two-sided-hypotheses-15-test
+#| echo: true
+tibble(level = c(0.01, 0.05, 0.10),
+       p_value = 0.27) |>
+  mutate(decision = if_else(p_value <= level,
+                            "Reject the null hypothesis",
+                            "Fail to reject the null hypothesis"))
+```
+
+###
+
+The discernibility level "provides the cutoff for the p-value which will lead to a decision of 'reject the null hypothesis.'" At every common level the decision is the same: "we do not find convincing evidence that the blood thinner has any influence on survival of patients who undergo CPR prior to arriving at the hospital."
+
+### Exercise 16
+
+Replace the code in that chunk with a histogram of the 1,000 differences in `cpr_null`, one bar for each value, with the bars at least as far from zero as 0.13, in either direction, in a different color. Render.
+
+```{r}
+#| label: two-sided-hypotheses-16
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: two-sided-hypotheses-16-test
+#| echo: true
+cpr_null |>
+  mutate(extreme = stat >= 0.13 | stat <= -0.13) |>
+  ggplot(aes(x = stat, fill = extreme)) +
+  geom_histogram(binwidth = 0.045, center = 0.04)
+```
+
+###
+
+"A **Type II error** is failing to reject the null hypothesis when the alternative is actually true." If blood thinners really do raise survival, then a sample this small, whose 13-point gain sits among so many chance differences, has led to exactly that error.
+
+### Exercise 17
+
+Improve the plot. Color the extreme bars red and the others gray, move the legend below the plot, and add a title, axis labels, a subtitle that states the main finding, and a caption giving the number of patients and the source. Render.
+
+```{r}
+#| label: two-sided-hypotheses-17
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: two-sided-hypotheses-17-test
+#| echo: true
+cpr_null |>
+  mutate(extreme = if_else(stat >= 0.13 | stat <= -0.13,
+                           "At least 0.13 from zero", "Closer to zero")) |>
+  ggplot(aes(x = stat, fill = extreme)) +
+  geom_histogram(binwidth = 0.045, center = 0.04) +
+  scale_fill_manual(values = c("At least 0.13 from zero" = "firebrick",
+                               "Closer to zero" = "gray60")) +
+  labs(title = "Survival Differences When Blood Thinners Have No Effect",
+       subtitle = "Two-sided p-value of 0.27: chance alone often gives a difference as large as the observed 0.13",
+       x = "Difference in Survival Rate (Treatment - Control)",
+       y = "Number of Shuffles",
+       fill = NULL,
+       caption = "1,000 shuffles of 90 patients; Böttiger et al. (2001), via openintro") +
+  theme(legend.position = "bottom")
+```
+
+###
+
+"These two shaded tails provide a visual representation of the p-value for a two-sided test." "Use a one-sided hypothesis test only if you truly have interest in only one direction."
+
+### Exercise 18
+
+Commit `analysis.qmd` and `.gitignore` with the message `"Test blood thinners with a two-sided test"` and push.
+
+```{r}
+#| label: two-sided-hypotheses-18
+#| echo: false
+learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type = "reflection")
+```
+
+###
+
+```{.output}
+3f8a2d1 (HEAD -> main, origin/main) Test blood thinners with a two-sided test
+9be04d2 Initial commit
+```
+
+###
+
+"Since we rejected the null hypothesis in the sex discrimination and opportunity cost studies, it is possible that we made a Type I error in one or both of those studies." Here we did not reject, so the only error we could have made is a Type II error.
+
+## Type I error rate and power
+
+"Choosing a discernibility level for a test is important in many contexts, and the traditional level is 0.05." This section simulates many new versions of the blood-thinner study, first in a world where the null hypothesis is true and then in one where the alternative is, and counts how often the test gets each one wrong.
+
+### Exercise 1
+
+Start a new chunk that simulates 1,000 new studies in a world where blood thinners have no effect on survival: shuffle the `group` labels of `cpr` 1,000 more times, with a seed of 14, and calculate the difference in survival proportions, treatment minus control, rounded to three decimal places, for each. Print the result. Render.
+
+```{r}
+#| label: type-i-error-rate-and-power-1
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: type-i-error-rate-and-power-1-test
+#| echo: true
+set.seed(14)
+cpr |>
+  specify(outcome ~ group, success = "survived") |>
+  hypothesize(null = "independence") |>
+  generate(reps = 1000, type = "permute") |>
+  calculate(stat = "diff in props", order = c("treatment", "control")) |>
+  mutate(stat = round(stat, 3))
+```
+
+###
+
+Each row is a study whose null hypothesis is true by construction, since the shuffle breaks any link between treatment and survival. "A **Type I error** is rejecting the null hypothesis when H~0~ is actually true," so any of these studies that rejects has made one.
+
+### Exercise 2
+
+Add a column with each study's two-sided p-value against `cpr_null`: the proportion of `cpr_null` differences at least as large as the study's difference, or the proportion at least as small, whichever is smaller, doubled. Render.
+
+```{r}
+#| label: type-i-error-rate-and-power-2
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: type-i-error-rate-and-power-2-test
+#| echo: true
+set.seed(14)
+cpr |>
+  specify(outcome ~ group, success = "survived") |>
+  hypothesize(null = "independence") |>
+  generate(reps = 1000, type = "permute") |>
+  calculate(stat = "diff in props", order = c("treatment", "control")) |>
+  mutate(stat = round(stat, 3),
+         p_value = map_dbl(stat, \(s) 2 * min(mean(cpr_null$stat >= s),
+                                               mean(cpr_null$stat <= s))))
+```
+
+###
+
+Studies with a difference of -0.005 get a p-value of 1.16, which no probability can be. "However, the approach can result in p-values larger than 1 when the point estimate is very near the mean in the null distribution; in such cases, we write that the p-value is 1."
+
+### Exercise 3
+
+Cap each p-value at 1. Then, instead of printing the studies, calculate the proportion of the 1,000 studies whose p-value is at or below 0.05. Render.
+
+```{r}
+#| label: type-i-error-rate-and-power-3
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: type-i-error-rate-and-power-3-test
+#| echo: true
+set.seed(14)
+cpr |>
+  specify(outcome ~ group, success = "survived") |>
+  hypothesize(null = "independence") |>
+  generate(reps = 1000, type = "permute") |>
+  calculate(stat = "diff in props", order = c("treatment", "control")) |>
+  mutate(stat = round(stat, 3),
+         p_value = map_dbl(stat, \(s) 2 * min(mean(cpr_null$stat >= s),
+                                               mean(cpr_null$stat <= s))),
+         p_value = pmin(p_value, 1)) |>
+  summarize(type_1_rate = mean(p_value <= 0.05))
+```
+
+###
+
+Only 18 of the 1,000 true-null studies, 1.8%, rejected the null hypothesis: that is our simulated Type I error rate at a discernibility level of 0.05. It falls below 5% because 90 patients allow only a handful of possible differences, and none of them has a p-value between 0.044 and 0.066.
+
+### Exercise 4
+
+Replace the single proportion with three: the proportion of studies that reject the null hypothesis at discernibility levels of 0.01, 0.05, and 0.10. Render.
+
+```{r}
+#| label: type-i-error-rate-and-power-4
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: type-i-error-rate-and-power-4-test
+#| echo: true
+set.seed(14)
+cpr |>
+  specify(outcome ~ group, success = "survived") |>
+  hypothesize(null = "independence") |>
+  generate(reps = 1000, type = "permute") |>
+  calculate(stat = "diff in props", order = c("treatment", "control")) |>
+  mutate(stat = round(stat, 3),
+         p_value = map_dbl(stat, \(s) 2 * min(mean(cpr_null$stat >= s),
+                                               mean(cpr_null$stat <= s))),
+         p_value = pmin(p_value, 1)) |>
+  summarize(level_01 = mean(p_value <= 0.01),
+            level_05 = mean(p_value <= 0.05),
+            level_10 = mean(p_value <= 0.10))
+```
+
+###
+
+The Type I error rate rises with the discernibility level, from 0.2% to 1.8% to 4.2%, and never exceeds it. "If making a Type I error is dangerous or especially costly, we should choose a small discernibility level (e.g., 0.01 or 0.001)."
+
+### Exercise 5
+
+Suppose each study instead picked whichever one-sided test matched the direction of its own data, so its p-value is the smaller tail, not doubled. Replace the three proportions with two: the proportion of studies that reject at 0.05 with the two-sided p-value, and the proportion that reject at 0.05 with this one-sided p-value. Render.
+
+```{r}
+#| label: type-i-error-rate-and-power-5
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: type-i-error-rate-and-power-5-test
+#| echo: true
+set.seed(14)
+cpr |>
+  specify(outcome ~ group, success = "survived") |>
+  hypothesize(null = "independence") |>
+  generate(reps = 1000, type = "permute") |>
+  calculate(stat = "diff in props", order = c("treatment", "control")) |>
+  mutate(stat = round(stat, 3),
+         one_sided = map_dbl(stat, \(s) min(mean(cpr_null$stat >= s),
+                                            mean(cpr_null$stat <= s))),
+         two_sided = pmin(2 * one_sided, 1)) |>
+  summarize(two_sided_rate = mean(two_sided <= 0.05),
+            switching_rate = mean(one_sided <= 0.05))
+```
+
+###
+
+Choosing the direction after seeing the data more than doubles the Type I error rate, from 1.8% to 4.2%, just as the chapter's example, where 5% becomes 10%, "is twice the error rate we prescribed with our discernibility level". "Because of the result of increased error rates, it is never okay to change two-sided tests to one-sided tests after observing the data."
+
+### Exercise 6
+
+Replace the code in that chunk so that it simulates 1,000 studies in a world where blood thinners do raise survival from 22% to 35%: resample the 90 patients of `cpr` with replacement 1,000 times, with a seed of 14, and calculate each resample's difference in survival proportions, treatment minus control, rounded to three decimal places. Print the result. Render.
+
+```{r}
+#| label: type-i-error-rate-and-power-6
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: type-i-error-rate-and-power-6-test
+#| echo: true
+set.seed(14)
+cpr |>
+  specify(outcome ~ group, success = "survived") |>
+  generate(reps = 1000, type = "bootstrap") |>
+  calculate(stat = "diff in props", order = c("treatment", "control")) |>
+  mutate(stat = round(stat, 3))
+```
+
+###
+
+These bootstrap resamples are studies in which the alternative hypothesis is true, since each one is drawn from a population where survival really is 13 points higher with a blood thinner. "When planning a study, we want to know how likely we are to detect an effect we care about."
+
+### Exercise 7
+
+Add each study's two-sided p-value against `cpr_null`, calculated and capped at 1 exactly as before. Then, instead of printing the studies, calculate the proportion of them that reject the null hypothesis at 0.05. Render.
+
+```{r}
+#| label: type-i-error-rate-and-power-7
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: type-i-error-rate-and-power-7-test
+#| echo: true
+set.seed(14)
+cpr |>
+  specify(outcome ~ group, success = "survived") |>
+  generate(reps = 1000, type = "bootstrap") |>
+  calculate(stat = "diff in props", order = c("treatment", "control")) |>
+  mutate(stat = round(stat, 3),
+         p_value = map_dbl(stat, \(s) 2 * min(mean(cpr_null$stat >= s),
+                                               mean(cpr_null$stat <= s))),
+         p_value = pmin(p_value, 1)) |>
+  summarize(power = mean(p_value <= 0.05))
+```
+
+###
+
+"The power of the test is the probability of rejecting the null claim when the alternative claim is true." Our power is 0.308, so a study this size makes a Type II error about 69% of the time, even when the blood thinner truly works.
+
+### Exercise 8
+
+Replace the single proportion with three: the power at discernibility levels of 0.01, 0.05, and 0.10. Render.
+
+```{r}
+#| label: type-i-error-rate-and-power-8
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: type-i-error-rate-and-power-8-test
+#| echo: true
+set.seed(14)
+cpr |>
+  specify(outcome ~ group, success = "survived") |>
+  generate(reps = 1000, type = "bootstrap") |>
+  calculate(stat = "diff in props", order = c("treatment", "control")) |>
+  mutate(stat = round(stat, 3),
+         p_value = map_dbl(stat, \(s) 2 * min(mean(cpr_null$stat >= s),
+                                               mean(cpr_null$stat <= s))),
+         p_value = pmin(p_value, 1)) |>
+  summarize(level_01 = mean(p_value <= 0.01),
+            level_05 = mean(p_value <= 0.05),
+            level_10 = mean(p_value <= 0.10))
+```
+
+###
+
+Dropping the level from 0.05 to 0.01 cuts the power from 0.308 to 0.087, so the Type I error rate falls while the Type II error rate climbs. That is the chapter's "important lesson: if we reduce how often we make one type of error, we generally make more of the other type."
+
+### Exercise 9
+
+Replace the code in that chunk so that it calculates the power at 0.05 for studies with the same survival rates but 1 to 8 times as many patients, from 90 to 720, by stacking copies of `cpr`. For each size, build a new null distribution of 1,000 shuffles and 1,000 new resampled studies, round the differences to four decimal places, and calculate two-sided p-values as before. Use a seed of 14. Show a table of the number of patients and the power. Render.
+
+```{r}
+#| label: type-i-error-rate-and-power-9
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: type-i-error-rate-and-power-9-test
+#| echo: true
+power_at <- function(copies) {
+  study <- cpr |>
+    slice(rep(1:n(), times = copies))
+  null <- study |>
+    specify(outcome ~ group, success = "survived") |>
+    hypothesize(null = "independence") |>
+    generate(reps = 1000, type = "permute") |>
+    calculate(stat = "diff in props", order = c("treatment", "control")) |>
+    pull(stat) |>
+    round(4)
+  study |>
+    specify(outcome ~ group, success = "survived") |>
+    generate(reps = 1000, type = "bootstrap") |>
+    calculate(stat = "diff in props", order = c("treatment", "control")) |>
+    mutate(stat = round(stat, 4),
+           p_value = map_dbl(stat, \(s) 2 * min(mean(null >= s), mean(null <= s)))) |>
+    summarize(power = mean(p_value <= 0.05)) |>
+    pull(power)
+}
+
+set.seed(14)
+tibble(patients = 90 * 1:8) |>
+  mutate(power = map_dbl(patients / 90, power_at))
+```
+
+###
+
+Power climbs from 0.335 with 90 patients to 0.987 with 720; the 90-patient figure differs from the 0.308 of the last exercise because both the null distribution and the studies were simulated afresh. "How easy it is to detect the effect depends on both how big the effect is (e.g., how good the medical treatment is) as well as the sample size."
+
+### Exercise 10
+
+Replace the table with a plot of power against the number of patients, with a line and a point for each sample size. Render.
+
+```{r}
+#| label: type-i-error-rate-and-power-10
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: type-i-error-rate-and-power-10-test
+#| echo: true
+set.seed(14)
+tibble(patients = 90 * 1:8) |>
+  mutate(power = map_dbl(patients / 90, power_at)) |>
+  ggplot(aes(x = patients, y = power)) +
+  geom_line() +
+  geom_point()
+```
+
+###
+
+The curve rises steeply at first and then flattens as it nears 1, so each extra 90 patients buys less power than the last. "Collecting data can be expensive, and, in experiments involving people, there may be some risk to patients."
+
+### Exercise 11
+
+Improve the plot. Show the y-axis as percentages from 0 to 100%, add a dashed line at the 5% discernibility level, label each point with its power, and add a title, axis labels, a subtitle that states the main finding, and a caption giving the source. Render.
+
+```{r}
+#| label: type-i-error-rate-and-power-11
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: type-i-error-rate-and-power-11-test
+#| echo: true
+set.seed(14)
+tibble(patients = 90 * 1:8) |>
+  mutate(power = map_dbl(patients / 90, power_at)) |>
+  ggplot(aes(x = patients, y = power)) +
+  geom_hline(yintercept = 0.05, linetype = "dashed") +
+  annotate("text", x = 720, y = 0.09, hjust = 1,
+           label = "Discernibility level: 5%") +
+  geom_line() +
+  geom_point(size = 2) +
+  geom_text(aes(label = scales::label_percent(accuracy = 1)(power)),
+            vjust = -1) +
+  scale_x_continuous(breaks = 90 * 1:8) +
+  scale_y_continuous(labels = scales::label_percent(), limits = c(0, 1.05)) +
+  labs(title = "Power to Detect a 13-Point Gain in Survival",
+       subtitle = "A 90-patient study like the CPR trial detects the gain only about a third of the time",
+       x = "Number of Patients",
+       y = "Power at a 0.05 Discernibility Level",
+       caption = "1,000 simulated studies per size, with survival of 22% (control) and 35% (treatment)\nBöttiger et al. (2001), via openintro")
+```
+
+###
+
+"A good power analysis is a vital preliminary step to any study as it will inform whether the data you collect are sufficient for being able to conclude your research broadly." Had this study's planners believed in a 13-point gain, the plot says they needed around 450 patients, not 90, to detect it most of the time.
+
+### Exercise 12
+
+Commit `analysis.qmd` with the message `"Simulate Type I error rate and power"` and push.
+
+```{r}
+#| label: type-i-error-rate-and-power-12
+#| echo: false
+learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type = "reflection")
+```
+
+###
+
+```{.output}
+a71c4e9 (HEAD -> main, origin/main) Simulate Type I error rate and power
+3f8a2d1 Test blood thinners with a two-sided test
+9be04d2 Initial commit
+```
+
+###
+
+"The discernibility level selected for a test should reflect the real-world consequences associated with making a Type I or Type II error." Power is the other half of that choice: a low level protects against Type I errors only if the study is large enough to keep Type II errors rare.
+
+## Summary
+
+This tutorial covered [Chapter 14: Decision errors](https://openintrostat.github.io/ims/foundations-errors.html) from [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) by Mine Çetinkaya-Rundel and Johanna Hardin. You have learned to run a two-sided hypothesis test by simulation, to see how the discernibility level controls the rate of Type I errors, and to estimate the power of a test and how it grows with sample size, using a randomized experiment on blood thinners for patients who received CPR.
+
+The chapter's own summary, in the authors' words:
+
+> Although hypothesis testing provides a strong framework for making decisions based on data, as the analyst, you need to understand how and when the process can go wrong. That is, always keep in mind that the conclusion to a hypothesis test may not be right! Sometimes when the null hypothesis is true, we will accidentally reject it and commit a Type I error; sometimes when the alternative hypothesis is true, we will fail to reject the null hypothesis and commit a Type II error. The power of the test quantifies how likely it is to obtain data which will reject the null hypothesis when indeed the alternative is true; the power of the test is increased when larger sample sizes are taken.
+
+For the experiment itself, read "Efficacy and safety of thrombolytic therapy after initially unsuccessful cardiopulmonary resuscitation: a prospective clinical trial" by Bernd Böttiger and colleagues, in *The Lancet* (2001), the source the `cpr` [help page](https://openintrostat.github.io/openintro/reference/cpr.html) cites.
+
+### Exercise 1
+
+Render one last time.
+
+```{r}
+#| label: summary-1
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). CP/CR.', type = "reflection")
+```
+
+###
+
+````{verbatim}
+---
+title: "Decision Errors"
+author: "Your Name"
+format: html
+execute:
+  echo: false
+---
+
+```{r}
+#| message: false
+library(tidyverse)
+library(openintro)
+library(infer)
+```
+
+```{r}
+#| cache: true
+set.seed(47)
+cpr_null <- cpr |>
+  specify(outcome ~ group, success = "survived") |>
+  hypothesize(null = "independence") |>
+  generate(reps = 1000, type = "permute") |>
+  calculate(stat = "diff in props", order = c("treatment", "control")) |>
+  mutate(stat = round(stat, 3))
+```
+
+```{r}
+cpr_null |>
+  mutate(extreme = if_else(stat >= 0.13 | stat <= -0.13,
+                           "At least 0.13 from zero", "Closer to zero")) |>
+  ggplot(aes(x = stat, fill = extreme)) +
+  geom_histogram(binwidth = 0.045, center = 0.04) +
+  scale_fill_manual(values = c("At least 0.13 from zero" = "firebrick",
+                               "Closer to zero" = "gray60")) +
+  labs(title = "Survival Differences When Blood Thinners Have No Effect",
+       subtitle = "Two-sided p-value of 0.27: chance alone often gives a difference as large as the observed 0.13",
+       x = "Difference in Survival Rate (Treatment - Control)",
+       y = "Number of Shuffles",
+       fill = NULL,
+       caption = "1,000 shuffles of 90 patients; Böttiger et al. (2001), via openintro") +
+  theme(legend.position = "bottom")
+```
+
+```{r}
+power_at <- function(copies) {
+  study <- cpr |>
+    slice(rep(1:n(), times = copies))
+  null <- study |>
+    specify(outcome ~ group, success = "survived") |>
+    hypothesize(null = "independence") |>
+    generate(reps = 1000, type = "permute") |>
+    calculate(stat = "diff in props", order = c("treatment", "control")) |>
+    pull(stat) |>
+    round(4)
+  study |>
+    specify(outcome ~ group, success = "survived") |>
+    generate(reps = 1000, type = "bootstrap") |>
+    calculate(stat = "diff in props", order = c("treatment", "control")) |>
+    mutate(stat = round(stat, 4),
+           p_value = map_dbl(stat, \(s) 2 * min(mean(null >= s), mean(null <= s)))) |>
+    summarize(power = mean(p_value <= 0.05)) |>
+    pull(power)
+}
+
+set.seed(14)
+tibble(patients = 90 * 1:8) |>
+  mutate(power = map_dbl(patients / 90, power_at)) |>
+  ggplot(aes(x = patients, y = power)) +
+  geom_hline(yintercept = 0.05, linetype = "dashed") +
+  annotate("text", x = 720, y = 0.09, hjust = 1,
+           label = "Discernibility level: 5%") +
+  geom_line() +
+  geom_point(size = 2) +
+  geom_text(aes(label = scales::label_percent(accuracy = 1)(power)),
+            vjust = -1) +
+  scale_x_continuous(breaks = 90 * 1:8) +
+  scale_y_continuous(labels = scales::label_percent(), limits = c(0, 1.05)) +
+  labs(title = "Power to Detect a 13-Point Gain in Survival",
+       subtitle = "A 90-patient study like the CPR trial detects the gain only about a third of the time",
+       x = "Number of Patients",
+       y = "Power at a 0.05 Discernibility Level",
+       caption = "1,000 simulated studies per size, with survival of 22% (control) and 35% (treatment)\nBöttiger et al. (2001), via openintro")
+```
+````
+
+###
+
+"Sometimes, however, data can produce a small p-value when the null hypothesis is actually true and the data are just inherently variable." Your two plots show both sides of that risk: the first is the variability a true null produces, and the second is how often a real effect breaks through it.
+
+### Exercise 2
+
+Publish your analysis to GitHub Pages. In a bash Terminal, run:
+
+```bash
+quarto publish gh-pages analysis.qmd
+```
+
+```{r}
+#| label: summary-2
+#| echo: false
+learnr2::question("Paste the URL of your published page.", type = "reflection")
+```
+
+###
+
+Your answer should look like `https://your-github-username.github.io/decision-errors/`.
+
+###
+
+"Sometimes data simply point us to the wrong conclusion, which is why scientific studies are often repeated to check initial findings." A repeat of the CPR trial with several hundred patients would settle what 90 could not.
+
+### Exercise 3
+
+Commit and push any remaining changes.
+
+```{r}
+#| label: summary-3
+#| echo: false
+learnr2::question("Paste the URL of your GitHub repo.", type = "reflection")
+```
+
+###
+
+Your answer should look like `https://github.com/your-github-username/decision-errors`.
+
+###
+
+"Hypotheses should be set up *before* observing the data." "We want to be rigorous and keep an open mind when we analyze data and evidence."
+
+## Your Answers
+
+```{r}
+#| label: your-answers-1
+#| echo: false
+learnr2::question(
+  "How many minutes, approximately, did it take you to complete this
+  tutorial? For example, an hour and a half would be 90 minutes.",
+  type = "reflection_editable",
+  validate = "integer"
+)
+```
+
+```{r}
+#| label: your-answers-2
+#| echo: false
+learnr2::download_answers_button(filename_prefix = "decision-errors")
+```

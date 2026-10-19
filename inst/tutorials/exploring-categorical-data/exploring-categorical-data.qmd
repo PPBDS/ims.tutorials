@@ -39,7 +39,7 @@ You should be doing this tutorial in a repo named `exploring-categorical-data`. 
 
 Create a new file, `analysis.qmd`, with the title `"Exploring Categorical Data"` and your name as the author. In a bash Terminal, render it:
 
-```
+```bash
 quarto render analysis.qmd
 ```
 
@@ -57,7 +57,7 @@ learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type
 
 ###
 
-```
+```{.output}
 analysis_files
 ```
 
@@ -77,9 +77,10 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-<pre><code>#| message: false
+````{verbatim}
+#| message: false
 library(tidyverse)
-</code></pre>
+````
 
 ###
 
@@ -97,10 +98,11 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-<pre><code>#| message: false
+````{verbatim}
+#| message: false
 library(tidyverse)
 library(openintro)
-</code></pre>
+````
 
 ###
 
@@ -118,11 +120,12 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-<pre><code>#| message: false
+````{verbatim}
+#| message: false
 library(tidyverse)
 library(openintro)
 library(usdata)
-</code></pre>
+````
 
 ###
 
@@ -140,12 +143,13 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-<pre><code>#| message: false
+````{verbatim}
+#| message: false
 library(tidyverse)
 library(openintro)
 library(usdata)
 library(ggridges)
-</code></pre>
+````
 
 ###
 
@@ -187,7 +191,7 @@ learnr2::question("In the R Terminal, run ?loans_full_schema. Copy and paste the
 
 ###
 
-```
+```{.output}
      homeownership The ownership status of the applicant's residence.
 
      application_type The type of application: either ‘individual’ or
@@ -268,7 +272,7 @@ loans
 
 ###
 
-"Based on the data in this dataset we have modified the `homeownership` and `application_type` variables. We will refer to this modified dataset as `loans`." Recoding a categorical variable changes its labels and order, never its counts.
+"We will refer to this modified dataset as `loans`." Recoding a categorical variable changes its labels and order, never its counts.
 
 ### Exercise 6
 
@@ -282,10 +286,11 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-<pre><code>loans <- loans_full_schema |>
+````{verbatim}
+loans <- loans_full_schema |>
   mutate(homeownership = str_to_lower(homeownership),
          homeownership = fct_relevel(homeownership, "rent", "mortgage", "own"))
-</code></pre>
+````
 
 ###
 
@@ -303,7 +308,7 @@ learnr2::question("In the bash Terminal, run ls. CP/CR.", type = "reflection")
 
 ###
 
-```
+```{.output}
 analysis.html  analysis.qmd  analysis_cache  analysis_files
 ```
 
@@ -323,7 +328,7 @@ learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type
 
 ###
 
-```
+```{.output}
 analysis_files
 analysis_cache
 ```
@@ -528,7 +533,7 @@ loans |>
 
 ###
 
-"Here the value 0.906 indicates that 90.6% of renters applied as individuals for the loan. This rate is higher compared to loans from people with mortgages (80.2%) or who own their home (86.5%)." Both tables are **conditional proportions**; they answer different questions.
+"Here the value 0.906 indicates that 90.6% of renters applied as individuals for the loan," against 80.2% of mortgage holders and 86.5% of owners. Both tables are **conditional proportions**; they answer different questions.
 
 ### Exercise 17
 
@@ -597,7 +602,7 @@ learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type
 
 ###
 
-```
+```{.output}
 7a3c5e2 (HEAD -> main, origin/main) Summarize homeownership and application type
 9be04d2 Initial commit
 ```
@@ -635,7 +640,7 @@ county_change |>
 
 ###
 
-"We have data on 3142 counties in the United States. We are missing 2017 population data from 3 of them, and of the remaining 3139 counties, in 1541 the population increased from 2010 to 2017 and in the remaining 1598 the population decreased." Two of the 1,541, in Alaska and South Dakota, have no income figure, so 1,539 remain here.
+The book counts: "of the remaining 3139 counties, in 1541 the population increased from 2010 to 2017 and in the remaining 1598 the population decreased." Two of the 1,541, in Alaska and South Dakota, have no income figure, so 1,539 remain here.
 
 ### Exercise 2
 
@@ -855,7 +860,7 @@ learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type
 
 ###
 
-```
+```{.output}
 d08f41b (HEAD -> main, origin/main) Compare county incomes across groups
 7a3c5e2 Summarize homeownership and application type
 9be04d2 Initial commit
@@ -868,6 +873,10 @@ d08f41b (HEAD -> main, origin/main) Compare county incomes across groups
 ## Summary
 
 This tutorial covered [Chapter 4: Exploring categorical data](https://openintrostat.github.io/ims/explore-categorical.html) from [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) by Mine Çetinkaya-Rundel and Johanna Hardin. You have learned to summarize one or two categorical variables with contingency tables and bar plots, to read row and column proportions, and to compare a numerical variable across groups.
+
+The chapter's own summary, in the authors' words:
+
+> Fluently working with categorical variables is an important skill for data analysts. In this chapter we have introduced different visualizations and numerical summaries applied to categorical variables. The graphical visualizations are even more descriptive when two variables are presented simultaneously. We presented bar plots, mosaic plots, pie charts, and estimations of conditional proportions.
 
 For more on choosing among bar plots, read the "[Visualizing amounts](https://clauswilke.com/dataviz/visualizing-amounts.html)" and "[Visualizing proportions](https://clauswilke.com/dataviz/visualizing-proportions.html)" chapters of Claus Wilke's *Fundamentals of Data Visualization*, by the author of **ggridges**.
 
@@ -883,7 +892,8 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). 
 
 ###
 
-<pre><code>---
+````{verbatim}
+---
 title: "Exploring Categorical Data"
 author: "Your Name"
 format: html
@@ -891,27 +901,27 @@ execute:
   echo: false
 ---
 
-&#96;&#96;&#96;{r}
+```{r}
 #| message: false
 library(tidyverse)
 library(openintro)
 library(usdata)
 library(ggridges)
-&#96;&#96;&#96;
+```
 
-&#96;&#96;&#96;{r}
+```{r}
 loans_full_schema |>
   count(application_type)
-&#96;&#96;&#96;
+```
 
-&#96;&#96;&#96;{r}
+```{r}
 #| cache: true
 loans <- loans_full_schema |>
   mutate(homeownership = str_to_lower(homeownership),
          homeownership = fct_relevel(homeownership, "rent", "mortgage", "own"))
-&#96;&#96;&#96;
+```
 
-&#96;&#96;&#96;{r}
+```{r}
 loans |>
   ggplot(aes(x = homeownership, fill = application_type)) +
   geom_bar(position = "fill") +
@@ -922,9 +932,9 @@ loans |>
        y = "Share of Loans",
        fill = "Application Type",
        caption = "10,000 loans; Lending Club")
-&#96;&#96;&#96;
+```
 
-&#96;&#96;&#96;{r}
+```{r}
 county_change <- county |>
   drop_na(pop_change, median_hh_income) |>
   mutate(change = if_else(pop_change > 0, "gain", "no gain"))
@@ -940,8 +950,8 @@ county_change |>
        x = "Median Household Income",
        y = "Counties",
        caption = "3,136 US counties with known population change and metro status")
-&#96;&#96;&#96;
-</code></pre>
+```
+````
 
 ###
 
@@ -951,7 +961,7 @@ Your page shows one association between two categorical variables and one numeri
 
 Publish your analysis to GitHub Pages. In a bash Terminal, run:
 
-```
+```bash
 quarto publish gh-pages analysis.qmd
 ```
 

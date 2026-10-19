@@ -1,0 +1,1238 @@
+---
+title: "Applications: Model and Infer"
+subtitle: "A Mario Kart case study: regression output, a permutation test, bootstrap intervals, and cross-validation."
+format: live-html
+engine: knitr
+toc: true
+toc-depth: 2
+learnr2:
+  ordering: 27
+---
+
+{{< include _extensions/r-wasm/live/_knitr.qmd >}}
+
+```{r}
+#| label: setup
+#| include: false
+library(tidyverse)
+library(openintro)
+library(infer)
+library(broom)
+knitr::opts_chunk$set(out.width = "90%")
+
+mario <- mariokart |>
+  filter(total_pr < 100) |>
+  mutate(price = total_pr,
+         cond_new = if_else(cond == "new", 1, 0),
+         stock_photo = if_else(stock_photo == "yes", 1, 0)) |>
+  select(price, cond_new, stock_photo, duration, wheels)
+```
+
+## Student Information
+
+```{r}
+#| label: student-information-1
+#| echo: false
+learnr2::student_info()
+```
+
+## Introduction
+
+This tutorial covers [Chapter 27: Applications: Model and infer](https://openintrostat.github.io/ims/inf-model-applications.html) from [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) by Mine Çetinkaya-Rundel and Johanna Hardin. You will learn to fit and read one-predictor and multiple regression models of eBay auction prices for *Mario Kart*, to test and estimate a slope by permutation and by the bootstrap, and to compare two models with cross-validation.
+
+### Exercise 1
+
+You should be doing this tutorial in a repo named `applications-model-and-infer`. If you are not, create one and then connect to it. You may need to restart this tutorial after you do so.
+
+Create a new file, `analysis.qmd`, with the title `"Applications: Model and Infer"` and your name as the author. In a bash Terminal, render it:
+
+```bash
+quarto render analysis.qmd
+```
+
+Open `analysis.html` with Live Server (right-click it in the Explorer → **Open with Live Server**) and keep the tab open. It refreshes on every render. Going forward, we will just tell you to "Render" when we want you to take these steps.
+
+Create a `.gitignore` with `analysis_files` followed by a blank line. Commit and push. Use AI however you like.
+
+If `show_file()` fails, it is probably because you have not yet loaded `library(learnr2)` in the R Terminal.
+
+```{r}
+#| label: introduction-1
+#| echo: false
+learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{.output}
+analysis_files
+```
+
+###
+
+"In this case study, we consider Ebay auctions of a video game called *Mario Kart* for the Nintendo Wii." It is the book's last chapter, and it brings regression, simulation, and the mathematical model together on a single dataset.
+
+### Exercise 2
+
+Add a chunk to `analysis.qmd` that loads the **[tidyverse](https://www.tidyverse.org/)**, with `#| message: false` so the startup messages stay out of the rendered page. Add `execute: echo: false` to the YAML header. Render.
+
+```{r}
+#| label: introduction-2
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+````{verbatim}
+#| message: false
+library(tidyverse)
+````
+
+###
+
+"We will try to determine how total price is related to each characteristic in an auction while simultaneously controlling for other variables." The **tidyverse** prepares those characteristics with **dplyr** and plots the results with **ggplot2**.
+
+### Exercise 3
+
+Add **[openintro](https://openintrostat.github.io/openintro/)** to that chunk. Render.
+
+```{r}
+#| label: introduction-3
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+````{verbatim}
+#| message: false
+library(tidyverse)
+library(openintro)
+````
+
+###
+
+**openintro** holds `mariokart`, the auctions you met in the Linear Regression with a Single Predictor tutorial. "The outcome variable of interest is the total price of an auction, which is the highest bid plus the shipping cost."
+
+### Exercise 4
+
+Add **[infer](https://infer.tidymodels.org/)** to that chunk. Render.
+
+```{r}
+#| label: introduction-4
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+````{verbatim}
+#| message: false
+library(tidyverse)
+library(openintro)
+library(infer)
+````
+
+###
+
+**infer** writes a simulation as a pipeline of steps: name the variables, state the null hypothesis if there is one, generate new datasets, and calculate a statistic for each. The chapter's own code uses **infer** for both its permutation test and its bootstrap of the slope.
+
+### Exercise 5
+
+Add **[broom](https://broom.tidymodels.org/)** to that chunk. Render.
+
+```{r}
+#| label: introduction-5
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+````{verbatim}
+#| message: false
+library(tidyverse)
+library(openintro)
+library(infer)
+library(broom)
+````
+
+###
+
+**broom** turns a fitted model into a tibble, which is how the chapter builds its regression tables. "Using the output, we identify the point estimates of each coefficient and the corresponding impact (measured with information on the standard error used to compute the p-value)."
+
+## Mathematical approach to linear models
+
+"For instance, all other characteristics held constant, are longer auctions associated with higher or lower prices?" This section answers with the mathematical model: a regression on the game's condition alone, then one that adds three more predictors.
+
+### Exercise 1
+
+Add a chunk that prints `mariokart`. Render.
+
+```{r}
+#| label: mathematical-approach-to-linear-models-1
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: mathematical-approach-to-linear-models-1-test
+#| echo: true
+mariokart
+```
+
+###
+
+The tibble has 143 rows, one per auction, and 12 variables. The chapter, though, says "The `mariokart` dataset includes results from 141 auctions."
+
+### Exercise 2
+
+```{r}
+#| label: mathematical-approach-to-linear-models-2
+#| echo: false
+learnr2::question("In the R Terminal, run ?mariokart. Copy and paste the Description, and the entry for wheels in the Format section.", type = "reflection")
+```
+
+###
+
+```{.output}
+Description:
+
+     Auction data from Ebay for the game Mario Kart for the Nintendo
+     Wii. This data was collected in early October 2009.
+
+     wheels Number of Wii wheels included in the auction. These are
+          steering wheel attachments to make it seem as though you are
+          actually driving in the game. When used with the controller,
+          turning the wheel actually causes the character on screen to
+          turn.
+```
+
+###
+
+The chapter asks, "on average, how much more do buyers tend to pay for additional Wii wheels (plastic steering wheels that attach to the Wii controller) in auctions?" The help page's Format section also says "A data frame with 143 observations," two more than the chapter uses.
+
+### Exercise 3
+
+Replace the code in that chunk so that it shows the `total_pr` and `title` of every auction with a total price of \$100 or more. Render.
+
+```{r}
+#| label: mathematical-approach-to-linear-models-3
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: mathematical-approach-to-linear-models-3-test
+#| echo: true
+mariokart |>
+  filter(total_pr >= 100) |>
+  select(total_pr, title)
+```
+
+###
+
+These are the two bundles from the Linear Regression with a Single Predictor tutorial: a Wii console with Guitar Hero 5 for \$327, and ten Wii games for \$118. The chapter's code keeps only the auctions that sold for under \$100, which leaves exactly its 141.
+
+### Exercise 4
+
+Replace the code in that chunk so that it creates `mario` from `mariokart`, following the chapter: keep only the auctions under \$100, add `price` as a copy of `total_pr`, make `cond_new` equal to 1 for a new game and 0 for a used one, recode `stock_photo` as 1 for yes and 0 for no, and keep only `price`, `cond_new`, `stock_photo`, `duration`, and `wheels`. Print `mario`. Render.
+
+```{r}
+#| label: mathematical-approach-to-linear-models-4
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: mathematical-approach-to-linear-models-4-test
+#| echo: true
+mario <- mariokart |>
+  filter(total_pr < 100) |>
+  mutate(price = total_pr,
+         cond_new = if_else(cond == "new", 1, 0),
+         stock_photo = if_else(stock_photo == "yes", 1, 0)) |>
+  select(price, cond_new, stock_photo, duration, wheels)
+
+mario
+```
+
+###
+
+The first four rows match the chapter's table, starting with a new game, shown with a stock photo, that sold for \$51.55 over 3 days with one wheel. The chapter calls `cond_new` and `stock_photo` **indicator variables**, taking only the values 0 and 1, "similar to `bankruptcy` in the `loans` dataset."
+
+### Exercise 5
+
+Delete the line that prints `mario`, so that the chunk only creates it. Render.
+
+```{r}
+#| label: mathematical-approach-to-linear-models-5
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+````{verbatim}
+mario <- mariokart |>
+  filter(total_pr < 100) |>
+  mutate(price = total_pr,
+         cond_new = if_else(cond == "new", 1, 0),
+         stock_photo = if_else(stock_photo == "yes", 1, 0)) |>
+  select(price, cond_new, stock_photo, duration, wheels)
+````
+
+###
+
+Every model in this tutorial uses these 141 auctions. In the table that describes them, `duration` is "The length of the auction, in days, taking values from 1 to 10."
+
+### Exercise 6
+
+Add `#| cache: true` to that chunk. Render.
+
+```{r}
+#| label: mathematical-approach-to-linear-models-6
+#| echo: false
+learnr2::question("In the bash Terminal, run ls. CP/CR.", type = "reflection")
+```
+
+###
+
+```{.output}
+analysis.html  analysis.qmd  analysis_cache  analysis_files
+```
+
+###
+
+`analysis_cache` now holds `mario`, so later renders load it from disk instead of rebuilding it. A cached chunk only re-runs when its code changes.
+
+### Exercise 7
+
+Your Source Control count just jumped, because Git sees every file in the new cache directory. Add `analysis_cache` to `.gitignore`, and the count drops back.
+
+```{r}
+#| label: mathematical-approach-to-linear-models-7
+#| echo: false
+learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{.output}
+analysis_files
+analysis_cache
+```
+
+###
+
+The chapter's table of variables describes `cond_new` as an "Indicator variable for if the game is new (1) or used (0)." Coded that way, its regression coefficient is the difference in average price between new and used games.
+
+### Exercise 8
+
+Start a new chunk with a linear regression of `price` on `cond_new`, using `mario`. Show the full table of coefficients. Render.
+
+```{r}
+#| label: mathematical-approach-to-linear-models-8
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: mathematical-approach-to-linear-models-8-test
+#| echo: true
+lm(price ~ cond_new, data = mario) |>
+  tidy()
+```
+
+###
+
+The slope is 10.90 with a standard error of 1.26, and its p-value, about $10^{-14}$, means "there is strong evidence that the coefficient is different from zero when using this one-variable model." "This means the 10.90 model coefficient predicts a price of an extra \$10.90 for those games that are new versus those that are used."
+
+### Exercise 9
+
+Replace the code in that chunk so that it calculates the number of auctions and the average `price` for used games and for new games. Render.
+
+```{r}
+#| label: mathematical-approach-to-linear-models-9
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: mathematical-approach-to-linear-models-9-test
+#| echo: true
+mario |>
+  summarize(n = n(), mean_price = mean(price), .by = cond_new)
+```
+
+###
+
+The 82 used games averaged \$42.87, the model's intercept, and the 59 new ones \$53.77, which is \$10.90 more. The chapter's footnote writes the line with an intercept of 47.15, a typo: its own table, like your output, gives 42.87.
+
+### Exercise 10
+
+Replace the code in that chunk with a linear regression of `price` on `cond_new`, `stock_photo`, `duration`, and `wheels`. Show the full table of coefficients. Render.
+
+```{r}
+#| label: mathematical-approach-to-linear-models-10
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: mathematical-approach-to-linear-models-10-test
+#| echo: true
+lm(price ~ cond_new + stock_photo + duration + wheels, data = mario) |>
+  tidy()
+```
+
+###
+
+The model has "4 predictors but 5 coefficients (including the intercept)." The wheels coefficient, 7.29, is "the average difference in auction price for each additional Wii wheel included when holding the other variables constant."
+
+### Exercise 11
+
+Replace the code in that chunk so that, for the same model, it shows the `price`, the fitted value, and the residual of the first four auctions. Render.
+
+```{r}
+#| label: mathematical-approach-to-linear-models-11
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: mathematical-approach-to-linear-models-11-test
+#| echo: true
+lm(price ~ cond_new + stock_photo + duration + wheels, data = mario) |>
+  augment() |>
+  select(price, .fitted, .resid) |>
+  slice_head(n = 4)
+```
+
+###
+
+The first auction sold for \$51.55 against a fitted \$49.63, a residual of 1.92. The chapter gets 51.55 - 49.62 = 1.93 because it plugs in coefficients rounded to two decimals.
+
+### Exercise 12
+
+Replace the code in that chunk so that it calculates the number of auctions and the average number of `wheels` for used games and for new games. Render.
+
+```{r}
+#| label: mathematical-approach-to-linear-models-12
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: mathematical-approach-to-linear-models-12-test
+#| echo: true
+mario |>
+  summarize(n = n(), mean_wheels = mean(wheels), .by = cond_new)
+```
+
+###
+
+New games came with 1.58 wheels on average, used ones with 0.84. "For instance, new games sold on Ebay tend to come with more Wii wheels, which may have led to higher prices for those auctions."
+
+### Exercise 13
+
+Replace the code in that chunk with a table that shows the estimate and standard error of the `cond_new` coefficient from both models: the one with `cond_new` alone and the one with all four predictors. Render.
+
+```{r}
+#| label: mathematical-approach-to-linear-models-13
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: mathematical-approach-to-linear-models-13-test
+#| echo: true
+bind_rows(
+  "One predictor" = lm(price ~ cond_new, data = mario) |>
+    tidy(),
+  "Four predictors" = lm(price ~ cond_new + stock_photo + duration + wheels,
+                         data = mario) |>
+    tidy(),
+  .id = "model"
+) |>
+  filter(term == "cond_new") |>
+  select(model, estimate, std.error)
+```
+
+###
+
+The new-game premium falls from \$10.90 to \$5.13 once wheels and the rest are in the model. "That model was biased by the confounding variable `wheels`."
+
+### Exercise 14
+
+Replace the table with a plot of every coefficient except the intercepts from both models, each with its 95% confidence interval, coloring the two models differently. Render.
+
+```{r}
+#| label: mathematical-approach-to-linear-models-14
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: mathematical-approach-to-linear-models-14-test
+#| echo: true
+bind_rows(
+  "One predictor" = lm(price ~ cond_new, data = mario) |>
+    tidy(conf.int = TRUE),
+  "Four predictors" = lm(price ~ cond_new + stock_photo + duration + wheels,
+                         data = mario) |>
+    tidy(conf.int = TRUE),
+  .id = "model"
+) |>
+  filter(term != "(Intercept)") |>
+  ggplot(aes(x = term, y = estimate, color = model)) +
+  geom_pointrange(aes(ymin = conf.low, ymax = conf.high),
+                  position = position_dodge(width = 0.4))
+```
+
+###
+
+Only `cond_new` appears in both models, and its two intervals, 8.41 to 13.4 and 3.05 to 7.21, do not even overlap. The intervals for `stock_photo` and `duration` cross zero, while the one for `wheels` sits well above it.
+
+### Exercise 15
+
+Improve the plot. Add a dashed line at zero, give the coefficients readable names, show the estimates in dollars, put the legend below the plot with one predictor listed first, and add a title, axis labels, a subtitle that states the main finding, and a caption giving the number of auctions and the source. Render.
+
+```{r}
+#| label: mathematical-approach-to-linear-models-15
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: mathematical-approach-to-linear-models-15-test
+#| echo: true
+bind_rows(
+  "One predictor" = lm(price ~ cond_new, data = mario) |>
+    tidy(conf.int = TRUE),
+  "Four predictors" = lm(price ~ cond_new + stock_photo + duration + wheels,
+                         data = mario) |>
+    tidy(conf.int = TRUE),
+  .id = "model"
+) |>
+  filter(term != "(Intercept)") |>
+  mutate(model = fct_inorder(model),
+         term = fct_recode(term,
+                           "New condition" = "cond_new",
+                           "Stock photo" = "stock_photo",
+                           "Each day of auction" = "duration",
+                           "Each Wii wheel" = "wheels")) |>
+  ggplot(aes(x = term, y = estimate, color = model)) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_pointrange(aes(ymin = conf.low, ymax = conf.high),
+                  position = position_dodge(width = 0.4)) +
+  scale_y_continuous(labels = scales::label_dollar()) +
+  labs(title = "What Adds to the Price of Mario Kart on eBay",
+       subtitle = "Holding wheels and the rest constant cuts the premium for a new game from $10.90 to $5.13",
+       x = NULL,
+       y = "Change in Total Price, with 95% Confidence Interval",
+       color = "Model",
+       caption = "141 eBay auctions under $100, October 2009; two bundles removed") +
+  theme(legend.position = "bottom")
+```
+
+###
+
+"When we use both variables, this particular underlying and unintentional bias is reduced or eliminated (though bias from other confounding variables may still remain)." Each extra wheel adds \$7.29, more than a new game does once wheels are held constant.
+
+### Exercise 16
+
+Commit `analysis.qmd` and `.gitignore` with the message `"Model Mario Kart prices"` and push.
+
+```{r}
+#| label: mathematical-approach-to-linear-models-16
+#| echo: false
+learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type = "reflection")
+```
+
+###
+
+```{.output}
+4e8a1c7 (HEAD -> main, origin/main) Model Mario Kart prices
+9be04d2 Initial commit
+```
+
+###
+
+"Sometimes there are underlying structures or relationships between predictor variables." The mathematical model gave us a p-value and a standard error from a formula; the next section gets the same answers by simulation.
+
+## Computational approach and cross-validation
+
+"Previously, using a mathematical model, we investigated the coefficients associated with `cond_new` when predicting `price` in a linear model." This section tests and estimates that slope by permutation and by the bootstrap, then compares the one- and four-predictor models by cross-validation.
+
+### Exercise 1
+
+Start a new chunk that uses **infer** to calculate the slope of `price` on `cond_new` in `mario`. Render.
+
+```{r}
+#| label: computational-approach-and-cross-validation-1
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: computational-approach-and-cross-validation-1-test
+#| echo: true
+mario |>
+  specify(price ~ cond_new) |>
+  calculate(stat = "slope")
+```
+
+###
+
+The same 10.9 as the regression table, because **infer** fits the same least squares line. "That is, $\beta_1$ represents the population value for the difference in price between new *Mario Kart* games and used games."
+
+### Exercise 2
+
+Replace the code in that chunk so that it uses **infer** to create 1,000 permuted datasets, in which `price` is shuffled across `cond_new` under the null hypothesis of no relationship, and calculates the slope for each. Set a seed first. Store the result as `null_slopes` and print it. Render.
+
+```{r}
+#| label: computational-approach-and-cross-validation-2
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: computational-approach-and-cross-validation-2-test
+#| echo: true
+set.seed(47)
+null_slopes <- mario |>
+  specify(price ~ cond_new) |>
+  hypothesize(null = "independence") |>
+  generate(reps = 1000, type = "permute") |>
+  calculate(stat = "slope")
+
+null_slopes
+```
+
+###
+
+We use the chapter's seed, 47, so with a different seed your slopes will differ slightly from ours. "When the data are randomly permuted, prices are randomly assigned to a condition (new or used), so that the null hypothesis is forced to be true, i.e., permutation is done under the assumption that no relationship between the two variables exists."
+
+### Exercise 3
+
+Replace the print with a summary of `null_slopes`: the smallest slope, the largest slope, and the number of slopes at least as far from zero as the observed 10.9. Render.
+
+```{r}
+#| label: computational-approach-and-cross-validation-3
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: computational-approach-and-cross-validation-3-test
+#| echo: true
+set.seed(47)
+null_slopes <- mario |>
+  specify(price ~ cond_new) |>
+  hypothesize(null = "independence") |>
+  generate(reps = 1000, type = "permute") |>
+  calculate(stat = "slope")
+
+null_slopes |>
+  summarize(min = min(stat),
+            max = max(stat),
+            as_extreme = sum(abs(stat) >= 10.9))
+```
+
+###
+
+Our permuted slopes run from -6.79 to 5.59, and not one of the 1,000 reaches 10.9. "Because the observed slope is not a plausible value under the null distribution, the p-value is essentially zero."
+
+### Exercise 4
+
+Replace the summary with a histogram of `null_slopes`, with a vertical red line at the observed slope of 10.9. Render.
+
+```{r}
+#| label: computational-approach-and-cross-validation-4
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: computational-approach-and-cross-validation-4-test
+#| echo: true
+set.seed(47)
+null_slopes <- mario |>
+  specify(price ~ cond_new) |>
+  hypothesize(null = "independence") |>
+  generate(reps = 1000, type = "permute") |>
+  calculate(stat = "slope")
+
+null_slopes |>
+  ggplot(aes(x = stat)) +
+  geom_histogram(binwidth = 0.5) +
+  geom_vline(xintercept = 10.9, color = "red")
+```
+
+###
+
+The red line sits far to the right of every permuted slope, as in the chapter's figure. The regression table's p-value was also essentially zero, and "Often, the mathematical and computational approaches to inference will give quite similar answers."
+
+### Exercise 5
+
+Replace the code in that chunk so that it uses **infer** to draw 1,000 bootstrap samples from `mario` and calculates the slope of `price` on `cond_new` for each. Set a seed first. Store the result as `boot_slopes` and print it. Render.
+
+```{r}
+#| label: computational-approach-and-cross-validation-5
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: computational-approach-and-cross-validation-5-test
+#| echo: true
+set.seed(47)
+boot_slopes <- mario |>
+  specify(price ~ cond_new) |>
+  generate(reps = 1000, type = "bootstrap") |>
+  calculate(stat = "slope")
+
+boot_slopes
+```
+
+###
+
+A bootstrap sample draws 141 auctions with replacement from the 141 we have, so there is no null hypothesis to impose. "Although knowing there is a relationship between the condition of the game and its price, we might be more interested in the difference in price, here given by the slope of the linear regression line."
+
+### Exercise 6
+
+Replace the print with a summary of `boot_slopes`: the mean, the smallest and largest slopes, and the standard deviation of the slopes. Render.
+
+```{r}
+#| label: computational-approach-and-cross-validation-6
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: computational-approach-and-cross-validation-6-test
+#| echo: true
+set.seed(47)
+boot_slopes <- mario |>
+  specify(price ~ cond_new) |>
+  generate(reps = 1000, type = "bootstrap") |>
+  calculate(stat = "slope")
+
+boot_slopes |>
+  summarize(mean = mean(stat),
+            min = min(stat),
+            max = max(stat),
+            se = sd(stat))
+```
+
+###
+
+The standard deviation of the bootstrap slopes, 1.22 for us, estimates the standard error of the slope. Reading its histogram by eye, the chapter guesses "a rough approximation of the standard error is 1.5," while the regression table's formula gives 1.26.
+
+### Exercise 7
+
+Replace the summary so that it uses **infer** to calculate a 90% standard error confidence interval for the slope from `boot_slopes`, centered on the observed slope of 10.9. Render.
+
+```{r}
+#| label: computational-approach-and-cross-validation-7
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: computational-approach-and-cross-validation-7-test
+#| echo: true
+set.seed(47)
+boot_slopes <- mario |>
+  specify(price ~ cond_new) |>
+  generate(reps = 1000, type = "bootstrap") |>
+  calculate(stat = "slope")
+
+boot_slopes |>
+  get_confidence_interval(level = 0.90, type = "se", point_estimate = 10.9)
+```
+
+###
+
+Ours runs from \$8.89 to \$12.90: 10.9 plus or minus 1.645 bootstrap standard errors. The chapter, with its rough standard error of 1.5, says "For games that are new, the average price is higher by between \$8.43 and \$13.37 than games that are used, with 90% confidence."
+
+### Exercise 8
+
+Replace the interval with a 90% bootstrap percentile confidence interval for the slope from `boot_slopes`. Render.
+
+```{r}
+#| label: computational-approach-and-cross-validation-8
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: computational-approach-and-cross-validation-8-test
+#| echo: true
+set.seed(47)
+boot_slopes <- mario |>
+  specify(price ~ cond_new) |>
+  generate(reps = 1000, type = "bootstrap") |>
+  calculate(stat = "slope")
+
+boot_slopes |>
+  get_confidence_interval(level = 0.90, type = "percentile")
+```
+
+###
+
+"Because there were 1,000 bootstrap resamples, we look for the cutoffs which provide 50 bootstrap slopes on the left, 900 in the middle, and 50 on the right." Our cutoffs are \$8.94 and \$13.00, close to the chapter's "\$9 to \$13.10" read from its histogram.
+
+### Exercise 9
+
+Replace the interval with a histogram of `boot_slopes`, with dashed vertical lines at the ends of the 90% percentile interval. Render.
+
+```{r}
+#| label: computational-approach-and-cross-validation-9
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: computational-approach-and-cross-validation-9-test
+#| echo: true
+set.seed(47)
+boot_slopes <- mario |>
+  specify(price ~ cond_new) |>
+  generate(reps = 1000, type = "bootstrap") |>
+  calculate(stat = "slope")
+
+boot_slopes |>
+  ggplot(aes(x = stat)) +
+  geom_histogram(binwidth = 0.5) +
+  geom_vline(xintercept = quantile(boot_slopes$stat, c(0.05, 0.95)),
+             linetype = "dashed")
+```
+
+###
+
+The bootstrap slopes are bell-shaped and centered on 10.9, while the permuted slopes in Exercise 4 were centered on 0. Both intervals, \$8.89 to \$12.90 and \$8.94 to \$13.00, sit far above zero, which agrees with the permutation test.
+
+### Exercise 10
+
+The chapter next compares the two models by cross-validation. Replace the code in that chunk so that it creates `mario_folds`, which adds to `mario` a `fold` variable that randomly assigns each auction to one of three folds of equal size. Set a seed first. Count the auctions in each fold. Render.
+
+```{r}
+#| label: computational-approach-and-cross-validation-10
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: computational-approach-and-cross-validation-10-test
+#| echo: true
+set.seed(4)
+mario_folds <- mario |>
+  mutate(fold = sample(rep(1:3, length.out = n())))
+
+mario_folds |>
+  count(fold)
+```
+
+###
+
+Each fold holds 47 of the 141 auctions. "We applied 3-fold cross-validation, so 1/3 of the data was removed while 2/3 of the observations were used to build each model."
+
+### Exercise 11
+
+Add code so that, for each fold, it fits the regression of `price` on `cond_new` to the other two folds, then predicts the price of each auction in the held-out fold and calculates its residual. Show the cross-validation sum of squared errors (CV SSE): the sum of all 141 squared residuals. Render.
+
+```{r}
+#| label: computational-approach-and-cross-validation-11
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: computational-approach-and-cross-validation-11-test
+#| echo: true
+set.seed(4)
+mario_folds <- mario |>
+  mutate(fold = sample(rep(1:3, length.out = n())))
+
+map(1:3, \(k) lm(price ~ cond_new, data = filter(mario_folds, fold != k)) |>
+      augment(newdata = filter(mario_folds, fold == k))) |>
+  list_rbind() |>
+  summarize(cv_sse = sum(.resid^2))
+```
+
+###
+
+Our CV SSE for the one-predictor model is 7,923; a different seed puts different auctions in each fold, so yours will differ. "In other words, the model is built (using the other 2/3) without the observation (which is in the 1/3) being used."
+
+### Exercise 12
+
+Change the code so that it does the same for the four-predictor model too, storing every held-out prediction and residual from both models, labeled by model, as `mario_cv`. Show the CV SSE of each model. Render.
+
+```{r}
+#| label: computational-approach-and-cross-validation-12
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: computational-approach-and-cross-validation-12-test
+#| echo: true
+set.seed(4)
+mario_folds <- mario |>
+  mutate(fold = sample(rep(1:3, length.out = n())))
+
+mario_cv <- bind_rows(
+  "One predictor" = map(1:3, \(k) lm(price ~ cond_new,
+                                     data = filter(mario_folds, fold != k)) |>
+                          augment(newdata = filter(mario_folds, fold == k))) |>
+    list_rbind(),
+  "Four predictors" = map(1:3, \(k) lm(price ~ cond_new + stock_photo + duration + wheels,
+                                       data = filter(mario_folds, fold != k)) |>
+                            augment(newdata = filter(mario_folds, fold == k))) |>
+    list_rbind(),
+  .id = "model"
+)
+
+mario_cv |>
+  summarize(cv_sse = sum(.resid^2), .by = model)
+```
+
+###
+
+Our CV SSE falls from 7,923 to 3,482 with four predictors. "The CV SSE is smaller (by a factor of almost two!) for the model with four predictors."
+
+### Exercise 13
+
+Replace the summary with a scatterplot of each auction's cross-validated residual against its predicted price, with one panel per model and the points colored by fold. Add a horizontal line at zero. Render.
+
+```{r}
+#| label: computational-approach-and-cross-validation-13
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: computational-approach-and-cross-validation-13-test
+#| echo: true
+set.seed(4)
+mario_folds <- mario |>
+  mutate(fold = sample(rep(1:3, length.out = n())))
+
+mario_cv <- bind_rows(
+  "One predictor" = map(1:3, \(k) lm(price ~ cond_new,
+                                     data = filter(mario_folds, fold != k)) |>
+                          augment(newdata = filter(mario_folds, fold == k))) |>
+    list_rbind(),
+  "Four predictors" = map(1:3, \(k) lm(price ~ cond_new + stock_photo + duration + wheels,
+                                       data = filter(mario_folds, fold != k)) |>
+                            augment(newdata = filter(mario_folds, fold == k))) |>
+    list_rbind(),
+  .id = "model"
+)
+
+mario_cv |>
+  ggplot(aes(x = .fitted, y = .resid, color = factor(fold))) +
+  geom_point() +
+  geom_hline(yintercept = 0) +
+  facet_wrap(~ model)
+```
+
+###
+
+With one predictor, every prediction is one of just a few values, one for used games and one for new games in each fold, so the points form vertical stripes. "The residuals give us a sense for how well the model will do at predicting observations which were not a part of the original dataset, e.g., future studies."
+
+### Exercise 14
+
+Improve the plot. Put the one-predictor panel first, show both axes in dollars, add a title, axis labels, a legend title, a subtitle that states the main finding with each model's CV SSE, and a caption giving the number of auctions and the source. Render.
+
+```{r}
+#| label: computational-approach-and-cross-validation-14
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: computational-approach-and-cross-validation-14-test
+#| echo: true
+set.seed(4)
+mario_folds <- mario |>
+  mutate(fold = sample(rep(1:3, length.out = n())))
+
+mario_cv <- bind_rows(
+  "One predictor" = map(1:3, \(k) lm(price ~ cond_new,
+                                     data = filter(mario_folds, fold != k)) |>
+                          augment(newdata = filter(mario_folds, fold == k))) |>
+    list_rbind(),
+  "Four predictors" = map(1:3, \(k) lm(price ~ cond_new + stock_photo + duration + wheels,
+                                       data = filter(mario_folds, fold != k)) |>
+                            augment(newdata = filter(mario_folds, fold == k))) |>
+    list_rbind(),
+  .id = "model"
+)
+
+mario_cv |>
+  mutate(model = fct_inorder(model)) |>
+  ggplot(aes(x = .fitted, y = .resid, color = factor(fold))) +
+  geom_point(alpha = 0.7) +
+  geom_hline(yintercept = 0) +
+  facet_wrap(~ model) +
+  scale_x_continuous(labels = scales::label_dollar()) +
+  scale_y_continuous(labels = scales::label_dollar()) +
+  labs(title = "Cross-Validated Errors for Two Models of Mario Kart Prices",
+       subtitle = "Four predictors cut the CV sum of squared errors from 7,923 to 3,482",
+       x = "Predicted Total Price",
+       y = "Prediction Error (Residual)",
+       color = "Fold",
+       caption = "141 eBay auctions under $100, October 2009; 3-fold cross-validation")
+```
+
+###
+
+The four-predictor errors stay within about \$14 of zero, while the one-predictor errors reach \$22. "Using a single valued criterion (CV SSE) allows us to make a decision to choose the model with four predictors."
+
+### Exercise 15
+
+Commit `analysis.qmd` with the message `"Simulate and cross-validate Mario Kart models"` and push.
+
+```{r}
+#| label: computational-approach-and-cross-validation-15
+#| echo: false
+learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type = "reflection")
+```
+
+###
+
+```{.output}
+b71f3d2 (HEAD -> main, origin/main) Simulate and cross-validate Mario Kart models
+4e8a1c7 Model Mario Kart prices
+9be04d2 Initial commit
+```
+
+###
+
+"Note that each time 1/3 of the data is removed, the resulting model will produce slightly different model coefficients." Cross-validation judges a model by the auctions it never saw, not by how well it fits the ones it did.
+
+## Summary
+
+This tutorial covered [Chapter 27: Applications: Model and infer](https://openintrostat.github.io/ims/inf-model-applications.html) from [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) by Mine Çetinkaya-Rundel and Johanna Hardin. You have learned to fit and read one-predictor and multiple regression models of eBay auction prices for *Mario Kart*, to test and estimate a slope by permutation and by the bootstrap, and to compare two models with cross-validation.
+
+This was the book's last chapter. To keep going, reread any part of [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) whose ideas you used here, from [Chapter 8: Linear regression with multiple predictors](https://openintrostat.github.io/ims/model-mlr.html) to [Chapter 25: Inference for regression with multiple predictors](https://openintrostat.github.io/ims/inf-model-mlr.html), where cross-validation first appears. For one more case study, try the chapter's own R lab, [Multiple linear regression: Grading the professor](https://www.openintro.org/go?id=ims-r-lab-model-infer).
+
+### Exercise 1
+
+Render one last time.
+
+```{r}
+#| label: summary-1
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). CP/CR.', type = "reflection")
+```
+
+###
+
+````{verbatim}
+---
+title: "Applications: Model and Infer"
+author: "Your Name"
+format: html
+execute:
+  echo: false
+---
+
+```{r}
+#| message: false
+library(tidyverse)
+library(openintro)
+library(infer)
+library(broom)
+```
+
+```{r}
+#| cache: true
+mario <- mariokart |>
+  filter(total_pr < 100) |>
+  mutate(price = total_pr,
+         cond_new = if_else(cond == "new", 1, 0),
+         stock_photo = if_else(stock_photo == "yes", 1, 0)) |>
+  select(price, cond_new, stock_photo, duration, wheels)
+```
+
+```{r}
+bind_rows(
+  "One predictor" = lm(price ~ cond_new, data = mario) |>
+    tidy(conf.int = TRUE),
+  "Four predictors" = lm(price ~ cond_new + stock_photo + duration + wheels,
+                         data = mario) |>
+    tidy(conf.int = TRUE),
+  .id = "model"
+) |>
+  filter(term != "(Intercept)") |>
+  mutate(model = fct_inorder(model),
+         term = fct_recode(term,
+                           "New condition" = "cond_new",
+                           "Stock photo" = "stock_photo",
+                           "Each day of auction" = "duration",
+                           "Each Wii wheel" = "wheels")) |>
+  ggplot(aes(x = term, y = estimate, color = model)) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_pointrange(aes(ymin = conf.low, ymax = conf.high),
+                  position = position_dodge(width = 0.4)) +
+  scale_y_continuous(labels = scales::label_dollar()) +
+  labs(title = "What Adds to the Price of Mario Kart on eBay",
+       subtitle = "Holding wheels and the rest constant cuts the premium for a new game from $10.90 to $5.13",
+       x = NULL,
+       y = "Change in Total Price, with 95% Confidence Interval",
+       color = "Model",
+       caption = "141 eBay auctions under $100, October 2009; two bundles removed") +
+  theme(legend.position = "bottom")
+```
+
+```{r}
+set.seed(4)
+mario_folds <- mario |>
+  mutate(fold = sample(rep(1:3, length.out = n())))
+
+mario_cv <- bind_rows(
+  "One predictor" = map(1:3, \(k) lm(price ~ cond_new,
+                                     data = filter(mario_folds, fold != k)) |>
+                          augment(newdata = filter(mario_folds, fold == k))) |>
+    list_rbind(),
+  "Four predictors" = map(1:3, \(k) lm(price ~ cond_new + stock_photo + duration + wheels,
+                                       data = filter(mario_folds, fold != k)) |>
+                            augment(newdata = filter(mario_folds, fold == k))) |>
+    list_rbind(),
+  .id = "model"
+)
+
+mario_cv |>
+  mutate(model = fct_inorder(model)) |>
+  ggplot(aes(x = .fitted, y = .resid, color = factor(fold))) +
+  geom_point(alpha = 0.7) +
+  geom_hline(yintercept = 0) +
+  facet_wrap(~ model) +
+  scale_x_continuous(labels = scales::label_dollar()) +
+  scale_y_continuous(labels = scales::label_dollar()) +
+  labs(title = "Cross-Validated Errors for Two Models of Mario Kart Prices",
+       subtitle = "Four predictors cut the CV sum of squared errors from 7,923 to 3,482",
+       x = "Predicted Total Price",
+       y = "Prediction Error (Residual)",
+       color = "Fold",
+       caption = "141 eBay auctions under $100, October 2009; 3-fold cross-validation")
+```
+````
+
+###
+
+The page holds the chapter's two models of the same 141 auctions: one plot shows what each predictor adds, and the other how well each model predicts auctions it never saw. "Multiple regression will help us answer these and other questions."
+
+### Exercise 2
+
+Publish your analysis to GitHub Pages. In a bash Terminal, run:
+
+```bash
+quarto publish gh-pages analysis.qmd
+```
+
+```{r}
+#| label: summary-2
+#| echo: false
+learnr2::question("Paste the URL of your published page.", type = "reflection")
+```
+
+###
+
+Your answer should look like `https://your-github-username.github.io/applications-model-and-infer/`.
+
+###
+
+Each row of `mariokart` still carries the eBay auction ID and the seller's title. The two bundles you found by their titles are a reminder that the documentation said they should not be in the data at all.
+
+### Exercise 3
+
+Commit and push any remaining changes.
+
+```{r}
+#| label: summary-3
+#| echo: false
+learnr2::question("Paste the URL of your GitHub repo.", type = "reflection")
+```
+
+###
+
+Your answer should look like `https://github.com/your-github-username/applications-model-and-infer`.
+
+###
+
+The same slope came out of the regression table, a permutation test, and a bootstrap, and all three told the same story. "In the actual study, the new *Mario Kart* games do actually cost more (on average) than the used games!"
+
+## Your Answers
+
+```{r}
+#| label: your-answers-1
+#| echo: false
+learnr2::question(
+  "How many minutes, approximately, did it take you to complete this
+  tutorial? For example, an hour and a half would be 90 minutes.",
+  type = "reflection_editable",
+  validate = "integer"
+)
+```
+
+```{r}
+#| label: your-answers-2
+#| echo: false
+learnr2::download_answers_button(filename_prefix = "applications-model-infer")
+```

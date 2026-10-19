@@ -1,6 +1,6 @@
 Package: ims.tutorials
 Title: Tutorials for Introduction to Modern Statistics
-Version: 0.0.0.9004
+Version: 0.0.1
 Authors@R:
     c(
     person(given = "David",
@@ -26,10 +26,13 @@ Imports:
     learnr2
 Suggests:
     broom,
+    cherryblossom,
     ggridges,
     httr2,
+    infer,
     maps,
     openintro,
+    palmerpenguins,
     scales,
     testthat,
     tidyverse,

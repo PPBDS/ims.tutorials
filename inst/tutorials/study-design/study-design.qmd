@@ -38,7 +38,7 @@ You should be doing this tutorial in a repo named `study-design`. If you are not
 
 Create a new file, `analysis.qmd`, with the title `"Study Design"` and your name as the author. In a bash Terminal, render it:
 
-```
+```bash
 quarto render analysis.qmd
 ```
 
@@ -56,7 +56,7 @@ learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type
 
 ###
 
-```
+```{.output}
 analysis_files
 ```
 
@@ -76,9 +76,10 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-<pre><code>#| message: false
+````{verbatim}
+#| message: false
 library(tidyverse)
-</code></pre>
+````
 
 ###
 
@@ -96,14 +97,15 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-<pre><code>#| message: false
+````{verbatim}
+#| message: false
 library(tidyverse)
 library(openintro)
-</code></pre>
+````
 
 ###
 
-**openintro** holds `mlb`, the salaries of every Major League Baseball player in 2010, which the chapter uses to explain sampling, and `malaria`, a small randomized experiment with a placebo.
+**openintro** holds `mlb`, the salaries of every Major League Baseball player in 2010, which the chapter uses to explain sampling, and `stent30` and `stent365`, the experiment from Hello Data that the chapter revisits when it asks whether a study can be blind.
 
 ### Exercise 4
 
@@ -117,11 +119,12 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-<pre><code>#| message: false
+````{verbatim}
+#| message: false
 library(tidyverse)
 library(openintro)
 library(usdata)
-</code></pre>
+````
 
 ###
 
@@ -163,7 +166,7 @@ learnr2::question("In the R Terminal, run ?mlb. Copy and paste the Description, 
 
 ###
 
-```
+```{.output}
 Description:
 
      Salary data for Major League Baseball players in the year 2010.
@@ -342,10 +345,11 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-<pre><code>set.seed(42)
+````{verbatim}
+set.seed(42)
 mlb_srs <- mlb |>
   slice_sample(n = 120)
-</code></pre>
+````
 
 ###
 
@@ -363,7 +367,7 @@ learnr2::question("In the bash Terminal, run ls. CP/CR.", type = "reflection")
 
 ###
 
-```
+```{.output}
 analysis.html  analysis.qmd  analysis_cache  analysis_files
 ```
 
@@ -383,7 +387,7 @@ learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type
 
 ###
 
-```
+```{.output}
 analysis_files
 analysis_cache
 ```
@@ -513,7 +517,7 @@ learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type
 
 ###
 
-```
+```{.output}
 5b2e9c1 (HEAD -> main, origin/main) Sample baseball salaries
 9be04d2 Initial commit
 ```
@@ -524,11 +528,11 @@ The chapter also describes cluster and multistage samples, which pick whole grou
 
 ## Experiments and observational studies
 
-"Studies where the researchers assign treatments to cases are called experiments." The chapter's other kind of study, where "no treatment has been explicitly applied," is observational. This section looks at one of each.
+"Studies where the researchers assign treatments to cases are called experiments." The chapter's other kind of study, where "no treatment has been explicitly applied," is observational. This section looks at one of each, starting with the stent study from Hello Data.
 
 ### Exercise 1
 
-Start a new chunk that prints `malaria`. Render.
+Start a new chunk that counts the patients in each `group` of `stent30`. Render.
 
 ```{r}
 #| label: experiments-and-observational-studies-1
@@ -541,50 +545,46 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: experiments-and-observational-studies-1-test
 #| echo: true
-malaria
+stent30 |>
+  count(group)
 ```
 
 ###
 
-Each of the 20 rows is a volunteer who received either an experimental vaccine or a placebo, and was then deliberately exposed to malaria. "When this assignment includes randomization, e.g., using a coin flip to decide which treatment a patient receives, it is called a randomized experiment."
+A coin flip, not a doctor, put 224 patients in the treatment group and 227 in the control group. "Researchers randomize patients into treatment groups to account for variables that cannot be controlled," and "randomizing patients into the treatment or control group helps even out such differences."
 
 ### Exercise 2
 
 ```{r}
 #| label: experiments-and-observational-studies-2
 #| echo: false
-learnr2::question("In the R Terminal, run ?malaria. Copy and paste the Description and the Details sections.", type = "reflection")
+learnr2::question("In the R Terminal, run ?stent30. Copy and paste the Description and the Source.", type = "reflection")
 ```
 
 ###
 
-```
+```{.output}
 Description:
 
-     Volunteer patients were randomized into one of two experiment
-     groups where they would receive an experimental vaccine or a
-     placebo.  They were subsequently exposed to a drug-sensitive
-     strain of malaria and observed to see whether they came down with
-     an infection.
+     An experiment that studies effectiveness of stents in treating
+     patients at risk of stroke with some unexpected results. 'stent30'
+     represents the results 30 days after stroke and 'stent365'
+     represents the results 365 days after stroke.
 
-Details:
+Source:
 
-     In this study, volunteer patients were randomized into one of two
-     experiment groups: 14 patients received an experimental vaccine or
-     6 patients received a placebo vaccine.  Nineteen weeks later, all
-     20 patients were exposed to a drug-sensitive malaria virus strain;
-     the motivation of using a drug-sensitive strain of virus here is
-     for ethical considerations, allowing any infections to be treated
-     effectively.
+     Chimowitz MI, Lynn MJ, Derdeyn CP, et al. 2011. Stenting versus
+     Aggressive Medical Therapy for Intracranial Arterial Stenosis.
+     New England Journal of Medicine 365:993-1003.
 ```
 
 ###
 
-The placebo is "a fake treatment," and "an effective placebo is the key to making a study truly blind." The Details also show the ethics behind the design: a drug-sensitive strain, so every infection could be cured.
+"The researchers assigned the patients into their treatment groups, so this study was an experiment." The Source's title shows what the control group received, aggressive medical therapy rather than nothing, because "in medical experiments, typically the control group must get the current standard of care."
 
 ### Exercise 3
 
-Replace the code in that chunk so that it counts volunteers by both `treatment` and `outcome`. Render.
+Replace the code in that chunk so that it calculates, for each `group`, the proportion of patients who had a stroke. Render.
 
 ```{r}
 #| label: experiments-and-observational-studies-3
@@ -597,17 +597,18 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: experiments-and-observational-studies-3-test
 #| echo: true
-malaria |>
-  count(treatment, outcome)
+stent30 |>
+  summarize(prop_stroke = mean(outcome == "stroke"),
+            .by = group)
 ```
 
 ###
 
-All 6 placebo volunteers were infected, against 5 of the 14 who got the vaccine. There is no row for placebo and no infection, because no such volunteer exists.
+Within 30 days, 14.7% of the treatment group had a stroke, against 5.7% of the control group, and every patient knew which group they were in. The chapter warns of "an emotional effect of (not) taking the drug, which is difficult to quantify," which is why "researchers do not want patients to know which group they are in."
 
 ### Exercise 4
 
-Replace the code in that chunk so that it calculates, for each `treatment`, the proportion of volunteers who were infected. Render.
+The study also recorded outcomes a year after enrollment, in `stent365`. Replace the code in that chunk so that it stacks `stent30` and `stent365` into one tibble named `stent`, with a `time` column recording `"30 days"` or `"365 days"`, and then calculates the proportion who had a stroke for each combination of `time` and `group`, as you did in Hello Data. Render.
 
 ```{r}
 #| label: experiments-and-observational-studies-4
@@ -620,18 +621,20 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: experiments-and-observational-studies-4-test
 #| echo: true
-malaria |>
-  summarize(prop_infected = mean(outcome == "infection"),
-            .by = treatment)
+stent <- bind_rows(`30 days` = stent30, `365 days` = stent365, .id = "time")
+
+stent |>
+  summarize(prop_stroke = mean(outcome == "stroke"),
+            .by = c(time, group))
 ```
 
 ###
 
-The vaccine group, the **treatment group**, had a 36% infection rate; the placebo group, the **control group**, had 100%. "Randomized experiments are fundamentally important when trying to show a causal connection between two variables."
+The only way to blind this study would have been a sham surgery, where "the patient does undergo surgery, but the patient does not receive the full treatment, though they will still get a placebo effect." The chapter explains why that is a hard call: "a sham surgery tends to create additional risk, while withholding a treatment only maintains a person's risk."
 
 ### Exercise 5
 
-Replace the summary in that chunk with a bar chart of the proportion infected, by `treatment`. Render.
+Replace the summary in that chunk with a bar chart of the proportion of patients who had a stroke at each `time`, with the two groups' bars side by side. Render.
 
 ```{r}
 #| label: experiments-and-observational-studies-5
@@ -644,20 +647,20 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: experiments-and-observational-studies-5-test
 #| echo: true
-malaria |>
-  summarize(prop_infected = mean(outcome == "infection"),
-            .by = treatment) |>
-  ggplot(aes(x = treatment, y = prop_infected)) +
-  geom_col()
+stent |>
+  summarize(prop_stroke = mean(outcome == "stroke"),
+            .by = c(time, group)) |>
+  ggplot(aes(x = time, y = prop_stroke, fill = group)) +
+  geom_col(position = "dodge")
 ```
 
 ###
 
-The gap is large, but the groups are tiny. The book's third principle, **replication**, says that "at a minimum we want to have multiple subjects (experimental units) per treatment group," and 6 is not many.
+The treatment bar is taller at both times, and with more than 200 patients behind each bar the gap is hard to dismiss. "In a single study, we replicate by collecting a sufficiently large sample," and "at a minimum we want to have multiple subjects (experimental units) per treatment group."
 
 ### Exercise 6
 
-Improve the bar chart. Put the placebo group first, label each bar with its percentage, show the y-axis as percentages, and add a title, axis labels, a subtitle that states the main finding, and a caption giving the number of volunteers and the source. Render.
+Improve the bar chart. Label each bar with its percentage, show the y-axis as percentages, and add a title, axis labels, a legend title, a subtitle that states the main finding, and a caption giving the number of patients and the source. Render.
 
 ```{r}
 #| label: experiments-and-observational-studies-6
@@ -670,26 +673,26 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: experiments-and-observational-studies-6-test
 #| echo: true
-malaria |>
-  summarize(prop_infected = mean(outcome == "infection"),
-            .by = treatment) |>
-  mutate(treatment = fct_relevel(treatment, "placebo")) |>
-  ggplot(aes(x = treatment, y = prop_infected)) +
-  geom_col() +
-  geom_text(aes(label = scales::label_percent(accuracy = 1)(prop_infected)),
-            vjust = -0.5) +
+stent |>
+  summarize(prop_stroke = mean(outcome == "stroke"),
+            .by = c(time, group)) |>
+  ggplot(aes(x = time, y = prop_stroke, fill = group)) +
+  geom_col(position = "dodge") +
+  geom_text(aes(label = scales::label_percent(accuracy = 0.1)(prop_stroke)),
+            position = position_dodge(width = 0.9), vjust = -0.5) +
   scale_y_continuous(labels = scales::label_percent(),
-                     limits = c(0, 1.1)) +
-  labs(title = "Malaria Infection in a Vaccine Experiment",
-       subtitle = "Every placebo volunteer was infected; most vaccinated volunteers were not",
-       x = "Group",
-       y = "Volunteers Infected",
-       caption = "20 volunteers; Lyke et al. (2017)")
+                     expand = expansion(mult = c(0, 0.1))) +
+  labs(title = "Stroke Rates in the Stent Experiment",
+       subtitle = "Random assignment made the groups alike, so the extra strokes point to the stent",
+       x = "Time Since Enrollment",
+       y = "Patients Who Had a Stroke",
+       fill = "Group",
+       caption = "451 patients randomly assigned; Chimowitz et al. (2011)")
 ```
 
 ###
 
-Because the volunteers were randomized, the vaccine is the only systematic difference between the groups. Most modern trials also use "a double-blind setup where doctors or researchers who interact with patients are, just like the patients, unaware of who is or is not receiving the treatment."
+"Making causal conclusions based on experiments is often reasonable, since we can randomly assign the explanatory variable(s), i.e., the treatments." Even so, "randomized experiments have long been considered to be the gold standard for data collection, but they do not ensure an unbiased perspective into the cause-and-effect relationship in all cases," and an unblinded surgery is one such case.
 
 ### Exercise 7
 
@@ -832,7 +835,7 @@ learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type
 
 ###
 
-```
+```{.output}
 c7d10e4 (HEAD -> main, origin/main) Compare an experiment with an observational study
 5b2e9c1 Sample baseball salaries
 9be04d2 Initial commit
@@ -846,7 +849,11 @@ Observational studies come in two forms. "A prospective study identifies individ
 
 This tutorial covered [Chapter 2: Study design](https://openintrostat.github.io/ims/data-design.html) from [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) by Mine Çetinkaya-Rundel and Johanna Hardin. You have learned the difference between a population and a sample, how simple random, stratified, and convenience samples behave, and what separates a randomized experiment from an observational study.
 
-For the malaria experiment itself, read the original [article](https://doi.org/10.1073/pnas.1615324114) by Lyke and colleagues in *PNAS*. For how sampling and random assignment together decide what a study can conclude, revisit the chapter's [closing figure](https://openintrostat.github.io/ims/data-design.html#fig-randsampValloc).
+The chapter's own summary, in the authors' words:
+
+> A proficient analyst will have a good sense of the types of data they are working with and how to visualize the data in order to gain a complete understanding of the variables. Equally important, however, is the data source. In this chapter, we have discussed randomized experiments and taking good, random, representative samples from a population. When we discuss inferential methods (starting in [Chapter 11]), the conclusions that can be drawn will be dependent on how the data were collected. [The chapter's closing figure] summarizes how sampling and assignment methods relate to the scope of inference. Regularly revisiting [that figure] will be important when making conclusions from a given data analysis.
+
+For the stent study itself, read the original [article](https://doi.org/10.1056/NEJMoa1105335) by Chimowitz and colleagues in the *New England Journal of Medicine*. For how sampling and random assignment together decide what a study can conclude, revisit the chapter's [closing figure](https://openintrostat.github.io/ims/data-design.html#fig-randsampValloc).
 
 ### Exercise 1
 
@@ -860,7 +867,8 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). 
 
 ###
 
-<pre><code>---
+````{verbatim}
+---
 title: "Study Design"
 author: "Your Name"
 format: html
@@ -868,21 +876,21 @@ execute:
   echo: false
 ---
 
-&#96;&#96;&#96;{r}
+```{r}
 #| message: false
 library(tidyverse)
 library(openintro)
 library(usdata)
-&#96;&#96;&#96;
+```
 
-&#96;&#96;&#96;{r}
+```{r}
 #| cache: true
 set.seed(42)
 mlb_srs <- mlb |>
   slice_sample(n = 120)
-&#96;&#96;&#96;
+```
 
-&#96;&#96;&#96;{r}
+```{r}
 mlb |>
   summarize(mean_salary = mean(salary), .by = team) |>
   ggplot(aes(x = mean_salary, y = fct_reorder(team, mean_salary))) +
@@ -894,27 +902,29 @@ mlb |>
        x = "Mean Salary",
        y = NULL,
        caption = "828 players; USA Today salary database")
-&#96;&#96;&#96;
+```
 
-&#96;&#96;&#96;{r}
-malaria |>
-  summarize(prop_infected = mean(outcome == "infection"),
-            .by = treatment) |>
-  mutate(treatment = fct_relevel(treatment, "placebo")) |>
-  ggplot(aes(x = treatment, y = prop_infected)) +
-  geom_col() +
-  geom_text(aes(label = scales::label_percent(accuracy = 1)(prop_infected)),
-            vjust = -0.5) +
+```{r}
+stent <- bind_rows(`30 days` = stent30, `365 days` = stent365, .id = "time")
+
+stent |>
+  summarize(prop_stroke = mean(outcome == "stroke"),
+            .by = c(time, group)) |>
+  ggplot(aes(x = time, y = prop_stroke, fill = group)) +
+  geom_col(position = "dodge") +
+  geom_text(aes(label = scales::label_percent(accuracy = 0.1)(prop_stroke)),
+            position = position_dodge(width = 0.9), vjust = -0.5) +
   scale_y_continuous(labels = scales::label_percent(),
-                     limits = c(0, 1.1)) +
-  labs(title = "Malaria Infection in a Vaccine Experiment",
-       subtitle = "Every placebo volunteer was infected; most vaccinated volunteers were not",
-       x = "Group",
-       y = "Volunteers Infected",
-       caption = "20 volunteers; Lyke et al. (2017)")
-&#96;&#96;&#96;
+                     expand = expansion(mult = c(0, 0.1))) +
+  labs(title = "Stroke Rates in the Stent Experiment",
+       subtitle = "Random assignment made the groups alike, so the extra strokes point to the stent",
+       x = "Time Since Enrollment",
+       y = "Patients Who Had a Stroke",
+       fill = "Group",
+       caption = "451 patients randomly assigned; Chimowitz et al. (2011)")
+```
 
-&#96;&#96;&#96;{r}
+```{r}
 county |>
   drop_na(metro) |>
   ggplot(aes(x = multi_unit, y = homeownership, color = metro)) +
@@ -925,8 +935,8 @@ county |>
        y = "Homeownership Rate (%)",
        color = "Metro Area",
        caption = "3,139 US counties with known metro status")
-&#96;&#96;&#96;
-</code></pre>
+```
+````
 
 ###
 
@@ -936,7 +946,7 @@ The page holds the chapter's two halves: how a sample relates to its population,
 
 Publish your analysis to GitHub Pages. In a bash Terminal, run:
 
-```
+```bash
 quarto publish gh-pages analysis.qmd
 ```
 
@@ -952,7 +962,7 @@ Your answer should look like `https://your-github-username.github.io/study-desig
 
 ###
 
-The stent study from the last tutorial was an experiment but not a blind one: "a stent is a surgical procedure. There is no equivalent surgical placebo, so this study was not blind."
+The stent study was an experiment but not a blind one: "a stent is a surgical procedure. There is no equivalent surgical placebo, so this study was not blind."
 
 ### Exercise 3
 

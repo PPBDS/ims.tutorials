@@ -38,7 +38,7 @@ You should be doing this tutorial in a repo named `hello-data`. If you are not, 
 
 Create a new file, `analysis.qmd`, with the title `"Hello Data"` and your name as the author. In a bash Terminal, render it:
 
-```
+```bash
 quarto render analysis.qmd
 ```
 
@@ -56,7 +56,7 @@ learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type
 
 ###
 
-```
+```{.output}
 analysis_files
 ```
 
@@ -76,9 +76,10 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-<pre><code>#| message: false
+````{verbatim}
+#| message: false
 library(tidyverse)
-</code></pre>
+````
 
 ###
 
@@ -96,10 +97,11 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-<pre><code>#| message: false
+````{verbatim}
+#| message: false
 library(tidyverse)
 library(openintro)
-</code></pre>
+````
 
 ###
 
@@ -117,11 +119,12 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-<pre><code>#| message: false
+````{verbatim}
+#| message: false
 library(tidyverse)
 library(openintro)
 library(usdata)
-</code></pre>
+````
 
 ###
 
@@ -163,7 +166,7 @@ learnr2::question("In the R Terminal, run ?stent365. Copy and paste the Descript
 
 ###
 
-```
+```{.output}
 Description:
 
      An experiment that studies effectiveness of stents in treating
@@ -353,7 +356,7 @@ learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type
 
 ###
 
-```
+```{.output}
 3f2c1a7 (HEAD -> main, origin/main) Analyze the stent experiment
 9be04d2 Initial commit
 ```
@@ -398,7 +401,7 @@ learnr2::question("In the R Terminal, run ?loan50. Copy and paste the Descriptio
 
 ###
 
-```
+```{.output}
 Description:
 
      This dataset represents thousands of loans made through the
@@ -611,7 +614,7 @@ learnr2::question("In the R Terminal, run ?county. Copy and paste the first line
 
 ###
 
-```
+```{.output}
 Format:
 
      A data frame with 3142 observations on the following 14 variables.
@@ -739,10 +742,11 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-<pre><code>county_clean <- county |>
+````{verbatim}
+county_clean <- county |>
   select(name, state, homeownership, multi_unit, pop_change, median_hh_income) |>
   drop_na()
-</code></pre>
+````
 
 ###
 
@@ -760,7 +764,7 @@ learnr2::question("In the bash Terminal, run ls. CP/CR.", type = "reflection")
 
 ###
 
-```
+```{.output}
 analysis.html  analysis.qmd  analysis_cache  analysis_files
 ```
 
@@ -780,7 +784,7 @@ learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type
 
 ###
 
-```
+```{.output}
 analysis_files
 analysis_cache
 ```
@@ -909,7 +913,7 @@ learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type
 
 ###
 
-```
+```{.output}
 8d41e0b (HEAD -> main, origin/main) Explore loans and counties
 3f2c1a7 Analyze the stent experiment
 9be04d2 Initial commit
@@ -922,6 +926,10 @@ The county data is an *observational study*: researchers "merely observe the dat
 ## Summary
 
 This tutorial covered [Chapter 1: Hello data](https://openintrostat.github.io/ims/data-hello.html) from [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) by Mine Çetinkaya-Rundel and Johanna Hardin. You have learned the vocabulary of data (cases, variables, and their types), how to spot an association between two variables, and why a randomized experiment can show cause and effect when an observational study cannot.
+
+The chapter's own summary, in the authors' words:
+
+> This chapter introduced you to the world of data. Data can be organized in many ways but tidy data, where each row represents an observation and each column represents a variable, lends itself most easily to statistical analysis. Many of the ideas from this chapter will be revisited as we move on to doing end-to-end data analyses. In the next chapter you're going to learn about how we can design studies to collect the data we need to make conclusions with the desired scope of inference.
 
 For more on organizing data, read Hadley Wickham's "[Tidy Data](https://doi.org/10.18637/jss.v059.i10)." For the stent study itself, read the original [article](https://doi.org/10.1056/NEJMoa1105335) in the *New England Journal of Medicine*.
 
@@ -937,7 +945,8 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). 
 
 ###
 
-<pre><code>---
+````{verbatim}
+---
 title: "Hello Data"
 author: "Your Name"
 format: html
@@ -945,20 +954,20 @@ execute:
   echo: false
 ---
 
-&#96;&#96;&#96;{r}
+```{r}
 #| message: false
 library(tidyverse)
 library(openintro)
 library(usdata)
-&#96;&#96;&#96;
+```
 
-&#96;&#96;&#96;{r}
+```{r}
 stent365 |>
   summarize(prop_stroke = mean(outcome == "stroke"),
             .by = group)
-&#96;&#96;&#96;
+```
 
-&#96;&#96;&#96;{r}
+```{r}
 stent <- bind_rows(`30 days` = stent30, `365 days` = stent365, .id = "time")
 
 stent |>
@@ -976,26 +985,26 @@ stent |>
        x = "Group",
        y = "Patients Who Had a Stroke",
        caption = "451 patients; Chimowitz et al. (2011)")
-&#96;&#96;&#96;
+```
 
-&#96;&#96;&#96;{r}
+```{r}
 loan50 |>
   count(term)
-&#96;&#96;&#96;
+```
 
-&#96;&#96;&#96;{r}
+```{r}
 county |>
   count(median_edu)
-&#96;&#96;&#96;
+```
 
-&#96;&#96;&#96;{r}
+```{r}
 #| cache: true
 county_clean <- county |>
   select(name, state, homeownership, multi_unit, pop_change, median_hh_income) |>
   drop_na()
-&#96;&#96;&#96;
+```
 
-&#96;&#96;&#96;{r}
+```{r}
 county_clean |>
   ggplot(aes(x = multi_unit, y = homeownership)) +
   geom_point(alpha = 0.3) +
@@ -1004,9 +1013,9 @@ county_clean |>
        x = "Housing Units in Multi-Unit Structures (%)",
        y = "Homeownership Rate (%)",
        caption = "3,137 US counties")
-&#96;&#96;&#96;
+```
 
-&#96;&#96;&#96;{r}
+```{r}
 county_clean |>
   ggplot(aes(x = median_hh_income, y = pop_change)) +
   geom_point(alpha = 0.3) +
@@ -1017,8 +1026,8 @@ county_clean |>
        x = "Median Household Income",
        y = "Population Change (%)",
        caption = "3,137 US counties")
-&#96;&#96;&#96;
-</code></pre>
+```
+````
 
 ###
 
@@ -1028,7 +1037,7 @@ The page holds the chapter in miniature: an experiment that supports a causal cl
 
 Publish your analysis to GitHub Pages. In a bash Terminal, run:
 
-```
+```bash
 quarto publish gh-pages analysis.qmd
 ```
 

@@ -1,0 +1,1177 @@
+---
+title: "Inference for Comparing Paired Means"
+subtitle: "Paired data, randomization within pairs, bootstrap intervals, and the t-model for the mean paired difference."
+format: live-html
+engine: knitr
+toc: true
+toc-depth: 2
+learnr2:
+  ordering: 21
+---
+
+{{< include _extensions/r-wasm/live/_knitr.qmd >}}
+
+```{r}
+#| label: setup
+#| include: false
+library(tidyverse)
+library(openintro)
+library(infer)
+knitr::opts_chunk$set(out.width = "90%")
+```
+
+## Student Information
+
+```{r}
+#| label: student-information-1
+#| echo: false
+learnr2::student_info()
+```
+
+## Introduction
+
+This tutorial covers [Chapter 21: Inference for comparing paired means](https://openintrostat.github.io/ims/inference-paired-means.html) from [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) by Mine Çetinkaya-Rundel and Johanna Hardin. You will learn why paired observations are analyzed through their differences, how to test and estimate the mean paired difference by simulation, with a randomization test that shuffles within each pair and a bootstrap interval, and how to check both against the t-distribution, using new-textbook prices at the UCLA Bookstore and on Amazon.
+
+### Exercise 1
+
+You should be doing this tutorial in a repo named `inference-for-comparing-paired-means`. If you are not, create one and then connect to it. You may need to restart this tutorial after you do so.
+
+Create a new file, `analysis.qmd`, with the title `"Inference for Comparing Paired Means"` and your name as the author. In a bash Terminal, render it:
+
+```bash
+quarto render analysis.qmd
+```
+
+Open `analysis.html` with Live Server (right-click it in the Explorer → **Open with Live Server**) and keep the tab open. It refreshes on every render. Going forward, we will just tell you to "Render" when we want you to take these steps.
+
+Create a `.gitignore` with `analysis_files` followed by a blank line. Commit and push. Use AI however you like.
+
+If `show_file()` fails, it is probably because you have not yet loaded `library(learnr2)` in the R Terminal.
+
+```{r}
+#| label: introduction-1
+#| echo: false
+learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{.output}
+analysis_files
+```
+
+###
+
+"Recall that one of the important conditions in doing a two-sample analysis is that the two groups are independent." This chapter is about the groups that are not: "However, a particular dependency, **pairing**, can be modeled quite effectively using many of the same tools we have already covered in this text."
+
+### Exercise 2
+
+Add a chunk to `analysis.qmd` that loads the **[tidyverse](https://www.tidyverse.org/)**, with `#| message: false` so the startup messages stay out of the rendered page. Add `execute: echo: false` to the YAML header. Render.
+
+```{r}
+#| label: introduction-2
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+````{verbatim}
+#| message: false
+library(tidyverse)
+````
+
+###
+
+"To analyze paired data, it is often useful to look at the difference in outcomes of each pair of observations." The **tidyverse** turns two columns of prices into one column of differences, and then draws every plot in this tutorial with **ggplot2**.
+
+### Exercise 3
+
+Add **[openintro](https://openintrostat.github.io/openintro/)** to that chunk. Render.
+
+```{r}
+#| label: introduction-3
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+````{verbatim}
+#| message: false
+library(tidyverse)
+library(openintro)
+````
+
+###
+
+**openintro** holds the chapter's dataset, `ucla_textbooks_f18`, and also `textbooks`, the older UCLA data behind this sentence: "In an earlier edition of this textbook, we found that Amazon prices were, on average, lower than those of the UCLA Bookstore for UCLA courses in 2010." The chapter asks whether that is still true.
+
+### Exercise 4
+
+Add **[infer](https://infer.tidymodels.org/)** to that chunk. Render.
+
+```{r}
+#| label: introduction-4
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+````{verbatim}
+#| message: false
+library(tidyverse)
+library(openintro)
+library(infer)
+````
+
+###
+
+**infer** runs this tutorial's simulations, and it has a null hypothesis written for paired data, which shuffles within each pair instead of across the whole dataset. "With paired data, the randomization test fits nicely with the structure of the experiment and is presented here."
+
+## Randomization and bootstrap for paired differences
+
+"Two sets of observations are *paired* if each observation in one set has a special correspondence or connection with exactly one observation in the other dataset." This section finds the textbooks that have both a UCLA Bookstore price and an Amazon price, tests whether the mean difference could be chance by shuffling within each book, and estimates that difference with the bootstrap.
+
+### Exercise 1
+
+Add a chunk that prints `ucla_textbooks_f18`. Render.
+
+```{r}
+#| label: randomization-and-bootstrap-for-paired-differences-1
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: randomization-and-bootstrap-for-paired-differences-1-test
+#| echo: true
+ucla_textbooks_f18
+```
+
+###
+
+Each of the 201 rows is one UCLA course from Fall 2018, with 20 columns describing the course, its textbook, and four prices. "We sampled 201 UCLA courses."
+
+### Exercise 2
+
+```{r}
+#| label: randomization-and-bootstrap-for-paired-differences-2
+#| echo: false
+learnr2::question("In the R Terminal, run ?ucla_textbooks_f18. Copy and paste the Description and the first paragraph of the Details.", type = "reflection")
+```
+
+###
+
+```{.output}
+Description:
+
+     A sample of courses were collected from UCLA from Fall 2018, and
+     the corresponding textbook prices were collected from the UCLA
+     bookstore and also from Amazon.
+
+Details:
+
+     A past dataset was collected from UCLA courses in Spring 2010, and
+     Amazon at that time was found to be almost uniformly lower than
+     those of the UCLA bookstore's.  Now in 2018, the UCLA bookstore is
+     about even with Amazon on the vast majority of titles, and there
+     is no statistical difference in the sample data.
+```
+
+###
+
+The help page claims "there is no statistical difference in the sample data." The chapter's own test of these same prices concludes the opposite.
+
+### Exercise 3
+
+Replace the code in that chunk so that it shows only five columns: `subject`, `course_num`, `textbook_isbn`, `bookstore_new`, and `amazon_new`. Render.
+
+```{r}
+#| label: randomization-and-bootstrap-for-paired-differences-3
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: randomization-and-bootstrap-for-paired-differences-3-test
+#| echo: true
+ucla_textbooks_f18 |>
+  select(subject, course_num, textbook_isbn, bookstore_new, amazon_new)
+```
+
+###
+
+`bookstore_new` and `amazon_new` are the prices of a new copy of the course's textbook, in US dollars. Even in the first ten rows, several courses have `NA` for the ISBN and both prices, and two Chemistry courses have a bookstore price but no Amazon price.
+
+### Exercise 4
+
+Replace the code in that chunk so that it counts the missing values in `textbook_isbn`, `bookstore_new`, and `amazon_new`. Render.
+
+```{r}
+#| label: randomization-and-bootstrap-for-paired-differences-4
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: randomization-and-bootstrap-for-paired-differences-4-test
+#| echo: true
+ucla_textbooks_f18 |>
+  summarize(across(c(textbook_isbn, bookstore_new, amazon_new),
+                   \(x) sum(is.na(x))))
+```
+
+###
+
+112 courses have no ISBN and no bookstore price, and 133 have no Amazon price. Since 133 is more than 112, some courses must have a bookstore price without an Amazon price.
+
+### Exercise 5
+
+Replace the code in that chunk so that it counts the courses by whether `bookstore_new` is missing and whether `amazon_new` is missing. Render.
+
+```{r}
+#| label: randomization-and-bootstrap-for-paired-differences-5
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: randomization-and-bootstrap-for-paired-differences-5-test
+#| echo: true
+ucla_textbooks_f18 |>
+  count(bookstore_missing = is.na(bookstore_new),
+        amazon_missing = is.na(amazon_new))
+```
+
+###
+
+68 courses have both prices, 21 have only a bookstore price, and 112 have neither. "Of those, 68 required books could be found on Amazon."
+
+### Exercise 6
+
+Replace the code in that chunk so that it shows the `notes` for the 21 courses that have a bookstore price but no Amazon price. Render.
+
+```{r}
+#| label: randomization-and-bootstrap-for-paired-differences-6
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: randomization-and-bootstrap-for-paired-differences-6-test
+#| echo: true
+ucla_textbooks_f18 |>
+  filter(!is.na(bookstore_new), is.na(amazon_new)) |>
+  select(subject, course_num, notes)
+```
+
+###
+
+Most of the notes say that Amazon did not sell a new copy, often because the course used a "Custom version" of the book. Those books are missing for a reason, so the 68 pairs describe books that both stores sell, not every required book at UCLA.
+
+### Exercise 7
+
+Replace the code in that chunk so that it creates `textbooks`: the five columns from before, only the courses with both a bookstore price and an Amazon price, and a new column, `price_diff`, equal to the bookstore price minus the Amazon price. Print `textbooks`. Render.
+
+```{r}
+#| label: randomization-and-bootstrap-for-paired-differences-7
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: randomization-and-bootstrap-for-paired-differences-7-test
+#| echo: true
+textbooks <- ucla_textbooks_f18 |>
+  select(subject, course_num, textbook_isbn, bookstore_new, amazon_new) |>
+  filter(!is.na(bookstore_new), !is.na(amazon_new)) |>
+  mutate(price_diff = bookstore_new - amazon_new)
+
+textbooks
+```
+
+###
+
+"It is important that we always subtract using a consistent order; here Amazon prices are always subtracted from UCLA prices." So a positive `price_diff`, like the first book's \$0.52, means the UCLA Bookstore charged more.
+
+### Exercise 8
+
+Delete the line that prints `textbooks`. Start a new chunk that calculates the mean and the standard deviation of `bookstore_new`, of `amazon_new`, and of `price_diff`. Render.
+
+```{r}
+#| label: randomization-and-bootstrap-for-paired-differences-8
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: randomization-and-bootstrap-for-paired-differences-8-test
+#| echo: true
+textbooks |>
+  pivot_longer(c(bookstore_new, amazon_new, price_diff)) |>
+  summarize(mean = mean(value), sd = sd(value), .by = name)
+```
+
+###
+
+Prices vary from book to book with a standard deviation of about \$55, but the differences within a book vary by only \$13.4. "However, because the observational unit is **paired** across the two groups, the two measurements are subtracted such that only the difference is retained."
+
+### Exercise 9
+
+Replace the code in that chunk with a scatterplot of the Amazon price against the bookstore price, one point per book, with a line where the two prices are equal. Render.
+
+```{r}
+#| label: randomization-and-bootstrap-for-paired-differences-9
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: randomization-and-bootstrap-for-paired-differences-9-test
+#| echo: true
+textbooks |>
+  ggplot(aes(x = bookstore_new, y = amazon_new)) +
+  geom_point() +
+  geom_abline(slope = 1, intercept = 0)
+```
+
+###
+
+The books run from about \$7 to \$229, yet nearly every point sits close to the line, because both prices belong to the same book. "Each textbook has two corresponding prices in the dataset: one for the UCLA Bookstore and one for Amazon."
+
+### Exercise 10
+
+Replace the code in that chunk so that it calculates the observed statistic, the mean of `price_diff`. Render.
+
+```{r}
+#| label: randomization-and-bootstrap-for-paired-differences-10
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: randomization-and-bootstrap-for-paired-differences-10-test
+#| echo: true
+textbooks |>
+  specify(response = price_diff) |>
+  calculate(stat = "mean")
+```
+
+###
+
+On average, the UCLA Bookstore charged \$3.58 more than Amazon for the same new book, the chapter's $\bar{x}_{diff}$. The null hypothesis is "$H_0:$ $\mu_{diff} = 0.$ There is no difference in the average textbook prices."
+
+### Exercise 11
+
+Under the null hypothesis, it does not matter which store a price came from. Replace the code in that chunk so that it sets a random seed and then makes one shuffle of the data under that null hypothesis, randomly swapping, or not, the two prices within each book. Print the shuffled differences. Render.
+
+```{r}
+#| label: randomization-and-bootstrap-for-paired-differences-11
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: randomization-and-bootstrap-for-paired-differences-11-test
+#| echo: true
+set.seed(21)
+textbooks |>
+  specify(response = price_diff) |>
+  hypothesize(null = "paired independence") |>
+  generate(reps = 1, type = "permute")
+```
+
+###
+
+Swapping a book's two prices flips the sign of its difference, so the first book's \$0.52 became -\$0.52 while the second book's \$0.71 stayed put. "The change in the paired setting, however, is that the assignment happens *within* an observational unit (here, a car)."
+
+### Exercise 12
+
+Replace the code in that chunk so that it sets a random seed, then creates `null_dist`: the means of 10,000 such shuffles, each swapping the two prices within each book at random. Print `null_dist`. Render.
+
+```{r}
+#| label: randomization-and-bootstrap-for-paired-differences-12
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: randomization-and-bootstrap-for-paired-differences-12-test
+#| echo: true
+set.seed(21)
+null_dist <- textbooks |>
+  specify(response = price_diff) |>
+  hypothesize(null = "paired independence") |>
+  generate(reps = 10000, type = "permute") |>
+  calculate(stat = "mean")
+
+null_dist
+```
+
+###
+
+Every shuffle keeps each book's two prices together and only decides which store gets which. "Remember, if the null hypothesis is true, it will not matter which brand is put on which tire because the overall tread wear will be the same across pairs."
+
+### Exercise 13
+
+Replace the line that prints `null_dist` with code that calculates the p-value: the proportion of the shuffled means at least as far from zero, in either direction, as the observed mean difference. Render.
+
+```{r}
+#| label: randomization-and-bootstrap-for-paired-differences-13
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: randomization-and-bootstrap-for-paired-differences-13-test
+#| echo: true
+set.seed(21)
+null_dist <- textbooks |>
+  specify(response = price_diff) |>
+  hypothesize(null = "paired independence") |>
+  generate(reps = 10000, type = "permute") |>
+  calculate(stat = "mean")
+
+null_dist |>
+  get_p_value(obs_stat = mean(textbooks$price_diff), direction = "two-sided")
+```
+
+###
+
+Our p-value is 0.021; yours will differ slightly with a different seed. The alternative is two-sided, "$H_A:$ $\mu_{diff} \neq 0.$ There is a difference in average prices," so shuffled means below -\$3.58 count as evidence too.
+
+### Exercise 14
+
+Replace the p-value code with code that creates `boot_dist`: the means of 10,000 bootstrap resamples of the 68 price differences. Then calculate a 99% bootstrap percentile confidence interval from `boot_dist`. Keep the seed and `null_dist` above it. Render.
+
+```{r}
+#| label: randomization-and-bootstrap-for-paired-differences-14
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: randomization-and-bootstrap-for-paired-differences-14-test
+#| echo: true
+set.seed(21)
+null_dist <- textbooks |>
+  specify(response = price_diff) |>
+  hypothesize(null = "paired independence") |>
+  generate(reps = 10000, type = "permute") |>
+  calculate(stat = "mean")
+
+boot_dist <- textbooks |>
+  specify(response = price_diff) |>
+  generate(reps = 10000, type = "bootstrap") |>
+  calculate(stat = "mean")
+
+boot_dist |>
+  get_confidence_interval(level = 0.99, type = "percentile")
+```
+
+###
+
+Our interval runs from \$0.05 to \$8.28; the chapter's, from 1,000 resamples, runs from \$0.25 to \$7.87. "That is, the original dataset would include the list of 68 price differences, and each resample will also include 68 price differences (some repeated through the bootstrap resampling process)."
+
+### Exercise 15
+
+Replace the percentile interval with a 99% bootstrap SE interval: the observed mean difference plus and minus 2.58 standard errors, where the standard error is the standard deviation of `boot_dist`. Render.
+
+```{r}
+#| label: randomization-and-bootstrap-for-paired-differences-15
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: randomization-and-bootstrap-for-paired-differences-15-test
+#| echo: true
+set.seed(21)
+null_dist <- textbooks |>
+  specify(response = price_diff) |>
+  hypothesize(null = "paired independence") |>
+  generate(reps = 10000, type = "permute") |>
+  calculate(stat = "mean")
+
+boot_dist <- textbooks |>
+  specify(response = price_diff) |>
+  generate(reps = 10000, type = "bootstrap") |>
+  calculate(stat = "mean")
+
+boot_dist |>
+  get_confidence_interval(level = 0.99, type = "se",
+                          point_estimate = mean(textbooks$price_diff))
+```
+
+###
+
+Our SE interval runs from -\$0.62 to \$7.78, close to the chapter's (-\$0.65, \$7.81), and unlike the percentile interval it includes zero. "That is, the 99% bootstrap SE interval gives potential for UCLA bookstore to be lower, on average, than Amazon (because of the possible negative values for the true mean difference in price)."
+
+### Exercise 16
+
+Delete the interval code, so that the chunk only sets the seed and creates `null_dist` and `boot_dist`. Render.
+
+```{r}
+#| label: randomization-and-bootstrap-for-paired-differences-16
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+````{verbatim}
+set.seed(21)
+null_dist <- textbooks |>
+  specify(response = price_diff) |>
+  hypothesize(null = "paired independence") |>
+  generate(reps = 10000, type = "permute") |>
+  calculate(stat = "mean")
+
+boot_dist <- textbooks |>
+  specify(response = price_diff) |>
+  generate(reps = 10000, type = "bootstrap") |>
+  calculate(stat = "mean")
+````
+
+###
+
+"Remember, the differences act as a single value to bootstrap." Both simulations work on the 68 differences alone, which is why the chapter calls the paired analysis "somewhat akin to a one-sample analysis."
+
+### Exercise 17
+
+Add `#| cache: true` to that chunk. Render.
+
+```{r}
+#| label: randomization-and-bootstrap-for-paired-differences-17
+#| echo: false
+learnr2::question("In the bash Terminal, run ls. CP/CR.", type = "reflection")
+```
+
+###
+
+```{.output}
+analysis.html  analysis.qmd  analysis_cache  analysis_files
+```
+
+###
+
+`analysis_cache` now holds the 20,000 simulated means in `null_dist` and `boot_dist`, so later renders reuse them instead of simulating again. Because the seed is set inside the chunk, the cached values are the same ones a fresh render would produce.
+
+### Exercise 18
+
+Your Source Control count just jumped, because Git sees every file in the new cache directory. Add `analysis_cache` to `.gitignore`, and the count drops back.
+
+```{r}
+#| label: randomization-and-bootstrap-for-paired-differences-18
+#| echo: false
+learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{.output}
+analysis_files
+analysis_cache
+```
+
+###
+
+"The key to working with paired data (for bootstrapping and mathematical approaches) is to consider the measurement of interest to be the difference in measured values across the pair of observations." The randomization test is the one place where the pairs themselves, not just the differences, shape the simulation.
+
+### Exercise 19
+
+Start a new chunk with a histogram of the 10,000 shuffled means in `null_dist`, with bars 0.25 wide. Add vertical lines at the observed mean difference and at its negative. Render.
+
+```{r}
+#| label: randomization-and-bootstrap-for-paired-differences-19
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: randomization-and-bootstrap-for-paired-differences-19-test
+#| echo: true
+null_dist |>
+  ggplot(aes(x = stat)) +
+  geom_histogram(binwidth = 0.25) +
+  geom_vline(xintercept = c(-1, 1) * mean(textbooks$price_diff))
+```
+
+###
+
+"As expected (because the differences were generated under the null hypothesis), the center of the histogram is zero." Only thin tails of the histogram reach past the two lines.
+
+### Exercise 20
+
+Improve the plot. Give the bars a light fill with white outlines, make the two lines red, show the x-axis in dollars, and add a title, axis labels, a subtitle that states the main finding, and a caption giving the number of shuffles and books and the source. Render.
+
+```{r}
+#| label: randomization-and-bootstrap-for-paired-differences-20
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: randomization-and-bootstrap-for-paired-differences-20-test
+#| echo: true
+null_dist |>
+  ggplot(aes(x = stat)) +
+  geom_histogram(binwidth = 0.25, fill = "gray75", color = "white") +
+  geom_vline(xintercept = c(-1, 1) * mean(textbooks$price_diff),
+             color = "firebrick", linewidth = 1) +
+  scale_x_continuous(labels = scales::label_dollar()) +
+  labs(title = "Shuffling Prices Within Each Textbook",
+       subtitle = "Only 2% of shuffles give a mean difference as far from $0 as the observed $3.58",
+       x = "Mean Price Difference, UCLA Bookstore - Amazon",
+       y = "Count",
+       caption = "10,000 within-book shuffles of 68 textbooks; UCLA courses, Fall 2018 (openintro)")
+```
+
+###
+
+"Because the observed statistic is so far away from the natural variability of the randomized differences, we are convinced that there is a difference between Smooth Turn and Quick Spin." The textbook prices lead to the same kind of conclusion: a \$3.58 average gap is hard to get by shuffling the prices within each book.
+
+### Exercise 21
+
+Commit `analysis.qmd` and `.gitignore` with the message `"Test the mean paired difference by simulation"` and push.
+
+```{r}
+#| label: randomization-and-bootstrap-for-paired-differences-21
+#| echo: false
+learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type = "reflection")
+```
+
+###
+
+```{.output}
+4b7e1d9 (HEAD -> main, origin/main) Test the mean paired difference by simulation
+3c07b9e Initial commit
+```
+
+###
+
+"When observations are paired, the randomization process randomly assigns the tire brand to each of the observed tread values." Whether the pairs are two tires on one car or two prices for one book, the shuffle respects the pairs, and that is what makes the test fit the design.
+
+## Mathematical model for the mean paired difference
+
+"Thinking about the differences as a single observation on an observational unit changes the paired setting into the one-sample setting." This section checks the simulations against the t-distribution, and then shows what is lost when the pairing is ignored.
+
+### Exercise 1
+
+Start a new chunk that calculates, for `price_diff`, the number of pairs, the mean, the standard deviation, and the standard error: the standard deviation divided by the square root of the number of pairs. Render.
+
+```{r}
+#| label: mathematical-model-for-the-mean-paired-difference-1
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: mathematical-model-for-the-mean-paired-difference-1-test
+#| echo: true
+textbooks |>
+  summarize(n = n(),
+            mean = mean(price_diff),
+            sd = sd(price_diff),
+            se = sd / sqrt(n))
+```
+
+###
+
+The chapter's numbers exactly: 68 pairs, a mean of \$3.58, a standard deviation of \$13.42, and a standard error of \$1.63. "Note that instead of reporting the prices separately for UCLA and Amazon, the summary statistics are given by the mean of the differences, the standard deviation of the differences, and the total number of pairs (i.e., differences)."
+
+### Exercise 2
+
+Add a column with the bootstrap's estimate of the same standard error: the standard deviation of the means in `boot_dist`. Render.
+
+```{r}
+#| label: mathematical-model-for-the-mean-paired-difference-2
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: mathematical-model-for-the-mean-paired-difference-2-test
+#| echo: true
+textbooks |>
+  summarize(n = n(),
+            mean = mean(price_diff),
+            sd = sd(price_diff),
+            se = sd / sqrt(n),
+            boot_se = sd(boot_dist$stat))
+```
+
+###
+
+The formula and our 10,000 bootstrap resamples agree, both at \$1.63; the chapter's 1,000 resamples gave \$1.64. Simulation and formula measure the same thing: how much the mean difference would vary from sample to sample.
+
+### Exercise 3
+
+The t-model's first condition is "Independently sampled pairs." Replace the code in that chunk so that it shows the rows of `textbooks` whose `textbook_isbn` appears more than once. Render.
+
+```{r}
+#| label: mathematical-model-for-the-mean-paired-difference-3
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: mathematical-model-for-the-mean-paired-difference-3-test
+#| echo: true
+textbooks |>
+  filter(n() > 1, .by = textbook_isbn) |>
+  arrange(textbook_isbn)
+```
+
+###
+
+Nine books appear twice, each used by two cross-listed courses or by two courses in a sequence, so 18 of the 68 pairs come from just 9 books. The chapter says "This is a simple random sample, so assuming the textbooks are independent seems reasonable," but the sample was of courses, not books, and one book even has two different Amazon prices.
+
+### Exercise 4
+
+The second condition is "Large samples and no extreme outliers." Replace the code in that chunk with a histogram of `price_diff`, with bars \$10 wide. Render.
+
+```{r}
+#| label: mathematical-model-for-the-mean-paired-difference-4
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: mathematical-model-for-the-mean-paired-difference-4-test
+#| echo: true
+textbooks |>
+  ggplot(aes(x = price_diff)) +
+  geom_histogram(binwidth = 10)
+```
+
+###
+
+Most differences are within \$5 of zero, but a long right tail reaches \$75.20, a Nursing book. "While there are some outliers, $n = 68$ and none of the outliers are particularly extreme, so the normality of $\bar{x}$ is satisfied."
+
+### Exercise 5
+
+Replace the code in that chunk so that it calculates the T score: the mean difference minus the null value of 0, divided by the standard error. Render.
+
+```{r}
+#| label: mathematical-model-for-the-mean-paired-difference-5
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: mathematical-model-for-the-mean-paired-difference-5-test
+#| echo: true
+textbooks |>
+  summarize(mean = mean(price_diff),
+            se = sd(price_diff) / sqrt(n())) |>
+  mutate(t = (mean - 0) / se)
+```
+
+###
+
+The T score is 2.20, the chapter's value. "The T score is a ratio of how the sample mean difference varies from zero as compared to how the observations vary."
+
+### Exercise 6
+
+Add a column with the p-value: twice the area beyond that T score in one tail of a t-distribution with 67 degrees of freedom. Render.
+
+```{r}
+#| label: mathematical-model-for-the-mean-paired-difference-6
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: mathematical-model-for-the-mean-paired-difference-6-test
+#| echo: true
+textbooks |>
+  summarize(mean = mean(price_diff),
+            se = sd(price_diff) / sqrt(n())) |>
+  mutate(t = (mean - 0) / se,
+         p_value = 2 * pt(-abs(t), df = 67))
+```
+
+###
+
+"Doubling this area gives the p-value: 0.0312." The randomization test gave us 0.021; both are below 0.05, and "When the null hypothesis is true and the conditions are met, T has a t-distribution with $df = n_{diff} - 1.$"
+
+### Exercise 7
+
+Replace the code in that chunk with a one-sample t-test of `price_diff` against a null value of 0, done by a single function built for it. Render.
+
+```{r}
+#| label: mathematical-model-for-the-mean-paired-difference-7
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: mathematical-model-for-the-mean-paired-difference-7-test
+#| echo: true
+textbooks |>
+  t_test(response = price_diff, mu = 0)
+```
+
+###
+
+The test gives the same T score, 2.20, the same 67 degrees of freedom, and the same p-value, 0.0312. "It is worth noting that if mathematical modeling is chosen as the analysis tool, paired data inference on the difference in measurements will be identical to the one-sample mathematical techniques," those of Chapter 19 on a single mean.
+
+### Exercise 8
+
+To see what the pairing buys, ignore it. Replace the code in that chunk so that it reshapes `textbooks` so that each price is its own row, labeled by store, and then runs a two-sample t-test comparing the bookstore prices with the Amazon prices as if they came from two independent groups. Render.
+
+```{r}
+#| label: mathematical-model-for-the-mean-paired-difference-8
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: mathematical-model-for-the-mean-paired-difference-8-test
+#| echo: true
+textbooks |>
+  pivot_longer(c(bookstore_new, amazon_new),
+               names_to = "store", values_to = "price") |>
+  t_test(price ~ store, order = c("bookstore_new", "amazon_new"))
+```
+
+###
+
+The estimate is the same \$3.58, but the p-value jumps to 0.707, because the \$55 spread between books now swamps the \$13 spread within them; the help page's claim of "no statistical difference" matches this unpaired test, not the paired one. "That said, depending on how the data are collected, we don't always have mechanism for pairing the data and reducing the inherent variability across observations."
+
+### Exercise 9
+
+Replace the code in that chunk so that it finds $t^\star$ for a 95% and for a 99% confidence interval: the cutoffs on a t-distribution with 67 degrees of freedom that leave 2.5% and 0.5% in each tail. Render.
+
+```{r}
+#| label: mathematical-model-for-the-mean-paired-difference-9
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: mathematical-model-for-the-mean-paired-difference-9-test
+#| echo: true
+tibble(level = c(0.95, 0.99)) |>
+  mutate(t_star = qt(1 - (1 - level) / 2, df = 67))
+```
+
+###
+
+The cutoffs are 2.00 and 2.65, a little wider than the normal model's 1.96 and 2.58. "The margin of error is $t^\star_{df} \times s_{diff}/\sqrt{n_{diff}}$ where $t^\star_{df}$ is calculated from a specified percentile on the t-distribution with *df* degrees of freedom."
+
+### Exercise 10
+
+Add columns for the lower and upper ends of each confidence interval: the chapter's point estimate, 3.58, plus and minus $t^\star$ times the chapter's standard error, 1.63. Render.
+
+```{r}
+#| label: mathematical-model-for-the-mean-paired-difference-10
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: mathematical-model-for-the-mean-paired-difference-10-test
+#| echo: true
+tibble(level = c(0.95, 0.99)) |>
+  mutate(t_star = qt(1 - (1 - level) / 2, df = 67),
+         lower = 3.58 - t_star * 1.63,
+         upper = 3.58 + t_star * 1.63)
+```
+
+###
+
+"We are 95% confident that the UCLA Bookstore is, on average, between \$0.32 and \$6.84 more expensive than Amazon for UCLA course books." The 99% interval, -\$0.74 to \$7.90, includes zero, which agrees with a p-value of 0.031: below 0.05 but above 0.01.
+
+### Exercise 11
+
+Replace the code in that chunk with a histogram of the bootstrapped means in `boot_dist`, with bars 0.25 wide and density on the y-axis. Lay over it the t-model for the mean difference: a t-distribution with 67 degrees of freedom, centered at 3.58 and scaled by the standard error, 1.63. Add dashed vertical lines at the 95% interval, 0.33 and 6.83. Render.
+
+```{r}
+#| label: mathematical-model-for-the-mean-paired-difference-11
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: mathematical-model-for-the-mean-paired-difference-11-test
+#| echo: true
+boot_dist |>
+  ggplot(aes(x = stat)) +
+  geom_histogram(aes(y = after_stat(density)), binwidth = 0.25) +
+  geom_function(fun = \(x) dt((x - 3.58) / 1.63, df = 67) / 1.63) +
+  geom_vline(xintercept = c(0.33, 6.83), linetype = "dashed")
+```
+
+###
+
+The t curve follows the bootstrap histogram closely, though the histogram leans a little to the right, pulled by the few books with very large differences. Zero sits just outside the left dashed line.
+
+### Exercise 12
+
+Improve the plot. Give the bars a light fill with white outlines, make the curve thicker and colored, add a solid vertical line at zero, show the x-axis in dollars, and add a title, axis labels, a subtitle that states the main finding, and a caption giving the number of resamples and books and the source. Render.
+
+```{r}
+#| label: mathematical-model-for-the-mean-paired-difference-12
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: mathematical-model-for-the-mean-paired-difference-12-test
+#| echo: true
+boot_dist |>
+  ggplot(aes(x = stat)) +
+  geom_histogram(aes(y = after_stat(density)), binwidth = 0.25,
+                 fill = "gray75", color = "white") +
+  geom_function(fun = \(x) dt((x - 3.58) / 1.63, df = 67) / 1.63,
+                color = "steelblue", linewidth = 1.2) +
+  geom_vline(xintercept = c(0.33, 6.83), linetype = "dashed") +
+  geom_vline(xintercept = 0) +
+  scale_x_continuous(labels = scales::label_dollar()) +
+  labs(title = "UCLA Bookstore Versus Amazon, New Textbooks",
+       subtitle = "Bootstrap and t-model agree: the bookstore charged $0.33 to $6.83 more on average",
+       x = "Mean Price Difference, UCLA Bookstore - Amazon",
+       y = "Density",
+       caption = "10,000 bootstrap resamples of 68 textbooks; UCLA courses, Fall 2018 (openintro)")
+```
+
+###
+
+"The confidence intervals seem to indicate that the UCLA bookstore price is, on average, higher than the Amazon price, as the majority of the confidence interval is positive." A difference of a few dollars on books that cost \$65 on average is real but small.
+
+### Exercise 13
+
+Commit `analysis.qmd` with the message `"Model the mean paired difference with the t-distribution"` and push.
+
+```{r}
+#| label: mathematical-model-for-the-mean-paired-difference-13
+#| echo: false
+learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type = "reflection")
+```
+
+###
+
+```{.output}
+9a3c5e2 (HEAD -> main, origin/main) Model the mean paired difference with the t-distribution
+4b7e1d9 Test the mean paired difference by simulation
+3c07b9e Initial commit
+```
+
+###
+
+"To analyze a paired dataset, we simply analyze the differences." The randomization test, the bootstrap, and the t-model all reached the same answer once each book's two prices were reduced to one difference, while the unpaired test, blind to the books, missed it.
+
+## Summary
+
+This tutorial covered [Chapter 21: Inference for comparing paired means](https://openintrostat.github.io/ims/inference-paired-means.html) from [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) by Mine Çetinkaya-Rundel and Johanna Hardin. You have learned why paired observations are analyzed through their differences, how to test and estimate the mean paired difference by simulation, with a randomization test that shuffles within each pair and a bootstrap interval, and how to check both against the t-distribution, using new-textbook prices at the UCLA Bookstore and on Amazon.
+
+The chapter's own summary, in the authors' words:
+
+> Like the two independent sample procedures in [Chapter 20], the paired difference analysis can be done using a t-distribution. The randomization test applied to the paired differences is slightly different, however. Note that when randomizing under the paired setting, each null statistic is created by randomly assigning the group to a numerical outcome **within** the individual observational unit. The procedure for creating a confidence interval for the paired difference is almost identical to the confidence intervals created in [Chapter 19] for a single mean.
+
+For the one-sample methods that paired data reduce to, read [Chapter 19: Inference for a single mean](https://openintrostat.github.io/ims/inference-one-mean.html), which the chapter points to in its first paragraph. For more on paired tests in R, see the **infer** article "[Tidy inference for paired data](https://infer.tidymodels.org/articles/paired.html)," which explains the within-pair shuffle you used.
+
+### Exercise 1
+
+Render one last time.
+
+```{r}
+#| label: summary-1
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). CP/CR.', type = "reflection")
+```
+
+###
+
+````{verbatim}
+---
+title: "Inference for Comparing Paired Means"
+author: "Your Name"
+format: html
+execute:
+  echo: false
+---
+
+```{r}
+#| message: false
+library(tidyverse)
+library(openintro)
+library(infer)
+```
+
+```{r}
+textbooks <- ucla_textbooks_f18 |>
+  select(subject, course_num, textbook_isbn, bookstore_new, amazon_new) |>
+  filter(!is.na(bookstore_new), !is.na(amazon_new)) |>
+  mutate(price_diff = bookstore_new - amazon_new)
+```
+
+```{r}
+#| cache: true
+set.seed(21)
+null_dist <- textbooks |>
+  specify(response = price_diff) |>
+  hypothesize(null = "paired independence") |>
+  generate(reps = 10000, type = "permute") |>
+  calculate(stat = "mean")
+
+boot_dist <- textbooks |>
+  specify(response = price_diff) |>
+  generate(reps = 10000, type = "bootstrap") |>
+  calculate(stat = "mean")
+```
+
+```{r}
+null_dist |>
+  ggplot(aes(x = stat)) +
+  geom_histogram(binwidth = 0.25, fill = "gray75", color = "white") +
+  geom_vline(xintercept = c(-1, 1) * mean(textbooks$price_diff),
+             color = "firebrick", linewidth = 1) +
+  scale_x_continuous(labels = scales::label_dollar()) +
+  labs(title = "Shuffling Prices Within Each Textbook",
+       subtitle = "Only 2% of shuffles give a mean difference as far from $0 as the observed $3.58",
+       x = "Mean Price Difference, UCLA Bookstore - Amazon",
+       y = "Count",
+       caption = "10,000 within-book shuffles of 68 textbooks; UCLA courses, Fall 2018 (openintro)")
+```
+
+```{r}
+boot_dist |>
+  ggplot(aes(x = stat)) +
+  geom_histogram(aes(y = after_stat(density)), binwidth = 0.25,
+                 fill = "gray75", color = "white") +
+  geom_function(fun = \(x) dt((x - 3.58) / 1.63, df = 67) / 1.63,
+                color = "steelblue", linewidth = 1.2) +
+  geom_vline(xintercept = c(0.33, 6.83), linetype = "dashed") +
+  geom_vline(xintercept = 0) +
+  scale_x_continuous(labels = scales::label_dollar()) +
+  labs(title = "UCLA Bookstore Versus Amazon, New Textbooks",
+       subtitle = "Bootstrap and t-model agree: the bookstore charged $0.33 to $6.83 more on average",
+       x = "Mean Price Difference, UCLA Bookstore - Amazon",
+       y = "Density",
+       caption = "10,000 bootstrap resamples of 68 textbooks; UCLA courses, Fall 2018 (openintro)")
+```
+````
+
+###
+
+"As with a two-sample analysis, quantitative measurements are made on each of two different levels of the explanatory variable." Your page shows both halves of the paired design: two prices for every book, analyzed as one difference.
+
+### Exercise 2
+
+Publish your analysis to GitHub Pages. In a bash Terminal, run:
+
+```bash
+quarto publish gh-pages analysis.qmd
+```
+
+```{r}
+#| label: summary-2
+#| echo: false
+learnr2::question("Paste the URL of your published page.", type = "reflection")
+```
+
+###
+
+Your answer should look like `https://your-github-username.github.io/inference-for-comparing-paired-means/`.
+
+###
+
+"There are certainly a handful of cases where Amazon prices are far below the UCLA Bookstore's, which suggests it is worth checking Amazon (and probably other online sites) before purchasing." "However, in many cases the Amazon price is above what the UCLA Bookstore charges, and most of the time the price isn't that different."
+
+### Exercise 3
+
+Commit and push any remaining changes.
+
+```{r}
+#| label: summary-3
+#| echo: false
+learnr2::question("Paste the URL of your GitHub repo.", type = "reflection")
+```
+
+###
+
+Your answer should look like `https://github.com/your-github-username/inference-for-comparing-paired-means`.
+
+###
+
+"At that time, Amazon prices were almost uniformly lower than those of the UCLA Bookstore's and by a large margin, making the case to use Amazon over the UCLA Bookstore quite compelling at that time." "Now we frequently check multiple websites to find the best price."
+
+## Your Answers
+
+```{r}
+#| label: your-answers-1
+#| echo: false
+learnr2::question(
+  "How many minutes, approximately, did it take you to complete this
+  tutorial? For example, an hour and a half would be 90 minutes.",
+  type = "reflection_editable",
+  validate = "integer"
+)
+```
+
+```{r}
+#| label: your-answers-2
+#| echo: false
+learnr2::download_answers_button(filename_prefix = "comparing-paired-means")
+```
