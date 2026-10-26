@@ -36,9 +36,16 @@ prefer it when both exist.
 
 Our guide for constructing tutorials is **[*Introduction to Modern
 Statistics*](https://openintrostat.github.io/ims/)** (2nd edition) by
-Mine Çetinkaya-Rundel and Johanna Hardin, free online under a CC BY-SA
-3.0 license. It decides what we teach, in what order, and with what
-vocabulary.
+Mine Çetinkaya-Rundel and Johanna Hardin, free online under a [Creative
+Commons BY-SA 3.0
+license](https://github.com/OpenIntroStat/ims/blob/main/LICENSE.md). It
+decides what we teach, in what order, and with what vocabulary. The
+license covers the book’s figures as well as its text, so we may use
+both, with attribution. It does not cover OpenIntro’s branding, logo, or
+book covers. Because the license is ShareAlike, the figures and
+sentences we copy stay under CC BY-SA 3.0 while the rest of the package
+is MIT. `inst/COPYRIGHTS`, the DESCRIPTION `Copyright:` field, and
+`LICENSE.md` record this.
 
 How the book shapes a tutorial:
 
@@ -75,6 +82,57 @@ How the book shapes a tutorial:
   the chapter’s *best* two sentences for each exercise. The exception is
   the chapter’s own Summary paragraph, which appears whole in the
   tutorial’s Summary section (see *One tutorial per chapter*).
+  - **No quotation marks.** Copy the book’s sentences as our own prose,
+    not as quotations: “A *summary statistic* is a single number
+    summarizing data from a sample.”, not “‘A summary statistic is a
+    single number summarizing data from a sample.’” Adjust only what the
+    new context needs: case, punctuation, a pronoun, a singular for a
+    plural. Italicize a term where the book defines it in bold.
+  - **Acknowledge once.** The Summary’s last paragraph credits the book
+    for every sentence and figure in the tutorial (see *One tutorial per
+    chapter*), so no single sentence or figure carries its own credit.
+  - **Other sources keep their quotation marks.** A help page (“were
+    from a variety of sources”), a paper, or a study’s own words is
+    quoted as usual.
+- **Use the book’s figures.** Students skip a third sentence but look at
+  a figure, so a knowledge drop may be one of the book’s figures plus at
+  most two sentences. Use most of a chapter’s *diagrams*: figures that
+  teach a concept no dataset produces, like Chapter 1’s tree of variable
+  types or Chapter 2’s sampling pictures. Place each in the drop of the
+  exercise whose output it explains, with sentences that tie the figure
+  to that output. Never copy a plot of data or a table as an image. If a
+  tutorial wants one, it builds it from R code, in an exercise or our
+  answer chunk.
+  - **Source.** Most of the book’s figures are drawn by R code. The
+    rendered files are committed in the [book’s
+    repo](https://github.com/OpenIntroStat/ims) at
+    `_freeze/<chapter>/figure-html/<label>-1.png`, and a few hand-made
+    ones are in `images/`. The HTML renders are 600 dpi and up to 6000
+    px wide, so shrink each so its longer side is 1600 px
+    (`sips -Z 1600`, never enlarging) and compress it
+    (`pngquant --quality=80-95 --strip`). A line diagram ends up around
+    10 to 50 KB, one with photos up to about 250 KB.
+
+  - **File.** Save it as `inst/tutorials/<slug>/images/<label>.png`,
+    keeping the book’s figure label (`fig-variables.png`). Where the
+    book’s chunk label has no `fig-` prefix (`normTail-51`), add one
+    (`fig-normTail-51.png`). A multi-panel figure’s single panel keeps
+    its panel number (`fig-outlier-plots-2.png`). If the package path
+    (`ims.tutorials/inst/tutorials/<slug>/images/<file>`) would pass 100
+    bytes, shorten the label after `fig-` (`fig-95PercentCI.png` for the
+    book’s `fig-95PercentConfidenceInterval`). R CMD check flags longer
+    paths, and a test enforces the limit. `inst/COPYRIGHTS` covers every
+    `images/fig-*.png` by that name, so a book figure must use it and
+    nothing else may. A photo the book credits to someone else under its
+    own license, like the possum in Chapter 7, is not the book’s to
+    give, so leave it out.
+
+  - **Markup.** A Markdown image with no caption, since the Summary’s
+    acknowledgment credits it. Its `fig-alt` is the book’s own alt text:
+
+    ``` markdown
+    ![](images/fig-variables.png){fig-alt="Types of variables are broken down into numerical (which can be discrete or continuous) and categorical (which can be ordinal or nominal)."}
+    ```
 - **The book shows no R code.** It teaches concepts with tables and
   figures. Our tutorials supply the R work, done by students with AI in
   `analysis.qmd`.
@@ -126,21 +184,32 @@ their structure.
   students will learn. The Summary repeats that paragraph in the past
   tense, then points to one or two of the best further readings, ideally
   a source the chapter cites that an earlier knowledge drop already
-  mentioned.
-- **Knowledge drops quote the chapter.** Pick the chapter’s most
-  important sentences, its definitions and its warnings, and quote them
-  directly, in quotation marks, so the student meets the book’s exact
-  wording. The other drop sentence ties the quote to what the student’s
-  output just showed. Never more than two sentences.
+  mentioned. Its last paragraph acknowledges the book: “Many sentences
+  in this tutorial, and its figures, come from the chapter, used under
+  the book’s [CC BY-SA 3.0
+  license](https://creativecommons.org/licenses/by-sa/3.0/).” Say “its
+  figure” when there is one, and drop the figures clause when there are
+  none.
+- **Knowledge drops copy the chapter.** Pick the chapter’s most
+  important sentences, its definitions and its warnings, and copy them,
+  without quotation marks (see *Use the book’s own words*), so the
+  student meets the book’s exact wording. The other drop sentence ties
+  the book’s sentence to what the student’s output just showed. Never
+  more than two sentences.
 - **The chapter’s own summary appears in the tutorial.** Most chapters
   end with a “Chapter review” whose Summary paragraph is the authors’
   own statement of what the chapter taught. The tutorial’s Summary
-  section quotes it whole, as a block quote introduced by “The chapter’s
-  own summary, in the authors’ words:”, between the past-tense paragraph
-  and the further readings. Cross-references the quote makes to figures
-  or later chapters are replaced in square brackets (“\[Chapter 11\]”).
-  The Applications chapters have no Chapter review, so their tutorials
-  have no such quote.
+  section copies it, as plain prose with no block quote or introduction,
+  between the past-tense paragraph and the further readings. The Summary
+  must match what the tutorial actually did, so cut any claim about
+  material the tutorial never covered (Chapter 4’s “mosaic plots, pie
+  charts”, Chapter 19’s ANOVA and paired means, which come in later
+  tutorials). Where it says “chapter,” write “tutorial”: “This chapter
+  introduced you to the world of data” becomes “This tutorial introduced
+  you to the world of data,” and “In the next chapter” becomes “In the
+  next tutorial.” A reference to a figure or a numbered chapter is
+  reworded the same way, or cut. The Applications chapters have no
+  Chapter review, so their tutorials have no such paragraph.
 - **Simulation uses infer.** Part 4 teaches inference by randomization
   and the bootstrap before the mathematical model. Our answer chunks
   simulate with **[infer](https://infer.netlify.app/)**, whose verbs
@@ -153,11 +222,15 @@ their structure.
   shows what makes a variable numerical, and counting the levels of
   `grade` shows a categorical one. The knowledge drop then names the
   concept in the book’s words.
-- **Help-page exercises.** Per *Tutorials for Books*, have students run
-  `?dataset` in the R Terminal and paste part of the help page, at least
-  once per dataset. Our answer is the relevant excerpt. Help pages are
-  also where documentation and data disagree, which makes them good
-  material for knowledge drops.
+- **Override: help-page exercises are rare.** *Tutorials for Books* has
+  students run `?dataset` and paste part of the help page for every
+  dataset. Most of these exercises waste the student’s time. Each of the
+  first three tutorials (Chapters 1 to 3) has exactly one, and later
+  tutorials have none. Pick the dataset whose help page teaches
+  something, such as `?stent365`, which misstates when the outcomes were
+  measured. Our answer is the relevant excerpt. A fact from a help page
+  can still appear in a knowledge drop without an exercise (“The help
+  page says the smoking ban data ‘were from a variety of sources.’”).
 - **Override: one exercise per library.** The base guide (§4,
   Introduction step 2) loads every library in one exercise. Here each
   library gets its own exercise, per *Tutorials for Books*, adding to
@@ -169,6 +242,11 @@ their structure.
   subtitle instead, written as part of the plot-improvement exercise,
   per *Tutorials in the Age of AI*. Each topic ends with a plot built in
   one exercise and improved in the next.
+- **Override: no caching.** The base guide (§2, *Caching*) walks every
+  tutorial through a three-exercise cache arc. Students learned caching
+  before these tutorials, and the focus here is statistics, so no
+  tutorial caches a chunk, adds `analysis_cache` to `.gitignore`, or has
+  a clean-up exercise that exists only to prepare for caching.
 
 ## learnr2, not learnr
 
@@ -293,8 +371,9 @@ Same as every package: open a Codespace on `main` from
 `PPBDS/codespace-starter`, then start the tutorial from the R Tutorials
 extension. Every tutorial’s intro uses the standard repo line: *“You
 should be doing this tutorial in a repo named `whatever`. If you are
-not, create one and then connect to it. You may need to restart this
-tutorial after you do so.”*
+not, create one and then connect to it.”* Do not add the old third
+sentence, “You may need to restart this tutorial after you do so.” It
+was a learnr limitation that learnr2 does not have.
 
 ## Authoring conventions
 

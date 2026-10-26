@@ -20,3 +20,14 @@ IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
 CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+## Material from *Introduction to Modern Statistics*
+
+The tutorials include figures and sentences from [*Introduction to
+Modern Statistics*](https://openintrostat.github.io/ims/) by Mine
+Çetinkaya-Rundel and Johanna Hardin. That material is not covered by the
+MIT license above. It stays under the book’s [Creative Commons
+Attribution-ShareAlike 3.0
+license](https://creativecommons.org/licenses/by-sa/3.0/). See
+[`inst/COPYRIGHTS`](https://ppbds.github.io/ims.tutorials/inst/COPYRIGHTS)
+for which files it covers.
