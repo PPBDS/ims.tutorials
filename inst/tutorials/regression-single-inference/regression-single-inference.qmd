@@ -40,7 +40,7 @@ This tutorial covers [Chapter 24: Inference for linear regression with a single 
 
 ### Exercise 1
 
-You should be doing this tutorial in a repo named `inference-for-linear-regression-with-a-single-predictor`. If you are not, create one and then connect to it. You may need to restart this tutorial after you do so.
+You should be doing this tutorial in a repo named `inference-for-linear-regression-with-a-single-predictor`. If you are not, create one and then connect to it.
 
 Create a new file, `analysis.qmd`, with the title `"Inference for Linear Regression with a Single Predictor"` and your name as the author. In a bash Terminal, render it:
 
@@ -68,7 +68,7 @@ analysis_files
 
 ###
 
-"In particular, we will use the least squares regression line to test whether there is a relationship between two continuous variables." "Additionally, we will build confidence intervals which quantify the slope of the linear regression line."
+In particular, we will use the least squares regression line to test whether there is a relationship between two continuous variables. Additionally, we will build confidence intervals which quantify the slope of the linear regression line.
 
 ### Exercise 2
 
@@ -89,7 +89,7 @@ library(tidyverse)
 
 ###
 
-"Many of the inferential ideas are remarkably similar to those covered in previous chapters." The **tidyverse** fits and draws the least squares lines here just as it did in the Linear Regression with a Single Predictor tutorial.
+Many of the inferential ideas are remarkably similar to those covered in previous chapters. The **tidyverse** fits and draws the least squares lines here as it did in the Linear Regression with a Single Predictor tutorial.
 
 ### Exercise 3
 
@@ -111,7 +111,7 @@ library(openintro)
 
 ###
 
-**openintro** holds the chapter's three real datasets: `births14`, `midterms_house`, and `elmhurst`. The chapter opens with a sandwich-store example, but for that one "we have made up the example and the data (and the entire population)," so we skip it.
+**openintro** holds the chapter's three real datasets: `births14`, `midterms_house`, and `elmhurst`. The chapter also opens with a sandwich-store example, for which the authors made up the data (and the entire population).
 
 ### Exercise 4
 
@@ -134,7 +134,7 @@ library(infer)
 
 ###
 
-**infer** simulates the datasets we did not collect, by shuffling or by resampling the one we did, and fits a least squares line to each. "Note that in real life, we always have exactly one sample (that is, one dataset), and through the inference process, we imagine what might have happened had we taken a different sample."
+**infer** simulates the datasets we did not collect by shuffling or resampling the one we did, and fits a least squares line to each. In real life, we always have exactly one sample (that is, one dataset), and through the inference process, we imagine what might have happened had we taken a different sample.
 
 ### Exercise 5
 
@@ -158,11 +158,15 @@ library(broom)
 
 ###
 
-**broom** turns a fitted model into a tibble with one row per coefficient, holding its estimate, standard error, T score, and p-value. "We will rely on statistical software to compute the standard error and leave the explanation of how this standard error is determined to a second or third statistics course."
+**broom** turns a fitted model into a tibble with one row per coefficient, holding its estimate, standard error, T score, and p-value. We will rely on statistical software to compute the standard error and leave the explanation of how this standard error is determined to a second or third statistics course.
 
 ## Randomization and bootstrapping for the slope
 
-"As with any numerical characteristic which describes a subset of the population, the estimated slope of a sample will vary from sample to sample." This section measures that variation in two ways, using 100 births: by shuffling, to test whether there is any relationship, and by resampling, to estimate how large it is.
+As with any numerical characteristic which describes a subset of the population, the estimated slope of a sample will vary from sample to sample. In the chapter's made-up population of sandwich stores, each random sample of 20 stores gives a different line, scattered around the population line in red.
+
+![](images/fig-slopes.png){fig-alt="An x-y coordinate system with least squares regression lines from many random samples of size 20 (no points are plotted). The lines vary around the true population line. On the x-axis is advertising amount; on the y-axis is revenue."}
+
+This section measures that variation in 100 births in two ways: by shuffling, to test whether there is any relationship, and by resampling, to estimate how large it is.
 
 ### Exercise 1
 
@@ -184,45 +188,34 @@ births14
 
 ###
 
-Each of the 1,000 rows is one birth, with 13 variables about the baby, the mother, and the father. The chapter considers "data on 100 randomly selected births gathered originally from the US Department of Health and Human Services."
+Each of the 1,000 rows is one birth, from a random sample of the births recorded in the US in 2014. We will work with a random sample of 100 observations from these data.
 
 ### Exercise 2
+
+Replace the code in that chunk so that it counts the missing values in each column of `births14`. Render.
 
 ```{r}
 #| label: randomization-and-bootstrapping-for-the-slope-2
 #| echo: false
-learnr2::question("In the R Terminal, run ?births14. Copy and paste the Description and the Source.", type = "reflection")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
 
-```{.output}
-Description:
-
-     Every year, the US releases to the public a large dataset
-     containing information on births recorded in the country. This
-     dataset has been of interest to medical researchers who are
-     studying the relation between habits and practices of expectant
-     mothers and the birth of their children. This is a random sample
-     of 1,000 cases from the dataset released in 2014.
-
-Source:
-
-     United States Department of Health and Human Services. Centers for
-     Disease Control and Prevention. National Center for Health
-     Statistics. Natality Detail File, 2014 United States.
-     Inter-university Consortium for Political and Social Research,
-     2016-10-07. doi:10.3886/ICPSR36461.v1
-     <https://doi.org/10.3886/ICPSR36461.v1>.
+```{r}
+#| label: randomization-and-bootstrapping-for-the-slope-2-test
+#| echo: true
+births14 |>
+  summarize(across(everything(), \(x) sum(is.na(x))))
 ```
 
 ###
 
-The 1,000 births are already a random sample from every birth recorded in 2014, and the chapter samples again: "We will work with a random sample of 100 observations from these data."
+Father's age, `fage`, is missing for 114 births, `visits` for 56, `gained` for 42, and `habit` for 19. The three variables this chapter uses, `weight`, `weeks`, and `mage`, have no missing values.
 
 ### Exercise 3
 
-Replace the code in that chunk so that it counts the missing values in each column of `births14`. Render.
+Replace the code in that chunk so that it drops every row of `births14` with a missing value in any column and counts the rows that remain. Render.
 
 ```{r}
 #| label: randomization-and-bootstrapping-for-the-slope-3
@@ -236,16 +229,17 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: randomization-and-bootstrapping-for-the-slope-3-test
 #| echo: true
 births14 |>
-  summarize(across(everything(), \(x) sum(is.na(x))))
+  drop_na() |>
+  nrow()
 ```
 
 ###
 
-Father's age, `fage`, is missing for 114 births, `visits` for 56, `gained` for 42, and `habit` for 19. The three variables this chapter uses, `weight`, `weeks`, and `mage`, have no missing values at all.
+Dropping incomplete rows leaves 794 births and throws away 206, mostly for a missing father's age, which the chapter never uses. The chapter drops them anyway before it samples.
 
 ### Exercise 4
 
-Replace the code in that chunk so that it drops every row of `births14` with a missing value in any column and counts the rows that remain. Render.
+Replace the code in that chunk so that it creates `births14_100` as the chapter does: drop the rows with any missing value, then take a random sample of 100 of the births that remain. Set a seed of 47 first, the one the chapter used. Print `births14_100`. Render.
 
 ```{r}
 #| label: randomization-and-bootstrapping-for-the-slope-4
@@ -257,30 +251,6 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ```{r}
 #| label: randomization-and-bootstrapping-for-the-slope-4-test
-#| echo: true
-births14 |>
-  drop_na() |>
-  nrow()
-```
-
-###
-
-Only 794 births survive, so dropping incomplete rows throws away 206, mostly for a missing father's age, a variable the chapter never uses. The chapter drops them anyway before it samples, so its 100 births come only from births with complete records.
-
-### Exercise 5
-
-Replace the code in that chunk so that it creates `births14_100` as the chapter does: drop the rows with any missing value, then take a random sample of 100 of the births that remain. Set a seed of 47 first, the one the chapter used. Print `births14_100`. Render.
-
-```{r}
-#| label: randomization-and-bootstrapping-for-the-slope-5
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{r}
-#| label: randomization-and-bootstrapping-for-the-slope-5-test
 #| echo: true
 set.seed(47)
 births14_100 <- births14 |>
@@ -294,78 +264,14 @@ If your first rows differ from ours, replace your code with ours, since the rest
 
 ###
 
-With a seed of 47, these are the chapter's own 100 births. "The scientific research interest at hand will be in determining the linear relationship between weight of baby at birth (in lbs) and number of weeks of gestation."
+With a seed of 47, these are the chapter's own 100 births. The scientific research interest at hand will be in determining the linear relationship between weight of baby at birth (in lbs) and number of weeks of gestation.
 
-### Exercise 6
-
-Delete the line that prints `births14_100`, so that the chunk only creates it. Render.
-
-```{r}
-#| label: randomization-and-bootstrapping-for-the-slope-6
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-````{verbatim}
-set.seed(47)
-births14_100 <- births14 |>
-  drop_na() |>
-  slice_sample(n = 100)
-````
-
-###
-
-The seed makes the random sample repeatable: anyone who runs this chunk gets the same 100 births. "The dataset is quite rich and deserves exploring, but for this example, we will focus only on the weight of the baby."
-
-### Exercise 7
-
-Add `#| cache: true` to that chunk. Render.
-
-```{r}
-#| label: randomization-and-bootstrapping-for-the-slope-7
-#| echo: false
-learnr2::question("In the bash Terminal, run ls. CP/CR.", type = "reflection")
-```
-
-###
-
-```{.output}
-analysis.html  analysis.qmd  analysis_cache  analysis_files
-```
-
-###
-
-`analysis_cache` now holds `births14_100`, so later renders reuse the same 100 births instead of drawing them again. A cached chunk only re-runs when its code changes.
-
-### Exercise 8
-
-Your Source Control count just jumped, because Git sees every file in the new cache directory. Add `analysis_cache` to `.gitignore`, and the count drops back.
-
-```{r}
-#| label: randomization-and-bootstrapping-for-the-slope-8
-#| echo: false
-learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{.output}
-analysis_files
-analysis_cache
-```
-
-###
-
-The chapter's null hypothesis is $H_0: \beta_1 = 0$: "there is no linear relationship between `weight` and `weeks`." The alternative is $H_A: \beta_1 \ne 0$: "there is some linear relationship between `weight` and `weeks`."
-
-### Exercise 9
+### Exercise 5
 
 Start a new chunk with a scatterplot of `weight` against `weeks` from `births14_100`, with the least squares line and no shaded band. Render.
 
 ```{r}
-#| label: randomization-and-bootstrapping-for-the-slope-9
+#| label: randomization-and-bootstrapping-for-the-slope-5
 #| echo: false
 learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
@@ -373,7 +279,7 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ###
 
 ```{r}
-#| label: randomization-and-bootstrapping-for-the-slope-9-test
+#| label: randomization-and-bootstrapping-for-the-slope-5-test
 #| echo: true
 births14_100 |>
   ggplot(aes(x = weeks, y = weight)) +
@@ -383,14 +289,14 @@ births14_100 |>
 
 ###
 
-Most births fall between 36 and 42 weeks, while a few very early ones, like a 2-pound baby born at 25 weeks, sit alone at the lower left. "In the linear model setting, we might hope to have a linear relationship between `weeks` and `weight` in settings where `weeks` gestation is known and `weight` of baby needs to be predicted."
+Most births fall between 36 and 42 weeks, while a few very early ones, like a 2-pound baby born at 25 weeks, sit alone at the lower left. In the linear model setting, we might hope to have a linear relationship between `weeks` and `weight` in settings where `weeks` gestation is known and `weight` of baby needs to be predicted.
 
-### Exercise 10
+### Exercise 6
 
 Replace the code in that chunk with a linear model predicting `weight` from `weeks`, using `births14_100`. Show only the term and the estimate for each coefficient. Render.
 
 ```{r}
-#| label: randomization-and-bootstrapping-for-the-slope-10
+#| label: randomization-and-bootstrapping-for-the-slope-6
 #| echo: false
 learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
@@ -398,7 +304,7 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ###
 
 ```{r}
-#| label: randomization-and-bootstrapping-for-the-slope-10-test
+#| label: randomization-and-bootstrapping-for-the-slope-6-test
 #| echo: true
 lm(weight ~ weeks, data = births14_100) |>
   tidy() |>
@@ -407,14 +313,14 @@ lm(weight ~ weeks, data = births14_100) |>
 
 ###
 
-Each extra week of gestation goes with 0.335 more pounds of baby, on average. "The observed slope is 0.335."
+Each extra week of gestation goes with 0.335 more pounds of baby, on average. The null hypothesis is $H_0: \beta_1 = 0$, there is no linear relationship between `weight` and `weeks`, and the alternative is $H_A: \beta_1 \ne 0$, there is some linear relationship between `weight` and `weeks`.
 
-### Exercise 11
+### Exercise 7
 
 Replace the code in that chunk so that it shuffles `weight` across the 100 births once, as if weight and weeks were unrelated, and calculates the slope of the least squares line for the shuffled data. Set a seed of 24 first. Render.
 
 ```{r}
-#| label: randomization-and-bootstrapping-for-the-slope-11
+#| label: randomization-and-bootstrapping-for-the-slope-7
 #| echo: false
 learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
@@ -422,7 +328,7 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ###
 
 ```{r}
-#| label: randomization-and-bootstrapping-for-the-slope-11-test
+#| label: randomization-and-bootstrapping-for-the-slope-7-test
 #| echo: true
 set.seed(24)
 births14_100 |>
@@ -434,14 +340,14 @@ births14_100 |>
 
 ###
 
-Our shuffled slope is -0.027, nowhere near 0.335, and yours will differ if your code shuffled differently. "That is, each `weight` value is randomly assigned to a new `weeks` gestation."
+Our shuffled slope is -0.027, nowhere near 0.335. Each `weight` value is randomly assigned to a new `weeks` gestation.
 
-### Exercise 12
+### Exercise 8
 
 Change the code so that it shuffles `weight` 1,000 times, calculating the slope for each shuffle, and stores the 1,000 slopes as `weeks_null`. Keep the seed of 24. Below that, show the smallest and the largest of the 1,000 slopes. Render.
 
 ```{r}
-#| label: randomization-and-bootstrapping-for-the-slope-12
+#| label: randomization-and-bootstrapping-for-the-slope-8
 #| echo: false
 learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
@@ -449,7 +355,7 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ###
 
 ```{r}
-#| label: randomization-and-bootstrapping-for-the-slope-12-test
+#| label: randomization-and-bootstrapping-for-the-slope-8-test
 #| echo: true
 set.seed(24)
 weeks_null <- births14_100 |>
@@ -464,14 +370,14 @@ weeks_null |>
 
 ###
 
-Our 1,000 shuffled slopes run from -0.178 to 0.200. The chapter found that "if indeed there were no linear relationship between `weight` and `weeks`, the natural variability of the slopes would produce estimates between approximately -0.15 and +0.15."
+Our 1,000 shuffled slopes run from -0.178 to 0.200. If indeed there were no linear relationship between `weight` and `weeks`, the natural variability of the slopes would produce estimates between approximately -0.15 and +0.15.
 
-### Exercise 13
+### Exercise 9
 
 Replace the smallest and largest slopes with the number of shuffled slopes at least as far from zero as the observed slope, 0.335, and the proportion of the 1,000 that number is. Render.
 
 ```{r}
-#| label: randomization-and-bootstrapping-for-the-slope-13
+#| label: randomization-and-bootstrapping-for-the-slope-9
 #| echo: false
 learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
@@ -479,7 +385,7 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ###
 
 ```{r}
-#| label: randomization-and-bootstrapping-for-the-slope-13-test
+#| label: randomization-and-bootstrapping-for-the-slope-9-test
 #| echo: true
 set.seed(24)
 weeks_null <- births14_100 |>
@@ -495,14 +401,14 @@ weeks_null |>
 
 ###
 
-Not one of the 1,000 shuffles came near 0.335, so the p-value is below 1 in 1,000 and "We reject the null hypothesis." "Therefore, we believe that the slope observed on the original data is not just due to natural variability and indeed, there is a linear relationship between `weight` of baby and `weeks` gestation for births in the US."
+None of the 1,000 shuffles came near 0.335, so the p-value is below 1 in 1,000 and we reject the null hypothesis. Therefore, we believe that the slope observed on the original data is not just due to natural variability and indeed, there is a linear relationship between `weight` of baby and `weeks` gestation for births in the US.
 
-### Exercise 14
+### Exercise 10
 
 Replace the code in that chunk with a linear model predicting `weight` from `mage`, the mother's age, using `births14_100`. Show only the term and the estimate for each coefficient. Render.
 
 ```{r}
-#| label: randomization-and-bootstrapping-for-the-slope-14
+#| label: randomization-and-bootstrapping-for-the-slope-10
 #| echo: false
 learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
@@ -510,7 +416,7 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ###
 
 ```{r}
-#| label: randomization-and-bootstrapping-for-the-slope-14-test
+#| label: randomization-and-bootstrapping-for-the-slope-10-test
 #| echo: true
 lm(weight ~ mage, data = births14_100) |>
   tidy() |>
@@ -519,14 +425,14 @@ lm(weight ~ mage, data = births14_100) |>
 
 ###
 
-"The observed slope is 0.036," pounds of baby per year of the mother's age. "Notice that the relationship between mother's age and weight of baby is not as strong as the relationship we saw previously between weeks gestation and weight of baby."
+The observed slope is 0.036 pounds of baby per year of the mother's age. The relationship between mother's age and weight of baby is not as strong as the relationship we saw previously between weeks gestation and weight of baby.
 
-### Exercise 15
+### Exercise 11
 
 Replace the code in that chunk so that it resamples the 100 births with replacement 1,000 times, calculates the slope of `weight` on `mage` for each resample, and stores the 1,000 slopes as `mage_boot`. Set a seed of 24 first. Print `mage_boot`. Render.
 
 ```{r}
-#| label: randomization-and-bootstrapping-for-the-slope-15
+#| label: randomization-and-bootstrapping-for-the-slope-11
 #| echo: false
 learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
@@ -534,7 +440,7 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ###
 
 ```{r}
-#| label: randomization-and-bootstrapping-for-the-slope-15-test
+#| label: randomization-and-bootstrapping-for-the-slope-11-test
 #| echo: true
 set.seed(24)
 mage_boot <- births14_100 |>
@@ -547,14 +453,14 @@ mage_boot
 
 ###
 
-"When sampling in the linear model case, consider each observation to be a single dot." "If the dot is resampled, both the `weight` and the `mage` measurement are observed."
+When sampling in the linear model case, consider each observation to be a single dot. If the dot is resampled, both the `weight` and the `mage` measurement are observed.
 
-### Exercise 16
+### Exercise 12
 
 Replace the line that prints `mage_boot` with the 95% bootstrap percentile confidence interval for the slope. Render.
 
 ```{r}
-#| label: randomization-and-bootstrapping-for-the-slope-16
+#| label: randomization-and-bootstrapping-for-the-slope-12
 #| echo: false
 learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
@@ -562,7 +468,7 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ###
 
 ```{r}
-#| label: randomization-and-bootstrapping-for-the-slope-16-test
+#| label: randomization-and-bootstrapping-for-the-slope-12-test
 #| echo: true
 set.seed(24)
 mage_boot <- births14_100 |>
@@ -576,14 +482,14 @@ mage_boot |>
 
 ###
 
-Our interval, (-0.004, 0.073), is close to the chapter's (-0.01, 0.081), and yours will differ slightly too. "Notice that the CI contains zero, so the true relationship *might* be null!"
+Our interval, (-0.004, 0.073), is close to the chapter's (-0.01, 0.081). The CI contains zero, so the true relationship *might* be null.
 
-### Exercise 17
+### Exercise 13
 
 Replace the confidence interval with a histogram of the 1,000 slopes in `mage_boot`, with dashed vertical lines at the two ends of the 95% percentile interval. Render.
 
 ```{r}
-#| label: randomization-and-bootstrapping-for-the-slope-17
+#| label: randomization-and-bootstrapping-for-the-slope-13
 #| echo: false
 learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
@@ -591,7 +497,7 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ###
 
 ```{r}
-#| label: randomization-and-bootstrapping-for-the-slope-17-test
+#| label: randomization-and-bootstrapping-for-the-slope-13-test
 #| echo: true
 set.seed(24)
 mage_boot <- births14_100 |>
@@ -611,14 +517,14 @@ mage_boot |>
 
 ###
 
-The bootstrapped slopes form a hill centered near the observed 0.036, and the left dashed line sits just below zero. "The histogram provides a sense for the variability of the slope of the linear model from sample to sample."
+The bootstrapped slopes form a hill centered near the observed 0.036, and the left dashed line sits just below zero. The histogram provides a sense for the variability of the slope of the linear model from sample to sample.
 
-### Exercise 18
+### Exercise 14
 
 Improve the plot. Add a solid red vertical line at zero, and add a title, axis labels, a subtitle that states the main finding, and a caption giving the number of births, the number of resamples, and the source. Render.
 
 ```{r}
-#| label: randomization-and-bootstrapping-for-the-slope-18
+#| label: randomization-and-bootstrapping-for-the-slope-14
 #| echo: false
 learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
@@ -626,7 +532,7 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ###
 
 ```{r}
-#| label: randomization-and-bootstrapping-for-the-slope-18-test
+#| label: randomization-and-bootstrapping-for-the-slope-14-test
 #| echo: true
 set.seed(24)
 mage_boot <- births14_100 |>
@@ -652,14 +558,14 @@ mage_boot |>
 
 ###
 
-"We are 95% confident that for the model describing the population of births, predicting weight of baby from mother's age, a one unit increase in `mage` (in years) is associated with an increase in predicted average baby `weight` of between -0.01 and 0.081 pounds." Those are the chapter's numbers, and ours tell the same story.
+We are 95% confident that for the model describing the population of births, predicting weight of baby from mother's age, a one unit increase in `mage` (in years) is associated with an increase in predicted average baby `weight` of between -0.01 and 0.081 pounds. Our interval, -0.004 to 0.073, tells the same story.
 
-### Exercise 19
+### Exercise 15
 
-Commit `analysis.qmd` and `.gitignore` with the message `"Simulate slopes for births"` and push.
+Commit `analysis.qmd` with the message `"Simulate slopes for births"` and push.
 
 ```{r}
-#| label: randomization-and-bootstrapping-for-the-slope-19
+#| label: randomization-and-bootstrapping-for-the-slope-15
 #| echo: false
 learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type = "reflection")
 ```
@@ -673,11 +579,11 @@ learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type
 
 ###
 
-The randomization test asks whether the slope could be zero, and the bootstrap asks what values it could plausibly take. "As we have seen in previous chapters, we can use bootstrapping to estimate the sampling distribution of the statistic of interest (here, the slope) without the null assumption of no relationship (which was the condition in the randomization test)."
+The randomization test asks whether the slope could be zero, and the bootstrap asks what values it could plausibly take. We can use bootstrapping to estimate the sampling distribution of the statistic of interest (here, the slope) without the null assumption of no relationship (which was the condition in the randomization test).
 
 ## The mathematical model and its conditions
 
-"When certain technical conditions apply, it is convenient to use mathematical approximations to test and estimate the slope parameter." This section reads the test and the interval for a slope from regression output, checks each against a simulation, and then checks the conditions themselves.
+When certain technical conditions apply, it is convenient to use mathematical approximations to test and estimate the slope parameter. This section reads the test and the interval for a slope from regression output, checks each against a simulation, and then checks the conditions.
 
 ### Exercise 1
 
@@ -699,45 +605,34 @@ midterms_house
 
 ###
 
-"The set of House elections occurring during the middle of a Presidential term are called midterm elections." The theory to test: "the higher the unemployment rate, the worse the President's party will do in the midterm elections."
+The set of House elections occurring during the middle of a Presidential term are called midterm elections. One political theory suggests the higher the unemployment rate, the worse the President's party will do in the midterm elections.
 
 ### Exercise 2
+
+Replace the code in that chunk so that it shows the elections with an unemployment rate above 15%. Render.
 
 ```{r}
 #| label: the-mathematical-model-and-its-conditions-2
 #| echo: false
-learnr2::question("In the R Terminal, run ?midterms_house. Copy and paste the Description and the Format section.", type = "reflection")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
 
-```{.output}
-Description:
-
-     Covers midterm elections.
-
-Format:
-
-     A data frame with 29 observations on the following 5 variables.
-
-     year Year.
-
-     potus The president in office.
-
-     party President's party: Democrat or Republican.
-
-     unemp Unemployment rate.
-
-     house_change Change in House seats for the President's party.
+```{r}
+#| label: the-mathematical-model-and-its-conditions-2-test
+#| echo: true
+midterms_house |>
+  filter(unemp > 15)
 ```
 
 ###
 
-The help page promises 29 observations, but the tibble you printed has 31. It also calls `house_change` a change in seats, while the chapter uses "the percent change in the number of seats of the President's party," which is what the numbers are.
+The data for the Great Depression (1934 and 1938) were removed because the unemployment rate was 21% and 18%, respectively. The data label those elections 1935 and 1939, because every `year` is one more than the year of the election.
 
 ### Exercise 3
 
-Replace the code in that chunk so that it shows the elections with an unemployment rate above 15%. Render.
+Replace the code in that chunk with a linear model predicting `house_change`, the percent change in the number of seats of the President's party, from `unemp`, leaving out the 1935 and 1939 rows. Show the whole coefficient table. Render.
 
 ```{r}
 #| label: the-mathematical-model-and-its-conditions-3
@@ -750,17 +645,18 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: the-mathematical-model-and-its-conditions-3-test
 #| echo: true
-midterms_house |>
-  filter(unemp > 15)
+lm(house_change ~ unemp,
+   data = filter(midterms_house, !year %in% c(1935, 1939))) |>
+  tidy()
 ```
 
 ###
 
-"The data for the Great Depression (1934 and 1938) were removed because the unemployment rate was 21% and 18%, respectively." The data label those elections 1935 and 1939, because every `year` is one more than the year of the election, and dropping them leaves the 29 rows the help page counts.
+The line is -7.36 - 0.890 × `unemp`, the chapter's own. The row labeled `unemp` includes all relevant information about the slope estimate (i.e., the coefficient of the unemployment variable, the related SE, the T statistic, and the corresponding p-value).
 
 ### Exercise 4
 
-Replace the code in that chunk with a linear model predicting `house_change` from `unemp`, leaving out the 1935 and 1939 rows. Show the whole coefficient table. Render.
+Keep only the `unemp` row, and add a column that divides the estimate by its standard error. Render.
 
 ```{r}
 #| label: the-mathematical-model-and-its-conditions-4
@@ -775,16 +671,18 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| echo: true
 lm(house_change ~ unemp,
    data = filter(midterms_house, !year %in% c(1935, 1939))) |>
-  tidy()
+  tidy() |>
+  filter(term == "unemp") |>
+  mutate(t_score = estimate / std.error)
 ```
 
 ###
 
-The line is -7.36 - 0.890 × `unemp`, the chapter's own. "The row labeled `unemp` includes all relevant information about the slope estimate (i.e., the coefficient of the unemployment variable, the related SE, the T statistic, and the corresponding p-value)."
+The null value is 0, so the T score is (-0.890 - 0) / 0.835 = -1.07, the `statistic` column. We will generally label the test statistic using a $T$, since it follows the $t$-distribution.
 
 ### Exercise 5
 
-Keep only the `unemp` row, and add a column that divides the estimate by its standard error. Render.
+Add a column with the two-sided p-value for that T score from a t-distribution with 27 degrees of freedom, which is the 29 elections minus 2. Render.
 
 ```{r}
 #| label: the-mathematical-model-and-its-conditions-5
@@ -801,16 +699,17 @@ lm(house_change ~ unemp,
    data = filter(midterms_house, !year %in% c(1935, 1939))) |>
   tidy() |>
   filter(term == "unemp") |>
-  mutate(t_score = estimate / std.error)
+  mutate(t_score = estimate / std.error,
+         p_by_hand = 2 * pt(-abs(t_score), df = 27))
 ```
 
 ###
 
-The null value is 0, so the T score is (-0.890 - 0) / 0.835 = -1.07, exactly the `statistic` column. "We will generally label the test statistic using a $T$, since it follows the $t$-distribution."
+The p-value by hand, 0.296, matches the software's. The data do not provide convincing evidence that a higher unemployment rate has any correspondence with smaller or larger losses for the President's party in the House of Representatives in midterm elections.
 
 ### Exercise 6
 
-Add a column with the two-sided p-value for that T score from a t-distribution with 27 degrees of freedom, which is the 29 elections minus 2. Render.
+Check the mathematical model against a simulation. Replace the code in that chunk with a randomization test of the same slope: shuffle `house_change` 1,000 times across the 29 elections, calculate the slope for each shuffle, and find the two-sided p-value for the observed slope of -0.890. Set a seed of 24 first. Render.
 
 ```{r}
 #| label: the-mathematical-model-and-its-conditions-6
@@ -822,33 +721,6 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ```{r}
 #| label: the-mathematical-model-and-its-conditions-6-test
-#| echo: true
-lm(house_change ~ unemp,
-   data = filter(midterms_house, !year %in% c(1935, 1939))) |>
-  tidy() |>
-  filter(term == "unemp") |>
-  mutate(t_score = estimate / std.error,
-         p_by_hand = 2 * pt(-abs(t_score), df = 27))
-```
-
-###
-
-The p-value by hand, 0.296, matches the software's. That is, "the data do not provide convincing evidence that a higher unemployment rate has any correspondence with smaller or larger losses for the President's party in the House of Representatives in midterm elections."
-
-### Exercise 7
-
-Check the mathematical model against a simulation. Replace the code in that chunk with a randomization test of the same slope: shuffle `house_change` 1,000 times across the 29 elections, calculate the slope for each shuffle, and find the two-sided p-value for the observed slope of -0.890. Set a seed of 24 first. Render.
-
-```{r}
-#| label: the-mathematical-model-and-its-conditions-7
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{r}
-#| label: the-mathematical-model-and-its-conditions-7-test
 #| echo: true
 set.seed(24)
 midterms_house |>
@@ -862,14 +734,14 @@ midterms_house |>
 
 ###
 
-Our randomization p-value is 0.322, close to the t-distribution's 0.296, and yours will differ slightly. "If there was no linear relationship between the two variables (i.e., if $\beta_1 = 0)$, then we would expect to see linear models as or more extreme that the observed model roughly 30% of the time."
+Our randomization p-value is 0.322, close to the t-distribution's 0.296. If there was no linear relationship between the two variables (i.e., if $\beta_1 = 0$), then we would expect to see linear models as or more extreme than the observed model roughly 30% of the time.
 
-### Exercise 8
+### Exercise 7
 
-Replace the code in that chunk with a plot of the residuals from the model in Exercise 4 against `year`, with a dashed horizontal line at zero. Render.
+Replace the code in that chunk with a plot of the residuals from the model in Exercise 3 against `year`, with a dashed horizontal line at zero. Render.
 
 ```{r}
-#| label: the-mathematical-model-and-its-conditions-8
+#| label: the-mathematical-model-and-its-conditions-7
 #| echo: false
 learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
@@ -877,7 +749,7 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ###
 
 ```{r}
-#| label: the-mathematical-model-and-its-conditions-8-test
+#| label: the-mathematical-model-and-its-conditions-7-test
 #| echo: true
 midterms_house |>
   filter(!year %in% c(1935, 1939)) |>
@@ -890,42 +762,61 @@ midterms_house |>
 
 ###
 
-The residuals swing above and below zero every election or few, with no steady drift up or down across 120 years. "While the data are collected sequentially, a separate analysis was used to check for any apparent correlation between successive observations; no such correlation was found."
+The residuals swing above and below zero every election or few, with no steady drift across 120 years. While the data are collected sequentially, a separate analysis was used to check for any apparent correlation between successive observations, and no such correlation was found.
+
+### Exercise 8
+
+`elmhurst` is a random sample of 50 Elmhurst College students, with `family_income` and `gift_aid` both in thousands of dollars. Replace the code in that chunk with a linear model predicting `gift_aid` from `family_income`, using `elmhurst`. Show the whole coefficient table. Render.
+
+```{r}
+#| label: the-mathematical-model-and-its-conditions-8
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: the-mathematical-model-and-its-conditions-8-test
+#| echo: true
+lm(gift_aid ~ family_income, data = elmhurst) |>
+  tidy()
+```
+
+###
+
+The point estimate of the slope of the line is -0.0431, the standard error of this estimate is 0.0108, and the $t$-test statistic is $T = -3.98$. The p-value corresponds exactly to the two-sided test we are interested in: 0.0002.
 
 ### Exercise 9
+
+Keep only the `family_income` row, and add three columns: the t cutoff for a 95% confidence interval with 48 degrees of freedom, which is the 50 students minus 2, and the lower and upper ends of the interval, the estimate plus or minus that cutoff times the standard error. Render.
 
 ```{r}
 #| label: the-mathematical-model-and-its-conditions-9
 #| echo: false
-learnr2::question("In the R Terminal, run ?elmhurst. Copy and paste the Description and the Format section.", type = "reflection")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
 
-```{.output}
-Description:
-
-     A random sample of 50 students gift aid for students at Elmhurst
-     College.
-
-Format:
-
-     A data frame with 50 observations on the following 3 variables.
-
-     family_income Family income of the student.
-
-     gift_aid Gift aid, in $1000s.
-
-     price_paid Price paid by the student (tuition - gift aid).
+```{r}
+#| label: the-mathematical-model-and-its-conditions-9-test
+#| echo: true
+lm(gift_aid ~ family_income, data = elmhurst) |>
+  tidy() |>
+  filter(term == "family_income") |>
+  mutate(t_star = qt(0.975, df = 48),
+         lower = estimate - t_star * std.error,
+         upper = estimate + t_star * std.error)
 ```
 
 ###
 
-The help page gives units only for `gift_aid`, but `family_income` is in thousands of dollars too. You met these 50 students in the Linear Regression with a Single Predictor tutorial, where the least squares line described them; now the question is whether that line tells us about other students.
+Our interval, (-0.0648, -0.0213), matches the chapter's (-0.0648, -0.0214) except for rounding. We are 95% confident that for an additional one unit (i.e., \$1000 increase) in family income, the university's gift aid is predicted to decrease on average by \$21.40 to \$64.80.
 
 ### Exercise 10
 
-Replace the code in that chunk with a linear model predicting `gift_aid` from `family_income`, using `elmhurst`. Show the whole coefficient table. Render.
+Check the interval against a simulation. Replace the code in that chunk so that it resamples the 50 students with replacement 1,000 times, calculates the slope of `gift_aid` on `family_income` for each resample, and finds the 95% bootstrap percentile interval. Set a seed of 24 first. Render.
 
 ```{r}
 #| label: the-mathematical-model-and-its-conditions-10
@@ -938,17 +829,21 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: the-mathematical-model-and-its-conditions-10-test
 #| echo: true
-lm(gift_aid ~ family_income, data = elmhurst) |>
-  tidy()
+set.seed(24)
+elmhurst |>
+  specify(gift_aid ~ family_income) |>
+  generate(reps = 1000, type = "bootstrap") |>
+  calculate(stat = "slope") |>
+  get_confidence_interval(level = 0.95, type = "percentile")
 ```
 
 ###
 
-"We see the point estimate of the slope of the line is -0.0431, the standard error of this estimate is 0.0108, and the $t$-test statistic is $T = -3.98$." "The p-value corresponds exactly to the two-sided test we are interested in: 0.0002."
+Our bootstrap interval, (-0.0692, -0.0210), nearly matches the t interval, and both exclude zero. One additional reason to worry slightly less about normality is that neither the randomization test nor the bootstrapping procedures require the data to be normal around the line.
 
 ### Exercise 11
 
-Keep only the `family_income` row, and add three columns: the t cutoff for a 95% confidence interval with 48 degrees of freedom, which is the 50 students minus 2, and the lower and upper ends of the interval, the estimate plus or minus that cutoff times the standard error. Render.
+Replace the code in that chunk with a histogram of the residuals from the model predicting `gift_aid` from `family_income`. Render.
 
 ```{r}
 #| label: the-mathematical-model-and-its-conditions-11
@@ -962,20 +857,18 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: the-mathematical-model-and-its-conditions-11-test
 #| echo: true
 lm(gift_aid ~ family_income, data = elmhurst) |>
-  tidy() |>
-  filter(term == "family_income") |>
-  mutate(t_star = qt(0.975, df = 48),
-         lower = estimate - t_star * std.error,
-         upper = estimate + t_star * std.error)
+  augment() |>
+  ggplot(aes(x = .resid)) +
+  geom_histogram(bins = 15)
 ```
 
 ###
 
-Our interval, (-0.0648, -0.0213), matches the chapter's (-0.0648, -0.0214) except for rounding. "We are 95% confident that for an additional one unit (i.e., \$1000 increase) in family income, the university's gift aid is predicted to decrease on average by \$21.40 to \$64.80."
+The residuals run from about -10 to 12 thousand dollars, centered on zero and roughly symmetric, though lumpy. The normality condition requires that points vary symmetrically around the line, spreading out in a bell-shaped fashion.
 
 ### Exercise 12
 
-Check the interval against a simulation. Replace the code in that chunk so that it resamples the 50 students with replacement 1,000 times, calculates the slope of `gift_aid` on `family_income` for each resample, and finds the 95% bootstrap percentile interval. Set a seed of 24 first. Render.
+Replace the histogram with a residual plot: the residuals against `family_income`, with a dashed horizontal line at zero. Render.
 
 ```{r}
 #| label: the-mathematical-model-and-its-conditions-12
@@ -988,21 +881,22 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: the-mathematical-model-and-its-conditions-12-test
 #| echo: true
-set.seed(24)
-elmhurst |>
-  specify(gift_aid ~ family_income) |>
-  generate(reps = 1000, type = "bootstrap") |>
-  calculate(stat = "slope") |>
-  get_confidence_interval(level = 0.95, type = "percentile")
+lm(gift_aid ~ family_income, data = elmhurst) |>
+  augment() |>
+  ggplot(aes(x = family_income, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed")
 ```
 
 ###
 
-Our bootstrap interval, (-0.0692, -0.0210), nearly matches the t interval, and both exclude zero. "One additional reason to worry slightly less about normality is that neither the randomization test nor the bootstrapping procedures require the data to be normal around the line."
+The technical conditions are often remembered using the **LINE** mnemonic: **linear** model, **independent** observations, points **normally** distributed around the line, and **equal** variability around it. The linearity, normality, and equality of variance conditions usually can be assessed through residual plots like yours, and the book's four examples below each break one condition.
+
+![](images/fig-whatCanGoWrong.png){fig-alt="A grid of 2 by 4 scatterplots with fabricated data. The top row of plots contains original x-y data plots with a least squares regression line. The bottom row of plots is a series of residual plot with predicted value on the x-axis and residual on the y-axis. The first column of plots gives an example of points that have a quadratic relationship instead of a linear relationship. The second column of plots gives an example where a single outlying point does not fit the linear model. The third column of points gives an example where the points have increasing variability as the value of x increases. The last column of points gives an example where the points are correlated with one another, possibly as part of a time series."}
 
 ### Exercise 13
 
-Replace the code in that chunk with a histogram of the residuals from the model predicting `gift_aid` from `family_income`. Render.
+Improve the plot. Add a title, axis labels in thousands of dollars, a subtitle that states what the plot says about the conditions, and a caption giving the number of students and the source. Render.
 
 ```{r}
 #| label: the-mathematical-model-and-its-conditions-13
@@ -1014,57 +908,6 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ```{r}
 #| label: the-mathematical-model-and-its-conditions-13-test
-#| echo: true
-lm(gift_aid ~ family_income, data = elmhurst) |>
-  augment() |>
-  ggplot(aes(x = .resid)) +
-  geom_histogram(bins = 15)
-```
-
-###
-
-The residuals run from about -10 to 12 thousand dollars, centered on zero and roughly symmetric, though lumpy, as 50 points usually are. "The normality condition requires that points vary symmetrically around the line, spreading out in a bell-shaped fashion."
-
-### Exercise 14
-
-Replace the histogram with a residual plot: the residuals against `family_income`, with a dashed horizontal line at zero. Render.
-
-```{r}
-#| label: the-mathematical-model-and-its-conditions-14
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{r}
-#| label: the-mathematical-model-and-its-conditions-14-test
-#| echo: true
-lm(gift_aid ~ family_income, data = elmhurst) |>
-  augment() |>
-  ggplot(aes(x = family_income, y = .resid)) +
-  geom_point() +
-  geom_hline(yintercept = 0, linetype = "dashed")
-```
-
-###
-
-"The technical conditions are often remembered using the **LINE** mnemonic": **linear** model, **independent** observations, points **normally** distributed around the line, and **equal** variability around it. "The linearity, normality, and equality of variance conditions usually can be assessed through residual plots."
-
-### Exercise 15
-
-Improve the plot. Add a title, axis labels in thousands of dollars, a subtitle that states what the plot says about the conditions, and a caption giving the number of students and the source. Render.
-
-```{r}
-#| label: the-mathematical-model-and-its-conditions-15
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{r}
-#| label: the-mathematical-model-and-its-conditions-15-test
 #| echo: true
 lm(gift_aid ~ family_income, data = elmhurst) |>
   augment() |>
@@ -1080,14 +923,14 @@ lm(gift_aid ~ family_income, data = elmhurst) |>
 
 ###
 
-"The trend appears to be linear, the data fall around the line with no obvious outliers, the variance is roughly constant." "Least squares regression can be applied to these data."
+The trend appears to be linear, the data fall around the line with no obvious outliers, and the variance is roughly constant. Least squares regression can be applied to these data.
 
-### Exercise 16
+### Exercise 14
 
 Commit `analysis.qmd` with the message `"Test and estimate slopes with the t-distribution"` and push.
 
 ```{r}
-#| label: the-mathematical-model-and-its-conditions-16
+#| label: the-mathematical-model-and-its-conditions-14
 #| echo: false
 learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type = "reflection")
 ```
@@ -1102,19 +945,19 @@ a71d0e5 (HEAD -> main, origin/main) Test and estimate slopes with the t-distribu
 
 ###
 
-"We usually rely on statistical software to identify point estimates, standard errors, test statistics, and p-values in practice." "However, be aware that software will not generally check whether the method is appropriate, meaning we must still verify conditions are met."
+We usually rely on statistical software to identify point estimates, standard errors, test statistics, and p-values in practice. However, be aware that software will not generally check whether the method is appropriate, meaning we must still verify conditions are met.
 
 ## Summary
 
 This tutorial covered [Chapter 24: Inference for linear regression with a single predictor](https://openintrostat.github.io/ims/inf-model-slr.html) from [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) by Mine Çetinkaya-Rundel and Johanna Hardin. You have learned to test whether a slope differs from zero by shuffling, to estimate a slope with a bootstrap interval, to read the same test and interval from regression output with the t-distribution, and to check the conditions that output depends on, using data on births, midterm elections, and college financial aid.
 
-The chapter's own summary, in the authors' words:
+Recall that early in the text we presented graphical techniques which communicated relationships across multiple variables. We also used modeling to formalize the relationships. Many tutorials were dedicated to inferential methods which allowed claims about the population to be made based on samples of data. Not only did we present the mathematical model for each of the inferential techniques, but when appropriate, we also presented bootstrapping and permutation methods.
 
-> Recall that early in the text we presented graphical techniques which communicated relationships across multiple variables. We also used modeling to formalize the relationships. Many chapters were dedicated to inferential methods which allowed claims about the population to be made based on samples of data. Not only did we present the mathematical model for each of the inferential techniques, but when appropriate, we also presented bootstrapping and permutation methods.
->
-> In [Chapter 24] we brought all of those ideas together by considering inferential claims on linear models through randomization tests, bootstrapping, and mathematical modeling. We continue to emphasize the importance of experimental design in making conclusions about research claims. In particular, recall that variability can come from different sources (e.g., random sampling vs. random allocation, see [Chapter 2]).
+In this tutorial we brought all of those ideas together by considering inferential claims on linear models through randomization tests, bootstrapping, and mathematical modeling. We continue to emphasize the importance of experimental design in making conclusions about research claims. In particular, recall that variability can come from different sources (e.g., random sampling vs. random allocation).
 
 For the same tests and intervals in R, see the **infer** article "[Full infer Pipeline Examples](https://infer.tidymodels.org/articles/observed_stat_examples.html)," which includes randomization tests and bootstrap intervals for a slope. For the births themselves, the `births14` help page cites the CDC's [Natality Detail File, 2014](https://doi.org/10.3886/ICPSR36461.v1).
+
+Many sentences in this tutorial, and its figures, come from the chapter, used under the book's [CC BY-SA 3.0 license](https://creativecommons.org/licenses/by-sa/3.0/).
 
 ### Exercise 1
 
@@ -1146,11 +989,12 @@ library(broom)
 ```
 
 ```{r}
-#| cache: true
 set.seed(47)
 births14_100 <- births14 |>
   drop_na() |>
   slice_sample(n = 100)
+
+births14_100
 ```
 
 ```{r}
@@ -1192,7 +1036,7 @@ lm(gift_aid ~ family_income, data = elmhurst) |>
 
 ###
 
-Your page now shows a simulation and a check of the mathematical model's conditions, two of the chapter's three ways to judge a slope. "We encourage the reader to think broadly about the models at hand without putting too much dependence on the exact p-values that are reported from the statistical software."
+Your page shows a bootstrap distribution of slopes and a check of the mathematical model's conditions. We encourage the reader to think broadly about the models at hand without putting too much dependence on the exact p-values that are reported from the statistical software.
 
 ### Exercise 2
 
@@ -1214,7 +1058,7 @@ Your answer should look like `https://your-github-username.github.io/inference-f
 
 ###
 
-"The technical condition describing the independence of the observations is often the most crucial but also the most difficult to diagnose." "It is also extremely difficult to gather a dataset which is a true random sample from the population of interest."
+The technical condition describing the independence of the observations is often the most crucial but also the most difficult to diagnose. It is also extremely difficult to gather a dataset which is a true random sample from the population of interest.
 
 ### Exercise 3
 
@@ -1232,7 +1076,7 @@ Your answer should look like `https://github.com/your-github-username/inference-
 
 ###
 
-"Many of the techniques used to deal with technical condition violations are outside the scope of this text, but they are taught in universities in the very next class after this one." "If you are working with linear models or are curious to learn more, we recommend that you continue learning about statistical methods applicable to a larger class of datasets."
+Many of the techniques used to deal with technical condition violations are outside the scope of this text, but they are taught in universities in the very next class after this one. If you are working with linear models or are curious to learn more, we recommend that you continue learning about statistical methods applicable to a larger class of datasets.
 
 ## Your Answers
 

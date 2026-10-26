@@ -35,7 +35,7 @@ This tutorial covers [Chapter 22: Inference for comparing many means](https://op
 
 ### Exercise 1
 
-You should be doing this tutorial in a repo named `inference-for-comparing-many-means`. If you are not, create one and then connect to it. You may need to restart this tutorial after you do so.
+You should be doing this tutorial in a repo named `inference-for-comparing-many-means`. If you are not, create one and then connect to it.
 
 Create a new file, `analysis.qmd`, with the title `"Inference for Comparing Many Means"` and your name as the author. In a bash Terminal, render it:
 
@@ -63,7 +63,7 @@ analysis_files
 
 ###
 
-"Sometimes we want to compare means across many groups." But "if we have many groups and do many comparisons, it is likely that we will eventually find a difference just by chance, even if there is no difference in the populations."
+Sometimes we want to compare means across many groups. But if we have many groups and do many comparisons, it is likely that we will eventually find a difference just by chance, even if there is no difference in the populations.
 
 ### Exercise 2
 
@@ -84,7 +84,7 @@ library(tidyverse)
 
 ###
 
-Instead of many pairwise tests, "we should apply a holistic test to check whether there is evidence that at least one pair of groups are in fact different, which is where ANOVA saves the day." The **tidyverse** does the filtering, grouping, and plotting around that test.
+Instead of many pairwise tests, we should apply a holistic test to check whether there is evidence that at least one pair of groups are in fact different, which is where ANOVA saves the day. The **tidyverse** does the filtering, grouping, and plotting around that test.
 
 ### Exercise 3
 
@@ -106,7 +106,7 @@ library(openintro)
 
 ###
 
-**openintro** holds both of the chapter's datasets: `mlb_players_18`, the batting records of the 2018 baseball season, and `classdata`, the scores from three exams. ANOVA asks one question of each: "The mean outcome is the same across all groups," or "At least one mean is different."
+**openintro** holds both of the chapter's datasets: `mlb_players_18`, the batting records of the 2018 baseball season, and `classdata`, the scores from three exams. ANOVA tests the null hypothesis that the mean outcome is the same across all groups against the alternative that at least one mean is different.
 
 ### Exercise 4
 
@@ -129,7 +129,7 @@ library(infer)
 
 ###
 
-**infer** shuffles groups and calculates a statistic from each shuffle, the same steps you used for two groups, and it can also give the matching mathematical distribution. The book's authors used it to draw the chapter's histogram of 1,000 randomized F statistics.
+**infer** shuffles groups and calculates a statistic from each shuffle, as you did for two groups, and it can also give the matching mathematical distribution.
 
 ### Exercise 5
 
@@ -153,11 +153,11 @@ library(broom)
 
 ###
 
-**broom** turns the output of a fitted model into a tidy tibble, one row per term. "An ANOVA analysis can be summarized in a table very similar to that of a regression summary," and **broom** builds that table.
+**broom** turns the output of a fitted model into a tidy tibble, one row per term. An ANOVA analysis can be summarized in a table very similar to that of a regression summary, and **broom** builds that table.
 
 ## Batting and randomization
 
-"We would like to discern whether there are real differences between the batting performance of baseball players according to their position: outfielder (OF), infielder (IF), and catcher (C)." The chapter then tests three exams the same way, by shuffling.
+We would like to discern whether there are real differences between the batting performance of baseball players according to their position: outfielder (OF), infielder (IF), and catcher (C). The chapter then tests three exams the same way, by shuffling.
 
 ### Exercise 1
 
@@ -179,41 +179,34 @@ mlb_players_18
 
 ###
 
-Each of the 1,270 rows is one player's 2018 season, and every `name` starts with a stray space, as in `" Allard, K"`. "The measure we will use for the player batting performance (the outcome variable) is on-base percentage (`OBP`)."
+Each of the 1,270 rows is one player's 2018 season, and every `name` starts with a stray space, as in `" Allard, K"`. The measure we will use for the player batting performance (the outcome variable) is on-base percentage (`OBP`).
 
 ### Exercise 2
+
+Replace the code in that chunk so that it counts the players at each `position`. Render.
 
 ```{r}
 #| label: batting-and-randomization-2
 #| echo: false
-learnr2::question("In the R Terminal, run ?mlb_players_18. Copy and paste the Description, the first line of the Format section, and the entry for position.", type = "reflection")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
 
-```{.output}
-Description:
-
-     Batter statistics for 2018 Major League Baseball season.
-
-Format:
-
-     A data frame with 1270 observations on the following 19 variables.
-
-     position Position abbreviation: ‘1B’ = first base, ‘2B’ = second
-          base, ‘3B’ = third base, ‘C’ = catcher, ‘CF’ = center field
-          (outfield), ‘DH’ = designated hitter, ‘LF’ = left field
-          (outfield), ‘P’ = pitcher, ‘RF’ = right field (outfield),
-          ‘SS’ = shortstop.
+```{r}
+#| label: batting-and-randomization-2-test
+#| echo: true
+mlb_players_18 |>
+  count(position)
 ```
 
 ###
 
-The data come from [mlb.com](https://www.mlb.com/stats), and `position` has ten values, not the chapter's three. The Examples at the bottom of the page drop pitchers and designated hitters and keep players with at least 100 at bats, just as the chapter does.
+642 of the 1,270 players, more than half, are pitchers, and only 6 are designated hitters. Pitchers are on a team for their arms, not their bats.
 
 ### Exercise 3
 
-Replace the code in that chunk so that it counts the players at each `position`. Render.
+Replace the code in that chunk so that it shows the five players with the highest `OBP`, along with their `position` and `AB`. Render.
 
 ```{r}
 #| label: batting-and-randomization-3
@@ -227,16 +220,17 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: batting-and-randomization-3-test
 #| echo: true
 mlb_players_18 |>
-  count(position)
+  slice_max(OBP, n = 5) |>
+  select(name, position, AB, OBP)
 ```
 
 ###
 
-642 of the 1,270 players, more than half, are pitchers, and only 6 are designated hitters. Pitchers are on a team for their arms, not their bats.
+The best on-base percentages in baseball belong to pitchers, each with an `OBP` of 1 from one or two at bats, and ties push the list to seven. The on-base percentage roughly represents the fraction of the time a player successfully gets on base or hits a home run, and a fraction built on one at bat is mostly luck.
 
 ### Exercise 4
 
-Replace the code in that chunk so that it shows the five players with the highest `OBP`, along with their `position` and `AB`. Render.
+Replace the code in that chunk so that it keeps only the players with at least 100 at bats and counts them at each `position`. Render.
 
 ```{r}
 #| label: batting-and-randomization-4
@@ -250,17 +244,17 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: batting-and-randomization-4-test
 #| echo: true
 mlb_players_18 |>
-  slice_max(OBP, n = 5) |>
-  select(name, position, AB, OBP)
+  filter(AB >= 100) |>
+  count(position)
 ```
 
 ###
 
-The best on-base percentages in baseball belong to pitchers, each with an `OBP` of 1 from one or two at bats; ties push the list to seven. "The on-base percentage roughly represents the fraction of the time a player successfully gets on base or hits a home run," and a fraction built on one at bat is mostly luck.
+436 players had at least 100 at bats, and only one of them is a pitcher, against 642 before the filter. That pitcher and the 6 designated hitters, who bat but never take the field, are the last players the chapter removes.
 
 ### Exercise 5
 
-Replace the code in that chunk so that it keeps only the players with at least 100 at bats and counts them at each `position`. Render.
+Replace the code in that chunk so that it keeps players with at least 100 at bats, drops pitchers and designated hitters, and combines the remaining positions into three groups: outfield (`LF`, `CF`, `RF`) as `OF`, infield (`1B`, `2B`, `3B`, `SS`) as `IF`, and catcher, `C`, in the order `OF`, `IF`, `C`. Store the result as `mlb`, and then count the players at each `position` of `mlb`. Render.
 
 ```{r}
 #| label: batting-and-randomization-5
@@ -273,18 +267,24 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: batting-and-randomization-5-test
 #| echo: true
-mlb_players_18 |>
-  filter(AB >= 100) |>
+mlb <- mlb_players_18 |>
+  filter(AB >= 100, !position %in% c("P", "DH")) |>
+  mutate(position = case_when(position %in% c("LF", "CF", "RF") ~ "OF",
+                              position %in% c("1B", "2B", "3B", "SS") ~ "IF",
+                              .default = position),
+         position = fct_relevel(position, "OF", "IF", "C"))
+
+mlb |>
   count(position)
 ```
 
 ###
 
-436 players had at least 100 at bats, and only one of them is a pitcher, against 642 before the filter. That pitcher and the 6 designated hitters, who bat but never take the field, are the last players the chapter removes.
+160 outfielders, 205 infielders, and 64 catchers make the chapter's 429 players. The player positions have been divided into three groups: outfield (OF), infield (IF), and catcher (C).
 
 ### Exercise 6
 
-Replace the code in that chunk so that it keeps players with at least 100 at bats, drops pitchers and designated hitters, and combines the remaining positions into three groups: outfield (`LF`, `CF`, `RF`) as `OF`, infield (`1B`, `2B`, `3B`, `SS`) as `IF`, and catcher, `C`, in the order `OF`, `IF`, `C`. Store the result as `mlb`, and then count the players at each `position` of `mlb`. Render.
+Start a new chunk that calculates, for each `position` in `mlb`, the number of players and the mean and standard deviation of `OBP`. Render.
 
 ```{r}
 #| label: batting-and-randomization-6
@@ -297,102 +297,6 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: batting-and-randomization-6-test
 #| echo: true
-mlb <- mlb_players_18 |>
-  filter(AB >= 100, !position %in% c("P", "DH")) |>
-  mutate(position = case_when(position %in% c("LF", "CF", "RF") ~ "OF",
-                              position %in% c("1B", "2B", "3B", "SS") ~ "IF",
-                              .default = position),
-         position = fct_relevel(position, "OF", "IF", "C"))
-
-mlb |>
-  count(position)
-```
-
-###
-
-160 outfielders, 205 infielders, and 64 catchers make the chapter's 429 players. "The player positions have been divided into three groups: outfield (OF), infield (IF), and catcher (C)."
-
-### Exercise 7
-
-Delete the lines that count the players, so that the chunk only creates `mlb`. Render.
-
-```{r}
-#| label: batting-and-randomization-7
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-````{verbatim}
-mlb <- mlb_players_18 |>
-  filter(AB >= 100, !position %in% c("P", "DH")) |>
-  mutate(position = case_when(position %in% c("LF", "CF", "RF") ~ "OF",
-                              position %in% c("1B", "2B", "3B", "SS") ~ "IF",
-                              .default = position),
-         position = fct_relevel(position, "OF", "IF", "C"))
-````
-
-###
-
-`mlb` is every 2018 player who meets the chapter's rules, not a sample of them. The chapter's footnote says the null hypothesis is that "the average on-base percentage is equal across the four positions," apparently left over from a version that kept designated hitters as a fourth group.
-
-### Exercise 8
-
-Add `#| cache: true` to that chunk. Render.
-
-```{r}
-#| label: batting-and-randomization-8
-#| echo: false
-learnr2::question("In the bash Terminal, run ls. CP/CR.", type = "reflection")
-```
-
-###
-
-```{.output}
-analysis.html  analysis.qmd  analysis_cache  analysis_files
-```
-
-###
-
-`analysis_cache` now holds `mlb`, so later renders skip the filtering and regrouping. With three groups, the null hypothesis is that the average on-base percentage is the same for outfielders, infielders, and catchers.
-
-### Exercise 9
-
-Your Source Control count just jumped, because Git sees every file in the new cache directory. Add `analysis_cache` to `.gitignore`, and the count drops back.
-
-```{r}
-#| label: batting-and-randomization-9
-#| echo: false
-learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{.output}
-analysis_files
-analysis_cache
-```
-
-###
-
-"As with two groups, the research question will focus on whether the group membership is independent of the numerical response variable." Here the group is `position` and the numerical response is `OBP`.
-
-### Exercise 10
-
-Start a new chunk that calculates, for each `position` in `mlb`, the number of players and the mean and standard deviation of `OBP`. Render.
-
-```{r}
-#| label: batting-and-randomization-10
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{r}
-#| label: batting-and-randomization-10-test
-#| echo: true
 mlb |>
   summarize(n = n(),
             mean_obp = mean(OBP),
@@ -402,14 +306,14 @@ mlb |>
 
 ###
 
-Outfielders average 0.320, the chapter's point estimate of their mean, and the three standard deviations run from 0.038 to 0.043. "Notice that the variability appears to be approximately constant across groups; nearly constant variance across groups is an important assumption that must be satisfied before we consider the ANOVA approach."
+Outfielders average 0.320, the chapter's point estimate of their mean, and the three standard deviations run from 0.038 to 0.043. The variability appears to be approximately constant across groups, and nearly constant variance across groups is an important assumption that must be satisfied before we consider the ANOVA approach.
 
-### Exercise 11
+### Exercise 7
 
 Replace the code in that chunk with side-by-side box plots of `OBP` for each `position`. Render.
 
 ```{r}
-#| label: batting-and-randomization-11
+#| label: batting-and-randomization-7
 #| echo: false
 learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
@@ -417,7 +321,7 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ###
 
 ```{r}
-#| label: batting-and-randomization-11-test
+#| label: batting-and-randomization-7-test
 #| echo: true
 mlb |>
   ggplot(aes(x = position, y = OBP)) +
@@ -426,14 +330,14 @@ mlb |>
 
 ###
 
-"The largest difference between the sample means is between the catcher and the outfielder positions." Testing only that pair because it looks biggest would be **data snooping**: "It is inappropriate to examine all data by eye (informal testing) and only afterwards decide which parts to formally test."
+The largest difference between the sample means is between the catcher and the outfielder positions. Testing only that pair would be *data snooping*: it is inappropriate to examine all data by eye (informal testing) and only afterwards decide which parts to formally test.
 
-### Exercise 12
+### Exercise 8
 
 The chapter builds its randomization test on a second dataset. Start a new chunk that prints `classdata`. Render.
 
 ```{r}
-#| label: batting-and-randomization-12
+#| label: batting-and-randomization-8
 #| echo: false
 learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
@@ -441,50 +345,21 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ###
 
 ```{r}
-#| label: batting-and-randomization-12-test
+#| label: batting-and-randomization-8-test
 #| echo: true
 classdata
 ```
 
 ###
 
-Each of the 164 rows is one student, with a score, `m1`, and a `lecture` of `a`, `b`, or `c`. The chapter's story: "Suppose now that the teacher had had such an extremely large class that three different exams were given: A, B, and C."
+Each of the 164 rows is one student, with a score, `m1`, and a `lecture` of `a`, `b`, or `c`, and the help page says the scores are simulated. Suppose now that the teacher had had such an extremely large class that three different exams were given: A, B, and C.
 
-### Exercise 13
-
-```{r}
-#| label: batting-and-randomization-13
-#| echo: false
-learnr2::question("In the R Terminal, run ?classdata. Copy and paste the Description and the Format section.", type = "reflection")
-```
-
-###
-
-```{.output}
-Description:
-
-     This data is simulated and is meant to represent students scores
-     from three different lectures who were all given the same exam.
-
-Format:
-
-     A data frame with 164 observations on the following 2 variables.
-
-     m1 Represents a first midterm score.
-
-     lecture Three classes: ‘a’, ‘b’, and ‘c’.
-```
-
-###
-
-The help page and the chapter disagree: the page says three lectures took the same exam, while the chapter says one class took three different exams. Both agree the scores are made up, so this dataset teaches the method, not a fact about any real class.
-
-### Exercise 14
+### Exercise 9
 
 Replace the code in that chunk so that it adds a variable `exam`, the `lecture` letter in upper case, and calculates, for each `exam`, the number of students and the mean, standard deviation, minimum, and maximum of `m1`. Render.
 
 ```{r}
-#| label: batting-and-randomization-14
+#| label: batting-and-randomization-9
 #| echo: false
 learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
@@ -492,7 +367,7 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ###
 
 ```{r}
-#| label: batting-and-randomization-14-test
+#| label: batting-and-randomization-9-test
 #| echo: true
 classdata |>
   mutate(exam = str_to_upper(lecture)) |>
@@ -506,14 +381,14 @@ classdata |>
 
 ###
 
-Exam C averages 78.9, against 75.1 for A and 72.0 for B, and all three standard deviations are close to 14. The alternative hypothesis: "At least one of the exams is inherently more (or less) difficult than the others."
+Exam C averages 78.9, against 75.1 for A and 72.0 for B, and all three standard deviations are close to 14. The alternative hypothesis is that at least one of the exams is inherently more (or less) difficult than the others.
 
-### Exercise 15
+### Exercise 10
 
 Replace the code in that chunk so that it uses **infer** to calculate the F statistic for `m1` across the three values of `exam`. Store the result as `class_F` and print it. Render.
 
 ```{r}
-#| label: batting-and-randomization-15
+#| label: batting-and-randomization-10
 #| echo: false
 learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
@@ -521,7 +396,7 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ###
 
 ```{r}
-#| label: batting-and-randomization-15-test
+#| label: batting-and-randomization-10-test
 #| echo: true
 class_F <- classdata |>
   mutate(exam = str_to_upper(lecture)) |>
@@ -533,14 +408,14 @@ class_F
 
 ###
 
-The observed F is 3.48, the chapter's value. "The F statistic is a ratio of how the groups differ (MSG) as compared to how the observations within a group vary (MSE)."
+The observed F is 3.48, the chapter's value. The *F statistic* is a ratio of how the groups differ (MSG) as compared to how the observations within a group vary (MSE).
 
-### Exercise 16
+### Exercise 11
 
 Below `class_F`, replace the line that prints it with code that shuffles the exams across the 164 scores once, as if the exam made no difference, and calculates the number of students and the mean score for each shuffled `exam`. Set a seed of 47 first, the one the chapter used. Render.
 
 ```{r}
-#| label: batting-and-randomization-16
+#| label: batting-and-randomization-11
 #| echo: false
 learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
@@ -548,7 +423,7 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ###
 
 ```{r}
-#| label: batting-and-randomization-16-test
+#| label: batting-and-randomization-11-test
 #| echo: true
 class_F <- classdata |>
   mutate(exam = str_to_upper(lecture)) |>
@@ -568,14 +443,16 @@ classdata |>
 
 ###
 
-The shuffle keeps 58, 55, and 51 students per exam, but the means become 76.4, 75.4, and 73.8, and exam C drops from best to worst. "By reallocating which student got which exam, we are able to understand how the difference in average exam scores changes due only to natural variability."
+The shuffle keeps 58, 55, and 51 students per exam, but the means become 76.4, 75.4, and 73.8, and exam C drops from best to worst. By reallocating which student got which exam, we are able to understand how the difference in average exam scores changes due only to natural variability.
 
-### Exercise 17
+![](images/fig-randANOVA.png){fig-alt="Four panels representing four different orientations of a toy dataset of 13 exam scores. The first panel provides the observed data; 4 of the exams were version A and the average score was 77.25; 5 of the exams were version B and the average score was 75.8; 4 of the exams were version C and the average score was 78.5. The observed F statistic is 0.0747. The second panel shows the shuffled reassignment of the exam versions (4 of the scores are randomly reassigned to A, 5 of the scores are randomly reassigned to B, 4 of the scores are randomly reassigned to C). The third panel shows which score is connected with which new reassigned version of the exam. And the fourth panel sorts the exams so that version A exams are together, version B exams are together, and version C exams are together. In the randomly reassigned versions, the average score for version A is 72.25, the average score for version B is 78, and the average score for version C is 75.25. The randomized F statistic is 0.1637."}
+
+### Exercise 12
 
 Change the shuffle so that, instead of the group means, it calculates the F statistic for the shuffled exams. Render.
 
 ```{r}
-#| label: batting-and-randomization-17
+#| label: batting-and-randomization-12
 #| echo: false
 learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
@@ -583,7 +460,7 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ###
 
 ```{r}
-#| label: batting-and-randomization-17-test
+#| label: batting-and-randomization-12-test
 #| echo: true
 class_F <- classdata |>
   mutate(exam = str_to_upper(lecture)) |>
@@ -601,14 +478,14 @@ classdata |>
 
 ###
 
-Our shuffled F is 0.451, far below the observed 3.48; yours will differ if your shuffle did. "If the null hypothesis is true, then the score on each exam should represent the true student ability on that material."
+Our shuffled F is 0.451, far below the observed 3.48, and yours will differ if your shuffle did. If the null hypothesis is true, then the score on each exam should represent the true student ability on that material.
 
-### Exercise 18
+### Exercise 13
 
 Change the code so that it shuffles the exams 1,000 times, calculating the F statistic for each shuffle, and stores the 1,000 values as `class_null`. Keep the seed of 47. Below that, calculate the minimum, mean, and maximum of the 1,000 F statistics. Render.
 
 ```{r}
-#| label: batting-and-randomization-18
+#| label: batting-and-randomization-13
 #| echo: false
 learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
@@ -616,7 +493,7 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ###
 
 ```{r}
-#| label: batting-and-randomization-18-test
+#| label: batting-and-randomization-13-test
 #| echo: true
 class_F <- classdata |>
   mutate(exam = str_to_upper(lecture)) |>
@@ -639,14 +516,14 @@ class_null |>
 
 ###
 
-The shuffled F statistics average 1.01 and never fall below zero, since F is a ratio of two measures of variability. Our largest is 7.12, matching the chapter: "We see that, just by chance, the F statistic can be as large as 7."
+The shuffled F statistics average 1.01 and never fall below zero, since F is a ratio of two measures of variability. Our largest is 7.12: just by chance, the F statistic can be as large as 7.
 
-### Exercise 19
+### Exercise 14
 
 Replace the summary at the bottom of that chunk with code that uses **infer** to calculate the p-value: the proportion of the 1,000 shuffled F statistics in `class_null` at least as large as `class_F`. Render.
 
 ```{r}
-#| label: batting-and-randomization-19
+#| label: batting-and-randomization-14
 #| echo: false
 learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
@@ -654,7 +531,7 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ###
 
 ```{r}
-#| label: batting-and-randomization-19-test
+#| label: batting-and-randomization-14-test
 #| echo: true
 class_F <- classdata |>
   mutate(exam = str_to_upper(lecture)) |>
@@ -675,14 +552,14 @@ class_null |>
 
 ###
 
-"That is, the p-value of the test is 0.036." At a discernibility level of 0.05, "the p-value is smaller than the level of discernibility which would lead us to reject the null hypothesis."
+The p-value of the test is 0.036. At a discernibility level of 0.05, the p-value is smaller than the level of discernibility which would lead us to reject the null hypothesis.
 
-### Exercise 20
+### Exercise 15
 
 Replace the p-value with a histogram of the 1,000 shuffled F statistics in `class_null`, with a vertical line at the observed F in `class_F`. Render.
 
 ```{r}
-#| label: batting-and-randomization-20
+#| label: batting-and-randomization-15
 #| echo: false
 learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
@@ -690,7 +567,7 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ###
 
 ```{r}
-#| label: batting-and-randomization-20-test
+#| label: batting-and-randomization-15-test
 #| echo: true
 class_F <- classdata |>
   mutate(exam = str_to_upper(lecture)) |>
@@ -715,12 +592,12 @@ class_null |>
 
 Unlike a difference in means, the shuffled F statistics do not center on zero: they pile up near 1 and trail off in a long right tail. Only large values of F count against the null hypothesis, so the p-value is the area to the right of the red line.
 
-### Exercise 21
+### Exercise 16
 
 Improve the histogram. Color the bars at or beyond the observed F differently from the rest, make the vertical line dashed, move the legend below the plot, and add a title, axis labels, a subtitle that states the main finding, and a caption giving the number of students, the number of shuffles, and the source. Render.
 
 ```{r}
-#| label: batting-and-randomization-21
+#| label: batting-and-randomization-16
 #| echo: false
 learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
@@ -728,7 +605,7 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ###
 
 ```{r}
-#| label: batting-and-randomization-21-test
+#| label: batting-and-randomization-16-test
 #| echo: true
 class_F <- classdata |>
   mutate(exam = str_to_upper(lecture)) |>
@@ -763,14 +640,14 @@ class_null |>
 
 ###
 
-"When the null hypothesis is true, random variability that exists in nature sometimes produces data with p-values less than 0.05." "To best mitigate any extra Type I errors, we suggest that you set up your hypotheses and testing protocol before running any analyses."
+When the null hypothesis is true, random variability that exists in nature sometimes produces data with p-values less than 0.05. To best mitigate any extra Type I errors, we suggest that you set up your hypotheses and testing protocol before running any analyses.
 
-### Exercise 22
+### Exercise 17
 
-Commit `analysis.qmd` and `.gitignore` with the message `"Test three exams by randomization"` and push.
+Commit `analysis.qmd` with the message `"Test three exams by randomization"` and push.
 
 ```{r}
-#| label: batting-and-randomization-22
+#| label: batting-and-randomization-17
 #| echo: false
 learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type = "reflection")
 ```
@@ -784,11 +661,11 @@ learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type
 
 ###
 
-The test says at least one exam differs, not which one, and the chapter warns that "we must be very careful about conclusions made using different techniques on the same data." "Once the conclusions have been reached, you should report your findings instead of running a different type of test on the same data."
+The test says at least one exam differs, not which one. Once the conclusions have been reached, you should report your findings instead of running a different type of test on the same data.
 
 ## Mathematical model for many means
 
-"As seen with many of the tests and statistics from previous sections, the randomization test on the F statistic has corresponding mathematical theory to describe the distribution that can be used without using a computational approach." The chapter applies that theory to the batting data.
+As seen with many of the tests and statistics from previous sections, the randomization test on the F statistic has corresponding mathematical theory to describe the distribution that can be used without using a computational approach. The chapter applies that theory to the batting data.
 
 ### Exercise 1
 
@@ -814,7 +691,7 @@ mlb_F
 
 ###
 
-The observed F is 5.08, the chapter's 5.077 rounded. When the null hypothesis is true, the two measures of variability in F "should be about equal," so an F near 1 is unremarkable.
+The observed F is 5.08, the chapter's 5.077 rounded. When the null hypothesis is true, the two measures of variability in F should be about equal, so an F near 1 is unremarkable.
 
 ### Exercise 2
 
@@ -846,7 +723,9 @@ mlb |>
 
 ###
 
-MSG is 0.00803 and MSE is 0.00158, the chapter's values, and their ratio is the same 5.08 that **infer** found. "The mean square between the groups is, on its own, quite useless in a hypothesis test": MSE, the variability within the groups, is its benchmark.
+MSG is 0.00803 and MSE is 0.00158, the chapter's values, and their ratio is the same 5.08 that **infer** found. Differences in the groups' centers are noticeable when those differences are large *relative to the variability in the individual observations within each group*, as in groups IV, V, and VI below but not in groups I, II, and III.
+
+![](images/fig-toyANOVA-1.png){fig-alt="Two sets of side by side dot plots. The first set shows three groups of observations where the variability within a group is so large that it swamps out any variability across the groups. The second set shows three groups of observations where the variability within a group is much smaller and the center of the groups appears different."}
 
 ### Exercise 3
 
@@ -878,7 +757,9 @@ mlb |>
 
 ###
 
-The p-value is 0.0066, the chapter's value, well below 0.05. "That is, the data provide strong evidence that the average on-base percentage varies by player's primary field position."
+The p-value, 0.0066, is the small tail area above 5.08 of an F distribution with 2 and 426 degrees of freedom. The data provide strong evidence that the average on-base percentage varies by player's primary field position.
+
+![](images/fig-fDist2And423Shaded-1.png){fig-alt="A line plot showing the theoretical F distribution with the first degree of freedom equal to 2 and the second degree of freedom equal to 426. The curve is right-skewed with most values less than 4. The tail extends to approximately 8. Area to the right of 5.077 has been shaded in red."}
 
 ### Exercise 4
 
@@ -906,11 +787,11 @@ lm(OBP ~ position, data = mlb) |>
 
 ###
 
-One table holds everything you calculated: degrees of freedom of 2 and 426, mean squares of 0.00803 and 0.00158, an F of 5.08, and a p-value of 0.0066. "The calculations required to perform an ANOVA by hand are tedious and prone to human error."
+One table holds everything you calculated: degrees of freedom of 2 and 426, mean squares of 0.00803 and 0.00158, an F of 5.08, and a p-value of 0.0066. The calculations required to perform an ANOVA by hand are tedious and prone to human error.
 
 ### Exercise 5
 
-"There are three conditions we must check for an ANOVA analysis: all observations must be independent, the data in each group must be nearly normal (or each group must have reasonably large sample sizes), and the variance within each group must be approximately equal."
+There are three conditions we must check for an ANOVA analysis: all observations must be independent, the data in each group must be nearly normal (or each group must have reasonably large sample sizes), and the variance within each group must be approximately equal.
 
 Replace the ANOVA table with a histogram of `OBP` for each `position`, one panel per position, stacked vertically. Render.
 
@@ -937,7 +818,7 @@ mlb |>
 
 ###
 
-All three histograms are roughly bell-shaped. "Since each of the groups we are considering have relatively large sample sizes, what we are looking for are major outliers."
+All three histograms are roughly bell-shaped. Since each of the groups we are considering have relatively large sample sizes, what we are looking for are major outliers.
 
 ### Exercise 6
 
@@ -965,7 +846,7 @@ mlb |>
 
 ###
 
-The largest standard deviation is only 1.12 times the smallest. That matters here because the groups range from 64 to 205 players, and "the constant variance condition is especially important when the sample sizes differ between groups."
+The largest standard deviation is only 1.12 times the smallest. The constant variance condition is especially important when the sample sizes differ between groups, as they do here, from 64 to 205 players.
 
 ### Exercise 7
 
@@ -999,7 +880,7 @@ mlb_null |>
 
 ###
 
-Only 5 of our 1,000 shuffles reached the observed 5.08, a p-value of 0.005, close to the 0.0066 from the F distribution; your count may differ a little. Randomization and the mathematical model reach the same conclusion.
+Only 5 of our 1,000 shuffles reached the observed 5.08, a p-value of 0.005, close to the 0.0066 from the F distribution. Randomization and the mathematical model reach the same conclusion.
 
 ### Exercise 8
 
@@ -1115,7 +996,7 @@ mlb_null |>
 
 ###
 
-"However, the ANOVA test does not provide a mechanism for knowing *which* group is driving the differences." "If we move forward with all possible two mean comparisons, we run the risk of a high Type I error rate."
+The ANOVA test does not provide a mechanism for knowing *which* group is driving the differences. If we move forward with all possible two mean comparisons, we run the risk of a high Type I error rate.
 
 ### Exercise 11
 
@@ -1137,17 +1018,17 @@ e1d40a8 (HEAD -> main, origin/main) Test on-base percentage by position with ANO
 
 ###
 
-The third condition, independence, cannot be read from a plot: "For example, in the MLB data, the data were not sampled. However, there are not obvious reasons why independence would not hold for most or all observations."
+The third condition, independence, cannot be read from a plot. In the MLB data, the data were not sampled, but there are not obvious reasons why independence would not hold for most or all observations.
 
 ## Summary
 
 This tutorial covered [Chapter 22: Inference for comparing many means](https://openintrostat.github.io/ims/inference-many-means.html) from [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) by Mine Çetinkaya-Rundel and Johanna Hardin. You have learned to compare the means of three or more groups with a single test, analysis of variance (ANOVA), first by shuffling groups to build a null distribution of the F statistic and then with the F distribution, using exam scores from three classes and the on-base percentages of Major League Baseball players.
 
-The chapter's own summary, in the authors' words:
-
-> In this chapter we have provided both the randomization test and the mathematical model appropriate for addressing questions of equality of means across two or more groups. Note that there were important technical conditions required for confirming that the F distribution appropriately modeled the ANOVA test statistic. Also, you may have noticed that there was no discussion of creating confidence intervals. That is because the ANOVA statistic does not have a direct analogue parameter to estimate. If there is interest in comparisons of mean differences (across each set of two groups), then the methods from [Chapter 20] comparing two independent means should be applied.
+In this tutorial we have provided both the randomization test and the mathematical model appropriate for addressing questions of equality of means across two or more groups. Note that there were important technical conditions required for confirming that the F distribution appropriately modeled the ANOVA test statistic. Also, you may have noticed that there was no discussion of creating confidence intervals. That is because the ANOVA statistic does not have a direct analogue parameter to estimate. If there is interest in comparisons of mean differences (across each set of two groups), then the methods from the tutorial comparing two independent means should be applied.
 
 For the arithmetic behind MSG and MSE, read the OpenIntro supplement "[ANOVA Calculations](https://www.openintro.org/download.php?file=stat_extra_anova_calculations)," which the chapter cites. For the same tests in R, read **infer**'s "[Tidy ANOVA (Analysis of Variance) with infer](https://infer.tidymodels.org/articles/anova.html)."
+
+Many sentences in this tutorial, and its figures, come from the chapter, used under the book's [CC BY-SA 3.0 license](https://creativecommons.org/licenses/by-sa/3.0/).
 
 ### Exercise 1
 
@@ -1179,13 +1060,15 @@ library(broom)
 ```
 
 ```{r}
-#| cache: true
 mlb <- mlb_players_18 |>
   filter(AB >= 100, !position %in% c("P", "DH")) |>
   mutate(position = case_when(position %in% c("LF", "CF", "RF") ~ "OF",
                               position %in% c("1B", "2B", "3B", "SS") ~ "IF",
                               .default = position),
          position = fct_relevel(position, "OF", "IF", "C"))
+
+mlb |>
+  count(position)
 ```
 
 ```{r}
@@ -1255,7 +1138,7 @@ mlb_null |>
 
 ###
 
-Your page holds both of the chapter's tests: a randomization test on three exams and an F-test on three groups of players, checked against its own shuffles. "Analysis of variance (ANOVA) is used to test whether the mean outcome differs across two or more groups."
+Your page has a randomization test on three exams and an F-test on three groups of players, checked against its own shuffles. Analysis of variance (ANOVA) is used to test whether the mean outcome differs across two or more groups.
 
 ### Exercise 2
 
@@ -1277,7 +1160,7 @@ Your answer should look like `https://your-github-username.github.io/inference-f
 
 ###
 
-ANOVA has no confidence interval, "because the ANOVA statistic does not have a direct analogue parameter to estimate." To ask how much two particular groups differ, go back to the methods for comparing two independent means.
+The larger the observed variability in the sample means (MSG) relative to the within-group observations (MSE), the larger F will be and the stronger the evidence against the null hypothesis.
 
 ### Exercise 3
 
@@ -1295,7 +1178,7 @@ Your answer should look like `https://github.com/your-github-username/inference-
 
 ###
 
-"Independence is always important to an ANOVA analysis." The other two conditions bend with large samples, but no sample size rescues observations that depend on one another.
+Independence is always important to an ANOVA analysis. Large samples relax the other two conditions, but not this one.
 
 ## Your Answers
 

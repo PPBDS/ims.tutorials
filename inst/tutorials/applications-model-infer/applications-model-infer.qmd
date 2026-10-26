@@ -42,7 +42,7 @@ This tutorial covers [Chapter 27: Applications: Model and infer](https://openint
 
 ### Exercise 1
 
-You should be doing this tutorial in a repo named `applications-model-and-infer`. If you are not, create one and then connect to it. You may need to restart this tutorial after you do so.
+You should be doing this tutorial in a repo named `applications-model-and-infer`. If you are not, create one and then connect to it.
 
 Create a new file, `analysis.qmd`, with the title `"Applications: Model and Infer"` and your name as the author. In a bash Terminal, render it:
 
@@ -70,7 +70,7 @@ analysis_files
 
 ###
 
-"In this case study, we consider Ebay auctions of a video game called *Mario Kart* for the Nintendo Wii." It is the book's last chapter, and it brings regression, simulation, and the mathematical model together on a single dataset.
+In this case study, we consider Ebay auctions of a video game called *Mario Kart* for the Nintendo Wii. The book's last chapter brings regression, simulation, and the mathematical model together on one dataset.
 
 ### Exercise 2
 
@@ -91,7 +91,7 @@ library(tidyverse)
 
 ###
 
-"We will try to determine how total price is related to each characteristic in an auction while simultaneously controlling for other variables." The **tidyverse** prepares those characteristics with **dplyr** and plots the results with **ggplot2**.
+We will try to determine how total price is related to each characteristic in an auction while simultaneously controlling for other variables. The **tidyverse** prepares those characteristics with **dplyr** and plots the results with **ggplot2**.
 
 ### Exercise 3
 
@@ -113,7 +113,7 @@ library(openintro)
 
 ###
 
-**openintro** holds `mariokart`, the auctions you met in the Linear Regression with a Single Predictor tutorial. "The outcome variable of interest is the total price of an auction, which is the highest bid plus the shipping cost."
+**openintro** holds `mariokart`, the auctions you met in the Linear Regression with a Single Predictor tutorial. The outcome variable of interest is the total price of an auction, which is the highest bid plus the shipping cost.
 
 ### Exercise 4
 
@@ -160,11 +160,11 @@ library(broom)
 
 ###
 
-**broom** turns a fitted model into a tibble, which is how the chapter builds its regression tables. "Using the output, we identify the point estimates of each coefficient and the corresponding impact (measured with information on the standard error used to compute the p-value)."
+**broom** turns a fitted model into a tibble, which is how the chapter builds its regression tables. Using the output, we identify the point estimates of each coefficient and the corresponding impact (measured with information on the standard error used to compute the p-value).
 
 ## Mathematical approach to linear models
 
-"For instance, all other characteristics held constant, are longer auctions associated with higher or lower prices?" This section answers with the mathematical model: a regression on the game's condition alone, then one that adds three more predictors.
+All other characteristics held constant, are longer auctions associated with higher or lower prices? This section answers with the mathematical model: a regression on the game's condition alone, then one that adds three more predictors.
 
 ### Exercise 1
 
@@ -186,38 +186,35 @@ mariokart
 
 ###
 
-The tibble has 143 rows, one per auction, and 12 variables. The chapter, though, says "The `mariokart` dataset includes results from 141 auctions."
+The tibble has 143 rows, one per auction, and 12 variables. The chapter, though, says the `mariokart` dataset includes results from 141 auctions.
 
 ### Exercise 2
+
+Replace the code in that chunk so that it shows the `total_pr` and `title` of every auction with a total price of \$100 or more. Render.
 
 ```{r}
 #| label: mathematical-approach-to-linear-models-2
 #| echo: false
-learnr2::question("In the R Terminal, run ?mariokart. Copy and paste the Description, and the entry for wheels in the Format section.", type = "reflection")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
 
-```{.output}
-Description:
-
-     Auction data from Ebay for the game Mario Kart for the Nintendo
-     Wii. This data was collected in early October 2009.
-
-     wheels Number of Wii wheels included in the auction. These are
-          steering wheel attachments to make it seem as though you are
-          actually driving in the game. When used with the controller,
-          turning the wheel actually causes the character on screen to
-          turn.
+```{r}
+#| label: mathematical-approach-to-linear-models-2-test
+#| echo: true
+mariokart |>
+  filter(total_pr >= 100) |>
+  select(total_pr, title)
 ```
 
 ###
 
-The chapter asks, "on average, how much more do buyers tend to pay for additional Wii wheels (plastic steering wheels that attach to the Wii controller) in auctions?" The help page's Format section also says "A data frame with 143 observations," two more than the chapter uses.
+These are the two bundles from the Linear Regression with a Single Predictor tutorial: a Wii console with Guitar Hero 5 for \$327, and ten Wii games for \$118. The chapter's code keeps only the auctions that sold for under \$100, which leaves exactly its 141.
 
 ### Exercise 3
 
-Replace the code in that chunk so that it shows the `total_pr` and `title` of every auction with a total price of \$100 or more. Render.
+Replace the code in that chunk so that it creates `mario` from `mariokart`, following the chapter: keep only the auctions under \$100, add `price` as a copy of `total_pr`, make `cond_new` equal to 1 for a new game and 0 for a used one, recode `stock_photo` as 1 for yes and 0 for no, and keep only `price`, `cond_new`, `stock_photo`, `duration`, and `wheels`. Print `mario`. Render.
 
 ```{r}
 #| label: mathematical-approach-to-linear-models-3
@@ -229,30 +226,6 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ```{r}
 #| label: mathematical-approach-to-linear-models-3-test
-#| echo: true
-mariokart |>
-  filter(total_pr >= 100) |>
-  select(total_pr, title)
-```
-
-###
-
-These are the two bundles from the Linear Regression with a Single Predictor tutorial: a Wii console with Guitar Hero 5 for \$327, and ten Wii games for \$118. The chapter's code keeps only the auctions that sold for under \$100, which leaves exactly its 141.
-
-### Exercise 4
-
-Replace the code in that chunk so that it creates `mario` from `mariokart`, following the chapter: keep only the auctions under \$100, add `price` as a copy of `total_pr`, make `cond_new` equal to 1 for a new game and 0 for a used one, recode `stock_photo` as 1 for yes and 0 for no, and keep only `price`, `cond_new`, `stock_photo`, `duration`, and `wheels`. Print `mario`. Render.
-
-```{r}
-#| label: mathematical-approach-to-linear-models-4
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{r}
-#| label: mathematical-approach-to-linear-models-4-test
 #| echo: true
 mario <- mariokart |>
   filter(total_pr < 100) |>
@@ -266,11 +239,34 @@ mario
 
 ###
 
-The first four rows match the chapter's table, starting with a new game, shown with a stock photo, that sold for \$51.55 over 3 days with one wheel. The chapter calls `cond_new` and `stock_photo` **indicator variables**, taking only the values 0 and 1, "similar to `bankruptcy` in the `loans` dataset."
+The first four rows match the chapter's table, starting with a new game, shown with a stock photo, that sold for \$51.55 over 3 days with one wheel. `cond_new` and `stock_photo` are *indicator variables*, taking only the values 0 and 1, similar to `bankruptcy` in the `loans` dataset.
+
+### Exercise 4
+
+Start a new chunk with a linear regression of `price` on `cond_new`, using `mario`. Show the full table of coefficients. Render.
+
+```{r}
+#| label: mathematical-approach-to-linear-models-4
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: mathematical-approach-to-linear-models-4-test
+#| echo: true
+lm(price ~ cond_new, data = mario) |>
+  tidy()
+```
+
+###
+
+The slope is 10.90 with a standard error of 1.26, and its p-value, about $10^{-14}$, means there is strong evidence that the coefficient is different from zero when using this one-variable model. The 10.90 model coefficient predicts a price of an extra \$10.90 for those games that are new versus those that are used.
 
 ### Exercise 5
 
-Delete the line that prints `mario`, so that the chunk only creates it. Render.
+Replace the code in that chunk so that it calculates the number of auctions and the average `price` for used games and for new games. Render.
 
 ```{r}
 #| label: mathematical-approach-to-linear-models-5
@@ -280,63 +276,68 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-````{verbatim}
-mario <- mariokart |>
-  filter(total_pr < 100) |>
-  mutate(price = total_pr,
-         cond_new = if_else(cond == "new", 1, 0),
-         stock_photo = if_else(stock_photo == "yes", 1, 0)) |>
-  select(price, cond_new, stock_photo, duration, wheels)
-````
+```{r}
+#| label: mathematical-approach-to-linear-models-5-test
+#| echo: true
+mario |>
+  summarize(n = n(), mean_price = mean(price), .by = cond_new)
+```
 
 ###
 
-Every model in this tutorial uses these 141 auctions. In the table that describes them, `duration` is "The length of the auction, in days, taking values from 1 to 10."
+The 82 used games averaged \$42.87, the model's intercept, and the 59 new ones \$53.77, which is \$10.90 more. The chapter's footnote writes the line with an intercept of 47.15, a typo: its own table, like your output, gives 42.87.
 
 ### Exercise 6
 
-Add `#| cache: true` to that chunk. Render.
+Replace the code in that chunk with a linear regression of `price` on `cond_new`, `stock_photo`, `duration`, and `wheels`. Show the full table of coefficients. Render.
 
 ```{r}
 #| label: mathematical-approach-to-linear-models-6
 #| echo: false
-learnr2::question("In the bash Terminal, run ls. CP/CR.", type = "reflection")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
 
-```{.output}
-analysis.html  analysis.qmd  analysis_cache  analysis_files
+```{r}
+#| label: mathematical-approach-to-linear-models-6-test
+#| echo: true
+lm(price ~ cond_new + stock_photo + duration + wheels, data = mario) |>
+  tidy()
 ```
 
 ###
 
-`analysis_cache` now holds `mario`, so later renders load it from disk instead of rebuilding it. A cached chunk only re-runs when its code changes.
+The model has 4 predictors but 5 coefficients (including the intercept). The `wheels` coefficient, 7.29, is the average difference in auction price for each additional Wii wheel (a plastic steering wheel that attaches to the Wii controller) included when holding the other variables constant.
 
 ### Exercise 7
 
-Your Source Control count just jumped, because Git sees every file in the new cache directory. Add `analysis_cache` to `.gitignore`, and the count drops back.
+Replace the code in that chunk so that, for the same model, it shows the `price`, the fitted value, and the residual of the first four auctions. Render.
 
 ```{r}
 #| label: mathematical-approach-to-linear-models-7
 #| echo: false
-learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type = "reflection")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
 
-```{.output}
-analysis_files
-analysis_cache
+```{r}
+#| label: mathematical-approach-to-linear-models-7-test
+#| echo: true
+lm(price ~ cond_new + stock_photo + duration + wheels, data = mario) |>
+  augment() |>
+  select(price, .fitted, .resid) |>
+  slice_head(n = 4)
 ```
 
 ###
 
-The chapter's table of variables describes `cond_new` as an "Indicator variable for if the game is new (1) or used (0)." Coded that way, its regression coefficient is the difference in average price between new and used games.
+The first auction sold for \$51.55 against a fitted \$49.63, a residual of 1.92. The chapter gets 51.55 - 49.62 = 1.93 because it plugs in coefficients rounded to two decimals.
 
 ### Exercise 8
 
-Start a new chunk with a linear regression of `price` on `cond_new`, using `mario`. Show the full table of coefficients. Render.
+Replace the code in that chunk so that it calculates the number of auctions and the average number of `wheels` for used games and for new games. Render.
 
 ```{r}
 #| label: mathematical-approach-to-linear-models-8
@@ -349,17 +350,17 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: mathematical-approach-to-linear-models-8-test
 #| echo: true
-lm(price ~ cond_new, data = mario) |>
-  tidy()
+mario |>
+  summarize(n = n(), mean_wheels = mean(wheels), .by = cond_new)
 ```
 
 ###
 
-The slope is 10.90 with a standard error of 1.26, and its p-value, about $10^{-14}$, means "there is strong evidence that the coefficient is different from zero when using this one-variable model." "This means the 10.90 model coefficient predicts a price of an extra \$10.90 for those games that are new versus those that are used."
+New games came with 1.58 wheels on average, used ones with 0.84. New games sold on Ebay tend to come with more Wii wheels, which may have led to higher prices for those auctions.
 
 ### Exercise 9
 
-Replace the code in that chunk so that it calculates the number of auctions and the average `price` for used games and for new games. Render.
+Replace the code in that chunk with a table that shows the estimate and standard error of the `cond_new` coefficient from both models: the one with `cond_new` alone and the one with all four predictors. Render.
 
 ```{r}
 #| label: mathematical-approach-to-linear-models-9
@@ -371,100 +372,6 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ```{r}
 #| label: mathematical-approach-to-linear-models-9-test
-#| echo: true
-mario |>
-  summarize(n = n(), mean_price = mean(price), .by = cond_new)
-```
-
-###
-
-The 82 used games averaged \$42.87, the model's intercept, and the 59 new ones \$53.77, which is \$10.90 more. The chapter's footnote writes the line with an intercept of 47.15, a typo: its own table, like your output, gives 42.87.
-
-### Exercise 10
-
-Replace the code in that chunk with a linear regression of `price` on `cond_new`, `stock_photo`, `duration`, and `wheels`. Show the full table of coefficients. Render.
-
-```{r}
-#| label: mathematical-approach-to-linear-models-10
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{r}
-#| label: mathematical-approach-to-linear-models-10-test
-#| echo: true
-lm(price ~ cond_new + stock_photo + duration + wheels, data = mario) |>
-  tidy()
-```
-
-###
-
-The model has "4 predictors but 5 coefficients (including the intercept)." The wheels coefficient, 7.29, is "the average difference in auction price for each additional Wii wheel included when holding the other variables constant."
-
-### Exercise 11
-
-Replace the code in that chunk so that, for the same model, it shows the `price`, the fitted value, and the residual of the first four auctions. Render.
-
-```{r}
-#| label: mathematical-approach-to-linear-models-11
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{r}
-#| label: mathematical-approach-to-linear-models-11-test
-#| echo: true
-lm(price ~ cond_new + stock_photo + duration + wheels, data = mario) |>
-  augment() |>
-  select(price, .fitted, .resid) |>
-  slice_head(n = 4)
-```
-
-###
-
-The first auction sold for \$51.55 against a fitted \$49.63, a residual of 1.92. The chapter gets 51.55 - 49.62 = 1.93 because it plugs in coefficients rounded to two decimals.
-
-### Exercise 12
-
-Replace the code in that chunk so that it calculates the number of auctions and the average number of `wheels` for used games and for new games. Render.
-
-```{r}
-#| label: mathematical-approach-to-linear-models-12
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{r}
-#| label: mathematical-approach-to-linear-models-12-test
-#| echo: true
-mario |>
-  summarize(n = n(), mean_wheels = mean(wheels), .by = cond_new)
-```
-
-###
-
-New games came with 1.58 wheels on average, used ones with 0.84. "For instance, new games sold on Ebay tend to come with more Wii wheels, which may have led to higher prices for those auctions."
-
-### Exercise 13
-
-Replace the code in that chunk with a table that shows the estimate and standard error of the `cond_new` coefficient from both models: the one with `cond_new` alone and the one with all four predictors. Render.
-
-```{r}
-#| label: mathematical-approach-to-linear-models-13
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{r}
-#| label: mathematical-approach-to-linear-models-13-test
 #| echo: true
 bind_rows(
   "One predictor" = lm(price ~ cond_new, data = mario) |>
@@ -480,14 +387,14 @@ bind_rows(
 
 ###
 
-The new-game premium falls from \$10.90 to \$5.13 once wheels and the rest are in the model. "That model was biased by the confounding variable `wheels`."
+The new-game premium falls from \$10.90 to \$5.13 once wheels and the rest are in the model. The one-predictor model was biased by the confounding variable `wheels`.
 
-### Exercise 14
+### Exercise 10
 
 Replace the table with a plot of every coefficient except the intercepts from both models, each with its 95% confidence interval, coloring the two models differently. Render.
 
 ```{r}
-#| label: mathematical-approach-to-linear-models-14
+#| label: mathematical-approach-to-linear-models-10
 #| echo: false
 learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
@@ -495,7 +402,7 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ###
 
 ```{r}
-#| label: mathematical-approach-to-linear-models-14-test
+#| label: mathematical-approach-to-linear-models-10-test
 #| echo: true
 bind_rows(
   "One predictor" = lm(price ~ cond_new, data = mario) |>
@@ -515,12 +422,12 @@ bind_rows(
 
 Only `cond_new` appears in both models, and its two intervals, 8.41 to 13.4 and 3.05 to 7.21, do not even overlap. The intervals for `stock_photo` and `duration` cross zero, while the one for `wheels` sits well above it.
 
-### Exercise 15
+### Exercise 11
 
 Improve the plot. Add a dashed line at zero, give the coefficients readable names, show the estimates in dollars, put the legend below the plot with one predictor listed first, and add a title, axis labels, a subtitle that states the main finding, and a caption giving the number of auctions and the source. Render.
 
 ```{r}
-#| label: mathematical-approach-to-linear-models-15
+#| label: mathematical-approach-to-linear-models-11
 #| echo: false
 learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
@@ -528,7 +435,7 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ###
 
 ```{r}
-#| label: mathematical-approach-to-linear-models-15-test
+#| label: mathematical-approach-to-linear-models-11-test
 #| echo: true
 bind_rows(
   "One predictor" = lm(price ~ cond_new, data = mario) |>
@@ -561,14 +468,14 @@ bind_rows(
 
 ###
 
-"When we use both variables, this particular underlying and unintentional bias is reduced or eliminated (though bias from other confounding variables may still remain)." Each extra wheel adds \$7.29, more than a new game does once wheels are held constant.
+When we use both variables, this particular underlying and unintentional bias is reduced or eliminated (though bias from other confounding variables may still remain). Each extra wheel adds \$7.29, more than a new game does once wheels are held constant.
 
-### Exercise 16
+### Exercise 12
 
-Commit `analysis.qmd` and `.gitignore` with the message `"Model Mario Kart prices"` and push.
+Commit `analysis.qmd` with the message `"Model Mario Kart prices"` and push.
 
 ```{r}
-#| label: mathematical-approach-to-linear-models-16
+#| label: mathematical-approach-to-linear-models-12
 #| echo: false
 learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type = "reflection")
 ```
@@ -582,11 +489,11 @@ learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type
 
 ###
 
-"Sometimes there are underlying structures or relationships between predictor variables." The mathematical model gave us a p-value and a standard error from a formula; the next section gets the same answers by simulation.
+Sometimes there are underlying structures or relationships between predictor variables. The mathematical model gave a p-value and a standard error from formulas, and the next section gets them by simulation.
 
 ## Computational approach and cross-validation
 
-"Previously, using a mathematical model, we investigated the coefficients associated with `cond_new` when predicting `price` in a linear model." This section tests and estimates that slope by permutation and by the bootstrap, then compares the one- and four-predictor models by cross-validation.
+Previously, using a mathematical model, we investigated the coefficients associated with `cond_new` when predicting `price` in a linear model. This section tests and estimates that slope by permutation and by the bootstrap, then compares the one- and four-predictor models by cross-validation.
 
 ### Exercise 1
 
@@ -610,7 +517,7 @@ mario |>
 
 ###
 
-The same 10.9 as the regression table, because **infer** fits the same least squares line. "That is, $\beta_1$ represents the population value for the difference in price between new *Mario Kart* games and used games."
+The same 10.9 as the regression table, because **infer** fits the same least squares line. $\beta_1$ represents the population value for the difference in price between new *Mario Kart* games and used games.
 
 ### Exercise 2
 
@@ -639,7 +546,7 @@ null_slopes
 
 ###
 
-We use the chapter's seed, 47, so with a different seed your slopes will differ slightly from ours. "When the data are randomly permuted, prices are randomly assigned to a condition (new or used), so that the null hypothesis is forced to be true, i.e., permutation is done under the assumption that no relationship between the two variables exists."
+We use the chapter's seed, 47, and a different seed gives slightly different slopes. When the data are randomly permuted, prices are randomly assigned to a condition (new or used), so that the null hypothesis is forced to be true.
 
 ### Exercise 3
 
@@ -671,7 +578,7 @@ null_slopes |>
 
 ###
 
-Our permuted slopes run from -6.79 to 5.59, and not one of the 1,000 reaches 10.9. "Because the observed slope is not a plausible value under the null distribution, the p-value is essentially zero."
+Our permuted slopes run from -6.79 to 5.59, and not one of the 1,000 reaches 10.9. Because the observed slope is not a plausible value under the null distribution, the p-value is essentially zero.
 
 ### Exercise 4
 
@@ -703,7 +610,7 @@ null_slopes |>
 
 ###
 
-The red line sits far to the right of every permuted slope, as in the chapter's figure. The regression table's p-value was also essentially zero, and "Often, the mathematical and computational approaches to inference will give quite similar answers."
+The red line sits far to the right of every permuted slope, as in the chapter's figure. The regression table's p-value was also essentially zero, and often, the mathematical and computational approaches to inference will give quite similar answers.
 
 ### Exercise 5
 
@@ -731,7 +638,7 @@ boot_slopes
 
 ###
 
-A bootstrap sample draws 141 auctions with replacement from the 141 we have, so there is no null hypothesis to impose. "Although knowing there is a relationship between the condition of the game and its price, we might be more interested in the difference in price, here given by the slope of the linear regression line."
+A bootstrap sample draws 141 auctions with replacement from the 141 we have, so there is no null hypothesis to impose. Although we know there is a relationship between the condition of the game and its price, we might be more interested in the difference in price, here given by the slope of the linear regression line.
 
 ### Exercise 6
 
@@ -763,7 +670,7 @@ boot_slopes |>
 
 ###
 
-The standard deviation of the bootstrap slopes, 1.22 for us, estimates the standard error of the slope. Reading its histogram by eye, the chapter guesses "a rough approximation of the standard error is 1.5," while the regression table's formula gives 1.26.
+The standard deviation of the bootstrap slopes, 1.22 for us, estimates the standard error of the slope. Reading its histogram by eye, the chapter takes 1.5 as a rough approximation of the standard error, while the regression table's formula gives 1.26.
 
 ### Exercise 7
 
@@ -792,7 +699,7 @@ boot_slopes |>
 
 ###
 
-Ours runs from \$8.89 to \$12.90: 10.9 plus or minus 1.645 bootstrap standard errors. The chapter, with its rough standard error of 1.5, says "For games that are new, the average price is higher by between \$8.43 and \$13.37 than games that are used, with 90% confidence."
+Ours runs from \$8.89 to \$12.90: 10.9 plus or minus 1.645 bootstrap standard errors. With its rough standard error of 1.5, the chapter concludes that for games that are new, the average price is higher by between \$8.43 and \$13.37 than games that are used, with 90% confidence.
 
 ### Exercise 8
 
@@ -821,7 +728,7 @@ boot_slopes |>
 
 ###
 
-"Because there were 1,000 bootstrap resamples, we look for the cutoffs which provide 50 bootstrap slopes on the left, 900 in the middle, and 50 on the right." Our cutoffs are \$8.94 and \$13.00, close to the chapter's "\$9 to \$13.10" read from its histogram.
+Because there were 1,000 bootstrap resamples, we look for the cutoffs which provide 50 bootstrap slopes on the left, 900 in the middle, and 50 on the right. Our cutoffs are \$8.94 and \$13.00, close to the chapter's \$9 to \$13.10, read from its histogram.
 
 ### Exercise 9
 
@@ -880,7 +787,7 @@ mario_folds |>
 
 ###
 
-Each fold holds 47 of the 141 auctions. "We applied 3-fold cross-validation, so 1/3 of the data was removed while 2/3 of the observations were used to build each model."
+Each fold holds 47 of the 141 auctions. We applied 3-fold cross-validation, so 1/3 of the data was removed while 2/3 of the observations were used to build each model.
 
 ### Exercise 11
 
@@ -909,7 +816,7 @@ map(1:3, \(k) lm(price ~ cond_new, data = filter(mario_folds, fold != k)) |>
 
 ###
 
-Our CV SSE for the one-predictor model is 7,923; a different seed puts different auctions in each fold, so yours will differ. "In other words, the model is built (using the other 2/3) without the observation (which is in the 1/3) being used."
+Our CV SSE for the one-predictor model is 7,923, and a different seed would put different auctions in each fold. Each prediction comes from a model built (using the other 2/3) without the observation (which is in the 1/3) being used.
 
 ### Exercise 12
 
@@ -948,7 +855,7 @@ mario_cv |>
 
 ###
 
-Our CV SSE falls from 7,923 to 3,482 with four predictors. "The CV SSE is smaller (by a factor of almost two!) for the model with four predictors."
+With four predictors, our CV SSE falls from 7,923 to 3,482. The CV SSE is smaller, by a factor of almost two, for the model with four predictors.
 
 ### Exercise 13
 
@@ -990,7 +897,7 @@ mario_cv |>
 
 ###
 
-With one predictor, every prediction is one of just a few values, one for used games and one for new games in each fold, so the points form vertical stripes. "The residuals give us a sense for how well the model will do at predicting observations which were not a part of the original dataset, e.g., future studies."
+With one predictor, every prediction is one of just a few values, one for used games and one for new games in each fold, so the points form vertical stripes. The residuals give us a sense for how well the model will do at predicting observations which were not a part of the original dataset, e.g., future studies.
 
 ### Exercise 14
 
@@ -1041,7 +948,7 @@ mario_cv |>
 
 ###
 
-The four-predictor errors stay within about \$14 of zero, while the one-predictor errors reach \$22. "Using a single valued criterion (CV SSE) allows us to make a decision to choose the model with four predictors."
+The four-predictor errors stay within about \$14 of zero, while the one-predictor errors reach \$22. Using a single valued criterion (CV SSE) allows us to make a decision to choose the model with four predictors.
 
 ### Exercise 15
 
@@ -1063,13 +970,15 @@ b71f3d2 (HEAD -> main, origin/main) Simulate and cross-validate Mario Kart model
 
 ###
 
-"Note that each time 1/3 of the data is removed, the resulting model will produce slightly different model coefficients." Cross-validation judges a model by the auctions it never saw, not by how well it fits the ones it did.
+Each time 1/3 of the data is removed, the resulting model will produce slightly different model coefficients. Cross-validation judges a model by the auctions it never saw, not by how well it fits the ones it did.
 
 ## Summary
 
 This tutorial covered [Chapter 27: Applications: Model and infer](https://openintrostat.github.io/ims/inf-model-applications.html) from [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) by Mine Çetinkaya-Rundel and Johanna Hardin. You have learned to fit and read one-predictor and multiple regression models of eBay auction prices for *Mario Kart*, to test and estimate a slope by permutation and by the bootstrap, and to compare two models with cross-validation.
 
 This was the book's last chapter. To keep going, reread any part of [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) whose ideas you used here, from [Chapter 8: Linear regression with multiple predictors](https://openintrostat.github.io/ims/model-mlr.html) to [Chapter 25: Inference for regression with multiple predictors](https://openintrostat.github.io/ims/inf-model-mlr.html), where cross-validation first appears. For one more case study, try the chapter's own R lab, [Multiple linear regression: Grading the professor](https://www.openintro.org/go?id=ims-r-lab-model-infer).
+
+Many sentences in this tutorial come from the chapter, used under the book's [CC BY-SA 3.0 license](https://creativecommons.org/licenses/by-sa/3.0/).
 
 ### Exercise 1
 
@@ -1101,13 +1010,14 @@ library(broom)
 ```
 
 ```{r}
-#| cache: true
 mario <- mariokart |>
   filter(total_pr < 100) |>
   mutate(price = total_pr,
          cond_new = if_else(cond == "new", 1, 0),
          stock_photo = if_else(stock_photo == "yes", 1, 0)) |>
   select(price, cond_new, stock_photo, duration, wheels)
+
+mario
 ```
 
 ```{r}
@@ -1176,7 +1086,7 @@ mario_cv |>
 
 ###
 
-The page holds the chapter's two models of the same 141 auctions: one plot shows what each predictor adds, and the other how well each model predicts auctions it never saw. "Multiple regression will help us answer these and other questions."
+Your page has two models of the same 141 auctions: one plot shows what each predictor adds, and the other how well each model predicts auctions it never saw.
 
 ### Exercise 2
 
@@ -1198,7 +1108,7 @@ Your answer should look like `https://your-github-username.github.io/application
 
 ###
 
-Each row of `mariokart` still carries the eBay auction ID and the seller's title. The two bundles you found by their titles are a reminder that the documentation said they should not be in the data at all.
+Each row of `mariokart` also carries the eBay auction ID and the seller's title, which is how you identified the two bundles.
 
 ### Exercise 3
 
@@ -1216,7 +1126,7 @@ Your answer should look like `https://github.com/your-github-username/applicatio
 
 ###
 
-The same slope came out of the regression table, a permutation test, and a bootstrap, and all three told the same story. "In the actual study, the new *Mario Kart* games do actually cost more (on average) than the used games!"
+The regression table, the permutation test, and the bootstrap all agree. In the actual study, the new *Mario Kart* games do actually cost more (on average) than the used games.
 
 ## Your Answers
 

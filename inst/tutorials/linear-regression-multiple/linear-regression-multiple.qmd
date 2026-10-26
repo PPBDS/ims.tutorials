@@ -34,7 +34,7 @@ This tutorial covers [Chapter 8: Linear regression with multiple predictors](htt
 
 ### Exercise 1
 
-You should be doing this tutorial in a repo named `linear-regression-with-multiple-predictors`. If you are not, create one and then connect to it. You may need to restart this tutorial after you do so.
+You should be doing this tutorial in a repo named `linear-regression-with-multiple-predictors`. If you are not, create one and then connect to it.
 
 Create a new file, `analysis.qmd`, with the title `"Linear Regression with Multiple Predictors"` and your name as the author. In a bash Terminal, render it:
 
@@ -62,7 +62,7 @@ analysis_files
 
 ###
 
-"Multiple regression extends single predictor variable regression to the case that still has one response but many predictors." Our one response is the interest rate on a loan, and our predictors describe the loan and the borrower.
+Multiple regression extends single predictor variable regression to the case that still has one response but many predictors. Our one response is the interest rate on a loan, and our predictors describe the loan and the borrower.
 
 ### Exercise 2
 
@@ -83,7 +83,7 @@ library(tidyverse)
 
 ###
 
-Base R fits linear models without any extra package. The **tidyverse** does the rest of the work here: preparing the data, looping over many candidate models, and plotting the results.
+Base R fits linear models without any extra package. The **tidyverse** prepares the data, loops over the candidate models, and plots the results.
 
 ### Exercise 3
 
@@ -105,7 +105,7 @@ library(openintro)
 
 ###
 
-"The `loans_full_schema` data can be found in the **openintro** R package." You met it in the Exploring Categorical Data tutorial; this time we use it to model interest rates.
+The `loans_full_schema` data can be found in the **openintro** R package. You met it in the Exploring Categorical Data tutorial.
 
 ### Exercise 4
 
@@ -128,11 +128,11 @@ library(broom)
 
 ###
 
-**broom** turns a fitted model into tibbles: one row per coefficient, or one row per model holding its R-squared and adjusted R-squared. It belongs to the **[tidymodels](https://www.tidymodels.org/)** family, and it is what lets us compare dozens of models in a single table.
+**broom** turns a fitted model into tibbles: one row per coefficient, or one row per model holding its R-squared and adjusted R-squared. It is part of **[tidymodels](https://www.tidymodels.org/)**, and it lets us compare dozens of models in one table.
 
 ## Categorical and many predictors
 
-"The outcome variable we would like to better understand is the interest rate assigned to the loan." We build the chapter's `loans` data, then fit models with an indicator predictor, a categorical predictor, and finally every predictor at once.
+The outcome variable we would like to better understand is the interest rate assigned to the loan. We build the chapter's `loans` data, then fit models with an indicator predictor, a categorical predictor, and finally every predictor at once.
 
 ### Exercise 1
 
@@ -154,39 +154,34 @@ loans_full_schema
 
 ###
 
-10,000 loans and 55 variables, far more than the chapter needs. "The loan data includes terms of the loan as well as information about the borrower."
+The data has 10,000 loans and 55 variables, far more than the chapter needs. The loan data includes terms of the loan as well as information about the borrower.
 
 ### Exercise 2
+
+Replace the code in that chunk so that it counts the loans at each level of `verified_income`, including any level that has no loans. Render.
 
 ```{r}
 #| label: categorical-and-many-predictors-2
 #| echo: false
-learnr2::question("In the R Terminal, run ?loans_full_schema. Copy and paste the entries for inquiries_last_12m, total_credit_limit, total_credit_utilized, and public_record_bankrupt from the Format section.", type = "reflection")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
 
-```{.output}
-     inquiries_last_12m Inquiries into the applicant's credit during
-          the last 12 months.
-
-     total_credit_limit Total available credit, e.g. if only credit
-          cards, then the total of all the credit limits. This excludes
-          a mortgage.
-
-     total_credit_utilized Total credit balance, excluding a mortgage.
-
-     public_record_bankrupt Number of bankruptcies listed in the public
-          record for this applicant.
+```{r}
+#| label: categorical-and-many-predictors-2-test
+#| echo: true
+loans_full_schema |>
+  count(verified_income, .drop = FALSE)
 ```
 
 ###
 
-The chapter builds two new variables from these: "`credit_util` which is calculated as the total credit utilized divided by the total credit limit and `bankruptcy` which turns the number of bankruptcies to an indicator variable (0 for no bankruptcies and 1 for at least 1 bankruptcy)." It also renames `inquiries_last_12m` to `credit_checks`.
+The factor has a fourth level, an empty string, that no loan uses. The chapter drops it, leaving three levels: Not Verified, Source Verified, and Verified.
 
 ### Exercise 3
 
-Replace the code in that chunk so that it counts the loans at each level of `verified_income`, including any level that has no loans. Render.
+Replace the code in that chunk so that it counts the loans with each value of `public_record_bankrupt`. Render.
 
 ```{r}
 #| label: categorical-and-many-predictors-3
@@ -200,16 +195,16 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: categorical-and-many-predictors-3-test
 #| echo: true
 loans_full_schema |>
-  count(verified_income, .drop = FALSE)
+  count(public_record_bankrupt)
 ```
 
 ###
 
-The factor carries a fourth level, an empty string, that not one loan uses. The chapter drops that unused level, so `verified_income` has three: Not Verified, Source Verified, and Verified.
+8,785 borrowers have no bankruptcy and only 20 have more than one, so a yes-or-no version loses little. Using an indicator variable in place of a category name allows for these variables to be directly used in regression.
 
 ### Exercise 4
 
-Replace the code in that chunk so that it counts the loans with each value of `public_record_bankrupt`. Render.
+Start a new chunk that creates `loans` from `loans_full_schema`, keeping only `interest_rate`, `verified_income`, `debt_to_income`, `term`, `issue_month`, and `inquiries_last_12m`, renamed to `credit_checks`. Print `loans`. Render.
 
 ```{r}
 #| label: categorical-and-many-predictors-4
@@ -222,17 +217,21 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: categorical-and-many-predictors-4-test
 #| echo: true
-loans_full_schema |>
-  count(public_record_bankrupt)
+loans <- loans_full_schema |>
+  rename(credit_checks = inquiries_last_12m) |>
+  select(interest_rate, verified_income, debt_to_income,
+         term, credit_checks, issue_month)
+
+loans
 ```
 
 ###
 
-8,785 borrowers have no bankruptcy and only 20 have more than one, so a yes-or-no version loses little. "Using an indicator variable in place of a category name allows for these variables to be directly used in regression."
+Every loan is either 36 or 60 months long. `issue_month` is the month and year the loan was issued, which for these loans is always during the first quarter of 2018.
 
 ### Exercise 5
 
-Start a new chunk that creates `loans` from `loans_full_schema`, keeping only `interest_rate`, `verified_income`, `debt_to_income`, `term`, `issue_month`, and `inquiries_last_12m`, renamed to `credit_checks`. Print `loans`. Render.
+Add a new variable to `loans`, `credit_util`: the total credit utilized divided by the total credit limit. Keep it, placed after `debt_to_income`. Render.
 
 ```{r}
 #| label: categorical-and-many-predictors-5
@@ -246,8 +245,9 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: categorical-and-many-predictors-5-test
 #| echo: true
 loans <- loans_full_schema |>
+  mutate(credit_util = total_credit_utilized / total_credit_limit) |>
   rename(credit_checks = inquiries_last_12m) |>
-  select(interest_rate, verified_income, debt_to_income,
+  select(interest_rate, verified_income, debt_to_income, credit_util,
          term, credit_checks, issue_month)
 
 loans
@@ -255,11 +255,11 @@ loans
 
 ###
 
-Every loan is either 36 or 60 months long. For `issue_month`, the chapter's table says: "The month and year the loan was issued, which for these loans is always during the first quarter of 2018."
+`credit_util` answers the question: of all the credit available to the borrower, what fraction are they utilizing? A value of 0.548 means the first borrower is using about 55% of her available credit.
 
 ### Exercise 6
 
-Add a new variable to `loans`, `credit_util`: the total credit utilized divided by the total credit limit. Keep it, placed after `debt_to_income`. Render.
+Add two more changes to `loans`. Create `bankruptcy`, a factor that is 1 if `public_record_bankrupt` is at least 1 and 0 otherwise, placed after `credit_util`. Drop the unused level of `verified_income`. Render.
 
 ```{r}
 #| label: categorical-and-many-predictors-6
@@ -273,21 +273,23 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: categorical-and-many-predictors-6-test
 #| echo: true
 loans <- loans_full_schema |>
-  mutate(credit_util = total_credit_utilized / total_credit_limit) |>
+  mutate(credit_util = total_credit_utilized / total_credit_limit,
+         bankruptcy = as.factor(if_else(public_record_bankrupt == 0, 0, 1)),
+         verified_income = droplevels(verified_income)) |>
   rename(credit_checks = inquiries_last_12m) |>
   select(interest_rate, verified_income, debt_to_income, credit_util,
-         term, credit_checks, issue_month)
+         bankruptcy, term, credit_checks, issue_month)
 
 loans
 ```
 
 ###
 
-`credit_util` answers the question, "Of all the credit available to the borrower, what fraction are they utilizing." A value of 0.548 means the first borrower is using about 55% of her available credit.
+This is the chapter's `loans`, the data for every model in this tutorial. If your columns or their types differ from ours, replace your code with ours.
 
 ### Exercise 7
 
-Add two more changes to `loans`. Create `bankruptcy`, a factor that is 1 if `public_record_bankrupt` is at least 1 and 0 otherwise, placed after `credit_util`. Drop the unused level of `verified_income`. Render.
+Replace the line that prints `loans` with a summary of every variable in `loans`. Render.
 
 ```{r}
 #| label: categorical-and-many-predictors-7
@@ -308,16 +310,16 @@ loans <- loans_full_schema |>
   select(interest_rate, verified_income, debt_to_income, credit_util,
          bankruptcy, term, credit_checks, issue_month)
 
-loans
+summary(loans)
 ```
 
 ###
 
-This is the chapter's `loans`, and every model in this tutorial is built from it. If your columns or their types differ from ours, replace your code with ours before going on.
+`debt_to_income` is missing for 24 loans, all of them joint applications, and `credit_util` for 2 borrowers whose credit limit is zero. `issue_month` still has an empty level with no loans, which the chapter leaves alone.
 
 ### Exercise 8
 
-Replace the line that prints `loans` with a summary of every variable in `loans`. Render.
+Start a new chunk that calculates the mean `interest_rate` and the number of loans for each value of `bankruptcy`. Render.
 
 ```{r}
 #| label: categorical-and-many-predictors-8
@@ -330,24 +332,17 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: categorical-and-many-predictors-8-test
 #| echo: true
-loans <- loans_full_schema |>
-  mutate(credit_util = total_credit_utilized / total_credit_limit,
-         bankruptcy = as.factor(if_else(public_record_bankrupt == 0, 0, 1)),
-         verified_income = droplevels(verified_income)) |>
-  rename(credit_checks = inquiries_last_12m) |>
-  select(interest_rate, verified_income, debt_to_income, credit_util,
-         bankruptcy, term, credit_checks, issue_month)
-
-summary(loans)
+loans |>
+  summarize(mean_rate = mean(interest_rate), n = n(), .by = bankruptcy)
 ```
 
 ###
 
-`debt_to_income` is missing for 24 loans, all of them joint applications, and `credit_util` for 2 borrowers whose credit limit is zero. `issue_month` still carries an empty level with no loans, which the chapter left alone.
+Borrowers with a bankruptcy pay 13.1% on average, against 12.3% for the 8,785 without one. A regression with `bankruptcy` as its only predictor turns that gap into a slope.
 
 ### Exercise 9
 
-Delete the summary, so that the chunk only creates `loans`. Render.
+Replace the code in that chunk so that it fits a linear model of `interest_rate` with `bankruptcy` as the only predictor, and shows just the term and the estimate for each coefficient, to two decimal places. Render.
 
 ```{r}
 #| label: categorical-and-many-predictors-9
@@ -357,64 +352,70 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-````{verbatim}
-loans <- loans_full_schema |>
-  mutate(credit_util = total_credit_utilized / total_credit_limit,
-         bankruptcy = as.factor(if_else(public_record_bankrupt == 0, 0, 1)),
-         verified_income = droplevels(verified_income)) |>
-  rename(credit_checks = inquiries_last_12m) |>
-  select(interest_rate, verified_income, debt_to_income, credit_util,
-         bankruptcy, term, credit_checks, issue_month)
-````
+```{r}
+#| label: categorical-and-many-predictors-9-test
+#| echo: true
+lm(interest_rate ~ bankruptcy, data = loans) |>
+  tidy() |>
+  select(term, estimate) |>
+  mutate(estimate = num(estimate, digits = 2))
+```
 
 ###
 
-"Notice that the past bankruptcy variable (`bankruptcy`) is an indicator variable, where it takes the value 1 if the borrower had a past bankruptcy in their record and 0 if not." `verified_income` and `issue_month` are the other two categorical variables.
+The intercept, 12.34, is the mean rate without a bankruptcy, and 12.34 + 0.74 is the mean with one. A slope of 0.74 means that the model predicts a 0.74% higher interest rate for those borrowers with a bankruptcy in their record.
 
 ### Exercise 10
 
-Add `#| cache: true` to that chunk. Render.
+Replace the predictor in that model with `verified_income`. Render.
 
 ```{r}
 #| label: categorical-and-many-predictors-10
 #| echo: false
-learnr2::question("In the bash Terminal, run ls. CP/CR.", type = "reflection")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
 
-```{.output}
-analysis.html  analysis.qmd  analysis_cache  analysis_files
+```{r}
+#| label: categorical-and-many-predictors-10-test
+#| echo: true
+lm(interest_rate ~ verified_income, data = loans) |>
+  tidy() |>
+  select(term, estimate) |>
+  mutate(estimate = num(estimate, digits = 2))
 ```
 
 ###
 
-`analysis_cache` now holds `loans`, so later renders load it from disk. A cached chunk only re-runs when its code changes.
+Three levels, but only two coefficients: Not Verified is missing. The missing level is called the *reference level* and it represents the default level that other levels are measured against.
 
 ### Exercise 11
 
-Your Source Control count just jumped, because Git sees every file in the new cache directory. Add `analysis_cache` to `.gitignore`, and the count drops back.
+Replace the code in that chunk so that it calculates the mean `interest_rate` for each level of `verified_income`. Render.
 
 ```{r}
 #| label: categorical-and-many-predictors-11
 #| echo: false
-learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type = "reflection")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
 
-```{.output}
-analysis_files
-analysis_cache
+```{r}
+#| label: categorical-and-many-predictors-11-test
+#| echo: true
+loans |>
+  summarize(mean_rate = mean(interest_rate), .by = verified_income)
 ```
 
 ###
 
-The cache is a copy of results that anyone can rebuild from `analysis.qmd`, so it does not belong on GitHub. Only the code that made it does.
+Not Verified averages 11.10%, the intercept, Source Verified 11.10 + 1.42 = 12.52%, and Verified 11.10 + 3.25 = 14.35%. Intuitively, we would think that a loan would look *less* risky if the borrower's income has been verified, but perhaps lenders require borrowers with poor credit to verify their income.
 
 ### Exercise 12
 
-Start a new chunk that calculates the mean `interest_rate` and the number of loans for each value of `bankruptcy`. Render.
+Replace the code in that chunk so that it fits a linear model of `interest_rate` using every other variable in `loans` as a predictor, and shows just the term and the estimate for each coefficient, to two decimal places. Render.
 
 ```{r}
 #| label: categorical-and-many-predictors-12
@@ -427,17 +428,19 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: categorical-and-many-predictors-12-test
 #| echo: true
-loans |>
-  summarize(mean_rate = mean(interest_rate), n = n(), .by = bankruptcy)
+lm(interest_rate ~ ., data = loans) |>
+  tidy() |>
+  select(term, estimate) |>
+  mutate(estimate = num(estimate, digits = 2))
 ```
 
 ###
 
-Borrowers with a bankruptcy pay 13.1% on average, against 12.3% for the 8,785 without one. A regression with `bankruptcy` as its only predictor turns that gap into a slope.
+Seven predictors produce nine slopes, because a categorical predictor with $p$ different levels will be represented by $p - 1$ terms in a multiple regression model. The `bankruptcy` slope fell from 0.74 to 0.39 because the one-predictor model was constructed in a vacuum and did not consider the full context of everything that is considered when an interest rate is decided.
 
 ### Exercise 13
 
-Replace the code in that chunk so that it fits a linear model of `interest_rate` with `bankruptcy` as the only predictor, and shows just the term and the estimate for each coefficient, to two decimal places. Render.
+Replace the code in that chunk so that it shows the number of loans the full model actually used. Render.
 
 ```{r}
 #| label: categorical-and-many-predictors-13
@@ -450,19 +453,17 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: categorical-and-many-predictors-13-test
 #| echo: true
-lm(interest_rate ~ bankruptcy, data = loans) |>
-  tidy() |>
-  select(term, estimate) |>
-  mutate(estimate = num(estimate, digits = 2))
+lm(interest_rate ~ ., data = loans) |>
+  nobs()
 ```
 
 ###
 
-The intercept, 12.34, is the mean rate without a bankruptcy, and 12.34 + 0.74 is the mean with one. "A slope of 0.74 means that the model predicts a 0.74% higher interest rate for those borrowers with a bankruptcy in their record."
+The chapter says 10,000 residuals are calculated, one for each observation, but the model used 9,974 loans. It silently dropped the 26 loans missing `debt_to_income` or `credit_util`.
 
 ### Exercise 14
 
-Replace the predictor in that model with `verified_income`. Render.
+Replace the code in that chunk with a linear model of `interest_rate` using only `credit_util` and `verified_income` as predictors, showing just the term and the estimate for each coefficient, to two decimal places. Render.
 
 ```{r}
 #| label: categorical-and-many-predictors-14
@@ -475,7 +476,7 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: categorical-and-many-predictors-14-test
 #| echo: true
-lm(interest_rate ~ verified_income, data = loans) |>
+lm(interest_rate ~ credit_util + verified_income, data = loans) |>
   tidy() |>
   select(term, estimate) |>
   mutate(estimate = num(estimate, digits = 2))
@@ -483,11 +484,11 @@ lm(interest_rate ~ verified_income, data = loans) |>
 
 ###
 
-Three levels, but only two coefficients: Not Verified is missing. "The missing level is called the reference level and it represents the default level that other levels are measured against."
+The model gives every level of `verified_income` the same slope for `credit_util`, 4.80, and a different intercept. Each coefficient represents how the model predicts the outcome might change with one unit increase of that predictor *given* the rest of the predictor variables in the model.
 
 ### Exercise 15
 
-Replace the code in that chunk so that it calculates the mean `interest_rate` for each level of `verified_income`. Render.
+Replace the code in that chunk with a scatterplot of `interest_rate` against `credit_util`, colored by `verified_income`, with the fitted lines from that two-predictor model drawn on top. Use only the loans the model was fit to. Render.
 
 ```{r}
 #| label: categorical-and-many-predictors-15
@@ -500,102 +501,6 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: categorical-and-many-predictors-15-test
 #| echo: true
-loans |>
-  summarize(mean_rate = mean(interest_rate), .by = verified_income)
-```
-
-###
-
-Not Verified averages 11.1%, the intercept; Source Verified averages 11.10 + 1.42 = 12.5%; and Verified 11.10 + 3.25 = 14.35%. "Intuitively, we would think that a loan would look *less* risky if the borrower's income has been verified," but "perhaps lenders require borrowers with poor credit to verify their income."
-
-### Exercise 16
-
-Replace the code in that chunk so that it fits a linear model of `interest_rate` using every other variable in `loans` as a predictor, and shows just the term and the estimate for each coefficient, to two decimal places. Render.
-
-```{r}
-#| label: categorical-and-many-predictors-16
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{r}
-#| label: categorical-and-many-predictors-16-test
-#| echo: true
-lm(interest_rate ~ ., data = loans) |>
-  tidy() |>
-  select(term, estimate) |>
-  mutate(estimate = num(estimate, digits = 2))
-```
-
-###
-
-Seven predictors produce nine slopes, because "a categorical predictor with $p$ different levels will be represented by $p - 1$ terms in a multiple regression model." The `bankruptcy` slope fell from 0.74 to 0.39: the one-predictor model "was constructed in a vacuum and did not consider the full context of everything that is considered when an interest rate is decided."
-
-### Exercise 17
-
-Replace the code in that chunk so that it shows the number of loans the full model actually used. Render.
-
-```{r}
-#| label: categorical-and-many-predictors-17
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{r}
-#| label: categorical-and-many-predictors-17-test
-#| echo: true
-lm(interest_rate ~ ., data = loans) |>
-  nobs()
-```
-
-###
-
-The chapter says "10,000 residuals are calculated, one for each observation," but the model used 9,974 loans. The 26 loans missing `debt_to_income` or `credit_util` were silently dropped, which is why it pays to check what a model was actually fit to.
-
-### Exercise 18
-
-Replace the code in that chunk with a linear model of `interest_rate` using only `credit_util` and `verified_income` as predictors, showing just the term and the estimate for each coefficient, to two decimal places. Render.
-
-```{r}
-#| label: categorical-and-many-predictors-18
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{r}
-#| label: categorical-and-many-predictors-18-test
-#| echo: true
-lm(interest_rate ~ credit_util + verified_income, data = loans) |>
-  tidy() |>
-  select(term, estimate) |>
-  mutate(estimate = num(estimate, digits = 2))
-```
-
-###
-
-The model gives every level of `verified_income` the same slope for `credit_util`, 4.80, and a different intercept. "Each coefficient represents how the model predicts the outcome might change with one unit increase of that predictor *given* the rest of the predictor variables in the model."
-
-### Exercise 19
-
-Replace the code in that chunk with a scatterplot of `interest_rate` against `credit_util`, colored by `verified_income`, with the fitted lines from that two-predictor model drawn on top. Use only the loans the model was fit to. Render.
-
-```{r}
-#| label: categorical-and-many-predictors-19
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{r}
-#| label: categorical-and-many-predictors-19-test
-#| echo: true
 lm(interest_rate ~ credit_util + verified_income, data = loans) |>
   augment() |>
   ggplot(aes(x = credit_util, color = verified_income)) +
@@ -607,12 +512,12 @@ lm(interest_rate ~ credit_util + verified_income, data = loans) |>
 
 Three parallel lines: the categorical predictor shifts the line up or down, and `credit_util` sets its slope. A few points sit to the right of 1: 154 borrowers owe more than their credit limit.
 
-### Exercise 20
+### Exercise 16
 
 Improve the scatterplot. Show credit utilization as a percentage, and add a title, axis labels, a legend title, a subtitle that states the main finding, and a caption giving the number of loans and the source. Render.
 
 ```{r}
-#| label: categorical-and-many-predictors-20
+#| label: categorical-and-many-predictors-16
 #| echo: false
 learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
@@ -620,7 +525,7 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ###
 
 ```{r}
-#| label: categorical-and-many-predictors-20-test
+#| label: categorical-and-many-predictors-16-test
 #| echo: true
 lm(interest_rate ~ credit_util + verified_income, data = loans) |>
   augment() |>
@@ -639,14 +544,14 @@ lm(interest_rate ~ credit_util + verified_income, data = loans) |>
 
 ###
 
-"While we remain cautious about making any causal interpretations using multiple regression on observational data, such models are a common first step in gaining insights or providing some evidence of a causal connection." Here, verification may mark borrowers the lender already worried about, rather than cause their higher rates.
+While we remain cautious about making any causal interpretations using multiple regression on observational data, such models are a common first step in gaining insights or providing some evidence of a causal connection. Here, verification may mark borrowers the lender already worried about, rather than cause their higher rates.
 
-### Exercise 21
+### Exercise 17
 
-Commit `analysis.qmd` and `.gitignore` with the message `"Fit models with categorical and many predictors"` and push.
+Commit `analysis.qmd` with the message `"Fit models with categorical and many predictors"` and push.
 
 ```{r}
-#| label: categorical-and-many-predictors-21
+#| label: categorical-and-many-predictors-17
 #| echo: false
 learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type = "reflection")
 ```
@@ -660,11 +565,11 @@ learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type
 
 ###
 
-Predictors that travel together are a problem for interpretation. "We say the two predictor variables are collinear (pronounced as *co-linear*) when they are correlated, and this multicollinearity complicates model estimation."
+We say the two predictor variables are *collinear* (pronounced as *co-linear*) when they are correlated, and this *multicollinearity* complicates model estimation.
 
 ## Adjusted R-squared and model selection
 
-"One challenge to working with multiple variables is that it is sometimes difficult to know which variables are most important to include in the model." The chapter's tool for that choice is adjusted R-squared, and its two strategies are backward elimination and forward selection.
+One challenge to working with multiple variables is that it is sometimes difficult to know which variables are most important to include in the model. This section chooses among models with adjusted R-squared, using backward elimination and forward selection.
 
 ### Exercise 1
 
@@ -689,7 +594,7 @@ lm(interest_rate ~ ., data = loans) |>
 
 ###
 
-The full model explains about 26% of the variability in interest rates, and the adjusted value, 0.2597, is a hair smaller. "The regular $R^2$ is a biased estimate of the amount of variability explained by the model when applied to model with more than one predictor."
+The full model explains about 26% of the variability in interest rates, and the adjusted value, 0.2597, is slightly smaller. The regular $R^2$ is a biased estimate of the amount of variability explained by the model when applied to model with more than one predictor.
 
 ### Exercise 2
 
@@ -718,7 +623,7 @@ lm(interest_rate ~ ., data = loans) |>
 
 ###
 
-The hand calculation matches the software. The adjusted version multiplies by $(n - 1) / (n - k - 1)$, and "because $k$ is never negative, the adjusted $R^2$ will be smaller -- often times just a little smaller -- than the unadjusted $R^2$."
+The adjusted version multiplies the variance ratio by $(n - 1) / (n - k - 1)$. Because $k$ is never negative, the adjusted $R^2$ will be smaller -- often times just a little smaller -- than the unadjusted $R^2$.
 
 ### Exercise 3
 
@@ -746,7 +651,7 @@ loans |>
 
 ###
 
-Noise nudged R-squared up, from 0.26036 to 0.26040, while adjusted R-squared fell, from 0.25969 to 0.25966. "If we were to make predictions for *new data* using our current model, we would find that the unadjusted $R^2$ would tend to be slightly overly optimistic, while the adjusted $R^2$ formula helps correct this bias."
+Noise nudged R-squared up, from 0.26036 to 0.26040, while adjusted R-squared fell, from 0.25969 to 0.25966. If we were to make predictions for *new data* using our current model, we would find that the unadjusted $R^2$ would tend to be slightly overly optimistic, while the adjusted $R^2$ formula helps correct this bias.
 
 ### Exercise 4
 
@@ -776,7 +681,7 @@ tibble(dropped = c("verified_income", "debt_to_income", "credit_util",
 
 ###
 
-This is the first step of **backward elimination**, which "starts with the full model -- the model that includes all potential predictor variables." Dropping `issue_month` raises adjusted R-squared from 0.2597 to 0.2598, so it goes; dropping `term` costs the most.
+This is the first step of *backward elimination*, which starts with the full model -- the model that includes all potential predictor variables. Dropping `issue_month` raises adjusted R-squared from 0.2597 to 0.2598, so it goes, while dropping `term` costs the most.
 
 ### Exercise 5
 
@@ -806,7 +711,7 @@ tibble(dropped = c("verified_income", "debt_to_income", "credit_util",
 
 ###
 
-No row beats the new baseline of 0.2598, so backward elimination stops. "Predictors are eliminated one-at-a-time from the model until we cannot improve the model any further."
+No row beats the new baseline of 0.2598, so backward elimination stops. Predictors are eliminated one-at-a-time from the model until we cannot improve the model any further.
 
 ### Exercise 6
 
@@ -831,7 +736,7 @@ lm(interest_rate ~ . - issue_month, data = loans) |>
 
 ###
 
-The remaining estimates barely moved from the full model's, because `issue_month` explained almost nothing. "It's common (and hip, at least in the statistical world) to refer to models that have undergone such predictor pruning as parsimonious."
+The remaining estimates barely moved from the full model's, because `issue_month` explained almost nothing. It's common (and hip, at least in the statistical world) to refer to models that have undergone such predictor pruning as *parsimonious*.
 
 ### Exercise 7
 
@@ -861,7 +766,7 @@ tibble(added = c("verified_income", "debt_to_income", "credit_util",
 
 ###
 
-**Forward selection** adds `term` first. `issue_month` comes out below zero, worse than "a baseline model that has no predictors, which always has $R_{adj}^2 = 0$," although the chapter's list swaps it with `credit_checks` and gives `credit_checks` the negative value.
+*Forward selection* adds `term` first, and `issue_month` comes out below zero, worse than a baseline model that has no predictors, which always has $R_{adj}^2 = 0$. The chapter's list swaps `issue_month` and `credit_checks`.
 
 ### Exercise 8
 
@@ -922,7 +827,7 @@ tibble(step = 1:7, added = predictors) |>
 
 ###
 
-The first two predictors lift adjusted R-squared to 0.20; the next four add only about 0.06 together. The chapter warns that "backward elimination and forward selection can arrive at different final models, because the decision for whether to include a given predictor or not depends on the other predictors that are already in the model."
+The first two predictors lift adjusted R-squared to 0.20, and the next four add only about 0.06 together. Backward elimination and forward selection can arrive at different final models, because the decision for whether to include a given predictor or not depends on the other predictors that are already in the model.
 
 ### Exercise 10
 
@@ -955,7 +860,7 @@ tibble(step = 1:7, added = predictors) |>
 
 ###
 
-The curve climbs steeply and then flattens. The drop at `issue_month`, from 0.2598 to 0.2597, is far too small to see at this scale.
+The curve climbs steeply and then flattens. The drop at `issue_month`, from 0.2598 to 0.2597, is too small to see.
 
 ### Exercise 11
 
@@ -995,7 +900,7 @@ tibble(step = 1:7, added = predictors) |>
 
 ###
 
-"It is highly advised that *before* you begin the model selection process, you decide what a "meaningful" difference in adjusted $R^2$ is for the context of your data." With a threshold of even 0.01, forward selection would have stopped after `credit_checks`, at four predictors instead of six.
+It is highly advised that *before* you begin the model selection process, you decide what a "meaningful" difference in adjusted $R^2$ is for the context of your data. With a threshold of even 0.01, forward selection would have stopped after `credit_checks`, at four predictors instead of six.
 
 ### Exercise 12
 
@@ -1017,17 +922,17 @@ a41d7e9 (HEAD -> main, origin/main) Select a model with adjusted R-squared
 
 ###
 
-Adjusted R-squared is only one yardstick. "In fact, many statisticians discourage the use of stepwise regression *alone* for model selection and advocate, instead, for a more thoughtful approach that carefully considers the research focus and features of the data."
+Many statisticians discourage the use of stepwise regression *alone* for model selection and advocate, instead, for a more thoughtful approach that carefully considers the research focus and features of the data.
 
 ## Summary
 
 This tutorial covered [Chapter 8: Linear regression with multiple predictors](https://openintrostat.github.io/ims/model-mlr.html) from [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) by Mine Çetinkaya-Rundel and Johanna Hardin. You have learned how a regression model uses indicator and categorical predictors, how to fit and read a model with many predictors at once, and how to choose among models with adjusted R-squared, using backward elimination and forward selection.
 
-The chapter's own summary, in the authors' words:
-
-> With real data, there is often a need to describe how multiple variables can be modeled together. In this chapter, we have presented one approach using multiple linear regression. Each coefficient represents how the model predicts the outcome might change with one unit increase of that predictor *given* the rest of the predictor variables in the model. Working with and interpreting multivariable models can be tricky, especially when the predictor variables show multicollinearity. There is often no perfect or "right" final model, however, using the adjusted $R^2$ value is one way to identify important predictor variables for a final regression model. In later chapters we will generalize multiple linear regression models to a larger population of interest from which the dataset was sampled.
+With real data, there is often a need to describe how multiple variables can be modeled together. In this tutorial, we have presented one approach using multiple linear regression. Each coefficient represents how the model predicts the outcome might change with one unit increase of that predictor *given* the rest of the predictor variables in the model. Working with and interpreting multivariable models can be tricky, especially when the predictor variables show multicollinearity. There is often no perfect or "right" final model, however, using the adjusted $R^2$ value is one way to identify important predictor variables for a final regression model. In later tutorials we will generalize multiple linear regression models to a larger population of interest from which the dataset was sampled.
 
 For what these same models say about the population the loans came from, read [Chapter 25: Inference for regression with multiple predictors](https://openintrostat.github.io/ims/inf-model-mlr.html), which returns to the `loans` data. For more on turning models into tidy tables, see the **broom** [introduction](https://broom.tidymodels.org/articles/broom.html).
+
+Many sentences in this tutorial come from the chapter, used under the book's [CC BY-SA 3.0 license](https://creativecommons.org/licenses/by-sa/3.0/).
 
 ### Exercise 1
 
@@ -1058,7 +963,11 @@ library(broom)
 ```
 
 ```{r}
-#| cache: true
+loans_full_schema |>
+  count(public_record_bankrupt)
+```
+
+```{r}
 loans <- loans_full_schema |>
   mutate(credit_util = total_credit_utilized / total_credit_limit,
          bankruptcy = as.factor(if_else(public_record_bankrupt == 0, 0, 1)),
@@ -1066,6 +975,8 @@ loans <- loans_full_schema |>
   rename(credit_checks = inquiries_last_12m) |>
   select(interest_rate, verified_income, debt_to_income, credit_util,
          bankruptcy, term, credit_checks, issue_month)
+
+summary(loans)
 ```
 
 ```{r}
@@ -1109,7 +1020,7 @@ tibble(step = 1:7, added = predictors) |>
 
 ###
 
-The page holds the chapter's two halves: a model with several kinds of predictors, and a way to decide which predictors to keep. "There is often no perfect or "right" final model, however, using the adjusted $R^2$ value is one way to identify important predictor variables for a final regression model."
+Your page has a model with several kinds of predictors and a way to decide which predictors to keep.
 
 ### Exercise 2
 
@@ -1131,7 +1042,7 @@ Your answer should look like `https://your-github-username.github.io/linear-regr
 
 ###
 
-"Model building is an extensive topic, and we scratch the surface here by defining and utilizing the adjusted $R^2$ value." Other yardsticks for the same job, such as AIC and BIC, come in later courses.
+Model building is an extensive topic, and we scratch the surface here by defining and utilizing the adjusted $R^2$ value. Stepwise selection can also be carried out with decision criteria other than adjusted $R^2$, such as AIC, which the next tutorial uses.
 
 ### Exercise 3
 
@@ -1149,7 +1060,7 @@ Your answer should look like `https://github.com/your-github-username/linear-reg
 
 ###
 
-Every number in this tutorial describes these 10,000 loans and nothing more. "Note that these values are sample statistics and in the case where the observed data is a random sample from a target population that we are interested in making inferences about, they are estimates of the population parameters."
+Every number in this tutorial describes these 10,000 loans. These values are sample statistics and in the case where the observed data is a random sample from a target population that we are interested in making inferences about, they are estimates of the population parameters.
 
 ## Your Answers
 

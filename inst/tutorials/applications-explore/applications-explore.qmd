@@ -32,7 +32,7 @@ This tutorial covers [Chapter 6: Applications: Explore](https://openintrostat.gi
 
 ### Exercise 1
 
-You should be doing this tutorial in a repo named `applications-explore`. If you are not, create one and then connect to it. You may need to restart this tutorial after you do so.
+You should be doing this tutorial in a repo named `applications-explore`. If you are not, create one and then connect to it.
 
 Create a new file, `analysis.qmd`, with the title `"Applications: Explore"` and your name as the author. In a bash Terminal, render it:
 
@@ -60,7 +60,7 @@ analysis_files
 
 ###
 
-"This chapter focuses on how graphs can best be utilized to present data accurately and effectively." It is a case study with no new statistics, only better and worse ways to show the same numbers.
+This chapter focuses on how graphs can best be utilized to present data accurately and effectively. It has no new statistics, only better and worse ways to show the same numbers.
 
 ### Exercise 2
 
@@ -81,7 +81,7 @@ library(tidyverse)
 
 ###
 
-The **tidyverse** includes **[ggplot2](https://ggplot2.tidyverse.org/)**, which drew every figure in this chapter, including the color-blind-friendly cividis scale it recommends. Base R graphics and **lattice** are older alternatives, but **ggplot2** is the standard.
+The **tidyverse** includes **[ggplot2](https://ggplot2.tidyverse.org/)**, which drew nearly every figure in this chapter. Base R graphics and **lattice** are older alternatives.
 
 ### Exercise 3
 
@@ -101,7 +101,7 @@ analysis.html  analysis.qmd  analysis_files  data
 
 ###
 
-The book types its small datasets in by hand, inside its own code. We have saved the same numbers as CSV files, which is how most data you find outside R packages will arrive.
+The book types its small datasets in by hand, inside its own code. We saved the same numbers as CSV files.
 
 ### Exercise 4
 
@@ -153,7 +153,7 @@ duke_hires_2010.csv  expenses.csv
 
 ###
 
-The file holds the number of people Duke University hired in each month of 2010. The book's own data file has columns for 2011 to 2015 too, but they are empty, and the book's code fills them with simulated numbers, so we keep only the twelve real counts.
+The file holds the number of people Duke University hired in each month of 2010. The book's data file also has empty columns for 2011 to 2015, which the book's code fills with simulated numbers, so we keep only the twelve real counts.
 
 ### Exercise 6
 
@@ -179,11 +179,11 @@ brexit.csv  duke_hires_2010.csv  expenses.csv
 
 ###
 
-The file is a count table: one row for each combination of region and answer, with the number of respondents in `n`. The poll's 1,643 people become just 25 rows.
+The file is a count table: one row for each combination of region and answer, with the number of respondents in `n`. The poll's 1,643 respondents fit in 25 rows.
 
 ## Simplicity, color, and story
 
-"Graphs can powerfully communicate ideas directly and quickly." This section applies the chapter's first three principles, keep it simple, use color to draw attention, and tell a story, to the chapter's own examples: a company's expenses and Duke University's monthly hires.
+Graphs can powerfully communicate ideas directly and quickly. This section applies three principles, keep it simple, use color to draw attention, and tell a story, to a company's expenses and Duke University's monthly hires.
 
 ### Exercise 1
 
@@ -206,7 +206,7 @@ Workplace materials,17
 
 ###
 
-The file has no help page, so the chapter is its documentation: "Consider a manufacturing company that has summarized its costs into five different categories." Each number is a percent of the company's total costs, and the five add up to 100.
+Consider a manufacturing company that has summarized its costs into five different categories. Each number is a percent of the company's total costs, and the five add up to 100.
 
 ### Exercise 2
 
@@ -228,7 +228,7 @@ read_csv("data/expenses.csv", show_col_types = FALSE)
 
 ###
 
-Labor, at 31%, is the biggest cost, and cutting tools, at 3%, the smallest. Buildings and Administration (22%) and Workplace materials (17%) differ by 5 percentage points, the comparison the chapter asks you to make by eye.
+Labor, at 31%, is the biggest cost, and cutting tools, at 3%, the smallest. Buildings and Administration (22%) and Workplace materials (17%) differ by 5 percentage points.
 
 ### Exercise 3
 
@@ -253,7 +253,7 @@ read_csv("data/expenses.csv", show_col_types = FALSE) |>
 
 ###
 
-The book asks, "can your eye tell how different 'Buildings and administration' is from 'Workplace materials' when looking at the slices of pie?" "Additionally, the colors in the pie chart do not mean anything and are therefore distracting."
+Can your eye tell how different Buildings and Administration is from Workplace materials when looking at the slices of pie? The colors in the pie chart do not mean anything and are therefore distracting.
 
 ### Exercise 4
 
@@ -277,7 +277,7 @@ read_csv("data/expenses.csv", show_col_types = FALSE) |>
 
 ###
 
-"Notice how much easier it is to identify the magnitude of the differences across categories while not being distracted by other aspects of the image." "Typically, a bar plot will be easier for the reader to digest than a pie chart, especially if the categorical data being plotted has more than just a few levels."
+The 5-point gap between Buildings and Administration and Workplace materials is now easy to see. Typically, a bar plot will be easier for the reader to digest than a pie chart, especially if the categorical data being plotted has more than just a few levels.
 
 ### Exercise 5
 
@@ -301,7 +301,7 @@ read_csv("data/expenses.csv", show_col_types = FALSE) |>
 
 ###
 
-"Colors can be distracting when they are only used to brighten up the plot." These five colors, and the legend that explains them, repeat what the y-axis already says.
+Colors can be distracting when they are only used to brighten up the plot. These five colors, and the legend that explains them, repeat what the y-axis already says.
 
 ### Exercise 6
 
@@ -327,7 +327,7 @@ read_csv("data/expenses.csv", show_col_types = FALSE) |>
 
 ###
 
-"An important principle to keep in mind is to use color to draw attention." The red bar is now the first thing a reader sees, and the gray bars give it context without competing with it.
+An important principle to keep in mind is to use color to draw attention. The red bar is now the first thing a reader sees.
 
 ### Exercise 7
 
@@ -436,7 +436,7 @@ duke_hires |>
 
 ###
 
-One colored point does what the chapter's red bar did: it tells the reader where to look. It still does not tell them why to look there.
+Like the red bar, the colored point tells the reader where to look, but not why.
 
 ### Exercise 11
 
@@ -467,7 +467,7 @@ duke_hires |>
 
 ###
 
-"For many graphs, an important aspect is the inclusion of information which is not provided in the dataset that is being plotted." The book's graph "is **annotated** with information about the start of the university's fiscal year which contextualizes the information provided by the data."
+For many graphs, an important aspect is the inclusion of information which is not provided in the dataset that is being plotted. Your graph is now *annotated* with information about the start of the university's fiscal year, which contextualizes the information provided by the data.
 
 ### Exercise 12
 
@@ -505,7 +505,7 @@ duke_hires |>
 
 ###
 
-The chapter's own annotation says hires "always" peak in July, a claim that needs more than one year; with only 2010's real counts, we say they peaked. "The external information serves to contextualize the data and helps communicate the narrative of the research."
+The book's annotation says hires always peak in July, but one year of data can only show that they peaked in 2010. The external information serves to contextualize the data and helps communicate the narrative of the research.
 
 ### Exercise 13
 
@@ -526,11 +526,11 @@ learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type
 
 ###
 
-"When creating a graphic, keep in mind what it is that you'd like your reader to see." A sorted bar, one highlight color, and one sentence of context do more for a reader than any number of extra colors.
+When creating a graphic, keep in mind what it is that you'd like your reader to see.
 
 ## Order, labels, purpose, and color
 
-The chapter's last four principles, order matters, make the labels easy to read, pick a purpose, and select meaningful colors, all use one poll about Brexit, Britain's exit from the European Union. Every plot in this section shows the same 25 counts.
+This section's four principles, order matters, make the labels easy to read, pick a purpose, and select meaningful colors, all use one poll about Brexit, Britain's exit from the European Union. Every plot shows the same 25 counts.
 
 ### Exercise 1
 
@@ -556,7 +556,7 @@ Rest of South,Fairly badly,126
 
 ###
 
-The poll has no help page, so the chapter is its documentation: YouGov asked, "How well or badly do you think the government are doing at handling Britain's exit from the European Union?" The five answers appear in each region in the order they were offered: Very well, Fairly well, Fairly badly, Very badly, and Don't know.
+In September 2019, YouGov asked Great Britain adults, "How well or badly do you think the government are doing at handling Britain's exit from the European Union?" The five answers appear in each region in the order they were offered: Very well, Fairly well, Fairly badly, Very badly, and Don't know.
 
 ### Exercise 2
 
@@ -578,7 +578,7 @@ read_csv("data/brexit.csv", show_col_types = FALSE)
 
 ###
 
-"The Brexit survey results were additionally broken down by region in Great Britain." Five regions times five answers makes 25 rows, and Northern Ireland, which is in the United Kingdom but not Great Britain, is not among them.
+The Brexit survey results were broken down by region in Great Britain. Five regions times five answers makes 25 rows, and Northern Ireland, which is in the United Kingdom but not Great Britain, is missing.
 
 ### Exercise 3
 
@@ -624,7 +624,7 @@ read_csv("data/brexit.csv", show_col_types = FALSE) |>
 
 ###
 
-The chapter says "YouGov survey asked 1,639 Great Britain adults," but its own counts add up to 1,643. Text and data disagree by four people, a reminder to total the data yourself before quoting a sample size.
+The chapter says YouGov asked 1,639 Great Britain adults, but its own counts add up to 1,643. Total the data yourself before quoting a sample size.
 
 ### Exercise 5
 
@@ -649,7 +649,7 @@ read_csv("data/brexit.csv", show_col_types = FALSE) |>
 
 ###
 
-The table's order is gone: the plot sorts the answers alphabetically, with Don't know at the bottom and Very well at the top. As the book says of its own version of this plot, "the alphabetical ordering isn't particularly meaningful for describing the data."
+The plot sorts the answers alphabetically, with Don't know at the bottom and Very well at the top. The alphabetical ordering isn't particularly meaningful for describing the data.
 
 ### Exercise 6
 
@@ -674,7 +674,7 @@ read_csv("data/brexit.csv", show_col_types = FALSE) |>
 
 ###
 
-"Sometimes it makes sense to" sort bars "from tallest to shortest (or vice versa)," and this order makes the winning answer obvious. But it scatters the two positive answers and the two negative ones, which belong together.
+Sometimes it makes sense to order the bars from tallest to shortest (or vice versa), which makes the most common answer obvious. But this order scatters the two positive answers and the two negative ones, which belong together.
 
 ### Exercise 7
 
@@ -701,7 +701,7 @@ read_csv("data/brexit.csv", show_col_types = FALSE) |>
 
 ###
 
-"But in this case, the best ordering is probably the one in which the questions were asked." "An ordering which does not make sense in the context of the problem (e.g., alphabetically here), can mislead the reader who might take a quick glance at the axes and not read the bar labels carefully."
+In this case, the best ordering is probably the one in which the questions were asked. An ordering which does not make sense in the context of the problem (e.g., alphabetically here), can mislead the reader who might take a quick glance at the axes and not read the bar labels carefully.
 
 ### Exercise 8
 
@@ -727,52 +727,59 @@ brexit <- read_csv("data/brexit.csv", show_col_types = FALSE) |>
 
 ###
 
-A categorical variable stored with its levels in a fixed order carries that order into every later table and plot. "Most software programs have built in methods for some of the plot details -- some order levels alphabetically, some provide functionality for arranging them in a custom order."
+A categorical variable stored with its levels in a fixed order carries that order into every later table and plot. Most software programs have built in methods for some of the plot details -- some order levels alphabetically, some provide functionality for arranging them in a custom order.
 
 ### Exercise 9
 
-Add `#| cache: true` to that chunk. Render.
+Start a new chunk with a stacked bar chart of `brexit`, with one vertical bar for each `region`, divided into segments by `opinion`. Render.
 
 ```{r}
 #| label: order-labels-purpose-and-color-9
 #| echo: false
-learnr2::question("In the bash Terminal, run ls. CP/CR.", type = "reflection")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
 
-```{.output}
-analysis.html  analysis.qmd  analysis_cache  analysis_files  data
+```{r}
+#| label: order-labels-purpose-and-color-9-test
+#| echo: true
+brexit |>
+  ggplot(aes(x = region, y = n, fill = opinion)) +
+  geom_col()
 ```
 
 ###
 
-`analysis_cache` now holds `brexit`, so later renders load it from disk instead of reading the file again. A cached chunk only re-runs when its code changes.
+The bars' heights mostly show how many people were polled in each region: 552 in the Rest of South, 142 in Scotland. The region names have to squeeze in side by side along the x-axis.
 
 ### Exercise 10
 
-Your Source Control count just jumped, because Git sees every file in the new cache directory. Add `analysis_cache` to `.gitignore`, and the count drops back.
+Make the bars horizontal, with the regions on the y-axis. Render.
 
 ```{r}
 #| label: order-labels-purpose-and-color-10
 #| echo: false
-learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type = "reflection")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
 
-```{.output}
-analysis_files
-analysis_cache
+```{r}
+#| label: order-labels-purpose-and-color-10-test
+#| echo: true
+brexit |>
+  ggplot(aes(x = n, y = region, fill = opinion)) +
+  geom_col()
 ```
 
 ###
 
-"The stacked bar plot allows for comparison of Brexit opinion across the five regions." Each bar is a region, and its segments are the five answers.
+The easier the categories are to read, the more the reader will learn from the visualization. With London at the bottom and Scotland at the top, the regions now also run from south to north, as on a map.
 
 ### Exercise 11
 
-Start a new chunk with a stacked bar chart of `brexit`, with one vertical bar for each `region`, divided into segments by `opinion`. Render.
+Make each bar show the proportion of the region's respondents giving each answer, so that every bar has the same length. Render.
 
 ```{r}
 #| label: order-labels-purpose-and-color-11
@@ -786,17 +793,17 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: order-labels-purpose-and-color-11-test
 #| echo: true
 brexit |>
-  ggplot(aes(x = region, y = n, fill = opinion)) +
-  geom_col()
+  ggplot(aes(x = n, y = region, fill = opinion)) +
+  geom_col(position = "fill")
 ```
 
 ###
 
-The bars' heights mostly show how many people were polled in each region: 552 in the Rest of South, 142 in Scotland. The region names have to squeeze in side by side along the x-axis.
+Stacked bar plots tell one part of a story. These proportions show that Scotland and London were the most negative regions.
 
 ### Exercise 12
 
-Make the bars horizontal, with the regions on the y-axis. Render.
+Replace the code in that chunk with a separate bar chart of the number of respondents giving each `opinion` for each `region`, side by side, with the answers on the y-axis in the survey's order. Use few enough tick marks that the numbers on the x-axes do not run together. Render.
 
 ```{r}
 #| label: order-labels-purpose-and-color-12
@@ -810,17 +817,19 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: order-labels-purpose-and-color-12-test
 #| echo: true
 brexit |>
-  ggplot(aes(x = n, y = region, fill = opinion)) +
-  geom_col()
+  ggplot(aes(x = n, y = fct_rev(opinion))) +
+  geom_col() +
+  facet_wrap(~ region, nrow = 1) +
+  scale_x_continuous(breaks = c(0, 100, 200))
 ```
 
 ###
 
-"The easier the categories are to read, the more the reader will learn from the visualization." With London at the bottom and Scotland at the top, the regions now also run from south to north, as on a map.
+Splitting one plot into a panel for each group is called faceting, and it shows the shape of opinion within each region. Depending on your research question, stacked bar plots may not tell the part of the story most important to the research.
 
 ### Exercise 13
 
-Make each bar show the proportion of the region's respondents giving each answer, so that every bar has the same length. Render.
+Return to the stacked bar chart of proportions, and color its segments with the cividis color scale. Render.
 
 ```{r}
 #| label: order-labels-purpose-and-color-13
@@ -835,16 +844,17 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| echo: true
 brexit |>
   ggplot(aes(x = n, y = region, fill = opinion)) +
-  geom_col(position = "fill")
+  geom_col(position = "fill") +
+  scale_fill_viridis_d(option = "cividis")
 ```
 
 ###
 
-"Stacked bar plots tell one part of a story." Counts told us where the poll found its people; proportions show that Scotland and London were the most negative, despite their small samples.
+Default or rainbow colors are not always the choice which will best distinguish the level of your variables. The cividis scale works well with ordinal data, and it was designed by Nuñez and colleagues to look the same to people with and without color vision deficiency.
 
 ### Exercise 14
 
-Replace the code in that chunk with a separate bar chart of the number of respondents giving each `opinion` for each `region`, side by side, with the answers on the y-axis in the survey's order. Use few enough tick marks that the numbers on the x-axes do not run together. Render.
+Improve the plot. Put Very well at the left end of each bar, show the x-axis as percentages, and put the legend on top. Use the survey question as the title, and add a subtitle that states the main finding and a caption giving the number of respondents and the source. Remove the axis titles. Render.
 
 ```{r}
 #| label: order-labels-purpose-and-color-14
@@ -856,57 +866,6 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ```{r}
 #| label: order-labels-purpose-and-color-14-test
-#| echo: true
-brexit |>
-  ggplot(aes(x = n, y = fct_rev(opinion))) +
-  geom_col() +
-  facet_wrap(~ region, nrow = 1) +
-  scale_x_continuous(breaks = c(0, 100, 200))
-```
-
-###
-
-Splitting one plot into a panel for each group is called faceting, and it shows the shape of opinion within each region. "Depending on your research question, they may not tell the part of the story most important to the research," which is why the chapter asks you to pick a purpose before picking a plot.
-
-### Exercise 15
-
-Return to the stacked bar chart of proportions, and color its segments with the cividis color scale. Render.
-
-```{r}
-#| label: order-labels-purpose-and-color-15
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{r}
-#| label: order-labels-purpose-and-color-15-test
-#| echo: true
-brexit |>
-  ggplot(aes(x = n, y = region, fill = opinion)) +
-  geom_col(position = "fill") +
-  scale_fill_viridis_d(option = "cividis")
-```
-
-###
-
-"Default or rainbow colors are not always the choice which will best distinguish the level of your variables." "The cividis scale works well with ordinal data," and it was designed by Nuñez and colleagues to look the same to people with and without color vision deficiency.
-
-### Exercise 16
-
-Improve the plot. Put Very well at the left end of each bar, show the x-axis as percentages, and put the legend on top. Use the survey question as the title, and add a subtitle that states the main finding and a caption giving the number of respondents and the source. Remove the axis titles. Render.
-
-```{r}
-#| label: order-labels-purpose-and-color-16
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{r}
-#| label: order-labels-purpose-and-color-16-test
 #| echo: true
 brexit |>
   ggplot(aes(x = n, y = region, fill = opinion)) +
@@ -925,14 +884,14 @@ brexit |>
 
 ###
 
-"Labels should be clear and oriented horizontally for the reader." "Don't forget titles and, if possible, include the source of the data."
+Labels should be clear and oriented horizontally for the reader. Don't forget titles and, if possible, include the source of the data.
 
-### Exercise 17
+### Exercise 15
 
-Commit `analysis.qmd` and `.gitignore` with the message `"Plot Brexit opinion by region"` and push.
+Commit `analysis.qmd` with the message `"Plot Brexit opinion by region"` and push.
 
 ```{r}
-#| label: order-labels-purpose-and-color-17
+#| label: order-labels-purpose-and-color-15
 #| echo: false
 learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type = "reflection")
 ```
@@ -947,13 +906,15 @@ b71e4d9 (HEAD -> main, origin/main) Plot Brexit opinion by region
 
 ###
 
-"The fundamental principle is that your graph should provide maximal information succinctly and clearly." Order, orientation, proportion, and color each changed what the same 25 numbers said.
+The fundamental principle is that your graph should provide maximal information succinctly and clearly. Order, orientation, proportion, and color each changed what the same 25 numbers said.
 
 ## Summary
 
 This tutorial covered [Chapter 6: Applications: Explore](https://openintrostat.github.io/ims/explore-applications.html) from [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) by Mine Çetinkaya-Rundel and Johanna Hardin. You have learned the chapter's principles for communicating exploratory results: keep it simple, use color to draw attention, tell a story, put categories in a meaningful order, make labels easy to read, pick a purpose, and select meaningful colors.
 
 For the research behind the cividis scale, read "[Optimizing colormaps with consideration for color vision deficiency to enable accurate interpretation of scientific data](https://doi.org/10.1371/journal.pone.0199239)" by Nuñez, Anderton, and Renslow, which the chapter cites. For the poll itself, see YouGov's [survey results](https://d25d2506sfb94s.cloudfront.net/cumulus_uploads/document/x0msmggx08/YouGov%20-%20Brexit%20and%202019%20election.pdf).
+
+Many sentences in this tutorial come from the chapter, used under the book's [CC BY-SA 3.0 license](https://creativecommons.org/licenses/by-sa/3.0/).
 
 ### Exercise 1
 
@@ -1010,7 +971,6 @@ duke_hires |>
 ```
 
 ```{r}
-#| cache: true
 brexit <- read_csv("data/brexit.csv", show_col_types = FALSE) |>
   mutate(opinion = fct_relevel(opinion, "Very well", "Fairly well",
                                "Fairly badly", "Very badly", "Don't know"),
@@ -1037,7 +997,7 @@ brexit |>
 
 ###
 
-The page holds three finished graphics, each built by removing distractions and adding context. "In this chapter different representations are contrasted to demonstrate best practices in creating graphs."
+Your page has three graphics, each improved by removing distractions or adding context.
 
 ### Exercise 2
 
@@ -1059,7 +1019,7 @@ Your answer should look like `https://your-github-username.github.io/application
 
 ###
 
-"Unfortunately, however, there are times when an image conveys a message which is inaccurate or misleading." A published page reaches readers who will never see your code, so the plot has to carry its own title, labels, and source.
+There are times when an image conveys a message which is inaccurate or misleading. Readers of your published page never see your code, so each plot needs its own title, labels, and source.
 
 ### Exercise 3
 
@@ -1077,7 +1037,8 @@ Your answer should look like `https://github.com/your-github-username/applicatio
 
 ###
 
-"Along with data modeling, creative visualization is somewhat of an art." "However, even with an art, there are recommended guiding principles."
+Along with data modeling, creative visualization is somewhat of an art. However, even with an art, there are recommended guiding principles.
+
 
 ## Your Answers
 

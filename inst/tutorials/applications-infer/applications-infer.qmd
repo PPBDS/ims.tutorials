@@ -33,7 +33,7 @@ This tutorial covers [Chapter 23: Applications: Infer](https://openintrostat.git
 
 ### Exercise 1
 
-You should be doing this tutorial in a repo named `applications-infer`. If you are not, create one and then connect to it. You may need to restart this tutorial after you do so.
+You should be doing this tutorial in a repo named `applications-infer`. If you are not, create one and then connect to it.
 
 Create a new file, `analysis.qmd`, with the title `"Applications: Infer"` and your name as the author. In a bash Terminal, render it:
 
@@ -61,7 +61,7 @@ analysis_files
 
 ###
 
-"The computational methods we have presented are used in two settings." "First, in many real life applications (as in those covered here), the mathematical model and computational model give identical conclusions."
+The computational methods we have presented are used in two settings. First, in many real life applications (as in those covered here), the mathematical model and computational model give identical conclusions.
 
 ### Exercise 2
 
@@ -104,7 +104,7 @@ library(infer)
 
 ###
 
-The chapter's own code builds every bootstrap and randomization distribution with **infer**, the same four steps each time: specify the variables, state the null hypothesis, generate simulated data, and calculate a statistic. "When there are no differences in conclusions, the advantage of the computational method is that it gives the analyst a good sense for the logic of the statistical inference process."
+The chapter's code builds every bootstrap and randomization distribution with **infer** in four steps: specify the variables, state the null hypothesis, generate simulated data, and calculate a statistic. When there are no differences in conclusions, the advantage of the computational method is that it gives the analyst a good sense for the logic of the statistical inference process.
 
 ### Exercise 4
 
@@ -124,7 +124,7 @@ analysis.html  analysis.qmd  analysis_files  data
 
 ###
 
-"In this case study we will examine data from redundant adjective study, which the authors have made available on Open Science Framework at [osf.io/9hw68](https://osf.io/9hw68/)." The book keeps a copy in its own repository, and we keep an identical copy in ours.
+The chapter examines data from the redundant adjective study, which the authors have made available on Open Science Framework at [osf.io/9hw68](https://osf.io/9hw68/). The book keeps a copy in its own repository, and we keep an identical copy in ours.
 
 ### Exercise 5
 
@@ -150,11 +150,11 @@ redundant_adjectives.csv
 
 ###
 
-The book's copy is called `ENGLISH-SPANISH PRODUCTION.csv`, a name with a space in it, which makes every command that touches it harder to type. We renamed it and changed nothing else.
+The book's copy is called `ENGLISH-SPANISH PRODUCTION.csv`. We renamed it to remove the spaces and changed nothing else.
 
 ## A confidence interval for one mean
 
-"Bootstrapping, in contrast to randomization tests, represents a proxy sampling of the original population." This section turns the study's 880 answers into one percentage per speaker and display, then bootstraps a confidence interval for the mean of one group, as the chapter does.
+Bootstrapping, in contrast to randomization tests, represents a proxy sampling of the original population. This section turns the study's 880 answers into one percentage per speaker and display, then bootstraps a confidence interval for the mean of one group.
 
 ### Exercise 1
 
@@ -181,7 +181,9 @@ English,1,9,1
 
 ###
 
-The file has no help page, so the chapter is its documentation: researchers "showed the following two images to 22 native English speakers (undergraduates from University College London) and 22 native Spanish speakers (undergraduates from the Universidad de las Islas Baleares)." A `Color Response` of 1 means the speaker said "the blue triangle" when "the triangle" was enough, a redundant adjective.
+The researchers showed images to 22 native English speakers (undergraduates from University College London) and 22 native Spanish speakers (undergraduates from the Universidad de las Islas Baleares). A `Color Response` of 1 means the speaker called the circled shape "the blue triangle" when "the triangle" was enough, a redundant adjective.
+
+![](images/fig-blue-triangle-shapes-1.png){fig-alt="Four shapes, each a different shape and color: pink circle, yellow square, red diamond, blue triangle. The blue triangle is circled."}
 
 ### Exercise 2
 
@@ -203,7 +205,7 @@ read_csv("data/redundant_adjectives.csv", show_col_types = FALSE)
 
 ###
 
-There are 880 rows, one per answer: 44 speakers times 20 questions each. The column `Color Response` has a space in its name, so R code can only refer to it wrapped in backticks.
+There are 880 rows, one per answer: 44 speakers times 20 questions each. The column `Color Response` has a space in its name, so R code must wrap it in backticks.
 
 ### Exercise 3
 
@@ -227,7 +229,7 @@ read_csv("data/redundant_adjectives.csv", show_col_types = FALSE) |>
 
 ###
 
-The chapter's code does the same cleanup in one step with the **[janitor](https://sfirke.github.io/janitor/)** package, which converts every column name to lowercase snake case. Renaming by hand works just as well when there are only four columns.
+The chapter's code does the same cleanup with the **[janitor](https://sfirke.github.io/janitor/)** package, which converts every column name to lowercase snake case.
 
 ### Exercise 4
 
@@ -252,7 +254,7 @@ read_csv("data/redundant_adjectives.csv", show_col_types = FALSE) |>
 
 ###
 
-Only 22, but "Remember that there are a total of 44 subjects in the study (22 English and 22 Spanish speakers)." The subjects are numbered 1 to 22 within each language, so `subject` 1 is two different people, and any summary by speaker must group by `language` as well.
+There are a total of 44 subjects in the study (22 English and 22 Spanish speakers). The subjects are numbered 1 to 22 within each language, so any summary by speaker must group by `language` as well.
 
 ### Exercise 5
 
@@ -278,7 +280,9 @@ read_csv("data/redundant_adjectives.csv", show_col_types = FALSE) |>
 
 ###
 
-Each cell holds 220 answers, 22 speakers times 10 questions. "Each subject was asked 10 questions for each type of image (with a different layout of items on the image for each question)."
+Each subject was asked 10 questions for each type of image (with a different layout of items on the image for each question). The circled blue triangle is the only triangle in both the 4-item and the 16-item displays, so the color is always redundant.
+
+![](images/fig-redundant-adjectives-blue-triangle.png){fig-alt="Two presentations of shapes. In each presentation all of the shapes and their colors are unique. In the left presentation, the blue triangle is circled and is one of four shapes. In the right presentation, the blue triangle is circled and is one of sixteen shapes."}
 
 ### Exercise 6
 
@@ -307,7 +311,7 @@ redundant
 
 ###
 
-The unit of observation has changed from an answer to a speaker shown one display size, so 880 rows have become 88. "Note that the variable is "percentage", and we are interested in the average percentage." "Therefore, we will use methods for means."
+Each row is now a speaker shown one display size, so 880 rows have become 88. The variable is a percentage, and we are interested in the average percentage, so we will use methods for means.
 
 ### Exercise 7
 
@@ -332,7 +336,7 @@ redundant <- read_csv("data/redundant_adjectives.csv", show_col_types = FALSE) |
 
 ###
 
-This chunk is now the analysis's data chunk: every later chunk starts from `redundant`. Keeping the reading and the preparation in one place means a fix to the data needs to be made only once.
+Every later chunk starts from `redundant`, so a fix to the data needs to be made only once.
 
 ### Exercise 8
 
@@ -356,7 +360,7 @@ redundant |>
 
 ###
 
-English speakers used a redundant adjective in 37.3% of 4-item displays and 80.5% of 16-item displays, Spanish speakers in 2.7% and 61.4%. "We can see that English speakers are more likely than Spanish speakers to use redundant adjectives, and that in both languages, subjects are more likely to use a redundant adjective when there are more items in the image (i.e., in a denser display)."
+English speakers used a redundant adjective in 37.3% of 4-item displays and 80.5% of 16-item displays, Spanish speakers in 2.7% and 61.4%. English speakers are more likely than Spanish speakers to use redundant adjectives, and in both languages, subjects are more likely to use a redundant adjective when there are more items in the image (i.e., in a denser display).
 
 ### Exercise 9
 
@@ -380,7 +384,7 @@ redundant |>
 
 ###
 
-Of 22 English speakers, 12 never used the redundant adjective, 8 always did, and only 2 did so once in 10 tries. The mean of 37.3% describes almost no one: most speakers have a habit, and the data are about as far from a bell shape as 22 numbers can be.
+Of 22 English speakers, 12 never used the redundant adjective, 8 always did, and only 2 did so once in 10 tries. The mean of 37.3% describes almost no one, and the data are far from a bell shape.
 
 ### Exercise 10
 
@@ -409,11 +413,11 @@ boot_eng_4
 
 ###
 
-Each row is the mean of one resample: "Repeatedly resample the original data, with replacement, using the same sample size as the original data." "With bootstrapping, the analyst is not forcing the null hypothesis to be true (or false, for that matter), but instead, they are replicating the variability seen in taking repeated samples from a population."
+Each row is the mean of one resample of the original data, drawn with replacement, using the same sample size as the original data. With bootstrapping, the analyst is not forcing the null hypothesis to be true (or false, for that matter), but instead, they are replicating the variability seen in taking repeated samples from a population.
 
 ### Exercise 11
 
-Delete the line that prints `boot_eng_4`, so that the chunk only creates it. Render.
+Start a new chunk that uses `boot_eng_4` to calculate a 95% bootstrap percentile interval. Render.
 
 ```{r}
 #| label: a-confidence-interval-for-one-mean-11
@@ -423,63 +427,71 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-````{verbatim}
-set.seed(74)
-boot_eng_4 <- redundant |>
-  filter(language == "English", items == 4) |>
-  specify(response = redundant_perc) |>
-  generate(reps = 1000, type = "bootstrap") |>
-  calculate(stat = "mean")
-````
+```{r}
+#| label: a-confidence-interval-for-one-mean-11-test
+#| echo: true
+boot_eng_4 |>
+  get_confidence_interval(level = 0.95, type = "percentile")
+```
 
 ###
 
-The seed fixes the 1,000 resamples, so every render gives the same interval. "Because there is no underlying true (or false) null hypothesis, bootstrapping is typically used for creating confidence intervals for the parameter of interest."
+Our interval, 19.1% to 56.4%, matches the chapter's because we used the same seed. This interval for the true population parameter is only valid if we can assume that the sample of English speakers are representative of the population of all English speakers.
 
 ### Exercise 12
 
-Add `#| cache: true` to that chunk. Render.
+The chapter's recap describes a second bootstrap interval, the bootstrap standard error (SE) interval, given by the original observed statistic plus or minus some multiple (e.g., 2) of SEs. Replace the code in that chunk so that it calculates the observed mean for English speakers with 4-item displays, the standard deviation of the bootstrap means as the SE, and the interval from the mean minus 2 SEs to the mean plus 2 SEs. Render.
 
 ```{r}
 #| label: a-confidence-interval-for-one-mean-12
 #| echo: false
-learnr2::question("In the bash Terminal, run ls. CP/CR.", type = "reflection")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
 
-```{.output}
-analysis.html  analysis.qmd  analysis_cache  analysis_files  data
+```{r}
+#| label: a-confidence-interval-for-one-mean-12-test
+#| echo: true
+redundant |>
+  filter(language == "English", items == 4) |>
+  summarize(mean = mean(redundant_perc)) |>
+  mutate(se = sd(boot_eng_4$stat),
+         lower = mean - 2 * se,
+         upper = mean + 2 * se)
 ```
 
 ###
 
-`analysis_cache` now holds the 1,000 bootstrap means, so later renders reuse them instead of resampling again. A cached chunk only re-runs when its code changes.
+The SE interval, 17.1% to 57.4%, is a little wider than the percentile interval and centered on the observed 37.3%. The percentile interval instead takes the endpoints representing the middle (e.g., 95%) of the bootstrapped statistics.
 
 ### Exercise 13
 
-Your Source Control count just jumped, because Git sees every file in the new cache directory. Add `analysis_cache` to `.gitignore`, and the count drops back.
+Check the bootstrap against the mathematical model. Replace the code in that chunk with a 95% confidence interval for the same mean from the $t$-distribution, done by a single function built for it. Render.
 
 ```{r}
 #| label: a-confidence-interval-for-one-mean-13
 #| echo: false
-learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type = "reflection")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
 
-```{.output}
-analysis_files
-analysis_cache
+```{r}
+#| label: a-confidence-interval-for-one-mean-13-test
+#| echo: true
+redundant |>
+  filter(language == "English", items == 4) |>
+  t_test(response = redundant_perc, conf_level = 0.95)
 ```
 
 ###
 
-The cache is rebuilt from your code on any machine that renders the file, so it does not belong on GitHub. The data file in `data/` is different: it cannot be rebuilt from anything in the repo, so it stays.
+The $t$-interval, 15.7% to 58.8% on 21 degrees of freedom, is wider still, and its normality condition is shaky with 22 values in two clumps at 0 and 100. When there is a difference in the conclusions, it is often the case that the computational method relies on fewer technical conditions and is therefore more appropriate to use.
 
 ### Exercise 14
 
-Start a new chunk that uses `boot_eng_4` to calculate a 95% bootstrap percentile interval. Render.
+Replace the code in that chunk with a histogram of the 1,000 bootstrap means in `boot_eng_4`, with vertical lines at the two ends of the 95% percentile interval. Render.
 
 ```{r}
 #| label: a-confidence-interval-for-one-mean-14
@@ -492,80 +504,6 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: a-confidence-interval-for-one-mean-14-test
 #| echo: true
-boot_eng_4 |>
-  get_confidence_interval(level = 0.95, type = "percentile")
-```
-
-###
-
-Our interval, 19.1% to 56.4%, is the chapter's to the decimal, because we used the same seed and the same steps; with another seed yours will differ slightly. "Note that this interval for the true population parameter is only valid if we can assume that the sample of English speakers are representative of the population of all English speakers."
-
-### Exercise 15
-
-The chapter's recap describes a second bootstrap interval: "The confidence interval will be given by the original observed statistic plus or minus some multiple (e.g., 2) of SEs." Replace the code in that chunk so that it calculates the observed mean for English speakers with 4-item displays, the standard deviation of the bootstrap means as the SE, and the interval from the mean minus 2 SEs to the mean plus 2 SEs. Render.
-
-```{r}
-#| label: a-confidence-interval-for-one-mean-15
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{r}
-#| label: a-confidence-interval-for-one-mean-15-test
-#| echo: true
-redundant |>
-  filter(language == "English", items == 4) |>
-  summarize(mean = mean(redundant_perc)) |>
-  mutate(se = sd(boot_eng_4$stat),
-         lower = mean - 2 * se,
-         upper = mean + 2 * se)
-```
-
-###
-
-The SE interval, 17.1% to 57.4%, is a little wider than the percentile interval and centered exactly on the observed 37.3%. "Bootstrap percentile interval: Obtain the endpoints representing the middle (e.g., 95%) of the bootstrapped statistics."
-
-### Exercise 16
-
-Check the bootstrap against the mathematical model. Replace the code in that chunk with a 95% confidence interval for the same mean from the $t$-distribution, done by a single function built for it. Render.
-
-```{r}
-#| label: a-confidence-interval-for-one-mean-16
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{r}
-#| label: a-confidence-interval-for-one-mean-16-test
-#| echo: true
-redundant |>
-  filter(language == "English", items == 4) |>
-  t_test(response = redundant_perc, conf_level = 0.95)
-```
-
-###
-
-The $t$-interval, 15.7% to 58.8% on 21 degrees of freedom, is wider still, and its conditions are shaky: "slight skew is okay for sample sizes of 15, moderate skew for sample sizes of 30, and strong skew for sample sizes of 60," and these 22 values sit in two clumps at 0 and 100. "Second, when there is a difference in the conclusions (seen primarily in methods beyond the scope of this text), it is often the case that the computational method relies on fewer technical conditions and is therefore more appropriate to use."
-
-### Exercise 17
-
-Replace the code in that chunk with a histogram of the 1,000 bootstrap means in `boot_eng_4`, with vertical lines at the two ends of the 95% percentile interval. Render.
-
-```{r}
-#| label: a-confidence-interval-for-one-mean-17
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{r}
-#| label: a-confidence-interval-for-one-mean-17-test
-#| echo: true
 ci_eng_4 <- boot_eng_4 |>
   get_confidence_interval(level = 0.95, type = "percentile")
 
@@ -577,14 +515,14 @@ boot_eng_4 |>
 
 ###
 
-The bootstrap means pile up around 37 even though no single English speaker scored anywhere near 37. Averaging 22 speakers smooths two clumps into one hump, which is why a mean can have a well-behaved bootstrap distribution when the data do not.
+The bootstrap means pile up around 37, though no English speaker scored near 37. Averaging 22 speakers smooths two clumps into one hump.
 
-### Exercise 18
+### Exercise 15
 
 Improve the plot. Shade the interval between the two lines, show the x-axis as percentages, and add a title, axis labels, a subtitle that states the interval, and a caption giving the number of speakers, the number of resamples, and the source. Render.
 
 ```{r}
-#| label: a-confidence-interval-for-one-mean-18
+#| label: a-confidence-interval-for-one-mean-15
 #| echo: false
 learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
@@ -592,7 +530,7 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ###
 
 ```{r}
-#| label: a-confidence-interval-for-one-mean-18-test
+#| label: a-confidence-interval-for-one-mean-15-test
 #| echo: true
 ci_eng_4 <- boot_eng_4 |>
   get_confidence_interval(level = 0.95, type = "percentile")
@@ -614,14 +552,14 @@ boot_eng_4 |>
 
 ###
 
-This is the chapter's bootstrap figure, built with a seed of 74 as the chapter's was. "Put the conclusions in context and in plain language so even non-statisticians and data scientists can understand the results."
+This is the chapter's bootstrap figure. Put the conclusions in context and in plain language so even non-statisticians and data scientists can understand the results.
 
-### Exercise 19
+### Exercise 16
 
-Commit `analysis.qmd` and `.gitignore` with the message `"Bootstrap a confidence interval"` and push.
+Commit `analysis.qmd` with the message `"Bootstrap a confidence interval"` and push.
 
 ```{r}
-#| label: a-confidence-interval-for-one-mean-19
+#| label: a-confidence-interval-for-one-mean-16
 #| echo: false
 learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type = "reflection")
 ```
@@ -635,15 +573,11 @@ learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type
 
 ###
 
-"However, these confidence intervals are not very meaningful to compare to one another as the interpretation of the "true mean redundant adjective usage percentage" is quite an abstract concept." Comparisons, between display sizes and between languages, call for hypothesis tests.
-
-###
-
-A confidence interval for one mean takes three steps by bootstrap: resample, recompute the mean, and keep the middle 95%. The same steps work for a median or any other statistic, which is why the bootstrap is the more general tool even when the $t$-interval agrees with it.
+Intervals for the other three groups are not very meaningful to compare to one another, as the interpretation of the "true mean redundant adjective usage percentage" is quite an abstract concept. Comparisons between display sizes and between languages call for hypothesis tests.
 
 ## Testing paired and independent means
 
-"An important feature of randomization tests is that the data are permuted in such a way that the null hypothesis is true." This section runs the chapter's two kinds of test: a paired test comparing each English speaker with themselves, and independent-means tests comparing English speakers with Spanish speakers.
+An important feature of randomization tests is that the data are permuted in such a way that the null hypothesis is true. This section runs a paired test comparing each English speaker with themselves, and independent-means tests comparing English speakers with Spanish speakers.
 
 ### Exercise 1
 
@@ -669,7 +603,7 @@ redundant |>
 
 ###
 
-"Note that the English speaking participants were each evaluated on both the 4 item and the 16 item displays." "Therefore, the variable of interest is the difference in redundant percentage."
+The English speaking participants were each evaluated on both the 4 item and the 16 item displays. Therefore, the variable of interest is the difference in redundant percentage.
 
 ### Exercise 2
 
@@ -696,7 +630,7 @@ redundant |>
 
 ###
 
-Eleven speakers did not change at all, and all 11 who did change used more redundant adjectives with 16 items, by 70 to 100 points. Not one English speaker went the other way.
+Eleven speakers did not change at all, and all 11 who did used more redundant adjectives with 16 items, by 70 to 100 points. No English speaker went the other way.
 
 ### Exercise 3
 
@@ -723,7 +657,7 @@ redundant |>
 
 ###
 
-The mean difference is 43.18 percentage points, the chapter's $\bar{x}_{diff}$. "Although the redundancy percentages seem higher in the 16 item task, a hypothesis test will tell us whether the differences observed in the data could be due to natural variability."
+The mean difference is 43.18 percentage points, the chapter's $\bar{x}_{diff}$. Although the redundancy percentages seem higher in the 16 item task, a hypothesis test will tell us whether the differences observed in the data could be due to natural variability.
 
 ### Exercise 4
 
@@ -756,7 +690,7 @@ null_eng
 
 ###
 
-The paired test "shuffles the observed percentage across the two groups (4 item vs 16 item) but **within** a single participant." Swapping a speaker's two percentages just flips the sign of their difference, so each shuffle is a random choice of plus or minus for each of the 22 differences.
+The computational method for a paired difference shuffles the observed percentage across the two groups (4 item vs 16 item) but **within** a single participant. Swapping a speaker's two percentages flips the sign of their difference, so each shuffle is a random choice of plus or minus for each of the 22 differences.
 
 ### Exercise 5
 
@@ -779,7 +713,7 @@ null_eng |>
 
 ###
 
-"Note that the distribution is centered at 0, since the structure of randomly assigning redundancy percentages to each item display will balance the data out such that the average of any differences will be zero." Our shuffles ranged from -43.18 to 36.8: none reached the observed 43.18, and just one matched it in the other direction.
+The distribution is centered at 0, since the structure of randomly assigning redundancy percentages to each item display will balance the data out such that the average of any differences will be zero. Our shuffles ranged from -43.18 to 36.8: none reached the observed 43.18, and one matched it in the other direction.
 
 ### Exercise 6
 
@@ -802,7 +736,7 @@ null_eng |>
 
 ###
 
-Our p-value is 0.001, one shuffle in 1,000, and the chapter reports "a p-value that is approximately 0." With all 11 nonzero differences positive, the observed 43.18 is the most extreme mean a shuffle can produce, so the exact p-value is 2 in $2^{11}$, about 0.001.
+Our p-value is 0.001, one shuffle in 1,000, and the chapter reports a p-value that is approximately 0. With all 11 nonzero differences positive, the observed 43.18 is the most extreme mean a shuffle can produce, so the exact p-value is 2 in $2^{11}$, about 0.001.
 
 ### Exercise 7
 
@@ -829,7 +763,7 @@ redundant |>
 
 ###
 
-The $t$-test gives T = 4.48 on 21 degrees of freedom and a p-value of 0.0002, the same conclusion as the shuffles. "With such a small p-value, we reject the null hypothesis and conclude that the data provide convincing evidence of a difference in mean redundant adjective usage percentages across different displays for English speakers."
+The $t$-test gives T = 4.48 on 21 degrees of freedom and a p-value of 0.0002. With such a small p-value, we reject the null hypothesis and conclude that the data provide convincing evidence of a difference in mean redundant adjective usage percentages across different displays for English speakers.
 
 ### Exercise 8
 
@@ -854,7 +788,7 @@ redundant |>
 
 ###
 
-English speakers were 34.5 points more redundant than Spanish speakers with 4 items. "The English speakers are independent from the Spanish speakers, but since the same subjects were shown the two types of displays, we can't combine data from the two display types (4 objects and 16 objects) together while maintaining independence of observations."
+English speakers were 34.5 points more redundant than Spanish speakers with 4 items. The English speakers are independent from the Spanish speakers, but since the same subjects were shown the two types of displays, we can't combine data from the two display types (4 objects and 16 objects) together while maintaining independence of observations.
 
 ### Exercise 9
 
@@ -883,7 +817,7 @@ redundant |>
 
 ###
 
-Our p-value is 0.002: 2 of 1,000 shuffles were as far from 0 as 34.5, and yours will be close. "Here, the randomization process is slightly different than the paired setting (because the English and Spanish speakers do not have a natural pairing across the two groups)."
+Our p-value is 0.002: 2 of 1,000 shuffles were as far from 0 as 34.5. Here, the randomization process is slightly different than the paired setting (because the English and Spanish speakers do not have a natural pairing across the two groups).
 
 ### Exercise 10
 
@@ -912,7 +846,7 @@ redundant |>
 
 ###
 
-Our p-value is 0.114, where the chapter's own code, with the same seed, gets 0.102: six shuffles tie the observed 19.09 exactly, but rounding inside the computer made them a hair smaller, so a cutoff of exactly 19.09 misses them. Either way, "the data provide convincing evidence of a difference in mean redundant adjective usage percentages between languages in 4 item displays (small p-value) but not in 16 item displays (not small p-value)."
+Our p-value is 0.114 and the chapter's is 0.102, because computer rounding makes the chapter's code miss six shuffles that tie the observed 19.09. Either way, the data provide convincing evidence of a difference in mean redundant adjective usage percentages between languages in 4 item displays (small p-value) but not in 16 item displays (not small p-value).
 
 ### Exercise 11
 
@@ -942,7 +876,7 @@ bind_rows(
 
 ###
 
-The $t$-tests give p-values of 0.003 and 0.094, against our 0.002 and 0.114 by simulation, so the two methods reach the same conclusions. "For a difference of means when the data are not paired: each sample mean must separately satisfy the one-sample conditions for the $t$-distribution, and the data in the groups must also be independent."
+The $t$-tests give p-values of 0.003 and 0.094, against our 0.002 and 0.114 by simulation, the same conclusions. For a difference of means when the data are not paired, each sample mean must separately satisfy the one-sample conditions for the $t$-distribution, and the data in the groups must also be independent.
 
 ### Exercise 12
 
@@ -968,7 +902,7 @@ redundant |>
 
 ###
 
-Two gaps show at once: the rise from 4 to 16 items within each language, which the paired test confirmed for English, and the gap between the languages, which is wide with 4 items and narrower with 16. Treating `items` as a category keeps the axis from inventing display sizes between 4 and 16.
+Usage rises from 4 to 16 items in both languages, and the gap between languages is wide with 4 items and narrower with 16. Treating `items` as a category keeps the axis from inventing display sizes between 4 and 16.
 
 ### Exercise 13
 
@@ -1005,7 +939,7 @@ redundant |>
 
 ###
 
-This is the chapter's bar chart, with the test results in the subtitle. "The results suggests that language patterns around redundant adjective usage might be more similar for denser displays than sparser displays across English and Spanish speakers."
+This is the chapter's bar chart, with the test results in the subtitle. The results suggest that language patterns around redundant adjective usage might be more similar for denser displays than sparser displays across English and Spanish speakers.
 
 ### Exercise 14
 
@@ -1027,17 +961,15 @@ a8d4f17 (HEAD -> main, origin/main) Test paired and independent means
 
 ###
 
-"In approaching research questions with a randomization test, be sure to ask yourself what the null hypothesis represents and how it is that permuting the data is creating different possible null data representations." The paired test shuffled within each speaker and the language tests shuffled across speakers, because the null hypotheses were different.
-
-###
-
-Every test in this section followed the same recipe: compute the observed statistic, shuffle the data so that the null hypothesis is true, recompute, and see how often the shuffles are as extreme. Only the shuffle changes with the design of the study, and choosing it correctly is the part no software can do for you.
+In approaching research questions with a randomization test, be sure to ask yourself what the null hypothesis represents and how it is that permuting the data is creating different possible null data representations. The paired test shuffled within each speaker and the language tests shuffled across speakers, because the null hypotheses were different.
 
 ## Summary
 
 This tutorial covered [Chapter 23: Applications: Infer](https://openintrostat.github.io/ims/inference-applications.html) from [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) by Mine Çetinkaya-Rundel and Johanna Hardin. You have learned to carry a real experiment on redundant adjectives through the computational methods of inference, a bootstrap confidence interval for one mean, a randomization test for paired means, and randomization tests for two independent means, checking each against the $t$-distribution.
 
 For the study itself, read "[Speakers and listeners exploit word order for communicative efficiency: A cross-linguistic investigation](https://doi.org/10.1037/xge0000963)" by Paula Rubio-Fernandez, Francis Mollica, and Julian Jara-Ettinger, whose data the authors share on the [Open Science Framework](https://osf.io/9hw68/). For more practice with this part of the book, the chapter points to OpenIntro's [Tutorial 5: Statistical inference](https://openintrostat.github.io/ims-tutorials/05-infer/).
+
+Many sentences in this tutorial, and its figures, come from the chapter, used under the book's [CC BY-SA 3.0 license](https://creativecommons.org/licenses/by-sa/3.0/).
 
 ### Exercise 1
 
@@ -1076,13 +1008,14 @@ redundant <- read_csv("data/redundant_adjectives.csv", show_col_types = FALSE) |
 ```
 
 ```{r}
-#| cache: true
 set.seed(74)
 boot_eng_4 <- redundant |>
   filter(language == "English", items == 4) |>
   specify(response = redundant_perc) |>
   generate(reps = 1000, type = "bootstrap") |>
   calculate(stat = "mean")
+
+boot_eng_4
 ```
 
 ```{r}
@@ -1126,7 +1059,7 @@ redundant |>
 
 ###
 
-The finished page holds one interval and the summary behind three tests, each built from the same 88-row `redundant`. "Make a conclusion based on the p-value, and write the conclusion in context and in plain language so anyone can understand the result."
+Your page has one bootstrap interval and the bar chart behind three tests, all built from the 88-row `redundant`. Make a conclusion based on the p-value, and write the conclusion in context and in plain language so anyone can understand the result.
 
 ### Exercise 2
 
@@ -1148,7 +1081,7 @@ Your answer should look like `https://your-github-username.github.io/application
 
 ###
 
-"Your answers to the above questions might be different if you're answering in a different language than English." In English the color comes before the noun, "the blue triangle," but in Spanish it comes after, "el triángulo azul," and the study's title credits that word order for the difference between the languages.
+In Spanish, the adjective comes after the noun (e.g., "el triángulo azul"), so the incremental value of the additional adjective might be different. The study's title credits word order for the difference between the languages.
 
 ### Exercise 3
 
@@ -1166,7 +1099,7 @@ Your answer should look like `https://github.com/your-github-username/applicatio
 
 ###
 
-"They found that in both languages, the subjects used more redundant color adjectives in denser displays where it would be more efficient." Your two plots show both halves of that sentence: the interval for one group, and the comparisons across languages and displays.
+The researchers found that in both languages, the subjects used more redundant color adjectives in denser displays where it would be more efficient. Your bar chart shows it.
 
 ## Your Answers
 

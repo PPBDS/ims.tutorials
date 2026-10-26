@@ -35,7 +35,7 @@ This tutorial covers [Chapter 4: Exploring categorical data](https://openintrost
 
 ### Exercise 1
 
-You should be doing this tutorial in a repo named `exploring-categorical-data`. If you are not, create one and then connect to it. You may need to restart this tutorial after you do so.
+You should be doing this tutorial in a repo named `exploring-categorical-data`. If you are not, create one and then connect to it.
 
 Create a new file, `analysis.qmd`, with the title `"Exploring Categorical Data"` and your name as the author. In a bash Terminal, render it:
 
@@ -63,7 +63,7 @@ analysis_files
 
 ###
 
-"This chapter focuses on exploring categorical data using summary statistics and visualizations." Its main example is the full Lending Club dataset, of which `loan50` was a sample.
+This chapter focuses on exploring categorical data using summary statistics and visualizations. Its main example is the full Lending Club dataset, of which `loan50` was a sample.
 
 ### Exercise 2
 
@@ -84,7 +84,7 @@ library(tidyverse)
 
 ###
 
-The **tidyverse** includes **forcats**, for working with *factors*, R's type for categorical variables. Factors carry their levels in a fixed order, which decides the order of bars in every plot in this chapter.
+The **tidyverse** includes **forcats**, for working with *factors*, R's type for categorical variables. Factors carry their levels in a fixed order, which sets the order of the bars in a bar plot.
 
 ### Exercise 3
 
@@ -129,7 +129,7 @@ library(usdata)
 
 ###
 
-**usdata** holds `county`. The chapter returns to it in its final section to compare household income between counties that grew and counties that did not.
+**usdata** holds `county`, which the chapter uses to compare household income between counties that grew and counties that did not.
 
 ### Exercise 5
 
@@ -153,11 +153,11 @@ library(ggridges)
 
 ###
 
-**ggridges** adds *ridge plots* to **ggplot2**: several density curves stacked on one scale. The chapter uses one to compare income distributions across groups of counties.
+**ggridges** adds *ridge plots* to **ggplot2**: several density curves stacked on one scale. The chapter uses one to compare income across groups of counties.
 
 ## Contingency tables and bar plots
 
-"We will examine the relationship between `homeownership`, which for the `loans` data can take a value of `rent`, `mortgage` (owns but has a mortgage), or `own`, and `application_type`, which indicates whether the loan application was made with a partner or whether it was an individual application."
+We will examine the relationship between `homeownership`, which for the `loans` data can take a value of `rent`, `mortgage` (owns but has a mortgage), or `own`, and `application_type`, which indicates whether the loan application was made with a partner or whether it was an individual application.
 
 ### Exercise 1
 
@@ -179,32 +179,34 @@ loans_full_schema
 
 ###
 
-"This larger dataset contains information on 10,000 loans made through Lending Club." The 55 columns will not fit on the page, so the tibble names the ones it could not show.
+This larger dataset contains information on 10,000 loans made through Lending Club. The 55 columns do not fit on the page, so the tibble lists the ones it could not show.
 
 ### Exercise 2
+
+Replace the code in that chunk so that it counts the loans with each value of `homeownership`. Render.
 
 ```{r}
 #| label: contingency-tables-and-bar-plots-2
 #| echo: false
-learnr2::question("In the R Terminal, run ?loans_full_schema. Copy and paste the entries for homeownership and application_type from the Format section.", type = "reflection")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
 
-```{.output}
-     homeownership The ownership status of the applicant's residence.
-
-     application_type The type of application: either ‘individual’ or
-          ‘joint’.
+```{r}
+#| label: contingency-tables-and-bar-plots-2-test
+#| echo: true
+loans_full_schema |>
+  count(homeownership)
 ```
 
 ###
 
-"Note that loans from Lending Club are typically for small items or for cash, not for homes." Homeownership describes the borrower, not the purpose of the loan.
+Loans from Lending Club are typically for small items or for cash, not for homes, so `homeownership` describes the borrower, not the loan. The levels arrive in capitals and in alphabetical order, while the book writes them in lowercase from no ownership to full ownership: rent, mortgage, own.
 
 ### Exercise 3
 
-Replace the code in that chunk so that it counts the loans with each value of `homeownership`. Render.
+Replace the code in that chunk so that it counts the loans with each value of `application_type`. Render.
 
 ```{r}
 #| label: contingency-tables-and-bar-plots-3
@@ -218,16 +220,16 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: contingency-tables-and-bar-plots-3-test
 #| echo: true
 loans_full_schema |>
-  count(homeownership)
+  count(application_type)
 ```
 
 ###
 
-The levels arrive in capitals and in alphabetical order: MORTGAGE, OWN, RENT. The book writes them in lowercase and in the order rent, mortgage, own, which is a cleaner story, from no ownership to full ownership.
+8,505 loans were individual applications and 1,495 were joint. This imbalance affects how we should plot them.
 
 ### Exercise 4
 
-Replace the code in that chunk so that it counts the loans with each value of `application_type`. Render.
+Start a new chunk that creates `loans` from `loans_full_schema`, with `homeownership` converted to lowercase and its levels ordered rent, mortgage, own. Print `loans`. Render.
 
 ```{r}
 #| label: contingency-tables-and-bar-plots-4
@@ -240,17 +242,20 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: contingency-tables-and-bar-plots-4-test
 #| echo: true
-loans_full_schema |>
-  count(application_type)
+loans <- loans_full_schema |>
+  mutate(homeownership = str_to_lower(homeownership),
+         homeownership = fct_relevel(homeownership, "rent", "mortgage", "own"))
+
+loans
 ```
 
 ###
 
-8,505 loans were individual applications and 1,495 were joint. The imbalance between these two groups will matter when we choose how to plot them.
+We will refer to this modified dataset as `loans`. Recoding a categorical variable changes its labels and order, never its counts.
 
 ### Exercise 5
 
-Start a new chunk that creates `loans` from `loans_full_schema`, with `homeownership` converted to lowercase and its levels ordered rent, mortgage, own. Print `loans`. Render.
+Start a new chunk that counts the loans in each combination of `application_type` and `homeownership`, then spreads the result into a table with one row per `application_type` and one column per level of `homeownership`. Render.
 
 ```{r}
 #| label: contingency-tables-and-bar-plots-5
@@ -263,20 +268,18 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: contingency-tables-and-bar-plots-5-test
 #| echo: true
-loans <- loans_full_schema |>
-  mutate(homeownership = str_to_lower(homeownership),
-         homeownership = fct_relevel(homeownership, "rent", "mortgage", "own"))
-
-loans
+loans |>
+  count(application_type, homeownership) |>
+  pivot_wider(names_from = homeownership, values_from = n)
 ```
 
 ###
 
-"We will refer to this modified dataset as `loans`." Recoding a categorical variable changes its labels and order, never its counts.
+A table that summarizes data for two categorical variables in this way is called a *contingency table*. Each value in the table represents the number of times a particular combination of variable outcomes occurred, so 3,496 is the number of individual applicants who rent.
 
 ### Exercise 6
 
-Delete the line that prints `loans`, so that the chunk only creates it. Render.
+Replace the code in that chunk with a bar plot of the number of loans at each level of `homeownership`. Render.
 
 ```{r}
 #| label: contingency-tables-and-bar-plots-6
@@ -286,60 +289,71 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-````{verbatim}
-loans <- loans_full_schema |>
-  mutate(homeownership = str_to_lower(homeownership),
-         homeownership = fct_relevel(homeownership, "rent", "mortgage", "own"))
-````
+```{r}
+#| label: contingency-tables-and-bar-plots-6-test
+#| echo: true
+loans |>
+  ggplot(aes(x = homeownership)) +
+  geom_bar()
+```
 
 ###
 
-Every table and plot in the rest of this section starts from `loans`, so it earns a chunk of its own.
+A *bar plot* is a common way to display a single categorical variable. The bars appear in the order rent, mortgage, own because that is the order of the levels you set.
 
 ### Exercise 7
 
-Add `#| cache: true` to that chunk. Render.
+Change the bar plot so that it shows the proportion of loans at each level of `homeownership` rather than the count. Render.
 
 ```{r}
 #| label: contingency-tables-and-bar-plots-7
 #| echo: false
-learnr2::question("In the bash Terminal, run ls. CP/CR.", type = "reflection")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
 
-```{.output}
-analysis.html  analysis.qmd  analysis_cache  analysis_files
+```{r}
+#| label: contingency-tables-and-bar-plots-7-test
+#| echo: true
+loans |>
+  count(homeownership) |>
+  mutate(proportion = n / sum(n)) |>
+  ggplot(aes(x = homeownership, y = proportion)) +
+  geom_col()
 ```
 
 ###
 
-`analysis_cache` now holds the recoded `loans`, so later renders skip rebuilding it. Lending Club loans are "for their personal use," and the help page's warning stands: these are loans made, not applications.
+Nearly half of borrowers, 47.9%, have a mortgage, while 38.6% rent and 13.5% own outright. The shape matches the count plot, and only the axis changed.
 
 ### Exercise 8
 
-Your Source Control count just jumped, because Git sees every file in the new cache directory. Add `analysis_cache` to `.gitignore`, and the count drops back.
+Replace the code in that chunk with a stacked bar plot: the count of loans at each level of `homeownership`, with each bar filled by `application_type`. Render.
 
 ```{r}
 #| label: contingency-tables-and-bar-plots-8
 #| echo: false
-learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type = "reflection")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
 
-```{.output}
-analysis_files
-analysis_cache
+```{r}
+#| label: contingency-tables-and-bar-plots-8-test
+#| echo: true
+loans |>
+  ggplot(aes(x = homeownership, fill = application_type)) +
+  geom_bar()
 ```
 
 ###
 
-"Mastery of the content presented in this chapter will be crucial for understanding the methods and techniques introduced in the rest of the book." Two-way tables of counts return in Chapter 18 as the basis of a hypothesis test.
+This plot most clearly displays that loan applicants most commonly live in mortgaged homes. It is difficult to say, based on this plot alone, how different application types vary across the levels of homeownership.
 
 ### Exercise 9
 
-Start a new chunk that counts the loans in each combination of `application_type` and `homeownership`, then spreads the result into a table with one row per `application_type` and one column per level of `homeownership`. Render.
+Change the stacked bar plot so that every bar is stretched to the same height, showing the proportion of each `application_type` within each level of `homeownership`. Render.
 
 ```{r}
 #| label: contingency-tables-and-bar-plots-9
@@ -353,17 +367,17 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: contingency-tables-and-bar-plots-9-test
 #| echo: true
 loans |>
-  count(application_type, homeownership) |>
-  pivot_wider(names_from = homeownership, values_from = n)
+  ggplot(aes(x = homeownership, fill = application_type)) +
+  geom_bar(position = "fill")
 ```
 
 ###
 
-"A table that summarizes data for two categorical variables in this way is called a contingency table. Each value in the table represents the number of times a particular combination of variable outcomes occurred," so 3,496 is the number of individual applicants who rent.
+This is a *standardized bar plot*, also known as a *filled bar plot*. Since the proportions of joint and individual loans vary across the groups, we can conclude that the two variables are associated for this sample.
 
 ### Exercise 10
 
-Replace the code in that chunk with a bar plot of the number of loans at each level of `homeownership`. Render.
+Change the plot so that the two application types sit side by side within each level of `homeownership` instead of on top of each other. Render.
 
 ```{r}
 #| label: contingency-tables-and-bar-plots-10
@@ -377,17 +391,17 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: contingency-tables-and-bar-plots-10-test
 #| echo: true
 loans |>
-  ggplot(aes(x = homeownership)) +
-  geom_bar()
+  ggplot(aes(x = homeownership, fill = application_type)) +
+  geom_bar(position = "dodge")
 ```
 
 ###
 
-"A bar plot is a common way to display a single categorical variable." The bars appear in the order rent, mortgage, own because that is the order of the levels you set.
+This *dodged bar plot* most clearly displays that within each level of homeownership, individual applications are more common than joint applications. When two groups are of very different sizes, as we see in the group `own` relative to either of the other two groups, it is difficult to discern if there is an association between the variables.
 
 ### Exercise 11
 
-Change the bar plot so that it shows the proportion of loans at each level of `homeownership` rather than the count. Render.
+Replace the plot with a table of row proportions: for each `application_type`, the proportion of its loans at each level of `homeownership`, spread into one column per level. Render.
 
 ```{r}
 #| label: contingency-tables-and-bar-plots-11
@@ -401,19 +415,19 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: contingency-tables-and-bar-plots-11-test
 #| echo: true
 loans |>
-  count(homeownership) |>
-  mutate(proportion = n / sum(n)) |>
-  ggplot(aes(x = homeownership, y = proportion)) +
-  geom_col()
+  count(application_type, homeownership) |>
+  mutate(proportion = n / sum(n), .by = application_type) |>
+  select(-n) |>
+  pivot_wider(names_from = homeownership, values_from = proportion)
 ```
 
 ###
 
-Nearly half of borrowers, 47.9%, have a mortgage; 38.6% rent and 13.5% own outright. The shape is identical to the count plot; only the axis changed.
+The value 3496 at the intersection of individual and rent is replaced by 3496 / 8505 = 0.411, the proportion of individual applicants who rent. Each row now sums to 1.
 
 ### Exercise 12
 
-Replace the code in that chunk with a stacked bar plot: the count of loans at each level of `homeownership`, with each bar filled by `application_type`. Render.
+Change the table to column proportions: for each level of `homeownership`, the proportion of its loans with each `application_type`. Render.
 
 ```{r}
 #| label: contingency-tables-and-bar-plots-12
@@ -427,17 +441,19 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: contingency-tables-and-bar-plots-12-test
 #| echo: true
 loans |>
-  ggplot(aes(x = homeownership, fill = application_type)) +
-  geom_bar()
+  count(application_type, homeownership) |>
+  mutate(proportion = n / sum(n), .by = homeownership) |>
+  select(-n) |>
+  pivot_wider(names_from = homeownership, values_from = proportion)
 ```
 
 ###
 
-"This plot most clearly displays that loan applicants most commonly live in mortgaged homes. It is difficult to say, based on this plot alone, how different application types vary across the levels of homeownership."
+Here the value 0.906 indicates that 90.6% of renters applied as individuals for the loan, against 80.2% of mortgage holders and 86.5% of owners. Row proportions and column proportions answer different questions.
 
 ### Exercise 13
 
-Change the stacked bar plot so that every bar is stretched to the same height, showing the proportion of each `application_type` within each level of `homeownership`. Render.
+Replace the code in that chunk so that it uses `email` to calculate, for each email `format`, the proportion of messages that are `spam`. Label the formats `"text"` and `"HTML"`. Render.
 
 ```{r}
 #| label: contingency-tables-and-bar-plots-13
@@ -450,18 +466,18 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: contingency-tables-and-bar-plots-13-test
 #| echo: true
-loans |>
-  ggplot(aes(x = homeownership, fill = application_type)) +
-  geom_bar(position = "fill")
+email |>
+  mutate(format = if_else(format == 1, "HTML", "text")) |>
+  summarize(prop_spam = mean(spam == 1), .by = format)
 ```
 
 ###
 
-This is a **standardized bar plot**, also called a filled bar plot. "Since the proportions of joint and individual loans vary across the groups, we can conclude that the two variables are associated for this sample."
+A higher fraction of plain text emails are spam (209/1195 = 17.5%) than compared to HTML emails (158/2726 = 5.8%). Usually it is most useful to "condition" on the explanatory variable, here the format.
 
 ### Exercise 14
 
-Change the plot so that the two application types sit side by side within each level of `homeownership` instead of on top of each other. Render.
+Replace the code in that chunk with the standardized bar plot of `application_type` within `homeownership` again, improved: show the y-axis as percentages, and add a title, axis labels, a legend title, a subtitle that states the main finding, and a caption giving the number of loans. Render.
 
 ```{r}
 #| label: contingency-tables-and-bar-plots-14
@@ -473,106 +489,6 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ```{r}
 #| label: contingency-tables-and-bar-plots-14-test
-#| echo: true
-loans |>
-  ggplot(aes(x = homeownership, fill = application_type)) +
-  geom_bar(position = "dodge")
-```
-
-###
-
-A **dodged bar plot** "most clearly displays that within each level of homeownership, individual applications are more common than joint applications." Its weakness: "when two groups are of very different sizes, … it is difficult to discern if there is an association."
-
-### Exercise 15
-
-Replace the plot with a table of row proportions: for each `application_type`, the proportion of its loans at each level of `homeownership`, spread into one column per level. Render.
-
-```{r}
-#| label: contingency-tables-and-bar-plots-15
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{r}
-#| label: contingency-tables-and-bar-plots-15-test
-#| echo: true
-loans |>
-  count(application_type, homeownership) |>
-  mutate(proportion = n / sum(n), .by = application_type) |>
-  select(-n) |>
-  pivot_wider(names_from = homeownership, values_from = proportion)
-```
-
-###
-
-"The value 3496 at the intersection of individual and rent is replaced by 3496 / 8505 = 0.411 … It corresponds to the proportion of individual applicants who rent." Each row now sums to 1.
-
-### Exercise 16
-
-Change the table to column proportions: for each level of `homeownership`, the proportion of its loans with each `application_type`. Render.
-
-```{r}
-#| label: contingency-tables-and-bar-plots-16
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{r}
-#| label: contingency-tables-and-bar-plots-16-test
-#| echo: true
-loans |>
-  count(application_type, homeownership) |>
-  mutate(proportion = n / sum(n), .by = homeownership) |>
-  select(-n) |>
-  pivot_wider(names_from = homeownership, values_from = proportion)
-```
-
-###
-
-"Here the value 0.906 indicates that 90.6% of renters applied as individuals for the loan," against 80.2% of mortgage holders and 86.5% of owners. Both tables are **conditional proportions**; they answer different questions.
-
-### Exercise 17
-
-Replace the code in that chunk so that it uses `email` to calculate, for each email `format`, the proportion of messages that are `spam`. Label the formats `"text"` and `"HTML"`. Render.
-
-```{r}
-#| label: contingency-tables-and-bar-plots-17
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{r}
-#| label: contingency-tables-and-bar-plots-17-test
-#| echo: true
-email |>
-  mutate(format = if_else(format == 1, "HTML", "text")) |>
-  summarize(prop_spam = mean(spam == 1), .by = format)
-```
-
-###
-
-"A higher fraction of plain text emails are spam (209/1195 = 17.5%) than compared to HTML emails (158/2726 = 5.8%)." The book's rule for choosing: "Usually it is most useful to 'condition' on the explanatory variable," here the format.
-
-### Exercise 18
-
-Replace the code in that chunk with the standardized bar plot of `application_type` within `homeownership` again, improved: show the y-axis as percentages, and add a title, axis labels, a legend title, a subtitle that states the main finding, and a caption giving the number of loans. Render.
-
-```{r}
-#| label: contingency-tables-and-bar-plots-18
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{r}
-#| label: contingency-tables-and-bar-plots-18-test
 #| echo: true
 loans |>
   ggplot(aes(x = homeownership, fill = application_type)) +
@@ -588,14 +504,14 @@ loans |>
 
 ###
 
-"The major downside of the standardized version is that we lose all sense of how many cases each of the bars represents." The 1,353 owners look as weighty as the 4,789 mortgage holders.
+The major downside of the standardized version is that we lose all sense of how many cases each of the bars represents. The 1,353 owners look as weighty as the 4,789 mortgage holders.
 
-### Exercise 19
+### Exercise 15
 
-Commit `analysis.qmd` and `.gitignore` with the message `"Summarize homeownership and application type"` and push.
+Commit `analysis.qmd` with the message `"Summarize homeownership and application type"` and push.
 
 ```{r}
-#| label: contingency-tables-and-bar-plots-19
+#| label: contingency-tables-and-bar-plots-15
 #| echo: false
 learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type = "reflection")
 ```
@@ -609,11 +525,11 @@ learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type
 
 ###
 
-The chapter also shows mosaic plots, pie charts, and waffle charts of the same data. Its verdict on pie charts: "it is far easier to compare the counts of each loan grade using the bar plot than the pie chart."
+The chapter also shows mosaic plots, pie charts, and waffle charts of the same data. For loan grades, it is far easier to compare the counts of each grade using a bar plot than a pie chart.
 
 ## Comparing numerical data across groups
 
-"We will revisit the `county` dataset and compare the median household income for counties that gained population from 2010 to 2017 versus counties that had no gain."
+We will revisit the `county` dataset and compare the median household income for counties that gained population from 2010 to 2017 versus counties that had no gain.
 
 ### Exercise 1
 
@@ -640,7 +556,7 @@ county_change |>
 
 ###
 
-The book counts: "of the remaining 3139 counties, in 1541 the population increased from 2010 to 2017 and in the remaining 1598 the population decreased." Two of the 1,541, in Alaska and South Dakota, have no income figure, so 1,539 remain here.
+Of the 3,139 counties with 2017 population data, in 1,541 the population increased from 2010 to 2017 and in the remaining 1,598 the population decreased. Two of the 1,541, in Alaska and South Dakota, have no income figure, so 1,539 remain here.
 
 ### Exercise 2
 
@@ -668,7 +584,7 @@ county_change |>
 
 ###
 
-Growing counties have a median household income of $52,080, against $44,842 for the rest. "While we might like to make a causal connection between income and population growth, remember that these are observational data."
+Growing counties have a median household income of $52,080, against $44,842 for the rest. While we might like to make a causal connection between income and population growth, remember that these are observational data.
 
 ### Exercise 3
 
@@ -696,7 +612,7 @@ county_change |>
 
 ###
 
-"Color can be used to split histograms for numerical variables by levels of a categorical variable." Both groups are right skewed, and the gain group sits a little further right.
+Color can be used to split histograms for numerical variables by levels of a categorical variable. Both groups are right skewed, and the gain group sits a little further right.
 
 ### Exercise 4
 
@@ -724,7 +640,7 @@ county_change |>
 
 ###
 
-"The side-by-side box plots are especially useful for comparing centers and spreads, while the hollow histograms are more useful for seeing distribution shape, skew, modes, and potential anomalies." The gain group's box is wider: its IQR is $16,241 against $13,031.
+The side-by-side box plots are especially useful for comparing centers and spreads, while the hollow histograms are more useful for seeing distribution shape, skew, modes, and potential anomalies. The gain group's box is wider: its IQR is $16,241 against $13,031.
 
 ### Exercise 5
 
@@ -752,7 +668,7 @@ county_change |>
 
 ###
 
-"The ridge plot give us a better sense of the shape, and especially modality, of the data." Both groups have a single peak, so there is no hidden second population of counties here.
+The ridge plot gives us a better sense of the shape, and especially modality, of the data. Both groups have a single peak.
 
 ### Exercise 6
 
@@ -810,7 +726,7 @@ county_change |>
 
 ###
 
-This is **faceting**: "we split (facet) the graphical display of the data across plotting windows based on groups." Its advantage is that "it extends to splitting the data across levels of two categorical variables, which allows for displaying relationships between three variables."
+In *faceting*, we split (facet) the graphical display of the data across plotting windows based on groups. An advantage of this approach is that it extends to splitting the data across levels of two categorical variables, which allows for displaying relationships between three variables.
 
 ### Exercise 8
 
@@ -846,7 +762,7 @@ county_change |>
 
 ###
 
-The medians run from $43,674 for non-metro counties that did not grow to $57,302 for metro counties that did. The book adds a fourth variable, `median_edu`, and finds "an increase in median household income from individuals with only a HS diploma, to individuals with some college, to individuals with a Bachelor's degree," regardless of the other two.
+The medians run from $43,674 for non-metro counties that did not grow to $57,302 for metro counties that did. Adding `median_edu`, the book finds that regardless of the location or change in population, there is an increase in median household income from individuals with only a HS diploma, to individuals with some college, to individuals with a Bachelor's degree.
 
 ### Exercise 9
 
@@ -868,17 +784,17 @@ d08f41b (HEAD -> main, origin/main) Compare county incomes across groups
 
 ###
 
-"Fluently working with categorical variables is an important skill for data analysts." The chapter's one-line summary of its tools: "We presented bar plots, mosaic plots, pie charts, and estimations of conditional proportions."
+Mastery of this content will be crucial for understanding the methods and techniques introduced in the rest of the book. Two-way tables of counts return later in the book as the basis of a hypothesis test.
 
 ## Summary
 
 This tutorial covered [Chapter 4: Exploring categorical data](https://openintrostat.github.io/ims/explore-categorical.html) from [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) by Mine Çetinkaya-Rundel and Johanna Hardin. You have learned to summarize one or two categorical variables with contingency tables and bar plots, to read row and column proportions, and to compare a numerical variable across groups.
 
-The chapter's own summary, in the authors' words:
-
-> Fluently working with categorical variables is an important skill for data analysts. In this chapter we have introduced different visualizations and numerical summaries applied to categorical variables. The graphical visualizations are even more descriptive when two variables are presented simultaneously. We presented bar plots, mosaic plots, pie charts, and estimations of conditional proportions.
+Fluently working with categorical variables is an important skill for data analysts. In this tutorial we have introduced different visualizations and numerical summaries applied to categorical variables. The graphical visualizations are even more descriptive when two variables are presented simultaneously. We presented bar plots and estimations of conditional proportions.
 
 For more on choosing among bar plots, read the "[Visualizing amounts](https://clauswilke.com/dataviz/visualizing-amounts.html)" and "[Visualizing proportions](https://clauswilke.com/dataviz/visualizing-proportions.html)" chapters of Claus Wilke's *Fundamentals of Data Visualization*, by the author of **ggridges**.
+
+Many sentences in this tutorial come from the chapter, used under the book's [CC BY-SA 3.0 license](https://creativecommons.org/licenses/by-sa/3.0/).
 
 ### Exercise 1
 
@@ -915,10 +831,11 @@ loans_full_schema |>
 ```
 
 ```{r}
-#| cache: true
 loans <- loans_full_schema |>
   mutate(homeownership = str_to_lower(homeownership),
          homeownership = fct_relevel(homeownership, "rent", "mortgage", "own"))
+
+loans
 ```
 
 ```{r}
@@ -955,7 +872,7 @@ county_change |>
 
 ###
 
-Your page shows one association between two categorical variables and one numerical variable split across four groups. "The graphical visualizations are even more descriptive when two variables are presented simultaneously."
+Your page shows one association between two categorical variables and one numerical variable split across four groups.
 
 ### Exercise 2
 
@@ -977,7 +894,7 @@ Your answer should look like `https://your-github-username.github.io/exploring-c
 
 ###
 
-"Row and column proportions can also be thought of as conditional proportions as they tell us about the proportion of observations in a given level of a categorical variable conditional on the level of another categorical variable." Conditioning is the idea that carries into every two-way table later in the book.
+Row and column proportions can also be thought of as *conditional proportions* as they tell us about the proportion of observations in a given level of a categorical variable conditional on the level of another categorical variable.
 
 ### Exercise 3
 
@@ -995,7 +912,7 @@ Your answer should look like `https://github.com/your-github-username/exploring-
 
 ###
 
-"Before settling on one form for a table, it is important to consider each to ensure that the most useful table is constructed. However, sometimes it simply isn't clear which, if either, is more useful."
+Before settling on one form for a table, it is important to consider each to ensure that the most useful table is constructed. However, sometimes it simply isn't clear which, if either, is more useful.
 
 ## Your Answers
 

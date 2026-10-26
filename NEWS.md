@@ -1,5 +1,35 @@
 # ims.tutorials 0.0.0.9004
 
+* Knowledge drops now show the book's own diagrams: 63 figures across 21 tutorials,
+  such as the tree of variable types in Hello Data, the sampling pictures in Study
+  Design, and the randomization and bootstrap schematics from Chapter 11 on. Plots
+  of the chapters' data are never copied. Students build those.
+
+* The tutorials copy the book's sentences as their own prose, without quotation
+  marks, and credit the book once, in the last paragraph of each Summary. Each
+  chapter's own summary paragraph is now plain text, not a block quote, with
+  "chapter" changed to "tutorial", and trimmed where it described material the
+  tutorial never covers (Chapters 4, 7, 18, and 19). The figures and sentences stay
+  under the book's CC BY-SA 3.0 license, recorded in `inst/COPYRIGHTS`,
+  `LICENSE.md`, and the DESCRIPTION `Copyright:` field.
+
+* Help-page exercises (`?dataset`) are cut to one in each of the first three
+  tutorials and none after. Caching exercises are gone from every tutorial: students
+  learned caching earlier, and these tutorials teach statistics. Tutorials are about
+  four exercises shorter as a result.
+
+* Knowledge drops are shorter and plainer throughout. The Introduction no longer
+  says "You may need to restart this tutorial after you do so," which learnr2 does
+  not require.
+
+* Fixed Summary answers that did not match the student's finished `analysis.qmd`,
+  in several tutorials: a missing chunk, or a chunk the student had already
+  replaced.
+
+* New tests check that every image a tutorial references exists and is used, that
+  every tutorial credits the book's license, and that no tutorial caches or has more
+  help-page exercises than allowed.
+
 * Tutorial directories no longer carry a chapter-number prefix (`hello-data`, not
   `01-hello-data`); each tutorial's place in the list is the `ordering:` field in its
   YAML header, read by learnr2 0.1.3. Chapter 7 is `linear-regression-single` and

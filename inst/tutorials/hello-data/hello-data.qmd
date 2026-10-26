@@ -34,7 +34,7 @@ This tutorial covers [Chapter 1: Hello data](https://openintrostat.github.io/ims
 
 ### Exercise 1
 
-You should be doing this tutorial in a repo named `hello-data`. If you are not, create one and then connect to it. You may need to restart this tutorial after you do so.
+You should be doing this tutorial in a repo named `hello-data`. If you are not, create one and then connect to it.
 
 Create a new file, `analysis.qmd`, with the title `"Hello Data"` and your name as the author. In a bash Terminal, render it:
 
@@ -62,7 +62,7 @@ analysis_files
 
 ###
 
-"Statistics is the study of how best to collect, analyze, and draw conclusions from data." This chapter is about the first step: what data looks like and how it is collected.
+Statistics is the study of how best to collect, analyze, and draw conclusions from data. This chapter is about the first step: what data looks like and how it is collected.
 
 ### Exercise 2
 
@@ -105,7 +105,7 @@ library(openintro)
 
 ###
 
-**openintro** holds 246 datasets, nearly every one used in the book. Two of them, `stent30` and `stent365`, come from the medical experiment this chapter opens with.
+**openintro** holds 246 datasets, including nearly every one in the book. `stent30` and `stent365` come from the stent experiment that opens this chapter.
 
 ### Exercise 4
 
@@ -132,7 +132,7 @@ library(usdata)
 
 ## Case study: using stents to prevent strokes
 
-Stents are small mesh tubes placed inside narrow or weak arteries. Researchers enrolled 451 patients at risk of stroke in an experiment to answer one question: "Does the use of stents reduce the risk of stroke?"
+Stents are small mesh tubes placed inside narrow or weak arteries. Researchers enrolled 451 patients at risk of stroke in an experiment to answer one question: does the use of stents reduce the risk of stroke?
 
 ### Exercise 1
 
@@ -154,7 +154,7 @@ stent365
 
 ###
 
-Each row is one patient: `group` records whether they received a stent, and `outcome` whether they had a stroke within 365 days. Every row we can see is a stroke in the treatment group, because the data happens to be sorted that way.
+Each row is one patient: `group` records whether they received a stent, and `outcome` whether they had a stroke within 365 days. The rows shown are all treatment-group strokes because the data is sorted that way.
 
 ### Exercise 2
 
@@ -183,7 +183,7 @@ Source:
 
 ###
 
-Read the description closely: the results are measured 30 and 365 days after each patient *enrolled* in the study, not after a stroke, as the book makes clear. Help pages are written by people, so check them against the original source when a detail matters.
+The help page is wrong: results were measured 30 and 365 days after each patient *enrolled*, not after a stroke. Check help pages against the original source.
 
 ### Exercise 3
 
@@ -206,7 +206,7 @@ stent365 |>
 
 ###
 
-Researchers randomly assigned 224 patients to the treatment group, who received a stent plus medical management, and 227 to the control group, who received the same medical management without a stent. "Random assignment organizes the participants in a study into groups that are roughly equal on all aspects," which is what allows an experiment to show cause and effect.
+Researchers randomly assigned 224 patients to the treatment group, who received a stent plus medical management, and 227 to the control group, who received the same medical management without a stent. Random assignment organizes the participants in a study into groups that are roughly equal on all aspects, which is what allows an experiment to show cause and effect.
 
 ### Exercise 4
 
@@ -229,7 +229,7 @@ stent365 |>
 
 ###
 
-45 of the 224 treatment patients had a stroke within a year, against 28 of the 227 control patients, the same counts as the book's Table 1.2. The control group "provides a reference point against which we can measure the medical impact of stents."
+45 of 224 treatment patients had a stroke within a year, against 28 of 227 control patients. The control group provides a reference point against which we can measure the medical impact of stents.
 
 ### Exercise 5
 
@@ -253,7 +253,7 @@ stent365 |>
 
 ###
 
-"A summary statistic is a single number summarizing data from a sample." These two, 20% for the treatment group and 12% for the control group, deliver a surprise: "an additional 8% of patients in the treatment group had a stroke!"
+A *summary statistic* is a single number summarizing data from a sample. The treatment group's stroke rate, 20%, is 8 points higher than the control group's 12%.
 
 ### Exercise 6
 
@@ -279,7 +279,7 @@ stent |>
 
 ###
 
-The gap opened early: within 30 days, 14.7% of the treatment group had a stroke, against 5.7% of the control group. Both proportions grew by 365 days, but the treatment group stayed about 8 points worse.
+Within 30 days, 14.7% of the treatment group had a stroke, against 5.7% of the control group. By 365 days both rates had grown, and the gap was still about 8 points.
 
 ### Exercise 7
 
@@ -306,7 +306,7 @@ stent |>
 
 ###
 
-The treatment bar is taller in both panels, the opposite of what doctors expected. The published analysis found "compelling evidence of harm by stents in this study."
+The treatment bar is taller in both panels, the opposite of what doctors expected. The published analysis found compelling evidence of harm by stents in this study.
 
 ### Exercise 8
 
@@ -342,7 +342,7 @@ stent |>
 
 ###
 
-"Do not generalize the results of this study to all patients and all stents." The patients were volunteers with specific characteristics, and the study tested only one stent, the self-expanding Wingspan.
+Do not generalize the results of this study to all patients and all stents. The patients were volunteers with specific characteristics, and the study tested only one stent, the self-expanding Wingspan.
 
 ### Exercise 9
 
@@ -363,11 +363,11 @@ learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type
 
 ###
 
-Even if stents did nothing, the two groups would rarely have exactly equal stroke rates, just as 100 coin flips rarely give exactly 50 heads. So the real question is, "if in fact stents have no effect, how likely is it that we observe such a large difference?"
+Even if stents did nothing, the two stroke rates would rarely be equal, just as 100 coin flips rarely give exactly 50 heads. So the question is: if in fact stents have no effect, how likely is it that we observe such a large difference?
 
 ## Data basics
 
-"Effective presentation and description of data is a first step in most analyses." The book builds its vocabulary for data on two data frames: a sample of 50 loans and every county in the United States.
+Effective presentation and description of data is a first step in most analyses. This section uses two data frames: a sample of 50 loans and every county in the United States.
 
 ### Exercise 1
 
@@ -389,41 +389,33 @@ loan50
 
 ###
 
-"Each row in the table represents a single loan," made through Lending Club, a peer-to-peer lending company. With 18 columns, the tibble cannot fit them all across the page, so it lists the rest by name below the table.
+Each row in the table represents a single loan, made through Lending Club, a peer-to-peer lending company. Riskier applicants who never received a loan do not appear in the data at all.
 
 ### Exercise 2
+
+Replace the code in that chunk so that it prints the names of all 18 variables. Render.
 
 ```{r}
 #| label: data-basics-2
 #| echo: false
-learnr2::question("In the R Terminal, run ?loan50. Copy and paste the Description and the first line of the Format section.", type = "reflection")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
 
-```{.output}
-Description:
-
-     This dataset represents thousands of loans made through the
-     Lending Club platform, which is a platform that allows individuals
-     to lend to other individuals. [...] It is important to keep that
-     last part in mind, since this dataset only represents loans
-     actually made, i.e. do not mistake this data for loan
-     applications!
-
-Format:
-
-     A data frame with 10,000 observations on the following 55
-     variables.
+```{r}
+#| label: data-basics-2-test
+#| echo: true
+names(loan50)
 ```
 
 ###
 
-This page also documents `loans_full_schema`, with 10,000 loans and 55 variables; `loan50` is a sample of 50 of those loans, with 18 of the variables. Its warning matters: riskier applicants who never received a loan do not appear in the data at all.
+The formal name for a row is a *case*, *observation*, or *unit of observation*, and each column is referred to as a *variable*. The book works with only 7 of these 18 variables.
 
 ### Exercise 3
 
-Replace the code in that chunk so that it prints the names of all 18 variables. Render.
+Replace the code in that chunk so that it keeps only `loan_amount`, `interest_rate`, `term`, `grade`, `state`, `total_income`, and `homeownership`, and shows the type and first few values of each. Render.
 
 ```{r}
 #| label: data-basics-3
@@ -436,16 +428,18 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: data-basics-3-test
 #| echo: true
-names(loan50)
+loan50 |>
+  select(loan_amount, interest_rate, term, grade, state, total_income, homeownership) |>
+  glimpse()
 ```
 
 ###
 
-"The formal name for a row is a case or observation or unit of observation," and each column "is referred to as a variable." The book works with only 7 of these 18 variables.
+The first loan is for $22,000 at 10.90% interest, to a borrower in New Jersey with an income of $59,000. A data frame where each row is a case, each column is a variable, and each cell is a single value is commonly referred to as *tidy data*, a term from Hadley Wickham's paper "[Tidy Data](https://doi.org/10.18637/jss.v059.i10)."
 
 ### Exercise 4
 
-Replace the code in that chunk so that it keeps only `loan_amount`, `interest_rate`, `term`, `grade`, `state`, `total_income`, and `homeownership`, and shows the type and first few values of each. Render.
+Replace the code in that chunk so that it calculates the mean and the median of `interest_rate`. Render.
 
 ```{r}
 #| label: data-basics-4
@@ -459,17 +453,17 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: data-basics-4-test
 #| echo: true
 loan50 |>
-  select(loan_amount, interest_rate, term, grade, state, total_income, homeownership) |>
-  glimpse()
+  summarize(mean_rate = mean(interest_rate),
+            median_rate = median(interest_rate))
 ```
 
 ###
 
-The first loan is for $22,000 at 10.90% interest, to a borrower in New Jersey with an income of $59,000. A data frame where each row is a case, each column is a variable, and each cell is a single value "is commonly referred to as tidy data," a term from Hadley Wickham's paper "[Tidy Data](https://doi.org/10.18637/jss.v059.i10)."
+A variable is *numerical* when it is sensible to add, subtract, or take averages with those values, as it is for these interest rates. Because a rate can take any value in a range, like 9.92 or 10.90, `interest_rate` is *continuous* rather than *discrete*.
 
 ### Exercise 5
 
-Replace the code in that chunk so that it calculates the mean and the median of `interest_rate`. Render.
+Replace the code in that chunk so that it counts the loans from each `state`, from most to fewest. Render.
 
 ```{r}
 #| label: data-basics-5
@@ -483,17 +477,16 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: data-basics-5-test
 #| echo: true
 loan50 |>
-  summarize(mean_rate = mean(interest_rate),
-            median_rate = median(interest_rate))
+  count(state, sort = TRUE)
 ```
 
 ###
 
-A variable is *numerical* when "it is sensible to add, subtract, or take averages with those values," as it is for these interest rates. Because a rate can take any value in a range, like 9.92 or 10.90, `interest_rate` is *continuous* rather than *discrete*.
+You can count states but not average them, which makes `state` a *categorical* variable whose possible values are its *levels*. An area code is a number, but the average, sum, and difference of area codes does not have any clear meaning.
 
 ### Exercise 6
 
-Replace the code in that chunk so that it counts the loans from each `state`, from most to fewest. Render.
+Replace the code in that chunk so that it counts the loans in each `grade`. Render.
 
 ```{r}
 #| label: data-basics-6
@@ -507,16 +500,16 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: data-basics-6-test
 #| echo: true
 loan50 |>
-  count(state, sort = TRUE)
+  count(grade)
 ```
 
 ###
 
-You can count states but not average them, which makes `state` a *categorical* variable whose possible values are its *levels*. The book's example is a telephone area code: it is a number, but "the average, sum, and difference of area codes does not have any clear meaning."
+Grade B is the most common, with 19 loans. Grades run from A through G and represent the quality of the loan and its likelihood of being repaid, yet no loan here is graded F or G.
 
 ### Exercise 7
 
-Replace the code in that chunk so that it counts the loans in each `grade`. Render.
+Replace the code in that chunk so that it prints the levels of `grade`: every value it is allowed to take, not just the ones that appear. Render.
 
 ```{r}
 #| label: data-basics-7
@@ -529,17 +522,16 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: data-basics-7-test
 #| echo: true
-loan50 |>
-  count(grade)
+levels(loan50$grade)
 ```
 
 ###
 
-Grade B is the most common, with 19 loans. The book says grades run from A through G and represent "the quality of the loan and its likelihood of being repaid," yet no loan here is graded F or G.
+`grade` has eight levels: A through G, plus an empty one, `""`, that no loan uses. Its levels have a natural order, which makes it an *ordinal* variable, while a categorical variable without an order, like `state`, is *nominal*.
 
 ### Exercise 8
 
-Replace the code in that chunk so that it prints the levels of `grade`: every value it is allowed to take, not just the ones that appear. Render.
+Replace the code in that chunk so that it counts the loans with each `term`. Render.
 
 ```{r}
 #| label: data-basics-8
@@ -552,16 +544,19 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: data-basics-8-test
 #| echo: true
-levels(loan50$grade)
+loan50 |>
+  count(term)
 ```
 
 ###
 
-`grade` has eight levels: A through G, plus an empty one, `""`, that no loan uses. Its levels have a natural order, which makes it an *ordinal* variable, while a categorical variable without an order, like `state`, is *nominal*.
+`term` is always set as a whole number of months, which makes it *discrete*, though only two values appear: 36 loans run 36 months and 14 run 60. `interest_rate`, `state`, `grade`, and `term` cover all four types of variable.
+
+![](images/fig-variables.png){fig-alt="Types of variables are broken down into numerical (which can be discrete or continuous) and categorical (which can be ordinal or nominal)."}
 
 ### Exercise 9
 
-Replace the code in that chunk so that it counts the loans with each `term`. Render.
+Start a new chunk that prints `county`. Render.
 
 ```{r}
 #| label: data-basics-9
@@ -574,17 +569,16 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: data-basics-9-test
 #| echo: true
-loan50 |>
-  count(term)
+county
 ```
 
 ###
 
-`term` is "always set as a whole number of months," which makes it *discrete*, but only two values appear: 36 loans run 36 months and 14 run 60. A numerical variable with so few values is often analyzed as if it were categorical.
+Each of the 3,142 rows is a county, described by 15 variables covering population, poverty, housing, income, and education. Unlike `loan50`, it is not a sample: it includes every county.
 
 ### Exercise 10
 
-Start a new chunk that prints `county`. Render.
+Replace the code in that chunk so that it counts the missing values in each column of `county`, with one row per column. Render.
 
 ```{r}
 #| label: data-basics-10
@@ -597,46 +591,41 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: data-basics-10-test
 #| echo: true
-county
+county |>
+  summarize(across(everything(), \(x) sum(is.na(x)))) |>
+  pivot_longer(everything(), names_to = "variable", values_to = "n_missing")
 ```
 
 ###
 
-Each of the 3,142 rows is a county, described by 15 variables covering population, poverty, housing, income, and education. Unlike `loan50`, this data frame is not a sample: it includes every county in the country.
+No column is missing more than three values except `smoking_ban`, which is missing 580. The help page says the smoking ban data "were from a variety of sources."
 
 ### Exercise 11
+
+Replace the code in that chunk so that it counts the counties with each value of `smoking_ban`. Render.
 
 ```{r}
 #| label: data-basics-11
 #| echo: false
-learnr2::question("In the R Terminal, run ?county. Copy and paste the first line of the Format section, the entry for smoking_ban, and the Source section.", type = "reflection")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
 
-```{.output}
-Format:
-
-     A data frame with 3142 observations on the following 14 variables.
-
-     smoking_ban Describes whether the type of county-level smoking ban
-          in place in 2010, taking one of the values '"none"',
-          '"partial"', or '"comprehensive"'.
-
-Source:
-
-     These data were collected from Census Quick Facts (no longer
-     available as of 2020) and its accompanying pages. Smoking ban data
-     were from a variety of sources.
+```{r}
+#| label: data-basics-11-test
+#| echo: true
+county |>
+  count(smoking_ban)
 ```
 
 ###
 
-The page says 14 variables, but it documents 15, as many as the data frame has. "It is always important to be sure we know what each variable means and its units of measurement," and sometimes that means noticing where the documentation is wrong.
+The help page lists none, partial, and comprehensive, but no county is comprehensive and 580 are missing. Those 580 may be the counties with comprehensive bans.
 
 ### Exercise 12
 
-Replace the code in that chunk so that it counts the missing values in each column of `county`, with one row per column. Render.
+Replace the code in that chunk so that it counts the counties with each value of `median_edu`. Render.
 
 ```{r}
 #| label: data-basics-12
@@ -650,17 +639,16 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: data-basics-12-test
 #| echo: true
 county |>
-  summarize(across(everything(), \(x) sum(is.na(x)))) |>
-  pivot_longer(everything(), names_to = "variable", values_to = "n_missing")
+  count(median_edu)
 ```
 
 ###
 
-No column is missing more than three values except `smoking_ban`, which is missing 580. The help page warned that the smoking ban data "were from a variety of sources."
+`median_edu` is a categorical variable, but the levels have a natural ordering, running from below high school to a bachelor's degree, so it is ordinal. In 3,092 of the 3,142 counties, the median resident finished high school but not college.
 
 ### Exercise 13
 
-Replace the code in that chunk so that it counts the counties with each value of `smoking_ban`. Render.
+Replace the code in that chunk so that it keeps `name`, `state`, `homeownership`, `multi_unit`, `pop_change`, and `median_hh_income`, drops every county with a missing value in any of them, and stores the result as `county_clean`. Print `county_clean`. Render.
 
 ```{r}
 #| label: data-basics-13
@@ -673,52 +661,6 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: data-basics-13-test
 #| echo: true
-county |>
-  count(smoking_ban)
-```
-
-###
-
-The help page promises none, partial, or comprehensive, yet not one county is comprehensive and 580 are missing. Before using this variable, you would need to find out whether those 580 are the counties with comprehensive bans.
-
-### Exercise 14
-
-Replace the code in that chunk so that it counts the counties with each value of `median_edu`. Render.
-
-```{r}
-#| label: data-basics-14
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{r}
-#| label: data-basics-14-test
-#| echo: true
-county |>
-  count(median_edu)
-```
-
-###
-
-`median_edu` "is a categorical variable, but the levels have a natural ordering," running from below high school to a bachelor's degree, so it is ordinal. In 3,092 of the 3,142 counties, the median resident finished high school but not college.
-
-### Exercise 15
-
-Replace the code in that chunk so that it keeps `name`, `state`, `homeownership`, `multi_unit`, `pop_change`, and `median_hh_income`, drops every county with a missing value in any of them, and stores the result as `county_clean`. Print `county_clean`. Render.
-
-```{r}
-#| label: data-basics-15
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{r}
-#| label: data-basics-15-test
-#| echo: true
 county_clean <- county |>
   select(name, state, homeownership, multi_unit, pop_change, median_hh_income) |>
   drop_na()
@@ -730,75 +672,12 @@ county_clean
 
 `county_clean` has 3,137 counties, 5 fewer than `county`. Three Alaska areas have no 2017 population, so their population change cannot be computed.
 
-### Exercise 16
+### Exercise 14
 
-Delete the line that prints `county_clean`, so that the chunk only creates it. Render.
-
-```{r}
-#| label: data-basics-16
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-````{verbatim}
-county_clean <- county |>
-  select(name, state, homeownership, multi_unit, pop_change, median_hh_income) |>
-  drop_na()
-````
-
-###
-
-`homeownership` is the percent of homes occupied by their owners, and `multi_unit` is the percent of housing units in structures like apartments and condos. Both were measured from 2006 to 2010.
-
-### Exercise 17
-
-Add `#| cache: true` to that chunk. Render.
+`homeownership` is the percent of homes occupied by their owners, and `multi_unit` is the percent of housing units in structures like apartments and condos. Start a new chunk with a scatterplot of `homeownership` against `multi_unit`, using `county_clean`. Add a title, axis labels, a subtitle that states the main finding, and a caption giving the number of counties. Render.
 
 ```{r}
-#| label: data-basics-17
-#| echo: false
-learnr2::question("In the bash Terminal, run ls. CP/CR.", type = "reflection")
-```
-
-###
-
-```{.output}
-analysis.html  analysis.qmd  analysis_cache  analysis_files
-```
-
-###
-
-`analysis_cache` now holds the saved `county_clean`, so later renders skip rebuilding it. `pop_change` is the percent change in population from 2010 to 2017, and `median_hh_income` is in US dollars.
-
-### Exercise 18
-
-Your Source Control count just jumped, because Git sees every file in the new cache directory. Add `analysis_cache` to `.gitignore`, and the count drops back.
-
-```{r}
-#| label: data-basics-18
-#| echo: false
-learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{.output}
-analysis_files
-analysis_cache
-```
-
-###
-
-Each row of `county` describes a whole county. A relationship you find in this data holds between counties, not necessarily between the people who live in them.
-
-### Exercise 19
-
-Start a new chunk with a scatterplot of `homeownership` against `multi_unit`, using `county_clean`. Add a title, axis labels, a subtitle that states the main finding, and a caption giving the number of counties. Render.
-
-```{r}
-#| label: data-basics-19
+#| label: data-basics-14
 #| echo: false
 learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
@@ -806,7 +685,7 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ###
 
 ```{r}
-#| label: data-basics-19-test
+#| label: data-basics-14-test
 #| echo: true
 county_clean |>
   ggplot(aes(x = multi_unit, y = homeownership)) +
@@ -820,14 +699,14 @@ county_clean |>
 
 ###
 
-Counties with more multi-unit housing tend to have lower homeownership, a *negative association*. When two variables show some connection with one another, "they are called associated variables."
+Counties with more multi-unit housing tend to have lower homeownership, a *negative association*. When two variables show some connection with one another, they are called *associated* variables.
 
-### Exercise 20
+### Exercise 15
 
 One county sits alone at 0% homeownership. Start a new chunk that shows the three counties in `county_clean` with the lowest homeownership rates, along with their `state`, `homeownership`, and `multi_unit`. Render.
 
 ```{r}
-#| label: data-basics-20
+#| label: data-basics-15
 #| echo: false
 learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
@@ -835,7 +714,7 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ###
 
 ```{r}
-#| label: data-basics-20-test
+#| label: data-basics-15-test
 #| echo: true
 county_clean |>
   slice_min(homeownership, n = 3) |>
@@ -844,14 +723,14 @@ county_clean |>
 
 ###
 
-Kalawao County, Hawaii, has 88 residents: it is a former settlement for people with Hansen's disease, now a national historical park, where no one owns their home. The other two, the Bronx and Manhattan, fit the trend, with nearly all their housing in multi-unit buildings.
+Kalawao County, Hawaii, a former settlement for people with Hansen's disease, is now a national historical park with 88 residents, none of whom own their home. The Bronx and Manhattan fit the trend: nearly all their housing is in multi-unit buildings.
 
-### Exercise 21
+### Exercise 16
 
-Replace the code in that chunk with a scatterplot of `pop_change` against `median_hh_income`, using `county_clean`. Render.
+`pop_change` is the percent change in population from 2010 to 2017, and `median_hh_income` is in US dollars. Replace the code in that chunk with a scatterplot of `pop_change` against `median_hh_income`, using `county_clean`. Render.
 
 ```{r}
-#| label: data-basics-21
+#| label: data-basics-16
 #| echo: false
 learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
@@ -859,7 +738,7 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ###
 
 ```{r}
-#| label: data-basics-21-test
+#| label: data-basics-16-test
 #| echo: true
 county_clean |>
   ggplot(aes(x = median_hh_income, y = pop_change)) +
@@ -868,14 +747,14 @@ county_clean |>
 
 ###
 
-Counties with higher median household incomes tend to have grown faster, a *positive association*, though many counties break the trend. Two variables with no evident relationship are called *independent*: "Associated or independent, not both."
+Counties with higher median household incomes tend to have grown faster, a *positive association*, though many counties break the trend. Two variables with no evident relationship are called *independent*, and a pair of variables is either associated or independent, not both.
 
-### Exercise 22
+### Exercise 17
 
 Improve the scatterplot. Add a trend line, show income in dollars, and add a title, axis labels, a subtitle that states the main finding, and a caption giving the number of counties. Render.
 
 ```{r}
-#| label: data-basics-22
+#| label: data-basics-17
 #| echo: false
 learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
@@ -883,7 +762,7 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ###
 
 ```{r}
-#| label: data-basics-22-test
+#| label: data-basics-17-test
 #| echo: true
 county_clean |>
   ggplot(aes(x = median_hh_income, y = pop_change)) +
@@ -899,14 +778,14 @@ county_clean |>
 
 ###
 
-Income sits on the x-axis because, if we suspect it drives growth, it is the *explanatory variable* and population change is the *response variable*. But "the act of labeling the variables in this way does nothing to guarantee that a causal relationship exists."
+If we suspect income drives growth, income is the *explanatory variable*, on the x-axis, and population change is the *response variable*. But the act of labeling the variables in this way does nothing to guarantee that a causal relationship exists.
 
-### Exercise 23
+### Exercise 18
 
-Commit `analysis.qmd` and `.gitignore` with the message `"Explore loans and counties"` and push.
+Commit `analysis.qmd` with the message `"Explore loans and counties"` and push.
 
 ```{r}
-#| label: data-basics-23
+#| label: data-basics-18
 #| echo: false
 learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type = "reflection")
 ```
@@ -921,17 +800,17 @@ learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type
 
 ###
 
-The county data is an *observational study*: researchers "merely observe the data that arise," so it can show associations but "cannot by themselves show a causal connection." The stent study could show that stents cause harm only because it was a randomized experiment.
+The county data is an *observational study*: researchers merely observe the data that arise, so it can show associations but cannot by itself show a causal connection. The stent study could show that stents cause harm only because it was a randomized experiment.
 
 ## Summary
 
 This tutorial covered [Chapter 1: Hello data](https://openintrostat.github.io/ims/data-hello.html) from [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) by Mine Çetinkaya-Rundel and Johanna Hardin. You have learned the vocabulary of data (cases, variables, and their types), how to spot an association between two variables, and why a randomized experiment can show cause and effect when an observational study cannot.
 
-The chapter's own summary, in the authors' words:
-
-> This chapter introduced you to the world of data. Data can be organized in many ways but tidy data, where each row represents an observation and each column represents a variable, lends itself most easily to statistical analysis. Many of the ideas from this chapter will be revisited as we move on to doing end-to-end data analyses. In the next chapter you're going to learn about how we can design studies to collect the data we need to make conclusions with the desired scope of inference.
+This tutorial introduced you to the world of data. Data can be organized in many ways but tidy data, where each row represents an observation and each column represents a variable, lends itself most easily to statistical analysis. Many of the ideas from this tutorial will be revisited as we move on to doing end-to-end data analyses. In the next tutorial you're going to learn about how we can design studies to collect the data we need to make conclusions with the desired scope of inference.
 
 For more on organizing data, read Hadley Wickham's "[Tidy Data](https://doi.org/10.18637/jss.v059.i10)." For the stent study itself, read the original [article](https://doi.org/10.1056/NEJMoa1105335) in the *New England Journal of Medicine*.
+
+Many sentences in this tutorial, and its figure, come from the chapter, used under the book's [CC BY-SA 3.0 license](https://creativecommons.org/licenses/by-sa/3.0/).
 
 ### Exercise 1
 
@@ -993,15 +872,11 @@ loan50 |>
 ```
 
 ```{r}
-county |>
-  count(median_edu)
-```
-
-```{r}
-#| cache: true
 county_clean <- county |>
   select(name, state, homeownership, multi_unit, pop_change, median_hh_income) |>
   drop_na()
+
+county_clean
 ```
 
 ```{r}
@@ -1031,7 +906,7 @@ county_clean |>
 
 ###
 
-The page holds the chapter in miniature: an experiment that supports a causal claim, and an observational study that shows two associations but cannot. Data "can be organized in many ways but tidy data … lends itself most easily to statistical analysis."
+Your page has an experiment that supports a causal claim and an observational study that cannot.
 
 ### Exercise 2
 
@@ -1053,7 +928,7 @@ Your answer should look like `https://your-github-username.github.io/hello-data/
 
 ###
 
-The stent study appeared in the *New England Journal of Medicine* in 2011. Its central finding, more strokes with stents than without, fits in the two panels on your page.
+The stent study appeared in the *New England Journal of Medicine* in 2011. Your page shows its main finding: more strokes with stents than without.
 
 ### Exercise 3
 
@@ -1071,7 +946,7 @@ Your answer should look like `https://github.com/your-github-username/hello-data
 
 ###
 
-"In general, association does not imply causation." Of every idea in this chapter, that is the one to carry into the rest of the book.
+In general, association does not imply causation.
 
 ## Your Answers
 

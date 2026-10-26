@@ -35,7 +35,7 @@ This tutorial covers [Chapter 5: Exploring numerical data](https://openintrostat
 
 ### Exercise 1
 
-You should be doing this tutorial in a repo named `exploring-numerical-data`. If you are not, create one and then connect to it. You may need to restart this tutorial after you do so.
+You should be doing this tutorial in a repo named `exploring-numerical-data`. If you are not, create one and then connect to it.
 
 Create a new file, `analysis.qmd`, with the title `"Exploring Numerical Data"` and your name as the author. In a bash Terminal, render it:
 
@@ -63,7 +63,7 @@ analysis_files
 
 ###
 
-"This chapter focuses on exploring numerical data using summary statistics and visualizations." Its two datasets are old friends: the 50 loans in `loan50` and the 3,142 counties in `county`.
+This chapter focuses on exploring numerical data using summary statistics and visualizations. It uses two datasets: `loan50` and `county`.
 
 ### Exercise 2
 
@@ -84,7 +84,7 @@ library(tidyverse)
 
 ###
 
-Every plot in this chapter, from dot plots to intensity maps, is a **ggplot2** plot, and every summary statistic comes from a **dplyr** summarize. Both are part of the **tidyverse**.
+**ggplot2** draws every plot in this tutorial, from dot plots to maps, and **dplyr** computes every summary statistic. Both are part of the **tidyverse**.
 
 ### Exercise 3
 
@@ -106,7 +106,7 @@ library(openintro)
 
 ###
 
-**openintro** holds `loan50`. "The `loan50` dataset represents a sample from a larger population of loans made through Lending Club," which is what makes its mean an estimate rather than a fact.
+**openintro** holds `loan50`. The `loan50` dataset represents a sample from a larger population of loans made through Lending Club.
 
 ### Exercise 4
 
@@ -129,7 +129,7 @@ library(usdata)
 
 ###
 
-**usdata** holds `county`, whose population variable is so skewed that "nearly all of the data fall into the left-most bin" of a histogram. That is the problem the chapter's transformations solve.
+**usdata** holds `county`, with one row for each of the 3,142 counties in the United States. Its population variable is so skewed that a histogram of it needs a transformation.
 
 ### Exercise 5
 
@@ -153,35 +153,39 @@ library(maps)
 
 ###
 
-**maps** holds outlines of every county in the lower 48 states, which **ggplot2** can draw as polygons. The chapter's intensity maps are built that way; **sf** and **tigris** are the modern alternatives for serious mapping.
+**maps** holds outlines of every county in the lower 48 states, which **ggplot2** can draw as polygons. **sf** and **tigris** are modern alternatives.
 
 ## Center, spread, and shape
 
-"Consider the `loan_amount` variable from the `loan50` dataset … This variable is numerical since we can sensibly discuss the numerical difference of the size of two loans." This section describes `loan50`'s numerical variables the way the chapter does, one tool at a time.
+Consider the `loan_amount` variable from the `loan50` dataset, which represents the loan size for each of 50 loans in the dataset. This variable is numerical since we can sensibly discuss the numerical difference of the size of two loans.
 
 ### Exercise 1
+
+Add a chunk with a scatterplot of `loan_amount` against `total_income`, using `loan50`. Render.
 
 ```{r}
 #| label: center-spread-and-shape-1
 #| echo: false
-learnr2::question("In the R Terminal, run ?loan50. Copy and paste the entries for loan_amount and interest_rate from the Format section.", type = "reflection")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
 
-```{.output}
-     loan_amount The amount of the loan the applicant received.
-
-     interest_rate Interest rate of the loan the applicant received.
+```{r}
+#| label: center-spread-and-shape-1-test
+#| echo: true
+loan50 |>
+  ggplot(aes(x = total_income, y = loan_amount)) +
+  geom_point()
 ```
 
 ###
 
-The help page is shared with `loans_full_schema`, the 10,000-loan dataset that `loan50` was drawn from. Neither entry gives units; the amounts are dollars and the rates are percentages.
+In any scatterplot, each point represents a single case, so there are 50 points. There are many borrowers with income below $100,000 on the left side of the graph, while there are a handful of borrowers with income above $250,000.
 
 ### Exercise 2
 
-Add a chunk with a scatterplot of `loan_amount` against `total_income`, using `loan50`. Render.
+Replace the code in that chunk with a dot plot of `interest_rate`: one dot per loan, stacked where rates coincide. Render.
 
 ```{r}
 #| label: center-spread-and-shape-2
@@ -195,17 +199,17 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: center-spread-and-shape-2-test
 #| echo: true
 loan50 |>
-  ggplot(aes(x = total_income, y = loan_amount)) +
-  geom_point()
+  ggplot(aes(x = interest_rate)) +
+  geom_dotplot(binwidth = 1)
 ```
 
 ###
 
-"In any scatterplot, each point represents a single case," so there are 50 points. "There are many borrowers with income below $100,000 on the left side of the graph, while there are a handful of borrowers with income above $250,000."
+A *dot plot* is a one-variable scatterplot. Most rates are between 6% and 12%, and a few are above 20%.
 
 ### Exercise 3
 
-Replace the code in that chunk with a dot plot of `interest_rate`: one dot per loan, stacked where rates coincide. Render.
+Replace the code in that chunk so that it calculates the mean of `interest_rate`. Render.
 
 ```{r}
 #| label: center-spread-and-shape-3
@@ -219,17 +223,16 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: center-spread-and-shape-3-test
 #| echo: true
 loan50 |>
-  ggplot(aes(x = interest_rate)) +
-  geom_dotplot(binwidth = 1)
+  summarize(mean_rate = mean(interest_rate))
 ```
 
 ###
 
-"A dot plot is a one-variable scatterplot." Most rates pile up between 6% and 12%, with a thin trail of loans out past 20%.
+The sample mean can be calculated as the sum of the observed values divided by the number of observations, here 11.57%. It is our single best guess point estimate of the average interest rate of all the loans in the population under study.
 
 ### Exercise 4
 
-Replace the code in that chunk so that it calculates the mean of `interest_rate`. Render.
+Replace the code in that chunk with a histogram of `interest_rate`, with bins 2.5 percentage points wide starting at 5. Render.
 
 ```{r}
 #| label: center-spread-and-shape-4
@@ -243,16 +246,17 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: center-spread-and-shape-4-test
 #| echo: true
 loan50 |>
-  summarize(mean_rate = mean(interest_rate))
+  ggplot(aes(x = interest_rate)) +
+  geom_histogram(breaks = seq(5, 27.5, 2.5))
 ```
 
 ###
 
-"The sample mean can be calculated as the sum of the observed values divided by the number of observations," here 11.57%. It is "our single best guess point estimate of the average interest rate of all the loans in the population under study."
+15 of the 50 loans fall in the 7.5% to 10% bin and only 3 are above 20%. When the distribution of a variable trails off to the right in this way and has a longer right tail, the shape is said to be *right skewed*.
 
 ### Exercise 5
 
-Replace the code in that chunk with a histogram of `interest_rate`, with bins 2.5 percentage points wide starting at 5. Render.
+Replace the histogram with a density plot of `interest_rate`. Render.
 
 ```{r}
 #| label: center-spread-and-shape-5
@@ -267,16 +271,18 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| echo: true
 loan50 |>
   ggplot(aes(x = interest_rate)) +
-  geom_histogram(breaks = seq(5, 27.5, 2.5))
+  geom_density()
 ```
 
 ###
 
-15 of the 50 loans fall in the 7.5% to 10% bin and only 3 are above 20%. "When the distribution of a variable trails off to the right in this way and has a longer right tail, the shape is said to be right skewed."
+A *density plot* is a smoothed out histogram. Yours has one prominent peak, so it is *unimodal*, like the left histogram below, not *bimodal* or *multimodal*.
+
+![](images/fig-singleBiMultiModalPlots.png){fig-alt="Three separate histograms on fabricated data. The first histogram shows a unimodal distribution, the second histogram shows a bimodal distribution, and the third histogram shows a multimodal distribution."}
 
 ### Exercise 6
 
-Replace the histogram with a density plot of `interest_rate`. Render.
+Replace the code in that chunk so that it calculates the variance and the standard deviation of `interest_rate`. Render.
 
 ```{r}
 #| label: center-spread-and-shape-6
@@ -290,17 +296,17 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: center-spread-and-shape-6-test
 #| echo: true
 loan50 |>
-  ggplot(aes(x = interest_rate)) +
-  geom_density()
+  summarize(variance = var(interest_rate),
+            sd = sd(interest_rate))
 ```
 
 ###
 
-A **density plot** "is a smoothed out histogram." It has one prominent peak, so the distribution is **unimodal**; "any distribution with more than two prominent peaks is called multimodal."
+The *variance* is the average squared distance from the mean. The *standard deviation*, 5.05 percentage points here, is the square root of the variance, and it roughly describes how far away the typical observation is from the mean.
 
 ### Exercise 7
 
-Replace the code in that chunk so that it calculates the variance and the standard deviation of `interest_rate`. Render.
+Replace the code in that chunk so that it counts how many loans have an `interest_rate` within one standard deviation of the mean, and how many within two. Render.
 
 ```{r}
 #| label: center-spread-and-shape-7
@@ -314,17 +320,20 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: center-spread-and-shape-7-test
 #| echo: true
 loan50 |>
-  summarize(variance = var(interest_rate),
-            sd = sd(interest_rate))
+  mutate(distance = abs(interest_rate - mean(interest_rate)) / sd(interest_rate)) |>
+  summarize(within_1_sd = sum(distance <= 1),
+            within_2_sd = sum(distance <= 2))
 ```
 
 ###
 
-"The variance is the average squared distance from the mean. The standard deviation is the square root of the variance," 5.05 percentage points here, and it "roughly describes how far away the typical observation is from the mean."
+34 of the 50 loans (68%) had interest rates within 1 standard deviation of the mean, and 48 of the 50 loans (96%) had rates within 2 standard deviations. Usually about 68% of the data are within 1 standard deviation of the mean and 95% within 2 standard deviations, though this is far from a hard rule, as these three distributions with the same mean and standard deviation show.
+
+![](images/fig-severalDiffDistWithSdOf1.png){fig-alt="Three histograms of fabricated data with empirical rule shading of one and two standard deviations superimposed. The bimodal and right skewed histogram demonstrate that the empirical rule is not a good approximation. The empirical rule fits well to the unimodal bell-shaped distribution."}
 
 ### Exercise 8
 
-Replace the code in that chunk so that it counts how many loans have an `interest_rate` within one standard deviation of the mean, and how many within two. Render.
+Replace the code in that chunk with a box plot of `interest_rate`. Render.
 
 ```{r}
 #| label: center-spread-and-shape-8
@@ -338,18 +347,17 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: center-spread-and-shape-8-test
 #| echo: true
 loan50 |>
-  mutate(distance = abs(interest_rate - mean(interest_rate)) / sd(interest_rate)) |>
-  summarize(within_1_sd = sum(distance <= 1),
-            within_2_sd = sum(distance <= 2))
+  ggplot(aes(x = interest_rate)) +
+  geom_boxplot()
 ```
 
 ###
 
-"34 of the 50 loans (68%) had interest rates within 1 standard deviation of the mean, and 48 of the 50 loans (96%) had rates within 2 standard deviations. Usually about 68% of the data are within 1 standard deviation of the mean and 95% within 2 standard deviations, though this is far from a hard rule."
+A *box plot* summarizes a dataset using five statistics while also identifying unusual observations. The thick line is the median, the box is the middle 50%, and the two dots past the right whisker are outliers.
 
 ### Exercise 9
 
-Replace the code in that chunk with a box plot of `interest_rate`. Render.
+Replace the code in that chunk so that it calculates the median, the first quartile, the third quartile, and the interquartile range of `interest_rate`. Render.
 
 ```{r}
 #| label: center-spread-and-shape-9
@@ -363,17 +371,19 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: center-spread-and-shape-9-test
 #| echo: true
 loan50 |>
-  ggplot(aes(x = interest_rate)) +
-  geom_boxplot()
+  summarize(median = median(interest_rate),
+            q1 = quantile(interest_rate, 0.25),
+            q3 = quantile(interest_rate, 0.75),
+            iqr = IQR(interest_rate))
 ```
 
 ###
 
-"A box plot summarizes a dataset using five statistics while also identifying unusual observations." The thick line is the median, the box is the middle 50%, and the two dots past the right whisker are flagged as outliers.
+The *interquartile range* (IQR) is the length of the box in a box plot, here 13.72 − 7.96 = 5.76. Any observation beyond 1.5 × IQR away from the first or the third quartile is considered an outlier, which is why 24.85% and 26.3% are dots.
 
 ### Exercise 10
 
-Replace the code in that chunk so that it calculates the median, the first quartile, the third quartile, and the interquartile range of `interest_rate`. Render.
+Replace the code in that chunk so that it changes the largest `interest_rate`, 26.3%, to 35%, and then calculates the median, IQR, mean, and standard deviation of the altered rates. Render.
 
 ```{r}
 #| label: center-spread-and-shape-10
@@ -387,19 +397,20 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: center-spread-and-shape-10-test
 #| echo: true
 loan50 |>
+  mutate(interest_rate = if_else(interest_rate == 26.3, 35, interest_rate)) |>
   summarize(median = median(interest_rate),
-            q1 = quantile(interest_rate, 0.25),
-            q3 = quantile(interest_rate, 0.75),
-            iqr = IQR(interest_rate))
+            iqr = IQR(interest_rate),
+            mean = mean(interest_rate),
+            sd = sd(interest_rate))
 ```
 
 ###
 
-"The IQR interquartile range is the length of the box in a box plot," here 13.72 − 7.96 = 5.76. "Any observation beyond 1.5 × IQR away from the first or the third quartile is considered an outlier," which is why 24.85% and 26.3% were dotted.
+The median and IQR did not move, while the mean rose from 11.57 to 11.74 and the standard deviation from 5.05 to 5.68. The median and IQR are called *robust statistics* because extreme observations have little effect on their values.
 
 ### Exercise 11
 
-Replace the code in that chunk so that it changes the largest `interest_rate`, 26.3%, to 35%, and then calculates the median, IQR, mean, and standard deviation of the altered rates. Render.
+Replace the code in that chunk with the histogram of `interest_rate` from before, with a vertical line at the mean and another at the median. Render.
 
 ```{r}
 #| label: center-spread-and-shape-11
@@ -413,20 +424,19 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: center-spread-and-shape-11-test
 #| echo: true
 loan50 |>
-  mutate(interest_rate = if_else(interest_rate == 26.3, 35, interest_rate)) |>
-  summarize(median = median(interest_rate),
-            iqr = IQR(interest_rate),
-            mean = mean(interest_rate),
-            sd = sd(interest_rate))
+  ggplot(aes(x = interest_rate)) +
+  geom_histogram(breaks = seq(5, 27.5, 2.5)) +
+  geom_vline(xintercept = mean(loan50$interest_rate)) +
+  geom_vline(xintercept = median(loan50$interest_rate), linetype = "dashed")
 ```
 
 ###
 
-The median and IQR did not move; the mean rose from 11.57 to 11.74 and the standard deviation from 5.05 to 5.68. "The median and IQR are called robust statistics because extreme observations have little effect on their values."
+The mean sits to the right of the median, pulled by the long right tail. If we are looking to simply understand what a typical individual loan looks like, the median is probably more useful.
 
 ### Exercise 12
 
-Replace the code in that chunk with the histogram of `interest_rate` from before, with a vertical line at the mean and another at the median. Render.
+Improve the histogram. Show rates as percentages, label the two lines, and add a title, axis labels, a subtitle that states the main finding, and a caption giving the number of loans. Render.
 
 ```{r}
 #| label: center-spread-and-shape-12
@@ -438,32 +448,6 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ```{r}
 #| label: center-spread-and-shape-12-test
-#| echo: true
-loan50 |>
-  ggplot(aes(x = interest_rate)) +
-  geom_histogram(breaks = seq(5, 27.5, 2.5)) +
-  geom_vline(xintercept = mean(loan50$interest_rate)) +
-  geom_vline(xintercept = median(loan50$interest_rate), linetype = "dashed")
-```
-
-###
-
-The mean sits to the right of the median, pulled by the long right tail. For "the typical loan size," the book's answer is that "the median is probably more useful."
-
-### Exercise 13
-
-Improve the histogram. Show rates as percentages, label the two lines, and add a title, axis labels, a subtitle that states the main finding, and a caption giving the number of loans. Render.
-
-```{r}
-#| label: center-spread-and-shape-13
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{r}
-#| label: center-spread-and-shape-13-test
 #| echo: true
 loan50 |>
   ggplot(aes(x = interest_rate)) +
@@ -482,14 +466,14 @@ loan50 |>
 
 ###
 
-"The distribution of interest rates is unimodal and skewed to the high end. Many of the rates fall near the mean at 11.57%, and most fall within one standard deviation (5.05%) of the mean."
+The distribution of interest rates is unimodal and skewed to the high end. Many of the rates fall near the mean at 11.57%, and most fall within one standard deviation (5.05%) of the mean.
 
-### Exercise 14
+### Exercise 13
 
 Commit `analysis.qmd` with the message `"Describe loan interest rates"` and push.
 
 ```{r}
-#| label: center-spread-and-shape-14
+#| label: center-spread-and-shape-13
 #| echo: false
 learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type = "reflection")
 ```
@@ -503,37 +487,40 @@ learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type
 
 ###
 
-"Regardless of the choice of centrality statistic (either mean or median), for most analyses, it is important to consider more than just the centrality." A center without a spread and a shape is half a description.
+Regardless of the choice of centrality statistic (either mean or median), for most analyses, it is important to consider more than just the centrality.
 
 ## Transforming and mapping data
 
-"When data are very strongly skewed, we sometimes transform them, so they are easier to model." And when the data are geographic, "we should create an intensity map, where colors are used to show higher and lower values of a variable."
+When data are very strongly skewed, we sometimes transform them, so they are easier to model. When we encounter geographic data, we should create an *intensity map*, where colors are used to show higher and lower values of a variable.
 
 ### Exercise 1
+
+Start a new chunk with a histogram of `pop2017`, using the counties in `county` where it is known. Render.
 
 ```{r}
 #| label: transforming-and-mapping-data-1
 #| echo: false
-learnr2::question("In the R Terminal, run ?county. Copy and paste the entries for pop2010, poverty, and unemployment_rate from the Format section.", type = "reflection")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
 
-```{.output}
-     pop2010 Population in 2010.
-
-     poverty Percent of population in poverty in 2017.
-
-     unemployment_rate Unemployment rate in 2017.
+```{r}
+#| label: transforming-and-mapping-data-1-test
+#| echo: true
+county |>
+  drop_na(pop2017) |>
+  ggplot(aes(x = pop2017)) +
+  geom_histogram(bins = 30)
 ```
 
 ###
 
-Populations are counts of people; poverty and unemployment are percentages. A variable's units decide whether a transformation makes sense: a log of a count of people is common, a log of a percentage less so.
+Nearly all of the data fall into the left-most bin, and the extreme skew obscures many of the potentially interesting details at the low values. Los Angeles County's 10.2 million residents stretch the axis, while the median county has 25,857.
 
 ### Exercise 2
 
-Start a new chunk with a histogram of `pop2017`, using the counties in `county` where it is known. Render.
+Change the histogram so that the x-axis shows `pop2017` on a base-10 logarithmic scale. Render.
 
 ```{r}
 #| label: transforming-and-mapping-data-2
@@ -549,16 +536,17 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 county |>
   drop_na(pop2017) |>
   ggplot(aes(x = pop2017)) +
-  geom_histogram(bins = 30)
+  geom_histogram(bins = 30) +
+  scale_x_log10()
 ```
 
 ###
 
-"Nearly all of the data fall into the left-most bin, and the extreme skew obscures many of the potentially interesting details at the low values." Los Angeles County's 10.2 million residents stretch the axis, while the median county has 25,857.
+A *transformation* is a rescaling of the data using a function. On the log scale, the transformed data are symmetric, and any potential outliers appear much less extreme than in the original dataset.
 
 ### Exercise 3
 
-Change the histogram so that the x-axis shows `pop2017` on a base-10 logarithmic scale. Render.
+Replace the code in that chunk with a scatterplot of `pop_change` against `pop2010`, for the counties where `pop_change` is known. Render.
 
 ```{r}
 #| label: transforming-and-mapping-data-3
@@ -572,19 +560,18 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: transforming-and-mapping-data-3-test
 #| echo: true
 county |>
-  drop_na(pop2017) |>
-  ggplot(aes(x = pop2017)) +
-  geom_histogram(bins = 30) +
-  scale_x_log10()
+  drop_na(pop_change) |>
+  ggplot(aes(x = pop2010, y = pop_change)) +
+  geom_point(alpha = 0.3)
 ```
 
 ###
 
-"A transformation is a rescaling of the data using a function." On the log scale, "the transformed data are symmetric, and any potential outliers appear much less extreme than in the original dataset."
+It's difficult to decipher any interesting patterns because the population variable is so strongly skewed. Almost every county is squeezed against the left edge.
 
 ### Exercise 4
 
-Replace the code in that chunk with a scatterplot of `pop_change` against `pop2010`, for the counties where `pop_change` is known. Render.
+Put the x-axis of that scatterplot on a base-10 logarithmic scale. Render.
 
 ```{r}
 #| label: transforming-and-mapping-data-4
@@ -600,16 +587,17 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 county |>
   drop_na(pop_change) |>
   ggplot(aes(x = pop2010, y = pop_change)) +
-  geom_point(alpha = 0.3)
+  geom_point(alpha = 0.3) +
+  scale_x_log10()
 ```
 
 ###
 
-"It's difficult to decipher any interesting patterns because the population variable is so strongly skewed." Almost every county is squeezed against the left edge.
+If we apply a log10 transformation to the population variable, a positive association between the variables is revealed. Bigger counties tended to grow faster.
 
 ### Exercise 5
 
-Put the x-axis of that scatterplot on a base-10 logarithmic scale. Render.
+Replace the code in that chunk with a scatterplot of `median_hh_income` against `poverty`, with a smooth curve through the points. Render.
 
 ```{r}
 #| label: transforming-and-mapping-data-5
@@ -623,19 +611,19 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: transforming-and-mapping-data-5-test
 #| echo: true
 county |>
-  drop_na(pop_change) |>
-  ggplot(aes(x = pop2010, y = pop_change)) +
+  drop_na(poverty, median_hh_income) |>
+  ggplot(aes(x = poverty, y = median_hh_income)) +
   geom_point(alpha = 0.3) +
-  scale_x_log10()
+  geom_smooth(formula = y ~ x, method = "loess", se = FALSE)
 ```
 
 ###
 
-"If we apply a log10 transformation to the population variable … a positive association between the variables is revealed." Bigger counties grew faster, a fact the untransformed plot hid completely.
+The relationship is evidently nonlinear. Income falls steeply at low poverty rates, then flattens.
 
 ### Exercise 6
 
-Replace the code in that chunk with a scatterplot of `median_hh_income` against `poverty`, with a smooth curve through the points. Render.
+Start a new chunk that joins `county` to the county outlines from **maps**, matching on state and county name, stores the result as `county_map`, and prints it. Render.
 
 ```{r}
 #| label: transforming-and-mapping-data-6
@@ -647,32 +635,6 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ```{r}
 #| label: transforming-and-mapping-data-6-test
-#| echo: true
-county |>
-  drop_na(poverty, median_hh_income) |>
-  ggplot(aes(x = poverty, y = median_hh_income)) +
-  geom_point(alpha = 0.3) +
-  geom_smooth(formula = y ~ x, method = "loess", se = FALSE)
-```
-
-###
-
-"The relationship is evidently nonlinear, as highlighted by the dashed line," unlike the straight trends in earlier scatterplots. Income falls steeply at low poverty rates, then flattens.
-
-### Exercise 7
-
-Start a new chunk that joins `county` to the county outlines from **maps**, matching on state and county name, stores the result as `county_map`, and prints it. Render.
-
-```{r}
-#| label: transforming-and-mapping-data-7
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{r}
-#| label: transforming-and-mapping-data-7-test
 #| echo: true
 county_map <- map_data("county") |>
   as_tibble() |>
@@ -686,80 +648,14 @@ county_map
 
 ###
 
-Each of the 87,949 rows is one corner of one county's outline, with that county's data repeated on every row. The outlines spell names in lowercase without "County," so the join has to recode the names before matching.
+Each of the 87,949 rows is one corner of one county's outline, with that county's data repeated on every row. Alaska and Hawaii are absent, and about 50 counties whose names are spelled differently in the two sources, like `DeKalb` and `de kalb`, fail to match.
 
-### Exercise 8
-
-Delete the line that prints `county_map`, so that the chunk only creates it. Render.
-
-```{r}
-#| label: transforming-and-mapping-data-8
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-````{verbatim}
-county_map <- map_data("county") |>
-  as_tibble() |>
-  left_join(county |>
-              mutate(region = str_to_lower(state),
-                     subregion = str_to_lower(str_remove(name, " County| Parish"))),
-            by = c("region", "subregion"))
-````
-
-###
-
-The **maps** outlines cover 3,076 counties in the lower 48 states; Alaska and Hawaii are absent, and about 50 counties whose names are spelled differently in the two sources, like "DeKalb" and "de kalb," fail to match.
-
-### Exercise 9
-
-Add `#| cache: true` to that chunk. Render.
-
-```{r}
-#| label: transforming-and-mapping-data-9
-#| echo: false
-learnr2::question("In the bash Terminal, run ls. CP/CR.", type = "reflection")
-```
-
-###
-
-```{.output}
-analysis.html  analysis.qmd  analysis_cache  analysis_files
-```
-
-###
-
-`analysis_cache` now holds the joined `county_map`, nearly 88,000 rows, so later renders load it from disk instead of rebuilding the join.
-
-### Exercise 10
-
-Your Source Control count just jumped, because Git sees every file in the new cache directory. Add `analysis_cache` to `.gitignore`, and the count drops back.
-
-```{r}
-#| label: transforming-and-mapping-data-10
-#| echo: false
-learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{.output}
-analysis_files
-analysis_cache
-```
-
-###
-
-"The intensity maps are not generally very helpful for getting precise values in any given county, but they are very helpful for seeing geographic trends and generating interesting research questions or hypotheses."
-
-### Exercise 11
+### Exercise 7
 
 Start a new chunk that draws `county_map` as a map of county outlines, each filled by its `poverty` rate. Render.
 
 ```{r}
-#| label: transforming-and-mapping-data-11
+#| label: transforming-and-mapping-data-7
 #| echo: false
 learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
@@ -767,7 +663,7 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ###
 
 ```{r}
-#| label: transforming-and-mapping-data-11-test
+#| label: transforming-and-mapping-data-7-test
 #| echo: true
 county_map |>
   ggplot(aes(x = long, y = lat, group = group, fill = poverty)) +
@@ -777,14 +673,14 @@ county_map |>
 
 ###
 
-"Notably, the deep south shows higher poverty rates, as does much of Arizona and New Mexico." The gray counties are the ones whose names did not match.
+Notably, the deep south shows higher poverty rates, as does much of Arizona and New Mexico. The intensity maps are not generally very helpful for getting precise values in any given county, but they are very helpful for seeing geographic trends and generating interesting research questions or hypotheses.
 
-### Exercise 12
+### Exercise 8
 
 Improve the map. Use a color scale that runs from light to dark, label the legend in percentages, remove the axes and grid, and add a title, a subtitle that states the main finding, and a caption giving the source. Render.
 
 ```{r}
-#| label: transforming-and-mapping-data-12
+#| label: transforming-and-mapping-data-8
 #| echo: false
 learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
@@ -792,7 +688,7 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ###
 
 ```{r}
-#| label: transforming-and-mapping-data-12-test
+#| label: transforming-and-mapping-data-8-test
 #| echo: true
 county_map |>
   ggplot(aes(x = long, y = lat, group = group, fill = poverty)) +
@@ -808,14 +704,14 @@ county_map |>
 
 ###
 
-"High poverty rates are evident in the Mississippi flood plains a little north of New Orleans and in a large section of Kentucky." Todd County, South Dakota, home of the Rosebud Reservation, has the highest rate of all, 52%.
+High poverty rates are evident in the Mississippi flood plains a little north of New Orleans and in a large section of Kentucky. Todd County, South Dakota, home of the Rosebud Reservation, has the highest rate of all, 52%.
 
-### Exercise 13
+### Exercise 9
 
-Commit `analysis.qmd` and `.gitignore` with the message `"Transform and map county data"` and push.
+Commit `analysis.qmd` with the message `"Transform and map county data"` and push.
 
 ```{r}
-#| label: transforming-and-mapping-data-13
+#| label: transforming-and-mapping-data-9
 #| echo: false
 learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type = "reflection")
 ```
@@ -830,17 +726,17 @@ b3e1d57 (HEAD -> main, origin/main) Transform and map county data
 
 ###
 
-"Common goals in transforming data are to see the data structure differently, reduce skew, assist in modeling, or straighten a nonlinear relationship in a scatterplot." The square root and the inverse are the other two transformations the chapter names.
+Common goals in transforming data are to see the data structure differently, reduce skew, assist in modeling, or straighten a nonlinear relationship in a scatterplot. Other common transformations are the square root and the inverse.
 
 ## Summary
 
 This tutorial covered [Chapter 5: Exploring numerical data](https://openintrostat.github.io/ims/explore-numerical.html) from [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) by Mine Çetinkaya-Rundel and Johanna Hardin. You have learned to describe a numerical variable's shape, center, and spread with histograms, box plots, the mean, the median, the standard deviation, and the interquartile range, and to tame a skewed variable with a transformation or a map.
 
-The chapter's own summary, in the authors' words:
-
-> Fluently working with numerical variables is an important skill for data analysts. In this chapter we have introduced different visualizations and numerical summaries applied to numeric variables. The graphical visualizations are even more descriptive when two variables are presented simultaneously. We presented scatterplots, dot plots, histograms, and box plots. Numerical variables can be summarized using the mean, median, quartiles, standard deviation, and variance.
+Fluently working with numerical variables is an important skill for data analysts. In this tutorial we have introduced different visualizations and numerical summaries applied to numeric variables. The graphical visualizations are even more descriptive when two variables are presented simultaneously. We presented scatterplots, dot plots, histograms, and box plots. Numerical variables can be summarized using the mean, median, quartiles, standard deviation, and variance.
 
 For the history of the box plot, which the chapter credits to Mary Eleanor Spear rather than John Tukey, see her 1952 book [*Charting Statistics*](https://archive.org/details/ChartingStatistics_201801). For more on intensity maps, called *choropleths*, read the "[Geospatial data](https://clauswilke.com/dataviz/geospatial-data.html)" chapter of Claus Wilke's *Fundamentals of Data Visualization*.
+
+Many sentences in this tutorial, and its figures, come from the chapter, used under the book's [CC BY-SA 3.0 license](https://creativecommons.org/licenses/by-sa/3.0/).
 
 ### Exercise 1
 
@@ -896,13 +792,14 @@ county |>
 ```
 
 ```{r}
-#| cache: true
 county_map <- map_data("county") |>
   as_tibble() |>
   left_join(county |>
               mutate(region = str_to_lower(state),
                      subregion = str_to_lower(str_remove(name, " County| Parish"))),
             by = c("region", "subregion"))
+
+county_map
 ```
 
 ```{r}
@@ -921,7 +818,7 @@ county_map |>
 
 ###
 
-Your page describes one variable from every angle the chapter offers, then shows what a transformation and a map reveal that a plain histogram cannot. "Numerical variables can be summarized using the mean, median, quartiles, standard deviation, and variance."
+Your page shows a skewed distribution, a nonlinear relationship, and a geographic pattern.
 
 ### Exercise 2
 
@@ -943,7 +840,7 @@ Your answer should look like `https://your-github-username.github.io/exploring-n
 
 ###
 
-"Looking for modes isn't about finding a clear and correct answer about the number of modes in a distribution … The most important part of this examination is to better understand your data."
+Looking for modes isn't about finding a clear and correct answer about the number of modes in a distribution. The most important part of this examination is to better understand your data.
 
 ### Exercise 3
 
@@ -961,7 +858,8 @@ Your answer should look like `https://github.com/your-github-username/exploring-
 
 ###
 
-"In practice, the variance and standard deviation are sometimes used as a means to an end, where the 'end' is being able to accurately estimate the uncertainty associated with a sample statistic." That end is where the book goes next.
+In practice, the variance and standard deviation are sometimes used as a means to an end, where the "end" is being able to accurately estimate the uncertainty associated with a sample statistic.
+
 
 ## Your Answers
 

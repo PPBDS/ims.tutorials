@@ -1,0 +1,38 @@
+ims.tutorials itself is released under the MIT license; see the LICENSE file.
+Copyright (c) 2026 ims.tutorials authors.
+
+The tutorials include material from a third-party work, which remains under
+its own license.
+
+----------------------------------------------------------------------------
+Introduction to Modern Statistics, 2nd edition
+  Mine Cetinkaya-Rundel and Johanna Hardin
+  https://openintrostat.github.io/ims/
+  https://github.com/OpenIntroStat/ims
+  License: Creative Commons Attribution-ShareAlike 3.0 (CC BY-SA 3.0)
+  https://creativecommons.org/licenses/by-sa/3.0/
+
+  Covered material:
+
+  inst/tutorials/*/images/fig-*.png
+    Figures from the book. Each file is named after the book's own figure
+    label (fig-variables.png is the book's fig-variables, Figure 1.1), with a
+    "fig-" prefix added where the book's label has none, and a few labels
+    shortened to keep package paths within 100 bytes
+    (fig-95PercentCI.png is the book's fig-95PercentConfidenceInterval).
+    Changes: resized and compressed for the web.
+
+  Sentences copied into the tutorials' .qmd files
+    Sentences from the book, used as the tutorials' own prose without
+    quotation marks, sometimes lightly adapted (case, punctuation, a
+    pronoun, "tutorial" for "chapter"), including each chapter's Summary
+    paragraph.
+
+  Each tutorial links the chapter it draws on in its first sentence, and the
+  last paragraph of its Summary credits that chapter for the sentences and
+  figures it uses, under CC BY-SA 3.0.
+
+  This material, and any adaptation of it, is distributed under
+  CC BY-SA 3.0, not under the MIT license that covers the rest of the
+  package. OpenIntro's name, logo and book covers are not covered by the
+  book's license and are not included.

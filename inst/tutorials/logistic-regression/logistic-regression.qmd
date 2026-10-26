@@ -42,7 +42,7 @@ This tutorial covers [Chapter 9: Logistic regression](https://openintrostat.gith
 
 ### Exercise 1
 
-You should be doing this tutorial in a repo named `logistic-regression`. If you are not, create one and then connect to it. You may need to restart this tutorial after you do so.
+You should be doing this tutorial in a repo named `logistic-regression`. If you are not, create one and then connect to it.
 
 Create a new file, `analysis.qmd`, with the title `"Logistic Regression"` and your name as the author. In a bash Terminal, render it:
 
@@ -70,7 +70,7 @@ analysis_files
 
 ###
 
-The chapter introduces logistic regression "as a tool for building models when there is a categorical response variable with two levels, e.g., yes and no." Our two levels: an employer called back about a resume, or did not.
+*Logistic regression* is a tool for building models when there is a categorical response variable with two levels, e.g., yes and no. Here the two levels are whether an employer called back about a resume or did not.
 
 ### Exercise 2
 
@@ -91,7 +91,7 @@ library(tidyverse)
 
 ###
 
-"GLMs can be thought of as a two-stage modeling approach." The **tidyverse** handles everything around the model: **dplyr** computes the callback rates and **ggplot2** draws the curves.
+Logistic regression is a type of *generalized linear model (GLM)* for response variables where regular multiple regression does not work very well. The **tidyverse** handles everything around the model: **dplyr** computes the callback rates and **ggplot2** draws the curves.
 
 ### Exercise 3
 
@@ -113,7 +113,7 @@ library(openintro)
 
 ###
 
-**openintro** holds `resume`, the data from "a study that sought to understand the effect of race and sex on job application callback rates." The study was an experiment, so the researchers, not the job seekers, decided what each resume said.
+**openintro** holds `resume`, the data from a study that sought to understand the effect of race and sex on job application callback rates. The researchers, not job seekers, decided what each resume said.
 
 ### Exercise 4
 
@@ -136,11 +136,11 @@ library(broom)
 
 ###
 
-**broom** turns a fitted model into a tibble of estimates, which makes a model as easy to filter and plot as any data. The chapter fits its models with **[tidymodels](https://www.tidymodels.org/)**, a family of modeling packages that includes **broom**; base R's own model fitting gives the same estimates.
+**broom** turns a fitted model into a tibble of estimates, which you can filter and plot like any data. The chapter fits its models with **[tidymodels](https://www.tidymodels.org/)**, which includes **broom**, but base R gives the same estimates.
 
 ## Modelling the probability of an event
 
-"Logistic regression is a generalized linear model where the outcome is a two-level categorical variable." Here that outcome is whether a resume got a callback, and the question is which resume characteristics made a callback more likely.
+Logistic regression is a generalized linear model where the outcome is a two-level categorical variable. Here that outcome is whether a resume got a callback, and the question is which resume characteristics made a callback more likely.
 
 ### Exercise 1
 
@@ -162,42 +162,34 @@ resume
 
 ###
 
-Each of the 4,870 rows is one fake resume sent to a real job ad in Boston or Chicago. The researchers "used these characteristics to randomly generate fake resumes," then "randomly assigned a name to each resume, where the name would imply the applicant's sex and race."
+Each of the 4,870 rows is one fake resume sent to a real job ad in Boston or Chicago. The researchers randomly assigned a name to each resume, where the name would imply the applicant's sex and race.
 
 ### Exercise 2
+
+Replace the code in that chunk so that it counts the resumes by `received_callback`. Render.
 
 ```{r}
 #| label: modelling-the-probability-of-an-event-2
 #| echo: false
-learnr2::question("In the R Terminal, run ?resume. Copy and paste the first two sentences of the Description, and the Source.", type = "reflection")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
 
-```{.output}
-Description:
-
-     This experiment data comes from a study that sought to understand
-     the influence of race and gender on job application callback
-     rates. The study monitored job postings in Boston and Chicago for
-     several months during 2001 and 2002 and used this to build up a
-     set of test cases.
-
-Source:
-
-     Bertrand M, Mullainathan S. 2004. "Are Emily and Greg More
-     Employable than Lakisha and Jamal? A Field Experiment on Labor
-     Market Discrimination". The American Economic Review 94:4
-     (991-1013). doi:10.3386/w9873 <https://doi.org/10.3386/w9873>.
+```{r}
+#| label: modelling-the-probability-of-an-event-2-test
+#| echo: true
+resume |>
+  count(received_callback)
 ```
 
 ###
 
-The help page and the data say "gender," while the chapter says "sex" and renames the variable to match. The article's title, "Are Emily and Greg More Employable than Lakisha and Jamal?", names four of the 36 first names the study used.
+Only 392 of the 4,870 resumes, about 8%, got a callback. The response variable of interest is whether there was a callback from the employer for the applicant, coded here as 1 for yes and 0 for no.
 
 ### Exercise 3
 
-Replace the code in that chunk so that it counts the resumes by `received_callback`. Render.
+Replace the code in that chunk so that it counts the resumes by both `race` and `gender`. Render.
 
 ```{r}
 #| label: modelling-the-probability-of-an-event-3
@@ -211,16 +203,16 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: modelling-the-probability-of-an-event-3-test
 #| echo: true
 resume |>
-  count(received_callback)
+  count(race, gender)
 ```
 
 ###
 
-Only 392 of the 4,870 resumes, about 8%, got a callback. "The response variable of interest is whether there was a callback from the employer for the applicant," coded here as 1 for yes and 0 for no.
+The race counts are equal, 2,435 each, but 3,746 resumes carry women's names and only 1,124 men's. A footnote in the chapter says typically four resumes were sent to each job, one for each inferred race/sex combination, which the race counts fit and the sex counts do not.
 
 ### Exercise 4
 
-Replace the code in that chunk so that it counts the resumes by both `race` and `gender`. Render.
+Replace the code in that chunk so that it calculates, for each `job_type`, the number of resumes and the proportion with a woman's name, from highest proportion to lowest. Render.
 
 ```{r}
 #| label: modelling-the-probability-of-an-event-4
@@ -234,16 +226,19 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: modelling-the-probability-of-an-event-4-test
 #| echo: true
 resume |>
-  count(race, gender)
+  summarize(n = n(),
+            prop_women = mean(gender == "f"),
+            .by = job_type) |>
+  arrange(desc(prop_women))
 ```
 
 ###
 
-Exactly 2,435 resumes carry Black names and 2,435 White names, but 3,746 carry women's names and only 1,124 men's. A footnote in the chapter says "typically four resumes were sent to each job: one for each inferred race/sex combination," which the race counts fit and the sex counts do not.
+Almost every secretary (98.1%), clerical (96.2%), and supervisor (95.5%) resume carried a woman's name, while sales jobs were split evenly. A comparison by sex is therefore partly a comparison of different kinds of jobs.
 
 ### Exercise 5
 
-Replace the code in that chunk so that it calculates, for each `job_type`, the number of resumes and the proportion with a woman's name, from highest proportion to lowest. Render.
+Replace the code in that chunk so that it calculates the callback rate for each combination of `race` and `gender`. Render.
 
 ```{r}
 #| label: modelling-the-probability-of-an-event-5
@@ -257,19 +252,17 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: modelling-the-probability-of-an-event-5-test
 #| echo: true
 resume |>
-  summarize(n = n(),
-            prop_women = mean(gender == "f"),
-            .by = job_type) |>
-  arrange(desc(prop_women))
+  summarize(callback_rate = mean(received_callback),
+            .by = c(race, gender))
 ```
 
 ###
 
-Almost every secretary (98.1%), clerical (96.2%), and supervisor (95.5%) resume carried a woman's name, while sales jobs were split evenly. Every job ad got equal numbers of Black and White names, but not of men's and women's, so a comparison by sex is partly a comparison of different kinds of jobs.
+Resumes with White names got callbacks 9.9% (women) and 8.9% (men) of the time, against 6.6% and 5.8% for Black names. Due to the experimental nature of the study, we can infer causation between these variables and the callback rate, if substantial differences are found.
 
 ### Exercise 6
 
-Replace the code in that chunk so that it calculates the callback rate for each combination of `race` and `gender`. Render.
+Replace the code in that chunk so that it creates `resume_data`, keeping only the nine variables the chapter models: `received_callback`, `job_city`, `college_degree`, `years_experience`, `honors`, `military`, `has_email_address`, `race`, and `gender`, with `gender` renamed `sex`. Print `resume_data`. Render.
 
 ```{r}
 #| label: modelling-the-probability-of-an-event-6
@@ -282,18 +275,20 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: modelling-the-probability-of-an-event-6-test
 #| echo: true
-resume |>
-  summarize(callback_rate = mean(received_callback),
-            .by = c(race, gender))
+resume_data <- resume |>
+  select(received_callback, job_city, college_degree, years_experience,
+         honors, military, has_email_address, race, sex = gender)
+
+resume_data
 ```
 
 ###
 
-Resumes with White names got callbacks 9.9% (women) and 8.9% (men) of the time, against 6.6% and 5.8% for Black names. Since the names were randomly assigned, "due to the experimental nature of the study, we can infer causation between these variables and the callback rate, if substantial differences are found."
+The chapter keeps the outcome and 8 attributes that were randomly assigned, setting aside the job details, such as industry and type. Race and sex are protected classes in the United States, meaning they are not legally permitted factors for hiring or employment decisions.
 
 ### Exercise 7
 
-Replace the code in that chunk so that it creates `resume_data`, keeping only the nine variables the chapter models: `received_callback`, `job_city`, `college_degree`, `years_experience`, `honors`, `military`, `has_email_address`, `race`, and `gender`, with `gender` renamed `sex`. Print `resume_data`. Render.
+Change the code so that `sex` reads `man` and `woman`, with `woman` as the first level; `race` reads `Black` and `White`; and the five 0/1 variables (`received_callback`, `college_degree`, `honors`, `military`, and `has_email_address`) are categorical rather than numbers. Keep printing `resume_data`. Render.
 
 ```{r}
 #| label: modelling-the-probability-of-an-event-7
@@ -308,18 +303,22 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| echo: true
 resume_data <- resume |>
   select(received_callback, job_city, college_degree, years_experience,
-         honors, military, has_email_address, race, sex = gender)
+         honors, military, has_email_address, race, sex = gender) |>
+  mutate(sex = fct_relevel(if_else(sex == "m", "man", "woman"), "woman", "man"),
+         race = if_else(race == "black", "Black", "White"),
+         across(c(received_callback, college_degree, honors, military,
+                  has_email_address), as.factor))
 
 resume_data
 ```
 
 ###
 
-The chapter keeps the outcome and "8 attributes that were randomly assigned," setting aside the job details, such as industry and type. "Race and sex are protected classes in the United States, meaning they are not legally permitted factors for hiring or employment decisions."
+Many of the variables are indicator variables, meaning they take the value 1 if the specified characteristic is present and 0 otherwise. Making `woman` the first level of `sex` means a model will describe men relative to women, as the chapter's does.
 
 ### Exercise 8
 
-Change the code so that `sex` reads `man` and `woman`, with `woman` as the first level; `race` reads `Black` and `White`; and the five 0/1 variables (`received_callback`, `college_degree`, `honors`, `military`, and `has_email_address`) are categorical rather than numbers. Keep printing `resume_data`. Render.
+Start a new chunk that uses `resume_data` to calculate the number of resumes and the callback rate for resumes with and without `honors`. Render.
 
 ```{r}
 #| label: modelling-the-probability-of-an-event-8
@@ -332,24 +331,19 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: modelling-the-probability-of-an-event-8-test
 #| echo: true
-resume_data <- resume |>
-  select(received_callback, job_city, college_degree, years_experience,
-         honors, military, has_email_address, race, sex = gender) |>
-  mutate(sex = fct_relevel(if_else(sex == "m", "man", "woman"), "woman", "man"),
-         race = if_else(race == "black", "Black", "White"),
-         across(c(received_callback, college_degree, honors, military,
-                  has_email_address), as.factor))
-
-resume_data
+resume_data |>
+  summarize(n = n(),
+            callback_rate = mean(received_callback == "1"),
+            .by = honors)
 ```
 
 ###
 
-"Many of the variables are indicator variables, meaning they take the value 1 if the specified characteristic is present and 0 otherwise." Making `woman` the first level of `sex` means a model will describe men relative to women, just as the chapter's does.
+Resumes listing any type of honors, such as employee of the month, got callbacks 16.3% of the time, against 7.6% without. Only 257 of the 4,870 resumes list honors.
 
 ### Exercise 9
 
-Delete the line that prints `resume_data`, so that the chunk only creates it. Render.
+Add a column with the logit of each callback rate: the natural log of the rate divided by one minus the rate. Render.
 
 ```{r}
 #| label: modelling-the-probability-of-an-event-9
@@ -359,64 +353,73 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-````{verbatim}
-resume_data <- resume |>
-  select(received_callback, job_city, college_degree, years_experience,
-         honors, military, has_email_address, race, sex = gender) |>
-  mutate(sex = fct_relevel(if_else(sex == "m", "man", "woman"), "woman", "man"),
-         race = if_else(race == "black", "Black", "White"),
-         across(c(received_callback, college_degree, honors, military,
-                  has_email_address), as.factor))
-````
+```{r}
+#| label: modelling-the-probability-of-an-event-9-test
+#| echo: true
+resume_data |>
+  summarize(n = n(),
+            callback_rate = mean(received_callback == "1"),
+            .by = honors) |>
+  mutate(logit = log(callback_rate / (1 - callback_rate)))
+```
 
 ###
 
-"All of the attributes listed on each resume were randomly assigned, which means that no attributes that might be favorable or detrimental to employment would favor one demographic over another on these resumes." That is what lets `resume_data` support causal comparisons that observational data could not.
+The *logit transformation* turns 7.6% into -2.50 and 16.3% into -1.63, both near the lower left of this curve. Without it, the left hand side of the model could only take values between 0 and 1, but the right hand side could take values well outside of the range from 0 to 1.
+
+![](images/fig-logit-transformation.png){fig-alt="A scatterplot with a superimposed line connecting values of p from -5 to +6 (on the x-axis) with their logit transformed value (on the y-axis)."}
 
 ### Exercise 10
 
-Add `#| cache: true` to that chunk. Render.
+Replace the code in that chunk with a logistic regression of `received_callback` on `honors`, using `resume_data`. Show only the term and the estimate for each coefficient. Render.
 
 ```{r}
 #| label: modelling-the-probability-of-an-event-10
 #| echo: false
-learnr2::question("In the bash Terminal, run ls. CP/CR.", type = "reflection")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
 
-```{.output}
-analysis.html  analysis.qmd  analysis_cache  analysis_files
+```{r}
+#| label: modelling-the-probability-of-an-event-10-test
+#| echo: true
+glm(received_callback ~ honors, data = resume_data, family = binomial) |>
+  tidy() |>
+  select(term, estimate)
 ```
 
 ###
 
-`analysis_cache` now holds all 4,870 rows of `resume_data`, so later renders reuse them instead of rebuilding the tibble. A cached chunk only re-runs when its code changes.
+The intercept, -2.50, is the logit for resumes without honors, and -2.50 + 0.867 = -1.63 is the logit with honors, so a model with one two-level predictor reproduces the two rates. The chapter reports the same fit: -2.4998 + 0.8668 × `honors`.
 
 ### Exercise 11
 
-Your Source Control count just jumped, because Git sees every file in the new cache directory. Add `analysis_cache` to `.gitignore`, and the count drops back.
+Replace the code in that chunk so that, from the same model, it calculates the predicted probability of a callback for a resume without honors and for one with honors. Render.
 
 ```{r}
 #| label: modelling-the-probability-of-an-event-11
 #| echo: false
-learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type = "reflection")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
 
-```{.output}
-analysis_files
-analysis_cache
+```{r}
+#| label: modelling-the-probability-of-an-event-11-test
+#| echo: true
+glm(received_callback ~ honors, data = resume_data, family = binomial) |>
+  augment(newdata = tibble(honors = c("0", "1")),
+          type.predict = "response")
 ```
 
 ###
 
-"Our analysis will allow us to compare the practical importance of each of the variables relative to each other." The chapter starts that comparison with a single variable, `honors`.
+To convert from values on the logistic regression scale to the probability scale, we need to back transform and then solve for the probability. The model gives 0.076 without honors and 0.163 with them, the two raw callback rates.
 
 ### Exercise 12
 
-Start a new chunk that uses `resume_data` to calculate the number of resumes and the callback rate for resumes with and without `honors`. Render.
+Replace the code in that chunk with a plot of the logit curve: probability on the y-axis against its logit on the x-axis, for logits from -5 to 6. Add the two callback rates, with and without honors, as points on the curve. Render.
 
 ```{r}
 #| label: modelling-the-probability-of-an-event-12
@@ -430,18 +433,21 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: modelling-the-probability-of-an-event-12-test
 #| echo: true
 resume_data |>
-  summarize(n = n(),
-            callback_rate = mean(received_callback == "1"),
-            .by = honors)
+  summarize(callback_rate = mean(received_callback == "1"), .by = honors) |>
+  mutate(logit = log(callback_rate / (1 - callback_rate))) |>
+  ggplot(aes(x = logit, y = callback_rate)) +
+  geom_function(fun = plogis) +
+  geom_point(color = "red", size = 3) +
+  xlim(-5, 6)
 ```
 
 ###
 
-Resumes listing honors, "such as employee of the month," got callbacks 16.3% of the time, against 7.6% without. Honors are rare, though: only 257 of the 4,870 resumes list them.
+The curve is flat near 0 and 1 and steep in the middle, so one step on the logit scale moves the probability more near 50% than near the edges. Both groups of resumes sit on the lower left, where callbacks are rare.
 
 ### Exercise 13
 
-Add a column with the logit of each callback rate: the natural log of the rate divided by one minus the rate. Render.
+Improve the plot. Add dashed lines at probabilities 0 and 1, label each point with its group and callback rate, show the y-axis as percentages, and add a title, axis labels, a subtitle that states the main finding, and a caption giving the number of resumes and the source. Render.
 
 ```{r}
 #| label: modelling-the-probability-of-an-event-13
@@ -453,108 +459,6 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ```{r}
 #| label: modelling-the-probability-of-an-event-13-test
-#| echo: true
-resume_data |>
-  summarize(n = n(),
-            callback_rate = mean(received_callback == "1"),
-            .by = honors) |>
-  mutate(logit = log(callback_rate / (1 - callback_rate)))
-```
-
-###
-
-The **logit transformation** turns 7.6% into -2.50 and 16.3% into -1.63, stretching probabilities, which must lie between 0 and 1, across the whole number line. Without it, "the left hand side could only take values between 0 and 1, but the right hand side could take values well outside of the range from 0 to 1."
-
-### Exercise 14
-
-Replace the code in that chunk with a logistic regression of `received_callback` on `honors`, using `resume_data`. Show only the term and the estimate for each coefficient. Render.
-
-```{r}
-#| label: modelling-the-probability-of-an-event-14
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{r}
-#| label: modelling-the-probability-of-an-event-14-test
-#| echo: true
-glm(received_callback ~ honors, data = resume_data, family = binomial) |>
-  tidy() |>
-  select(term, estimate)
-```
-
-###
-
-The intercept, -2.50, is the logit for resumes without honors, and -2.50 + 0.867 = -1.63 is the logit with honors, so a model with one two-level predictor simply reproduces the two rates. The chapter reports the same fit: -2.4998 + 0.8668 × `honors`.
-
-### Exercise 15
-
-Replace the code in that chunk so that, from the same model, it calculates the predicted probability of a callback for a resume without honors and for one with honors. Render.
-
-```{r}
-#| label: modelling-the-probability-of-an-event-15
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{r}
-#| label: modelling-the-probability-of-an-event-15-test
-#| echo: true
-glm(received_callback ~ honors, data = resume_data, family = binomial) |>
-  augment(newdata = tibble(honors = c("0", "1")),
-          type.predict = "response")
-```
-
-###
-
-"To convert from values on the logistic regression scale to the probability scale, we need to back transform and then solve" for the probability. The model's answers, 0.076 without honors and 0.163 with them, are the chapter's worked example and the two raw callback rates.
-
-### Exercise 16
-
-Replace the code in that chunk with a plot of the logit curve: probability on the y-axis against its logit on the x-axis, for logits from -5 to 6. Add the two callback rates, with and without honors, as points on the curve. Render.
-
-```{r}
-#| label: modelling-the-probability-of-an-event-16
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{r}
-#| label: modelling-the-probability-of-an-event-16-test
-#| echo: true
-resume_data |>
-  summarize(callback_rate = mean(received_callback == "1"), .by = honors) |>
-  mutate(logit = log(callback_rate / (1 - callback_rate))) |>
-  ggplot(aes(x = logit, y = callback_rate)) +
-  geom_function(fun = plogis) +
-  geom_point(color = "red", size = 3) +
-  xlim(-5, 6)
-```
-
-###
-
-The curve is flat near 0 and 1 and steep in the middle, so one step on the logit scale moves the probability more near 50% than near the edges. Both groups of resumes sit on the flat lower left, where callbacks are rare.
-
-### Exercise 17
-
-Improve the plot. Add dashed lines at probabilities 0 and 1, label each point with its group and callback rate, show the y-axis as percentages, and add a title, axis labels, a subtitle that states the main finding, and a caption giving the number of resumes and the source. Render.
-
-```{r}
-#| label: modelling-the-probability-of-an-event-17
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{r}
-#| label: modelling-the-probability-of-an-event-17-test
 #| echo: true
 resume_data |>
   summarize(callback_rate = mean(received_callback == "1"), .by = honors) |>
@@ -577,14 +481,14 @@ resume_data |>
 
 ###
 
-"While the precise choice of a logit function isn't intuitive, it is based on theory that underpins generalized linear models, which is beyond the scope of this book." The plot shows what the theory buys: whatever value the right side of a model takes, the curve turns it into a probability between 0 and 1.
+While the precise choice of a logit function isn't intuitive, it is based on theory that underpins generalized linear models, which is beyond the scope of this book. Whatever value the right side of a model takes, the curve turns it into a probability between 0 and 1.
 
-### Exercise 18
+### Exercise 14
 
-Commit `analysis.qmd` and `.gitignore` with the message `"Model callbacks with honors"` and push.
+Commit `analysis.qmd` with the message `"Model callbacks with honors"` and push.
 
 ```{r}
-#| label: modelling-the-probability-of-an-event-18
+#| label: modelling-the-probability-of-an-event-14
 #| echo: false
 learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type = "reflection")
 ```
@@ -598,11 +502,11 @@ learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type
 
 ###
 
-So far the model gives just two probabilities, one for each value of `honors`. The chapter's larger goal is to "examine which resume characteristics correspond to higher or lower callback rates."
+So far the model gives two probabilities, one for each value of `honors`. The larger goal is to examine which resume characteristics correspond to higher or lower callback rates.
 
 ## Logistic model with many variables
 
-"While knowing whether a resume listed honors provides some signal when predicting whether the employer would call, we would like to account for many different variables at once to understand how each of the different resume characteristics affected the chance of a callback." This section fits that model, trims it, and uses it to compare two applicants who differ only in their names.
+While knowing whether a resume listed honors provides some signal when predicting whether the employer would call, we would like to account for many different variables at once to understand how each of the different resume characteristics affected the chance of a callback. This section fits that model, trims it, and uses it to compare two applicants who differ only in their names.
 
 ### Exercise 1
 
@@ -654,7 +558,7 @@ glm(received_callback ~ job_city + college_degree + years_experience + honors +
 
 ###
 
-The full model's **Akaike information criterion**, or AIC, is 2677.25, from all 4,870 resumes. "In the calculation of a model's AIC, a penalty is given for including additional variables."
+The full model's *Akaike information criterion (AIC)* is 2677.25, from all 4,870 resumes. In the calculation of a model's AIC, a penalty is given for including additional variables.
 
 ### Exercise 3
 
@@ -680,7 +584,7 @@ glm(received_callback ~ job_city + years_experience + honors +
 
 ###
 
-Dropping `college_degree` lowers the AIC from 2677.25 to 2675.55, and with AIC, lower is better, so the chapter drops it. "It is important to note that AIC provides information about the quality of a model relative to other models, but does not provide information about the overall quality of a model."
+Dropping `college_degree` lowers the AIC from 2677.25 to 2675.55, and with AIC, lower is better, so the chapter drops it. It is important to note that AIC provides information about the quality of a model relative to other models, but does not provide information about the overall quality of a model.
 
 ### Exercise 4
 
@@ -706,7 +610,7 @@ glm(received_callback ~ job_city + years_experience + honors +
 
 ###
 
-The `raceWhite` estimate barely moves, from 0.442 to 0.443. "The predictors in the experiment were thoughtfully laid out so that the coefficient estimates would typically not be much influenced by which other predictors were in the model."
+The `raceWhite` estimate barely moves, from 0.442 to 0.443. The predictors in the experiment were thoughtfully laid out so that the coefficient estimates would typically not be much influenced by which other predictors were in the model.
 
 ### Exercise 5
 
@@ -730,7 +634,7 @@ glm(received_callback ~ race, data = resume_data, family = binomial) |>
 
 ###
 
-Even alone, `raceWhite` is 0.438, because random assignment kept race unrelated to everything else on the resume. "In most observational data, it's common for point estimates to change a little, and sometimes a lot, depending on which other variables are included in the model."
+Even alone, `raceWhite` is 0.438, because random assignment kept race unrelated to everything else on the resume. In most observational data, it's common for point estimates to change a little, and sometimes a lot, depending on which other variables are included in the model.
 
 ### Exercise 6
 
@@ -788,7 +692,7 @@ glm(received_callback ~ job_city + years_experience + honors +
 
 ###
 
-Only the name changed, and the probability fell from 0.0835 to 0.0553. "The model results suggest that prospective employers favor resumes where the first name is typically interpreted to be White."
+Only the name changed, and the probability fell from 0.0835 to 0.0553. The model results suggest that prospective employers favor resumes where the first name is typically interpreted to be White.
 
 ### Exercise 8
 
@@ -818,7 +722,7 @@ glm(received_callback ~ job_city + years_experience + honors +
 
 ###
 
-About 12 applications per callback for the White applicant, about 18 for the Black one. "That is, applicants who are perceived as Black need to apply to 50% more employers to receive a callback than someone who is perceived as White based on their first name for jobs like those in the study."
+About 12 applications per callback for the White applicant, about 18 for the Black one. Applicants who are perceived as Black need to apply to 50% more employers to receive a callback than someone who is perceived as White based on their first name for jobs like those in the study.
 
 ### Exercise 9
 
@@ -842,7 +746,7 @@ tibble(sex = c("woman", "man"),
 
 ###
 
-A woman's reviewers are 8% biased against her, a man's only 2%, even though each sex is equally prejudiced. The example shows that "even in a hypothetical setting where each demographic has the same degree of prejudice against the other demographic, the smaller group experiences the negative effects more frequently."
+A woman's reviewers are 8% biased against her, a man's only 2%, even though each sex is equally prejudiced. Even in a hypothetical setting where each demographic has the same degree of prejudice against the other demographic, the smaller group experiences the negative effects more frequently.
 
 ### Exercise 10
 
@@ -867,7 +771,7 @@ tibble(share_women = c(0.1, 0.2, 0.3, 0.4, 0.5)) |>
 
 ###
 
-At 10% women, a woman meets a biased reviewer nine times as often as a man does; at 50%, the rates are equal. In general, "the greater the imbalance in the population groups, the more the smaller group is disproportionately impacted."
+At 10% women, a woman meets a biased reviewer nine times as often as a man does, and at 50% the rates are equal. The greater the imbalance in the population groups, the more the smaller group is disproportionately impacted.
 
 ### Exercise 11
 
@@ -937,7 +841,7 @@ glm(received_callback ~ job_city + years_experience + honors +
 
 ###
 
-"What we have quantified in the current section is alarming and disturbing." "It is only possible to say that discrimination is happening, even if we cannot say which particular callbacks --- or non-callbacks --- represent discrimination."
+What we have quantified in this section is alarming and disturbing. It is only possible to say that discrimination is happening, even if we cannot say which particular callbacks --- or non-callbacks --- represent discrimination.
 
 ### Exercise 13
 
@@ -959,17 +863,17 @@ c7d10e4 (HEAD -> main, origin/main) Model callbacks with many variables
 
 ###
 
-"Logistic model fit and variable selection can be carried out in similar ways as multiple linear regression." What changes is the response: a probability, reached through the logit, instead of a number.
+AIC is analogous to how we used adjusted $R^2$ in multiple regression. AIC is a popular model selection method used in many disciplines, and is praised for its emphasis on model uncertainty and parsimony.
 
 ## Summary
 
 This tutorial covered [Chapter 9: Logistic regression](https://openintrostat.github.io/ims/model-logistic.html) from [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) by Mine Çetinkaya-Rundel and Johanna Hardin. You have learned to model the probability of a two-level outcome with logistic regression, to move between the logit and probability scales, and to choose among models with AIC, using a field experiment on discrimination in hiring.
 
-The chapter's own summary, in the authors' words:
-
-> Logistic and linear regression models have many similarities. The strongest of which is the linear combination of the explanatory variables which is used to form predictions related to the response variable. However, with logistic regression, the response variable is binary and therefore a prediction is given on the probability of a successful event. Logistic model fit and variable selection can be carried out in similar ways as multiple linear regression.
+Logistic and linear regression models have many similarities. The strongest of which is the linear combination of the explanatory variables which is used to form predictions related to the response variable. However, with logistic regression, the response variable is binary and therefore a prediction is given on the probability of a successful event. Logistic model fit and variable selection can be carried out in similar ways as multiple linear regression.
 
 For the experiment itself, read "[Are Emily and Greg More Employable than Lakisha and Jamal?](https://doi.org/10.3386/w9873)" by Marianne Bertrand and Sendhil Mullainathan, the source the `resume` help page cites. It answers many of the objections a skeptical reader might raise.
+
+Many sentences in this tutorial, and its figure, come from the chapter, used under the book's [CC BY-SA 3.0 license](https://creativecommons.org/licenses/by-sa/3.0/).
 
 ### Exercise 1
 
@@ -1000,7 +904,6 @@ library(broom)
 ```
 
 ```{r}
-#| cache: true
 resume_data <- resume |>
   select(received_callback, job_city, college_degree, years_experience,
          honors, military, has_email_address, race, sex = gender) |>
@@ -1008,6 +911,8 @@ resume_data <- resume |>
          race = if_else(race == "black", "Black", "White"),
          across(c(received_callback, college_degree, honors, military,
                   has_email_address), as.factor))
+
+resume_data
 ```
 
 ```{r}
@@ -1054,7 +959,7 @@ glm(received_callback ~ job_city + years_experience + honors +
 
 ###
 
-"Logistic and linear regression models have many similarities." "However, with logistic regression, the response variable is binary and therefore a prediction is given on the probability of a successful event," which is what both of your plots show.
+Your first plot shows how the logit turns any value into a probability, and your second shows the probabilities a model with seven predictors gives.
 
 ### Exercise 2
 
@@ -1076,7 +981,7 @@ Your answer should look like `https://your-github-username.github.io/logistic-re
 
 ###
 
-The company example leaves a lot out: "studies have found instances where people from an oppressed group also discriminate against others within their own oppressed group." "Ultimately, discrimination is complex, and there are many factors at play beyond the mathematics property we observed in the previous example."
+Studies have found instances where people from an oppressed group also discriminate against others within their own oppressed group. Discrimination is complex, and there are many factors at play beyond the mathematics property we observed in the company example.
 
 ### Exercise 3
 
@@ -1094,7 +999,7 @@ Your answer should look like `https://github.com/your-github-username/logistic-r
 
 ###
 
-"Whether it is with a formal statistical model or by using critical thinking skills to structure a problem, we hope the ideas you have learned will help you do more and do better in life."
+Whether it is with a formal statistical model or by using critical thinking skills to structure a problem, we hope the ideas you have learned will help you do more and do better in life.
 
 ## Your Answers
 

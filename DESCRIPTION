@@ -1,6 +1,6 @@
 Package: ims.tutorials
 Title: Tutorials for Introduction to Modern Statistics
-Version: 0.0.1
+Version: 0.1.0
 Authors@R:
     c(
     person(given = "David",
@@ -16,6 +16,8 @@ Description: Collection of tutorials, one per chapter, accompanying
     rendered to a static web page.
 Depends: R (>= 4.1.0)
 License: MIT + file LICENSE
+Copyright: See file inst/COPYRIGHTS for the figures and passages from
+    'Introduction to Modern Statistics', which are under CC BY-SA 3.0.
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3

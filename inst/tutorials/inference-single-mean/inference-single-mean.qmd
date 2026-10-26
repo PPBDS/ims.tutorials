@@ -34,7 +34,7 @@ This tutorial covers [Chapter 19: Inference for a single mean](https://openintro
 
 ### Exercise 1
 
-You should be doing this tutorial in a repo named `inference-for-a-single-mean`. If you are not, create one and then connect to it. You may need to restart this tutorial after you do so.
+You should be doing this tutorial in a repo named `inference-for-a-single-mean`. If you are not, create one and then connect to it.
 
 Create a new file, `analysis.qmd`, with the title `"Inference for a Single Mean"` and your name as the author. In a bash Terminal, render it:
 
@@ -62,7 +62,7 @@ analysis_files
 
 ###
 
-"In this chapter, we focus on the sample mean (instead of, for example, the sample median or the range of the observations) because of the well-studied mathematical model which describes the behavior of the sample mean." The proportions of the last three chapters came from yes-or-no variables; a mean needs a numerical one.
+In this tutorial, we focus on the sample mean (instead of, for example, the sample median or the range of the observations) because of the well-studied mathematical model which describes the behavior of the sample mean. The proportions of the last three tutorials came from yes-or-no variables, but a mean needs a numerical one.
 
 ### Exercise 2
 
@@ -83,7 +83,7 @@ library(tidyverse)
 
 ###
 
-"The important data structure for this chapter is a numeric response variable (that is, the outcome is quantitative)." The **tidyverse** filters the runners, converts their times to minutes, and draws the histograms.
+The important data structure for this tutorial is a numeric response variable (that is, the outcome is quantitative). The **tidyverse** filters the runners, converts their times to minutes, and draws the histograms.
 
 ### Exercise 3
 
@@ -105,7 +105,7 @@ library(cherryblossom)
 
 ###
 
-**cherryblossom** is a small OpenIntro package with results from three years of one race: `run09`, `run12`, and `run17`. "We consider this question in the context of the Cherry Blossom Race, which is a 10-mile race in Washington, DC each spring."
+**cherryblossom** is a small OpenIntro package with results from three years of one race: `run09`, `run12`, and `run17`. The Cherry Blossom Race is a 10-mile race in Washington, DC each spring.
 
 ### Exercise 4
 
@@ -128,11 +128,13 @@ library(infer)
 
 ###
 
-"We will not cover mathematical models which describe other statistics, but the bootstrap and randomization techniques described below are immediately extendable to any function of the observed data." **infer** bootstraps a mean, a median, or a standard deviation with the same pipeline, changing only the name of the statistic.
+We will not cover mathematical models which describe other statistics, but the bootstrap and randomization techniques described below are immediately extendable to any function of the observed data. **infer** bootstraps a mean, a median, or a standard deviation with the same pipeline, changing only the name of the statistic.
 
 ## Bootstrap confidence interval for a mean
 
-"Fortunately, as it did in previous chapters for the sample proportion, bootstrapping will approximate the variability of the sample mean from sample to sample." This section draws the chapter's sample of 100 runners and bootstraps it into a range of plausible values for the average finishing time.
+Fortunately, as it did in previous chapters for the sample proportion, bootstrapping will approximate the variability of the sample mean from sample to sample. The chapter shows the idea with a sample of five cars, and this section applies it to a sample of 100 runners.
+
+![](images/fig-bootpop1mean.png){fig-alt="The sample of 5 cars is drawn from a large population with other values (i.e., other car prices) unknown. The sample of five cars is replicated infinitely many times to create a proxy population where the car prices are given by the original dataset in the same relative distribution as measured in the sample."}
 
 ### Exercise 1
 
@@ -158,38 +160,30 @@ Each of the 19,961 rows is one runner, and `net_sec` is that runner's finishing 
 
 ### Exercise 2
 
+Replace the code in that chunk so that it counts the runners in each `event`. Render.
+
 ```{r}
 #| label: bootstrap-confidence-interval-for-a-mean-2
 #| echo: false
-learnr2::question("In the R Terminal, run ?run17. Copy and paste the Description, the entry for event, and the Details.", type = "reflection")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
 
-```{.output}
-Description:
-
-     Details for all 19,961 runners in the 2017 Cherry Blossom Run,
-     which is an annual road race that takes place in Washington, DC.
-     Most runners participate in a 10-mile run while a smaller fraction
-     take part in a 5k run or walk.
-
-     event The event the racer participated in, either the '"10 Mile"'
-          race or the '"5K"'.
-
-Details:
-
-     There was a time limit where all 10 Mile racers had to finish by.
-     Can you figure out what that time is?
+```{r}
+#| label: bootstrap-confidence-interval-for-a-mean-2-test
+#| echo: true
+run17 |>
+  count(event)
 ```
 
 ###
 
-The data hold two races, and a 5K time and a 10-mile time cannot be averaged together. The Details section poses a puzzle that the data can answer.
+17,442 runners ran the 10 miles and 2,519 the 5K. The average time for all runners who finished the 10-mile Cherry Blossom Race in 2006 was 93.29 minutes (93 minutes and about 17 seconds).
 
 ### Exercise 3
 
-Replace the code in that chunk so that it counts the runners in each `event`. Render.
+Replace the code in that chunk so that it calculates, for each event, the number of runners, the number with a missing finishing time, and the average finishing time in minutes. Render.
 
 ```{r}
 #| label: bootstrap-confidence-interval-for-a-mean-3
@@ -203,16 +197,19 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: bootstrap-confidence-interval-for-a-mean-3-test
 #| echo: true
 run17 |>
-  count(event)
+  summarize(runners = n(),
+            missing = sum(is.na(net_sec)),
+            mean_minutes = mean(net_sec / 60, na.rm = TRUE),
+            .by = event)
 ```
 
 ###
 
-17,442 runners ran the 10 miles and 2,519 the 5K. The chapter's question is about the 10-mile race: "The average time for all runners who finished the Cherry Blossom Race in 2006 was 93.29 minutes (93 minutes and about 17 seconds)."
+Three 5K runners have no time at all, while every 10-mile runner has one. The 5K average of 39.6 minutes would drag down any average that forgot to keep only the 10-mile race.
 
 ### Exercise 4
 
-Replace the code in that chunk so that it calculates, for each event, the number of runners, the number with a missing finishing time, and the average finishing time in minutes. Render.
+Replace the code in that chunk with a histogram of the finishing times, in minutes, of the 10 Mile runners only, with bars 5 minutes wide. Render.
 
 ```{r}
 #| label: bootstrap-confidence-interval-for-a-mean-4
@@ -226,19 +223,18 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: bootstrap-confidence-interval-for-a-mean-4-test
 #| echo: true
 run17 |>
-  summarize(runners = n(),
-            missing = sum(is.na(net_sec)),
-            mean_minutes = mean(net_sec / 60, na.rm = TRUE),
-            .by = event)
+  filter(event == "10 Mile") |>
+  ggplot(aes(x = net_sec / 60)) +
+  geom_histogram(binwidth = 5, boundary = 0)
 ```
 
 ###
 
-Three 5K runners have no time at all, while every 10-mile runner has one. The 5K average of 39.6 minutes would drag down any average that forgot to keep only the 10-mile race.
+The right tail stops at 140 minutes, with 242 runners in the last bar and none beyond it. The help page says all 10 Mile racers had to finish by a time limit, and the slowest time, 139.97 minutes, suggests it was 2 hours and 20 minutes.
 
 ### Exercise 5
 
-Replace the code in that chunk with a histogram of the finishing times, in minutes, of the 10 Mile runners only, with bars 5 minutes wide. Render.
+Replace the code in that chunk so that it calculates the number of 10 Mile runners and the mean and standard deviation of their finishing times in minutes. Render.
 
 ```{r}
 #| label: bootstrap-confidence-interval-for-a-mean-5
@@ -253,17 +249,18 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| echo: true
 run17 |>
   filter(event == "10 Mile") |>
-  ggplot(aes(x = net_sec / 60)) +
-  geom_histogram(binwidth = 5, boundary = 0)
+  summarize(runners = n(),
+            mean_time = mean(net_sec / 60),
+            sd_time = sd(net_sec / 60))
 ```
 
 ###
 
-The right tail does not fade away; it stops dead at 140 minutes, with 242 runners in the last bar and none beyond it. That is the answer to the help page's puzzle: the slowest 10-mile time is 139.97 minutes, so racers had 2 hours and 20 minutes to finish, and anyone slower is not in the data.
+Because `run17` holds every 10-mile finisher, 97.8 minutes is the population mean, $\mu$, a number researchers almost never get to see. The chapter instead uses data from 100 participants in the 2017 Cherry Blossom Race.
 
 ### Exercise 6
 
-Replace the code in that chunk so that it calculates the number of 10 Mile runners and the mean and standard deviation of their finishing times in minutes. Render.
+Start a new chunk that keeps only the 10 Mile runners, sets the seed to 1, draws a random sample of 100 of them, and adds a column `time` with each finishing time in minutes. Store the result as `run17_sample`, and print it. These are the chapter's own steps, so you should get the chapter's 100 runners. Render.
 
 ```{r}
 #| label: bootstrap-confidence-interval-for-a-mean-6
@@ -276,20 +273,22 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: bootstrap-confidence-interval-for-a-mean-6-test
 #| echo: true
-run17 |>
+set.seed(1)
+run17_sample <- run17 |>
   filter(event == "10 Mile") |>
-  summarize(runners = n(),
-            mean_time = mean(net_sec / 60),
-            sd_time = sd(net_sec / 60))
+  slice_sample(n = 100) |>
+  mutate(time = net_sec / 60)
+
+run17_sample
 ```
 
 ###
 
-Because `run17` holds every 10-mile finisher, 97.8 minutes is the population mean, $\mu$, a number researchers almost never get to see. The chapter instead works, as researchers must, from "data from 100 participants in the 2017 Cherry Blossom Race."
+The data come from a simple random sample of all participants, so the observations are independent. If your first runner is not Deepak S., check that the seed is set right before the sampling.
 
 ### Exercise 7
 
-Start a new chunk that keeps only the 10 Mile runners, sets the seed to 1, draws a random sample of 100 of them, and adds a column `time` with each finishing time in minutes. Store the result as `run17_sample`, and print it. These are the chapter's own steps, so you should get the chapter's 100 runners. Render.
+Replace the line that prints `run17_sample` with the number of runners, the mean, the standard deviation, the minimum, and the maximum of `time`. Render.
 
 ```{r}
 #| label: bootstrap-confidence-interval-for-a-mean-7
@@ -308,16 +307,21 @@ run17_sample <- run17 |>
   slice_sample(n = 100) |>
   mutate(time = net_sec / 60)
 
-run17_sample
+run17_sample |>
+  summarize(n = n(),
+            mean_time = mean(time),
+            sd_time = sd(time),
+            min_time = min(time),
+            max_time = max(time))
 ```
 
 ###
 
-"The data come from a simple random sample of all participants, so the observations are independent." If your first runner is not Deepak S., your sample differs from the chapter's; check that the seed is set right before the sampling.
+Our mean of 98.8 and standard deviation of 16.6 minutes are the chapter's numbers, and we will consider the sample average to be the best guess point estimate for $\mu.$ It is one minute above the population mean of 97.8, an error no researcher with only the sample could measure.
 
 ### Exercise 8
 
-Replace the line that prints `run17_sample` with the number of runners, the mean, the standard deviation, the minimum, and the maximum of `time`. Render.
+Start a new chunk that draws one bootstrap sample: 100 runners drawn at random, with replacement, from `run17_sample`. Set a seed first. Calculate the sample's mean time and how many different runners it contains. Render.
 
 ```{r}
 #| label: bootstrap-confidence-interval-for-a-mean-8
@@ -330,27 +334,22 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: bootstrap-confidence-interval-for-a-mean-8-test
 #| echo: true
-set.seed(1)
-run17_sample <- run17 |>
-  filter(event == "10 Mile") |>
-  slice_sample(n = 100) |>
-  mutate(time = net_sec / 60)
-
+set.seed(19)
 run17_sample |>
-  summarize(n = n(),
-            mean_time = mean(time),
-            sd_time = sd(time),
-            min_time = min(time),
-            max_time = max(time))
+  slice_sample(n = 100, replace = TRUE) |>
+  summarize(mean_time = mean(time),
+            runners = n_distinct(bib))
 ```
 
 ###
 
-Our mean of 98.8 and standard deviation of 16.6 minutes are the chapter's numbers, and "we will consider the sample average to be the best guess point estimate for $\mu.$" It is one minute above the population mean of 97.8, an error no researcher with only the sample could measure.
+Only 64 of the 100 runners made it into our bootstrap sample, some of them more than once, and its mean is 100.0 minutes, not 98.8. The bootstrap samples were taken from the same (estimated) population, and so the differences in bootstrap samples are due entirely to natural variability in the sampling procedure.
+
+![](images/fig-bootsamps1mean.png){fig-alt="The sample is shown being taken from the large unknown population. The bootstrap resamples, however, are taken directly from the original sample (sampling with replacement) as if the resamples had been taken from an infinitely large proxy population. Three bootstrap resamples of 5 cars each are shown, each resample is slightly different due to the process of resampling with replacement."}
 
 ### Exercise 9
 
-Start a new chunk that draws one bootstrap sample: 100 runners drawn at random, with replacement, from `run17_sample`. Set a seed first. Calculate the sample's mean time and how many different runners it contains. Render.
+Replace the code in that chunk so that it uses **infer** to draw 10,000 bootstrap samples from `run17_sample`, calculates the mean `time` of each, and stores the result as `boot_means`. Keep the seed. Print `boot_means`. Render.
 
 ```{r}
 #| label: bootstrap-confidence-interval-for-a-mean-9
@@ -364,19 +363,23 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: bootstrap-confidence-interval-for-a-mean-9-test
 #| echo: true
 set.seed(19)
-run17_sample |>
-  slice_sample(n = 100, replace = TRUE) |>
-  summarize(mean_time = mean(time),
-            runners = n_distinct(bib))
+boot_means <- run17_sample |>
+  specify(response = time) |>
+  generate(reps = 10000, type = "bootstrap") |>
+  calculate(stat = "mean")
+
+boot_means
 ```
 
 ###
 
-Only 64 of the 100 runners made it into our bootstrap sample, some of them more than once, and its mean is 100.0 minutes, not 98.8. "Recall that the bootstrap samples were taken from the same (estimated) population, and so the differences in bootstrap samples are due entirely to natural variability in the sampling procedure."
+By summarizing each of the bootstrap samples (here, using the sample mean), we see, directly, the variability of the sample mean, $\bar{x},$ from sample to sample. Each row of `boot_means` is one such summary, like the $\bar{x}_{bs}$ values in the figure.
+
+![](images/fig-bootmeans1mean.png){fig-alt="The sample is shown being taken from the large unknown population. Three bootstrap resamples of 5 cars each are shown; the three resamples have an average car price of 11780 dollars, 19020 dollars, and 20260 dollars, respectively. A histogram representing many bootstrap resamples indicates that the bootstrap averages vary from roughly 10000 dollars to 25000 dollars."}
 
 ### Exercise 10
 
-Replace the code in that chunk so that it uses **infer** to draw 10,000 bootstrap samples from `run17_sample`, calculates the mean `time` of each, and stores the result as `boot_means`. Keep the seed. Print `boot_means`. Render.
+Start a new chunk that calculates the standard deviation of the 10,000 bootstrapped means in `boot_means`. Render.
 
 ```{r}
 #| label: bootstrap-confidence-interval-for-a-mean-10
@@ -389,22 +392,17 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: bootstrap-confidence-interval-for-a-mean-10-test
 #| echo: true
-set.seed(19)
-boot_means <- run17_sample |>
-  specify(response = time) |>
-  generate(reps = 10000, type = "bootstrap") |>
-  calculate(stat = "mean")
-
-boot_means
+boot_means |>
+  summarize(se = sd(stat))
 ```
 
 ###
 
-"By summarizing each of the bootstrap samples (here, using the sample mean), we see, directly, the variability of the sample mean, $\bar{x},$ from sample to sample." Each row is one bootstrap sample of 100 runners, and `stat` is its mean time in minutes.
+The standard deviation calculated on the bootstrapped means is referred to as the bootstrap standard error of the mean. Our 1.64 minutes measures how much the mean of 100 runners varies from sample to sample, while the 16.6 minutes from Exercise 7 measures how much the runners vary from each other.
 
 ### Exercise 11
 
-Delete the line that prints `boot_means`, so that the chunk only creates it. Render.
+Replace the code in that chunk so that it uses **infer** to calculate a 95% percentile confidence interval from `boot_means`. Render.
 
 ```{r}
 #| label: bootstrap-confidence-interval-for-a-mean-11
@@ -414,62 +412,73 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-````{verbatim}
-set.seed(19)
-boot_means <- run17_sample |>
-  specify(response = time) |>
-  generate(reps = 10000, type = "bootstrap") |>
-  calculate(stat = "mean")
-````
+```{r}
+#| label: bootstrap-confidence-interval-for-a-mean-11-test
+#| echo: true
+boot_means |>
+  get_confidence_interval(level = 0.95, type = "percentile")
+```
 
 ###
 
-"It does not make sense to take repeated samples from the same population because if you have the ability to take more samples, a larger sample size will benefit you more than taking two samples from the population." So `boot_means` resamples the one sample we have, 10,000 times.
+The bootstrap percentile confidence interval is found by locating the middle 90% (for a 90% confidence interval) or a 95% (for a 95% confidence interval) of the bootstrapped statistics. Ours runs from 95.5 to 101.9 minutes.
 
 ### Exercise 12
 
-Add `#| cache: true` to that chunk. Render.
+The chapter also builds a bootstrap SE interval: the point estimate plus and minus 2 bootstrap standard errors. Replace the code in that chunk so that it calculates the mean of `time` in `run17_sample`, the standard deviation of the means in `boot_means`, and the lower and upper ends of that interval. Render.
 
 ```{r}
 #| label: bootstrap-confidence-interval-for-a-mean-12
 #| echo: false
-learnr2::question("In the bash Terminal, run ls. CP/CR.", type = "reflection")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
 
-```{.output}
-analysis.html  analysis.qmd  analysis_cache  analysis_files
+```{r}
+#| label: bootstrap-confidence-interval-for-a-mean-12-test
+#| echo: true
+run17_sample |>
+  summarize(mean_time = mean(time)) |>
+  mutate(se = sd(boot_means$stat),
+         lower = mean_time - 2 * se,
+         upper = mean_time + 2 * se)
 ```
 
 ###
 
-`analysis_cache` now holds the saved `boot_means`, so later renders skip its 1,000,000 random draws. Because the seed is set inside the chunk, the cached result is the same one a fresh render would produce.
+The SE interval, 95.5 to 102.1, is close to the percentile interval, 95.5 to 101.9, so the two methods provide very similar interval approximations. For when each kind of interval works best, the chapter points to Tim Hesterberg's "[What Teachers Should Know About the Bootstrap](https://www.tandfonline.com/doi/full/10.1080/00031305.2015.1089789)."
 
 ### Exercise 13
 
-Your Source Control count just jumped, because Git sees every file in the new cache directory. Add `analysis_cache` to `.gitignore`, and the count drops back.
+The chapter bootstraps other statistics, too. Replace the code in that chunk so that it uses **infer** to draw 10,000 bootstrap samples from `run17_sample`, calculates the standard deviation of `time` in each, and returns a 90% percentile confidence interval. Set a seed first. Render.
 
 ```{r}
 #| label: bootstrap-confidence-interval-for-a-mean-13
 #| echo: false
-learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type = "reflection")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
 
-```{.output}
-analysis_files
-analysis_cache
+```{r}
+#| label: bootstrap-confidence-interval-for-a-mean-13-test
+#| echo: true
+set.seed(19)
+run17_sample |>
+  specify(response = time) |>
+  generate(reps = 10000, type = "bootstrap") |>
+  calculate(stat = "sd") |>
+  get_confidence_interval(level = 0.90, type = "percentile")
 ```
 
 ###
 
-"Bootstrapping is a method for capturing the variability of a statistic when the mathematical model is unknown (it is not a method for navigating small samples)." The chapter's first example bootstraps only five cars, and its interval for their average price runs from \$11,778 to \$22,500.
+Although there is a mathematical model which describes how $s$ varies from sample to sample, the mathematical model will not be presented in the book. The bootstrap needs no such model: we are 90% confident that the standard deviation of all 10-mile times is between 14.8 and 18.2 minutes, and the true 16.9 is inside.
 
 ### Exercise 14
 
-Start a new chunk that calculates the standard deviation of the 10,000 bootstrapped means in `boot_means`. Render.
+Replace the code in that chunk with a histogram of the bootstrapped means in `boot_means`, with bars half a minute wide. Render.
 
 ```{r}
 #| label: bootstrap-confidence-interval-for-a-mean-14
@@ -483,16 +492,17 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: bootstrap-confidence-interval-for-a-mean-14-test
 #| echo: true
 boot_means |>
-  summarize(se = sd(stat))
+  ggplot(aes(x = stat)) +
+  geom_histogram(binwidth = 0.5)
 ```
 
 ###
 
-"Note that the standard deviation calculated on the bootstrapped means is referred to as the bootstrap standard error of the mean." Our 1.64 minutes measures how much the mean of 100 runners varies from sample to sample, while the 16.6 minutes from Exercise 8 measures how much the runners vary from each other.
+The bootstrapped means pile up around 98.8 in a symmetric bell, from 91.7 to 105.0 minutes. If the bootstrap distribution is relatively symmetric and bell-shaped, then the 95% bootstrap SE confidence interval can be constructed with the formula familiar from the mathematical models in previous chapters.
 
 ### Exercise 15
 
-Replace the code in that chunk so that it uses **infer** to calculate a 95% percentile confidence interval from `boot_means`. Render.
+Improve the histogram. Mark the two ends of the 95% percentile interval with dashed lines, and the mean finishing time of all 10 Mile runners in `run17` with a solid red line. Add a title, axis labels, a subtitle that states whether the interval captures the true mean, and a caption giving the sample size, the number of bootstrap samples, and the source. Render.
 
 ```{r}
 #| label: bootstrap-confidence-interval-for-a-mean-15
@@ -504,106 +514,6 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ```{r}
 #| label: bootstrap-confidence-interval-for-a-mean-15-test
-#| echo: true
-boot_means |>
-  get_confidence_interval(level = 0.95, type = "percentile")
-```
-
-###
-
-"The bootstrap percentile confidence interval is found by locating the middle 90% (for a 90% confidence interval) or a 95% (for a 95% confidence interval) of the bootstrapped statistics." Ours runs from 95.5 to 101.9 minutes; with your seed, the ends will differ slightly.
-
-### Exercise 16
-
-The chapter also builds a bootstrap SE interval: the point estimate plus and minus 2 bootstrap standard errors. Replace the code in that chunk so that it calculates the mean of `time` in `run17_sample`, the standard deviation of the means in `boot_means`, and the lower and upper ends of that interval. Render.
-
-```{r}
-#| label: bootstrap-confidence-interval-for-a-mean-16
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{r}
-#| label: bootstrap-confidence-interval-for-a-mean-16-test
-#| echo: true
-run17_sample |>
-  summarize(mean_time = mean(time)) |>
-  mutate(se = sd(boot_means$stat),
-         lower = mean_time - 2 * se,
-         upper = mean_time + 2 * se)
-```
-
-###
-
-The SE interval, 95.5 to 102.1, is close to the percentile interval, 95.5 to 101.9: "we are pleased to see that the two methods provide very similar interval approximations." For when each kind of interval works best, the chapter points to Tim Hesterberg's "[What Teachers Should Know About the Bootstrap](https://www.tandfonline.com/doi/full/10.1080/00031305.2015.1089789)."
-
-### Exercise 17
-
-The chapter bootstraps other statistics, too. Replace the code in that chunk so that it uses **infer** to draw 10,000 bootstrap samples from `run17_sample`, calculates the standard deviation of `time` in each, and returns a 90% percentile confidence interval. Set a seed first. Render.
-
-```{r}
-#| label: bootstrap-confidence-interval-for-a-mean-17
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{r}
-#| label: bootstrap-confidence-interval-for-a-mean-17-test
-#| echo: true
-set.seed(19)
-run17_sample |>
-  specify(response = time) |>
-  generate(reps = 10000, type = "bootstrap") |>
-  calculate(stat = "sd") |>
-  get_confidence_interval(level = 0.90, type = "percentile")
-```
-
-###
-
-"Although there is a mathematical model which describes how $s$ varies from sample to sample, the mathematical model will not be presented in this text." The bootstrap needs no such model: we are 90% confident that the standard deviation of all 10-mile times is between 14.8 and 18.2 minutes, and the true 16.9 is inside.
-
-### Exercise 18
-
-Replace the code in that chunk with a histogram of the bootstrapped means in `boot_means`, with bars half a minute wide. Render.
-
-```{r}
-#| label: bootstrap-confidence-interval-for-a-mean-18
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{r}
-#| label: bootstrap-confidence-interval-for-a-mean-18-test
-#| echo: true
-boot_means |>
-  ggplot(aes(x = stat)) +
-  geom_histogram(binwidth = 0.5)
-```
-
-###
-
-The bootstrapped means pile up around 98.8 in a symmetric bell, from 91.7 to 105.0 minutes. That shape is why the SE interval worked: "If the bootstrap distribution is relatively symmetric and bell-shaped, then the 95% bootstrap SE confidence interval can be constructed with the formula familiar from the mathematical models in previous chapters."
-
-### Exercise 19
-
-Improve the histogram. Mark the two ends of the 95% percentile interval with dashed lines, and the mean finishing time of all 10 Mile runners in `run17` with a solid red line. Add a title, axis labels, a subtitle that states whether the interval captures the true mean, and a caption giving the sample size, the number of bootstrap samples, and the source. Render.
-
-```{r}
-#| label: bootstrap-confidence-interval-for-a-mean-19
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{r}
-#| label: bootstrap-confidence-interval-for-a-mean-19-test
 #| echo: true
 boot_ci <- boot_means |>
   get_confidence_interval(level = 0.95, type = "percentile")
@@ -628,14 +538,14 @@ boot_means |>
 
 ###
 
-"As you might guess, the larger the random sample, the more accurately that sample will represent the population of interest." Our interval caught the true mean of 97.8, but a researcher holding only the sample could never have checked.
+As you might guess, the larger the random sample, the more accurately that sample will represent the population of interest. Our interval caught the true mean of 97.8, but a researcher holding only the sample could never have checked.
 
-### Exercise 20
+### Exercise 16
 
-Commit `analysis.qmd` and `.gitignore` with the message `"Bootstrap the Cherry Blossom sample"` and push.
+Commit `analysis.qmd` with the message `"Bootstrap the Cherry Blossom sample"` and push.
 
 ```{r}
-#| label: bootstrap-confidence-interval-for-a-mean-20
+#| label: bootstrap-confidence-interval-for-a-mean-16
 #| echo: false
 learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type = "reflection")
 ```
@@ -649,11 +559,11 @@ a07f93b Initial commit
 
 ###
 
-"As with analysis techniques that build on mathematical models, bootstrapping works best when a large random sample has been taken from the population." The same resample-and-summarize steps gave intervals for a mean and a standard deviation, and would work for a median, too.
+Bootstrapping is a method for capturing the variability of a statistic when the mathematical model is unknown (it is not a method for navigating small samples). As with analysis techniques that build on mathematical models, bootstrapping works best when a large random sample has been taken from the population.
 
 ## Mathematical model for a mean
 
-"As with the sample proportion, the variability of the sample mean is well described by the mathematical theory given by the Central Limit Theorem." "However, because of missing information about the inherent variability in the population ($\sigma$), a $t$-distribution is used in place of the standard normal when performing hypothesis test or confidence interval analyses."
+As with the sample proportion, the variability of the sample mean is well described by the mathematical theory given by the Central Limit Theorem. However, because of missing information about the inherent variability in the population ($\sigma$), a $t$-distribution is used in place of the standard normal when performing hypothesis test or confidence interval analyses.
 
 ### Exercise 1
 
@@ -679,7 +589,7 @@ run17_sample |>
 
 ###
 
-The formula's 1.66 minutes, the chapter's number, is close to the 1.64 from the bootstrap. The formula uses the sample's $s$ in place of the unknown $\sigma$, and "this strategy tends to work well when we have a lot of data and can estimate $\sigma$ using $s$ accurately."
+The formula's 1.66 minutes, the chapter's number, is close to the 1.64 from the bootstrap. The formula uses the sample's $s$ in place of the unknown $\sigma$, and this strategy tends to work well when we have a lot of data and can estimate $\sigma$ using $s$ accurately.
 
 ### Exercise 2
 
@@ -703,7 +613,7 @@ run17_sample |>
 
 ###
 
-"Large $n$: If the sample size $n$ is large and there are no **particularly extreme** outliers, then we typically assume the sampling distribution of $\bar{x}$ is nearly normal, even if the underlying distribution of individual observations is not." "With a sample of 100, we should only be concerned if there is are particularly extreme outliers."
+If the sample size $n$ is large and there are no **particularly extreme** outliers, then we typically assume the sampling distribution of $\bar{x}$ is nearly normal, even if the underlying distribution of individual observations is not. With a sample of 100, we should only be concerned if there are particularly extreme outliers.
 
 ### Exercise 3
 
@@ -727,7 +637,9 @@ run17_sample |>
 
 ###
 
-"It's often helpful to also visualize the data using a box plot to assess skewness and existence of outliers." No runner falls beyond the whiskers, and the 140-minute time limit you found makes an extremely slow outlier impossible.
+It's often helpful to also visualize the data using a box plot to assess skewness and existence of outliers. No runner in your box plot falls beyond the whiskers, unlike the extreme outlier in the second sample below.
+
+![](images/fig-outliersandsscondition.png){fig-alt="Two histogram and box plot pairs. The first pair of plots describes a sample size of 15 and the points are distributed between zero and six with no outliers. The second pair of plots describes a sample of size 50 and the points are distributed between zero and six with one additional outlying point above 20."}
 
 ### Exercise 4
 
@@ -754,7 +666,9 @@ ggplot() +
 
 ###
 
-The $t$-distribution with 2 degrees of freedom sits low in the middle and high in the tails: "its tails are thicker than the normal distribution's, meaning observations are more likely to fall beyond two standard deviations from the mean than under the normal distribution." With 99 degrees of freedom, the curve hides under the normal one.
+Your $t$-distribution with 2 degrees of freedom, like the book's below, has tails thicker than the normal distribution's, meaning observations are more likely to fall beyond two standard deviations from the mean than under the normal distribution. With 99 degrees of freedom, the curve hides under the normal one.
+
+![](images/fig-tDistCompareToNormalDist.png){fig-alt="Two symmetric bell-shaped curves on top of one another. One is a normal curve with smaller tails and a higher peak in the middle. The other is a t-distribution with longer tails, meaning that there are more observations far from the center of a t-distribution than of a normal distribution."}
 
 ### Exercise 5
 
@@ -778,7 +692,9 @@ tibble(df = c(2, 8, 18, 99, Inf)) |>
 
 ###
 
-The chapter's $t^{\star}_{18} = 2.10$ and its 0.0955 beyond 3 units for 2 degrees of freedom are both here, and infinite degrees of freedom gives the normal's 1.96. "In general, we'll use a $t$-distribution with $df = n - 1$ to model the sample mean when the sample size is $n.$"
+In general, we'll use a $t$-distribution with $df = n - 1$ to model the sample mean when the sample size is $n.$ The larger the degrees of freedom, the more closely the $t$-distribution resembles the standard normal distribution, and infinite degrees of freedom gives the normal's 1.96.
+
+![](images/fig-tDistConvergeToNormalDist.png){fig-alt="A normal distribution and four t distributions, all super imposed on top of one another. The smaller the degrees of freedom, the wider the tails in the t distribution."}
 
 ### Exercise 6
 
@@ -807,7 +723,7 @@ run17_sample |>
 
 ###
 
-The $t$-interval, 95.5 to 102.1 minutes, nearly matches the bootstrap's 95.5 to 101.9. "The margin of error is $t^\star_{df} \times s/\sqrt{n}$ where $t^\star_{df}$ is calculated from a specified percentile on the t-distribution with *df* degrees of freedom."
+The $t$-interval, 95.5 to 102.1 minutes, nearly matches the bootstrap's 95.5 to 101.9. The margin of error is $t^\star_{df} \times s/\sqrt{n}$ where $t^\star_{df}$ is calculated from a specified percentile on the t-distribution with *df* degrees of freedom.
 
 ### Exercise 7
 
@@ -833,7 +749,7 @@ run17_sample |>
 
 ###
 
-Only 15 of the 100 runners finished inside the 95% interval. "No, a confidence interval only provides a range of plausible values for a population parameter, in this case the population mean." "It does not describe what we might observe for individual observations."
+Only 15 of the 100 runners finished inside the 95% interval, because a confidence interval only provides a range of plausible values for a population parameter, in this case the population mean. It does not describe what we might observe for individual observations.
 
 ### Exercise 8
 
@@ -862,7 +778,7 @@ null_means
 
 ###
 
-To make the null true, **infer** subtracts 5.49 minutes from every runner's time, so that the sample mean is exactly 93.29, and then bootstraps. Each row is the mean of 100 runners in a world where "the average 10-mile run time was the same for 2006 and 2017."
+To make the null true, **infer** subtracts 5.49 minutes from every runner's time, so that the sample mean is exactly 93.29, and then bootstraps. Each row is the mean of 100 runners in a world where the average 10-mile run time was the same for 2006 and 2017.
 
 ### Exercise 9
 
@@ -892,7 +808,7 @@ null_means |>
 
 ###
 
-Only 3 of our 10,000 null means reached 98.8, and **infer** doubles that tail to a p-value of 0.0006; yours will be close. The chapter does the same with the formula: "find the one-tail area under the sampling distribution, and double it."
+Only 3 of our 10,000 null means reached 98.8, and **infer** doubles that tail to a p-value of 0.0006. The chapter does the same with the formula: find the one-tail area under the sampling distribution, and double it.
 
 ### Exercise 10
 
@@ -919,7 +835,7 @@ run17_sample |>
 
 ###
 
-"The Z score and T score are computed in the exact same way and are conceptually identical: each represents how many standard errors the observed value is from the null value." Our T of 3.31 and p-value of 0.0013 differ slightly from the chapter's 3.32 and 0.00126, which round the mean to 98.8 and the standard error to 1.66.
+The Z score and T score are computed in the exact same way and are conceptually identical: each represents how many standard errors the observed value is from the null value. Our T of 3.31 and p-value of 0.0013 differ slightly from the chapter's 3.32 and 0.00126, which round the mean to 98.8 and the standard error to 1.66.
 
 ### Exercise 11
 
@@ -942,7 +858,7 @@ run17_sample |>
 
 ###
 
-One line returns the T score, the 99 degrees of freedom, the p-value, and the 95% $t$-interval, all matching your formulas. "In practice, it's common to use statistical software, such as R, Python, or SAS for these analyses."
+One line returns the T score, the 99 degrees of freedom, the p-value, and the 95% $t$-interval, all matching your formulas. In practice, it's common to use statistical software, such as R, Python, or SAS for these analyses.
 
 ### Exercise 12
 
@@ -970,7 +886,7 @@ null_means |>
 
 ###
 
-The $t$ curve traces the simulated means closely, and the observed 98.8 sits beyond both of them. The curve's slightly thicker tails are why its p-value, 0.0013, is larger than the simulation's 0.0006: "The extra thick tails of the $t$-distribution are exactly the correction needed to resolve the problem (due to extra variability of the T score) of using $s$ in place of $\sigma$ in the $SE$ calculation."
+The $t$ curve's slightly thicker tails are why its p-value, 0.0013, is larger than the simulation's 0.0006. The extra thick tails of the $t$-distribution are exactly the correction needed to resolve the problem (due to extra variability of the T score) of using $s$ in place of $\sigma$ in the $SE$ calculation.
 
 ### Exercise 13
 
@@ -1004,7 +920,7 @@ null_means |>
 
 ###
 
-"Because the p-value is smaller than 0.05, we reject the null hypothesis." "That is, the data provide convincing evidence that the average run time for the Cherry Blossom Run in 2017 is different than the 2006 average."
+Because the p-value is smaller than 0.05, we reject the null hypothesis. That is, the data provide convincing evidence that the average run time for the Cherry Blossom Run in 2017 is different than the 2006 average.
 
 ### Exercise 14
 
@@ -1026,17 +942,17 @@ a07f93b Initial commit
 
 ###
 
-"The $t$-distribution allows us greater flexibility than the normal distribution when analyzing numerical data." With its conditions met, the $t$-distribution gave nearly the same interval and the same conclusion as the bootstrap, which needed no formula at all.
+The $t$-distribution allows us greater flexibility than the normal distribution when analyzing numerical data. With its conditions met, the $t$-distribution gave nearly the same interval and the same conclusion as the bootstrap, which needed no formula at all.
 
 ## Summary
 
 This tutorial covered [Chapter 19: Inference for a single mean](https://openintrostat.github.io/ims/inference-one-mean.html) from [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) by Mine Çetinkaya-Rundel and Johanna Hardin. You have learned to bootstrap a confidence interval for a population mean, and then to use the $t$-distribution, its degrees of freedom, and its conditions to build a $t$-interval and a $t$-test that you checked against the bootstrap, using a random sample of runners from the 2017 Cherry Blossom Run.
 
-The chapter's own summary, in the authors' words:
-
-> In this chapter we extended the randomization / bootstrap / mathematical model paradigm to questions involving quantitative variables of interest. When there is only one variable of interest, we are often hypothesizing or finding confidence intervals about the population mean. Note, however, the bootstrap method can be used for other statistics like the population median or the population IQR. When comparing a quantitative variable across two groups, the question often focuses on the difference in population means (or sometimes a paired difference in means). The questions revolving around one, two, and paired samples of means are addressed using the t-distribution; they are therefore called "t-tests" and "t-intervals." When considering a quantitative variable across 3 or more groups, a method called ANOVA is applied. Again, almost all the research questions can be approached using computational methods (e.g., randomization tests or bootstrapping) or using mathematical models. We continue to emphasize the importance of experimental design in making conclusions about research claims. In particular, recall that variability can come from different sources (e.g., random sampling vs. random allocation, see [Chapter 2's closing figure]).
+In this tutorial we extended the randomization / bootstrap / mathematical model paradigm to questions involving quantitative variables of interest. When there is only one variable of interest, we are often hypothesizing or finding confidence intervals about the population mean. Note, however, the bootstrap method can be used for other statistics like the population median or the population IQR. Questions about a single mean are addressed using the t-distribution, with *t-tests* and *t-intervals*. Again, almost all the research questions can be approached using computational methods (e.g., randomization tests or bootstrapping) or using mathematical models. We continue to emphasize the importance of experimental design in making conclusions about research claims. In particular, recall that variability can come from different sources (e.g., random sampling vs. random allocation).
 
 For when a bootstrap interval can be trusted, read Tim Hesterberg's "[What Teachers Should Know About the Bootstrap](https://www.tandfonline.com/doi/full/10.1080/00031305.2015.1089789)," which the chapter cites. For the race data, including the 2009 and 2012 runs, see the **cherryblossom** [reference pages](https://openintrostat.github.io/cherryblossom/reference/index.html).
+
+Many sentences in this tutorial, and its figures, come from the chapter, used under the book's [CC BY-SA 3.0 license](https://creativecommons.org/licenses/by-sa/3.0/).
 
 ### Exercise 1
 
@@ -1090,12 +1006,13 @@ run17_sample |>
 ```
 
 ```{r}
-#| cache: true
 set.seed(19)
 boot_means <- run17_sample |>
   specify(response = time) |>
   generate(reps = 10000, type = "bootstrap") |>
   calculate(stat = "mean")
+
+boot_means
 ```
 
 ```{r}
@@ -1159,7 +1076,7 @@ null_means |>
 
 ###
 
-"When there is only one variable of interest, we are often hypothesizing or finding confidence intervals about the population mean." Your page answers both questions about one variable, finishing time: a range of plausible values for the 2017 mean, and a test of whether it changed since 2006.
+Your page answers both questions about one variable, finishing time: a range of plausible values for the 2017 mean, and a test of whether it changed since 2006.
 
 ### Exercise 2
 
@@ -1181,7 +1098,7 @@ Your answer should look like `https://your-github-username.github.io/inference-f
 
 ###
 
-The published page carries an interval of about 95.5 to 102 minutes, on which the bootstrap and the $t$-distribution agree. The same two approaches return in the book's chapters on paired means and on two independent means.
+The published page carries an interval of about 95.5 to 102 minutes, on which the bootstrap and the $t$-distribution agree. The same two approaches return in the tutorials on two independent means and paired means.
 
 ### Exercise 3
 
@@ -1199,7 +1116,7 @@ Your answer should look like `https://github.com/your-github-username/inference-
 
 ###
 
-"Again, almost all the research questions can be approached using computational methods (e.g., randomization tests or bootstrapping) or using mathematical models." The test shows that 2017 runners were slower than 2006's, not why: the sample cannot say whether the runners changed or the field of entrants did.
+The test shows that 2017 runners were slower than 2006's, not why: the sample cannot say whether the runners changed or the field of entrants did.
 
 ## Your Answers
 

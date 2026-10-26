@@ -34,7 +34,7 @@ This tutorial covers [Chapter 15: Applications: Foundations](https://openintrost
 
 ### Exercise 1
 
-You should be doing this tutorial in a repo named `applications-foundations`. If you are not, create one and then connect to it. You may need to restart this tutorial after you do so.
+You should be doing this tutorial in a repo named `applications-foundations`. If you are not, create one and then connect to it.
 
 Create a new file, `analysis.qmd`, with the title `"Applications: Foundations"` and your name as the author. In a bash Terminal, render it:
 
@@ -62,7 +62,7 @@ analysis_files
 
 ###
 
-"In the foundations of inference chapters, we have provided three different methods for statistical inference": randomization, bootstrapping, and mathematical models. This chapter applies the first of them to a single small experiment.
+In the foundations of inference chapters, we have provided three different methods for statistical inference: randomization, bootstrapping, and mathematical models. This chapter applies the first of them to a single small experiment.
 
 ### Exercise 2
 
@@ -83,7 +83,7 @@ library(tidyverse)
 
 ###
 
-The book shows no code, but its tables and figures are built with the **tidyverse**: **dplyr** counts the patients and **ggplot2** draws the dot plot of simulated differences. You will use both to rebuild them.
+The book's tables and figures are built with the **tidyverse**: **dplyr** counts the patients and **ggplot2** draws the dot plot of simulated differences.
 
 ### Exercise 3
 
@@ -105,7 +105,7 @@ library(openintro)
 
 ###
 
-**openintro** holds `malaria`, the data from a trial of "a new malaria vaccine called PfSPZ." The same package supplied the `resume` experiment in the Logistic Regression tutorial.
+**openintro** holds `malaria`, the data from a trial of a new malaria vaccine called PfSPZ. The same package supplied the `resume` experiment in the Logistic Regression tutorial.
 
 ### Exercise 4
 
@@ -128,11 +128,11 @@ library(infer)
 
 ###
 
-**infer** describes every simulation in four steps: name the variables, state the null hypothesis, generate simulated data sets, and calculate a statistic from each. The book's own figures for this chapter are drawn with **infer**, and the `malaria` help page analyzes the same data with an exact test from base R's **stats** package.
+**infer** describes every simulation in four steps: name the variables, state the null hypothesis, generate simulated data sets, and calculate a statistic from each. The chapter's figures are drawn with **infer**, and the `malaria` help page analyzes the same data with an exact test from base R's **stats** package.
 
 ## Variability within data
 
-"In this case study, we consider a new malaria vaccine called PfSPZ." This section looks at what the 20 volunteers' data show, and why so small a study leaves the result in doubt.
+In this case study, we consider a new malaria vaccine called PfSPZ. This section looks at the data from its 20 volunteers.
 
 ### Exercise 1
 
@@ -154,45 +154,36 @@ malaria
 
 ###
 
-The whole data set is 20 rows, one per volunteer, and two categorical variables. "In the malaria study, volunteer patients were randomized into one of two experiment groups: 14 patients received an experimental vaccine and 6 patients received a placebo vaccine."
+Each of the 20 rows is one volunteer. Nineteen weeks after vaccination, all 20 patients were exposed to a drug-sensitive strain of the malaria parasite, allowing any infections to be treated effectively.
 
 ### Exercise 2
+
+Replace the code in that chunk so that it counts the volunteers in each `treatment` group. Render.
 
 ```{r}
 #| label: variability-within-data-2
 #| echo: false
-learnr2::question("In the R Terminal, run ?malaria. Copy and paste the Details and the Source sections.", type = "reflection")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
 
-```{.output}
-Details:
-
-     In this study, volunteer patients were randomized into one of two
-     experiment groups: 14 patients received an experimental vaccine or
-     6 patients received a placebo vaccine.  Nineteen weeks later, all
-     20 patients were exposed to a drug-sensitive malaria virus strain;
-     the motivation of using a drug-sensitive strain of virus here is
-     for ethical considerations, allowing any infections to be treated
-     effectively.
-
-Source:
-
-     Lyke et al. 2017. PfSPZ vaccine induces strain-transcending T
-     cells and durable protection against heterologous controlled human
-     malaria infection. PNAS 114(10):2711-2716.
-     doi:10.1073/pnas.1615324114
-     <https://doi.org/10.1073/pnas.1615324114>.
+```{r}
+#| label: variability-within-data-2-test
+#| echo: true
+malaria |>
+  count(treatment)
 ```
 
 ###
 
-The help page calls malaria a "virus," but the chapter gets it right: "all 20 patients were exposed to a drug-sensitive strain of the malaria parasite." Malaria is caused by a parasite carried by mosquitoes, and the drug-sensitive strain meant any infection could be cured.
+The study is an experiment, as patients were randomly assigned an experiment group: 14 to the vaccine and 6 to a placebo. The patients were volunteers, not a random sample, so its conclusions are cause and effect but might not generalize because of volunteer bias.
+
+![](images/fig-randsampValloc.png){fig-alt="A two by two table describing the scenarios of random sample or not and random allocation or not. Selecting randomly from a population allows for generalization back to the population. Randomly allocating in an experiment allows for establishing causation."}
 
 ### Exercise 3
 
-Replace the code in that chunk so that it counts the volunteers in each `treatment` group. Render.
+Replace the code in that chunk so that it counts the volunteers by both `treatment` and `outcome`. Render.
 
 ```{r}
 #| label: variability-within-data-3
@@ -206,16 +197,16 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: variability-within-data-3-test
 #| echo: true
 malaria |>
-  count(treatment)
+  count(treatment, outcome)
 ```
 
 ###
 
-The groups are small and unequal: 14 vaccine, 6 placebo. "The study is an experiment, as patients were randomly assigned an experiment group," so a difference between the groups can be read as an effect of the vaccine, if it is too big to be chance.
+Two treatments and two outcomes make four combinations, but the count shows only three. The missing one, placebo with no infection, has no volunteers, and `count()` lists only combinations that occur.
 
 ### Exercise 4
 
-Replace the code in that chunk so that it counts the volunteers by both `treatment` and `outcome`. Render.
+Change the code so that the count also shows combinations with no volunteers in them. Render.
 
 ```{r}
 #| label: variability-within-data-4
@@ -229,16 +220,16 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: variability-within-data-4-test
 #| echo: true
 malaria |>
-  count(treatment, outcome)
+  count(treatment, outcome, .drop = FALSE)
 ```
 
 ###
 
-Two treatments and two outcomes make four combinations, but the count shows only three rows. The missing row is placebo with no infection, because "all of the 6 patients in the control group showed some baseline signs of infection," and a count lists only combinations that occur.
+The zero is now a row of its own: placebo, no infection, 0. Dropping it would hide the study's most striking fact.
 
 ### Exercise 5
 
-Change the code so that the count also shows combinations with no volunteers in them. Render.
+Reshape that count into a two-way table, with one row for each `treatment` and one column for each `outcome`. Render.
 
 ```{r}
 #| label: variability-within-data-5
@@ -252,16 +243,17 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: variability-within-data-5-test
 #| echo: true
 malaria |>
-  count(treatment, outcome, .drop = FALSE)
+  count(treatment, outcome, .drop = FALSE) |>
+  pivot_wider(names_from = outcome, values_from = n)
 ```
 
 ###
 
-The zero is now a row of its own: placebo, no infection, 0. A table that silently drops its empty cells hides the single most striking fact in this study.
+This is the chapter's summary table: 9 of the 14 treatment patients remained free of signs of infection while all of the 6 patients in the control group showed some baseline signs of infection.
 
 ### Exercise 6
 
-Reshape that count into a two-way table, with one row for each `treatment` and one column for each `outcome`. Render.
+Replace the code in that chunk so that it calculates, for each `treatment` group, the number of volunteers and the proportion who got an infection. Render.
 
 ```{r}
 #| label: variability-within-data-6
@@ -275,17 +267,18 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: variability-within-data-6-test
 #| echo: true
 malaria |>
-  count(treatment, outcome, .drop = FALSE) |>
-  pivot_wider(names_from = outcome, values_from = n)
+  summarize(n = n(),
+            infection_rate = mean(outcome == "infection"),
+            .by = treatment)
 ```
 
 ###
 
-This is the chapter's summary table: "9 of the 14 treatment patients remained free of signs of infection while all of the 6 patients in the control group showed some baseline signs of infection." Moving the outcomes into columns puts each group's whole story on one line.
+In this study, a smaller proportion of patients who received the vaccine showed signs of an infection (35.7% versus 100%). However, the sample is very small, and it is unclear whether the difference provides *convincing evidence* that the vaccine is effective.
 
 ### Exercise 7
 
-Replace the code in that chunk so that it calculates, for each `treatment` group, the number of volunteers and the proportion who got an infection. Render.
+Replace the code in that chunk so that it calculates a single number: the infection rate in the placebo group minus the infection rate in the vaccine group. Use **infer**. Render.
 
 ```{r}
 #| label: variability-within-data-7
@@ -299,18 +292,17 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: variability-within-data-7-test
 #| echo: true
 malaria |>
-  summarize(n = n(),
-            infection_rate = mean(outcome == "infection"),
-            .by = treatment)
+  specify(response = outcome, explanatory = treatment, success = "infection") |>
+  calculate(stat = "diff in props", order = c("placebo", "vaccine"))
 ```
 
 ###
 
-"In this study, a smaller proportion of patients who received the vaccine showed signs of an infection (35.7% versus 100%)." "However, the sample is very small, and it is unclear whether the difference provides *convincing evidence* that the vaccine is effective."
+The observed difference is 0.643, or 64.3 percentage points. Under the *independence model*, $H_0$, the variables are independent and this difference was due to chance, while under the *alternative model*, $H_A$, it was not due to chance.
 
 ### Exercise 8
 
-Replace the code in that chunk so that it calculates a single number: the infection rate in the placebo group minus the infection rate in the vaccine group. Use **infer**. Render.
+Replace the code in that chunk with a bar plot of the data: one bar for each `treatment` group, filled by `outcome`, with each bar showing proportions rather than counts. Render.
 
 ```{r}
 #| label: variability-within-data-8
@@ -324,17 +316,17 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: variability-within-data-8-test
 #| echo: true
 malaria |>
-  specify(response = outcome, explanatory = treatment, success = "infection") |>
-  calculate(stat = "diff in props", order = c("placebo", "vaccine"))
+  ggplot(aes(x = treatment, fill = outcome)) +
+  geom_bar(position = "fill")
 ```
 
 ###
 
-The observed difference is 0.643, or 64.3 percentage points. Under the **independence model**, $H_0$, "the variables are independent," and this difference "was due to chance"; under the **alternative model**, $H_A$, it "was not due to chance."
+This plot shows the *data distribution*, which describes the shape, center, and variability of the observed data. Bars of equal height hide the fact that the placebo bar stands for 6 people and the vaccine bar for 14.
 
 ### Exercise 9
 
-Replace the code in that chunk with a bar plot of the data: one bar for each `treatment` group, filled by `outcome`, with each bar showing proportions rather than counts. Render.
+Improve the plot. Show the y-axis as percentages, move the legend below the plot, and add a title, axis labels, a subtitle that states the main finding, and a caption giving the number of volunteers in each group and the source. Render.
 
 ```{r}
 #| label: variability-within-data-9
@@ -346,30 +338,6 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ```{r}
 #| label: variability-within-data-9-test
-#| echo: true
-malaria |>
-  ggplot(aes(x = treatment, fill = outcome)) +
-  geom_bar(position = "fill")
-```
-
-###
-
-This plot shows the **data distribution**, which "describes the shape, center, and variability of the **observed data**." Bars of equal height hide the fact that the placebo bar stands for 6 people and the vaccine bar for 14.
-
-### Exercise 10
-
-Improve the plot. Show the y-axis as percentages, move the legend below the plot, and add a title, axis labels, a subtitle that states the main finding, and a caption giving the number of volunteers in each group and the source. Render.
-
-```{r}
-#| label: variability-within-data-10
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{r}
-#| label: variability-within-data-10-test
 #| echo: true
 malaria |>
   ggplot(aes(x = treatment, fill = outcome)) +
@@ -386,14 +354,14 @@ malaria |>
 
 ###
 
-"The observed infection rates (35.7% for the treatment group versus 100% for the control group) suggest the vaccine may be effective." "Additionally, with such small samples, perhaps it's common to observe such large differences when we randomly split a group due to chance alone!"
+The observed infection rates (35.7% for the treatment group versus 100% for the control group) suggest the vaccine may be effective. But with such small samples, perhaps it's common to observe such large differences when we randomly split a group due to chance alone.
 
-### Exercise 11
+### Exercise 10
 
 Commit `analysis.qmd` with the message `"Explore the malaria vaccine data"` and push.
 
 ```{r}
-#| label: variability-within-data-11
+#| label: variability-within-data-10
 #| echo: false
 learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type = "reflection")
 ```
@@ -407,11 +375,11 @@ learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type
 
 ###
 
-"This example is a reminder that the observed outcomes in the data sample may not perfectly reflect the true relationships between variables since there is **random noise**." The next section measures how much noise a study of 20 people can produce.
+This example is a reminder that the observed outcomes in the data sample may not perfectly reflect the true relationships between variables since there is *random noise*. The next section measures how much noise a study of 20 people can produce.
 
 ## Simulating the study
 
-"We're going to implement **simulation** under the setting where we will pretend we know that the malaria vaccine being tested does *not* work." If the vaccine did nothing, "11 patients were going to develop an infection *no matter which group they were randomized into*," so re-randomizing the patients shows what chance alone can do.
+We're going to implement *simulation* under the setting where we will pretend we know that the malaria vaccine being tested does *not* work. Then 11 patients were going to develop an infection *no matter which group they were randomized into*. Ultimately, we want to understand if the large difference we observed in the data is common in these simulations that represent independence.
 
 ### Exercise 1
 
@@ -438,7 +406,7 @@ malaria |>
 
 ###
 
-Your shuffle will probably differ from ours, but the totals cannot: 14 vaccine, 6 placebo, 11 infections, 9 without. The book does the same thing by hand: "we write down 'infection' on 11 cards and 'no infection' on 9 cards," then "thoroughly shuffle the notecards and deal 14 into a pile and 6 into a pile."
+Your shuffle may differ from ours, but the totals cannot: 14 vaccine, 6 placebo, 11 infections, 9 without. By hand, we would write down "infection" on 11 cards and "no infection" on 9 cards, thoroughly shuffle the notecards, and deal 14 into a pile and 6 into a pile.
 
 ### Exercise 2
 
@@ -465,7 +433,7 @@ malaria |>
 
 ###
 
-Our shuffle gave 2/6 - 9/14 = -0.310, which happens to be one of the chapter's own examples: "Repeating the simulation on a computer, we get another difference due to chance." A difference due to chance alone can go either way, and this one favors the placebo.
+Our shuffle gave 2/6 - 9/14 = -0.310, one of the chapter's own examples. A difference due to chance alone can go either way, and this one favors the placebo.
 
 ### Exercise 3
 
@@ -493,7 +461,7 @@ malaria |>
 
 ###
 
-A hundred shuffles produced only six different values, because with 6 placebo patients the number infected can only be 0 through 6, giving seven possible differences in all. The observed 0.643, all six placebo patients infected, is the largest difference this study could possibly produce.
+A hundred shuffles produced only six different values, because with 6 placebo patients the number infected can only be 0 through 6, giving seven possible differences in all. The observed 0.643, all six placebo patients infected, is the largest difference this study can produce.
 
 ### Exercise 4
 
@@ -521,7 +489,7 @@ malaria |>
 
 ###
 
-Our 100 shuffles match the chapter's: "Two of the 100 simulations had a difference of at least 64.3%." Beware a cutoff of exactly 0.643, though, because the observed difference is 9/14 = 0.6428..., and a test of `stat >= 0.643` counts zero shuffles.
+Our 100 shuffles match the chapter's: two of the 100 simulations had a difference of at least 64.3%. The observed difference is 9/14 = 0.6428..., so a cutoff of `stat >= 0.643` would count zero shuffles.
 
 ### Exercise 5
 
@@ -550,11 +518,11 @@ null_dist
 
 ###
 
-These 1,000 differences form a **randomization distribution**, which "describes the shape, center, and variability of all possible values of a **sample statistic** from random allocations of the treatment variable." Each row is one rerun of the study's random assignment.
+These 1,000 differences form a *randomization distribution*, which describes the shape, center, and variability of all possible values of a sample statistic from random allocations of the treatment variable. Each row is one rerun of the study's random assignment.
 
 ### Exercise 6
 
-Delete the line that prints `null_dist`, so that the chunk only creates it. Render.
+Start a new chunk that uses `null_dist` to calculate the mean of the simulated differences. Render.
 
 ```{r}
 #| label: simulating-the-study-6
@@ -564,63 +532,71 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-````{verbatim}
-set.seed(15)
-null_dist <- malaria |>
-  specify(response = outcome, explanatory = treatment, success = "infection") |>
-  hypothesize(null = "independence") |>
-  generate(reps = 1000, type = "permute") |>
-  calculate(stat = "diff in props", order = c("placebo", "vaccine"))
-````
+```{r}
+#| label: simulating-the-study-6-test
+#| echo: true
+null_dist |>
+  summarize(mean_diff = mean(stat))
+```
 
 ###
 
-The seed matters here: without it, every render would draw a fresh 1,000 shuffles and every number below would change slightly. "We choose between these two competing claims by assessing if the data conflict so much with $H_0$ that the independence model cannot be deemed reasonable."
+Our mean is 0.014, close to zero. The distribution of these simulated differences is centered around 0 because we simulated these differences assuming that the independence model was true.
 
 ### Exercise 7
 
-Add `#| cache: true` to that chunk. Render.
+Replace the code in that chunk so that it calculates, from `null_dist`, the proportion of shuffles with a difference at least as large as the observed 0.643. Use **infer**. Render.
 
 ```{r}
 #| label: simulating-the-study-7
 #| echo: false
-learnr2::question("In the bash Terminal, run ls. CP/CR.", type = "reflection")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
 
-```{.output}
-analysis.html  analysis.qmd  analysis_cache  analysis_files
+```{r}
+#| label: simulating-the-study-7-test
+#| echo: true
+obs_diff <- malaria |>
+  specify(response = outcome, explanatory = treatment, success = "infection") |>
+  calculate(stat = "diff in props", order = c("placebo", "vaccine"))
+
+null_dist |>
+  get_p_value(obs_stat = obs_diff, direction = "greater")
 ```
 
 ###
 
-`analysis_cache` now holds the 1,000 simulated differences, so later renders reuse them instead of shuffling again. A cached chunk only re-runs when its code changes.
+Our p-value is 0.012: 12 of 1,000 shuffles were as extreme as the study. Such a low probability indicates a rare event.
 
 ### Exercise 8
 
-Your Source Control count just jumped, because Git sees every file in the new cache directory. Add `analysis_cache` to `.gitignore`, and the count drops back.
+This study is small enough to skip simulation and count every possible random assignment. Replace the code in that chunk with a small table of three numbers: the number of ways to choose 6 placebo patients from 20, the number of those ways that put all 6 among the 11 who got an infection, and the second divided by the first. Render.
 
 ```{r}
 #| label: simulating-the-study-8
 #| echo: false
-learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type = "reflection")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
 
-```{.output}
-analysis_files
-analysis_cache
+```{r}
+#| label: simulating-the-study-8-test
+#| echo: true
+tibble(all_assignments = choose(20, 6),
+       all_placebo_infected = choose(11, 6),
+       proportion = all_placebo_infected / all_assignments)
 ```
 
 ###
 
-"Ultimately, we want to understand if the large difference we observed in the data is common in these simulations that represent independence." "If it is common, then maybe the difference we observed was purely due to chance."
+Only 462 of the 38,760 possible assignments put all six placebo patients among the infected, a proportion of 0.0119, against our simulated 0.012. Usually it's not feasible to generate the full distribution of all possible values of the sample statistic, but 20 volunteers make it small enough to count.
 
 ### Exercise 9
 
-Start a new chunk that uses `null_dist` to calculate the mean of the simulated differences. Render.
+Replace the code in that chunk with a bootstrap distribution: resample the 20 volunteers with replacement 1,000 times, with a seed set first, and calculate the same difference in infection rates for each resample. Show the mean of the 1,000 differences. Render.
 
 ```{r}
 #| label: simulating-the-study-9
@@ -633,17 +609,21 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: simulating-the-study-9-test
 #| echo: true
-null_dist |>
+set.seed(15)
+malaria |>
+  specify(response = outcome, explanatory = treatment, success = "infection") |>
+  generate(reps = 1000, type = "bootstrap") |>
+  calculate(stat = "diff in props", order = c("placebo", "vaccine")) |>
   summarize(mean_diff = mean(stat))
 ```
 
 ###
 
-Our mean is 0.014, close to zero. "Note that the distribution of these simulated differences is centered around 0," because "we simulated these differences assuming that the independence model was true."
+Our bootstrap mean is 0.652, near the observed 0.643, while the randomization distribution, which describes the null hypothesis, centered near 0. Since bootstrap distributions are generated by randomly resampling from the observed data, they are centered at the sample statistic.
 
 ### Exercise 10
 
-Replace the code in that chunk so that it calculates, from `null_dist`, the proportion of shuffles with a difference at least as large as the observed 0.643. Use **infer**. Render.
+Replace the code in that chunk with a bar plot of `null_dist`: the number of shuffles for each value of the difference, with the bars at least as large as the observed difference in a different color. Render.
 
 ```{r}
 #| label: simulating-the-study-10
@@ -656,21 +636,18 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: simulating-the-study-10-test
 #| echo: true
-obs_diff <- malaria |>
-  specify(response = outcome, explanatory = treatment, success = "infection") |>
-  calculate(stat = "diff in props", order = c("placebo", "vaccine"))
-
 null_dist |>
-  get_p_value(obs_stat = obs_diff, direction = "greater")
+  ggplot(aes(x = stat, fill = stat >= 0.64)) +
+  geom_bar()
 ```
 
 ###
 
-Our p-value is 0.012: 12 of 1,000 shuffles were as extreme as the study, and yours will be close. The chapter's 100 shuffles gave "about 2% of the time," and "such a low probability indicates a rare event."
+The bars sit at six of the seven possible differences. The seventh, -0.786, which needs all six placebo patients free of infection, never came up.
 
 ### Exercise 11
 
-This study is small enough to skip simulation and count every possible random assignment. Replace the code in that chunk with a small table of three numbers: the number of ways to choose 6 placebo patients from 20, the number of those ways that put all 6 among the 11 who got an infection, and the second divided by the first. Render.
+Improve the plot. Make the bars narrower, use grey for the ordinary bars and a strong color for the extreme one, drop the legend, and add a title, axis labels, a subtitle that states the main finding, and a caption giving the number of volunteers, the number of shuffles, and the source. Render.
 
 ```{r}
 #| label: simulating-the-study-11
@@ -682,81 +659,6 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ```{r}
 #| label: simulating-the-study-11-test
-#| echo: true
-tibble(all_assignments = choose(20, 6),
-       all_placebo_infected = choose(11, 6),
-       proportion = all_placebo_infected / all_assignments)
-```
-
-###
-
-Only 462 of the 38,760 possible assignments put all six placebo patients among the infected, a proportion of 0.0119, against our simulated 0.012. Usually "it's not feasible to generate the full distribution of all possible values of the sample statistic," but 20 volunteers make it small enough to count.
-
-### Exercise 12
-
-Replace the code in that chunk with a bootstrap distribution: resample the 20 volunteers with replacement 1,000 times, with a seed set first, and calculate the same difference in infection rates for each resample. Show the mean of the 1,000 differences. Render.
-
-```{r}
-#| label: simulating-the-study-12
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{r}
-#| label: simulating-the-study-12-test
-#| echo: true
-set.seed(15)
-malaria |>
-  specify(response = outcome, explanatory = treatment, success = "infection") |>
-  generate(reps = 1000, type = "bootstrap") |>
-  calculate(stat = "diff in props", order = c("placebo", "vaccine")) |>
-  summarize(mean_diff = mean(stat))
-```
-
-###
-
-Our bootstrap mean is 0.652, near the observed 0.643, while the randomization mean was near 0. "Since bootstrap distributions are generated by randomly resampling from the observed data, they are centered at the sample statistic," but "by randomly allocating the treatment variable, the randomization distribution describes the null hypothesis."
-
-### Exercise 13
-
-Replace the code in that chunk with a bar plot of `null_dist`: the number of shuffles for each value of the difference, with the bars at least as large as the observed difference in a different color. Render.
-
-```{r}
-#| label: simulating-the-study-13
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{r}
-#| label: simulating-the-study-13-test
-#| echo: true
-null_dist |>
-  ggplot(aes(x = stat, fill = stat >= 0.64)) +
-  geom_bar()
-```
-
-###
-
-The bars sit at six of the seven possible differences; -0.786, which needs all six placebo patients free of infection, never came up. Only the single bar on the far right matches the study.
-
-### Exercise 14
-
-Improve the plot. Make the bars narrower, use grey for the ordinary bars and a strong color for the extreme one, drop the legend, and add a title, axis labels, a subtitle that states the main finding, and a caption giving the number of volunteers, the number of shuffles, and the source. Render.
-
-```{r}
-#| label: simulating-the-study-14
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{r}
-#| label: simulating-the-study-14-test
 #| echo: true
 null_dist |>
   ggplot(aes(x = stat, fill = stat >= 0.64)) +
@@ -771,14 +673,14 @@ null_dist |>
 
 ###
 
-"When we conduct formal studies, usually we reject the notion that we just happened to observe a rare event." "That is, we are concluding the data provide strong evidence that the vaccine provides some protection against malaria in this clinical setting."
+When we conduct formal studies, usually we reject the notion that we just happened to observe a rare event. So we conclude the data provide strong evidence that the vaccine provides some protection against malaria in this clinical setting.
 
-### Exercise 15
+### Exercise 12
 
-Commit `analysis.qmd` and `.gitignore` with the message `"Simulate the malaria study"` and push.
+Commit `analysis.qmd` with the message `"Simulate the malaria study"` and push.
 
 ```{r}
-#| label: simulating-the-study-15
+#| label: simulating-the-study-12
 #| echo: false
 learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type = "reflection")
 ```
@@ -793,13 +695,15 @@ learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type
 
 ###
 
-"Errors do occur, just like rare events, and we might choose the wrong model." "While we do not always choose correctly, statistical inference gives us tools to control and evaluate how often decision errors occur."
+Errors do occur, just like rare events, and we might choose the wrong model. While we do not always choose correctly, statistical inference gives us tools to control and evaluate how often decision errors occur.
 
 ## Summary
 
 This tutorial covered [Chapter 15: Applications: Foundations](https://openintrostat.github.io/ims/foundations-applications.html) from [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) by Mine Çetinkaya-Rundel and Johanna Hardin. You have learned to judge whether a difference between two groups in a small randomized experiment could be due to chance alone, by simulating the experiment's random assignment many times, and to tell apart the data, randomization, and bootstrap distributions.
 
 For the trial itself, read "[PfSPZ vaccine induces strain-transcending T cells and durable protection against heterologous controlled human malaria infection](https://doi.org/10.1073/pnas.1615324114)" by Lyke and colleagues, the source the `malaria` help page cites. For more practice with these ideas, the chapter points to OpenIntro's [Tutorial 4: Foundations of inference](https://openintrostat.github.io/ims-tutorials/04-foundations/).
+
+Many sentences in this tutorial come from the chapter, and its figure from [Chapter 2](https://openintrostat.github.io/ims/data-design.html), all used under the book's [CC BY-SA 3.0 license](https://creativecommons.org/licenses/by-sa/3.0/).
 
 ### Exercise 1
 
@@ -844,13 +748,14 @@ malaria |>
 ```
 
 ```{r}
-#| cache: true
 set.seed(15)
 null_dist <- malaria |>
   specify(response = outcome, explanatory = treatment, success = "infection") |>
   hypothesize(null = "independence") |>
   generate(reps = 1000, type = "permute") |>
   calculate(stat = "diff in props", order = c("placebo", "vaccine"))
+
+null_dist
 ```
 
 ```{r}
@@ -868,7 +773,7 @@ null_dist |>
 
 ###
 
-The first plot is a data distribution and the second a randomization distribution, two of the kinds the chapter defines. "A distribution always describes variability, but sometimes it is worth reflecting on *what* is varying."
+Your first plot is a data distribution and your second a randomization distribution. A distribution always describes variability, but sometimes it is worth reflecting on *what* is varying.
 
 ### Exercise 2
 
@@ -890,7 +795,7 @@ Your answer should look like `https://your-github-username.github.io/application
 
 ###
 
-"The methods presented in this text (and used in science generally) are typically used interchangeably across ideas of random samples or random allocations of the treatment." "The most important thing to consider is how to contextualize the conclusion in terms of the problem."
+The methods presented in this text (and used in science generally) are typically used interchangeably across ideas of random samples or random allocations of the treatment. The most important thing to consider is how to contextualize the conclusion in terms of the problem.
 
 ### Exercise 3
 
@@ -908,7 +813,7 @@ Your answer should look like `https://github.com/your-github-username/applicatio
 
 ###
 
-"One field of statistics, statistical inference, is built on evaluating whether such differences are due to chance." "In statistical inference, data scientists evaluate which model is most reasonable given the data."
+One field of statistics, statistical inference, is built on evaluating whether such differences are due to chance. In statistical inference, data scientists evaluate which model is most reasonable given the data.
 
 ## Your Answers
 

@@ -33,7 +33,7 @@ This tutorial covers [Chapter 16: Inference for a single proportion](https://ope
 
 ### Exercise 1
 
-You should be doing this tutorial in a repo named `inference-for-a-single-proportion`. If you are not, create one and then connect to it. You may need to restart this tutorial after you do so.
+You should be doing this tutorial in a repo named `inference-for-a-single-proportion`. If you are not, create one and then connect to it.
 
 Create a new file, `analysis.qmd`, with the title `"Inference for a Single Proportion"` and your name as the author. In a bash Terminal, render it:
 
@@ -61,7 +61,7 @@ analysis_files
 
 ###
 
-"Note that there is only one variable being measured in a study which focuses on one proportion." Every dataset in this tutorial is a single yes-or-no column, with one row per person.
+There is only one variable being measured in a study which focuses on one proportion. Every dataset in this tutorial has a single yes-or-no variable, with one row per person.
 
 ### Exercise 2
 
@@ -82,7 +82,7 @@ library(tidyverse)
 
 ###
 
-The **tidyverse** includes **[readr](https://readr.tidyverse.org/)**, which reads the CSV files you are about to download, and **[ggplot2](https://ggplot2.tidyverse.org/)**, which drew the chapter's null distribution. The chapter shades that distribution's tail with **[gghighlight](https://yutannihilation.github.io/gghighlight/)**, a small add-on to **ggplot2**.
+The **tidyverse** includes **[readr](https://readr.tidyverse.org/)**, which reads the CSV files you are about to download, and **[ggplot2](https://ggplot2.tidyverse.org/)**, which drew the chapter's null distribution.
 
 ### Exercise 3
 
@@ -104,7 +104,7 @@ library(infer)
 
 ###
 
-The chapter notes that "simulations are typically programmed into a computer, which is much more efficient." **infer** is the package OpenIntro's own labs use for them, with the same four steps for every test: specify the variable, state the null hypothesis, generate simulated data, and calculate a statistic.
+Simulations are typically programmed into a computer, which is much more efficient than simulating by hand. **infer** is the package OpenIntro's labs use for them, with the same four steps for every test: specify the variable, state the null hypothesis, generate simulated data, and calculate a statistic.
 
 ### Exercise 4
 
@@ -124,7 +124,7 @@ analysis.html  analysis.qmd  analysis_files  data
 
 ###
 
-Neither of the chapter's studies is in an R package: the book reports each as a count, such as 3 complications in 62 surgeries. A count is enough for a single proportion, but a file with one row per case is how most data arrives.
+The book reports each of the chapter's studies only as a count, such as 3 complications in 62 surgeries. A count is enough for a single proportion, but most data arrives as one row per case.
 
 ### Exercise 5
 
@@ -150,7 +150,7 @@ medical_consultant.csv
 
 ###
 
-"One consultant tried to attract patients by noting the average complication rate for liver donor surgeries in the US is about 10%, but her clients have only had 3 complications in the 62 liver donor surgeries she has facilitated." The file rebuilds those counts as 62 rows, one for each surgery.
+One consultant tried to attract patients by noting the average complication rate for liver donor surgeries in the US is about 10%, but her clients have only had 3 complications in the 62 liver donor surgeries she has facilitated. The file rebuilds those counts as 62 rows, one for each surgery.
 
 ### Exercise 6
 
@@ -177,11 +177,11 @@ medical_consultant.csv  payday_credit_check.csv  payday_regulation.csv
 
 ###
 
-"A simple random sample of 826 payday loan borrowers was surveyed to better understand their interests around regulation and costs." Each payday file has one row for each of those 826 borrowers, with their answer to one question about regulation.
+A simple random sample of 826 payday loan borrowers was surveyed to better understand their interests around regulation and costs. Each payday file has one row for each of those 826 borrowers, with their answer to one question about regulation.
 
 ## Bootstrap test for a proportion
 
-"Because the nature of the research question at hand focuses on only a single variable, there is not a way to randomize the variable across a different (explanatory) variable." So this section tests the medical consultant's claim by simulating studies in a world where her complication rate is the US rate of 10%.
+Because the nature of the research question at hand focuses on only a single variable, there is not a way to randomize the variable across a different (explanatory) variable. So this section tests the medical consultant's claim by simulating studies in a world where her complication rate is the US rate of 10%.
 
 ### Exercise 1
 
@@ -208,7 +208,7 @@ client,complication
 
 ###
 
-The file has no help page, so the chapter is its documentation, and it warns: "The claim is that there is a causal connection, but the data are observational." "Patients who hire this medical consultant may have lower complication rates for other reasons."
+The consultant's claim is that there is a causal connection, but the data are observational. Patients who hire this medical consultant may have lower complication rates for other reasons.
 
 ### Exercise 2
 
@@ -230,7 +230,7 @@ read_csv("data/medical_consultant.csv", show_col_types = FALSE)
 
 ###
 
-Each of the 62 rows is one liver donor surgery the consultant facilitated. "While it is not possible to assess this causal claim, it is still possible to test for an association using these data."
+Each of the 62 rows is one liver donor surgery the consultant facilitated. While it is not possible to assess this causal claim, it is still possible to test for an association using these data.
 
 ### Exercise 3
 
@@ -253,7 +253,7 @@ read_csv("data/medical_consultant.csv", show_col_types = FALSE) |>
 
 ###
 
-"For each observational unit, the single variable is measured as either a success or failure." Here a complication counts as the success, a label for the outcome we are counting, not a good outcome.
+For each observational unit, the single variable is measured as either a success or failure. Here a complication counts as the success, a label for the outcome we are counting, not a good outcome.
 
 ### Exercise 4
 
@@ -276,7 +276,7 @@ read_csv("data/medical_consultant.csv", show_col_types = FALSE) |>
 
 ###
 
-The sample proportion, 3/62 = 0.0484, is half the US rate. The null hypothesis says the gap is chance: "There is no association between the consultant's contributions and the clients' complication rate."
+The sample proportion, 3/62 = 0.0484, is half the US rate. The null hypothesis is that there is no association between the consultant's contributions and the clients' complication rate.
 
 ### Exercise 5
 
@@ -303,7 +303,7 @@ read_csv("data/medical_consultant.csv", show_col_types = FALSE) |>
 
 ###
 
-"Sampling a marble from the bag (with 10% red marbles) is one way of simulating whether a patient has a complication if the true complication rate is 10%." Our simulated study had 6 complications (0.0968) and the chapter's had 5 (0.081); with a different seed, yours will differ too.
+Sampling a marble from the bag (with 10% red marbles) is one way of simulating whether a patient has a complication *if the true complication rate is 10%*. Our simulated study had 6 complications (0.0968), and the chapter's had 5 (0.081).
 
 ### Exercise 6
 
@@ -332,7 +332,7 @@ null_dist
 
 ###
 
-Each row is one simulated study of 62 clients in a world where the true rate is 10%. "Simulating observations using a hypothesized null parameter value is often called a **parametric bootstrap simulation**," and "Roughly 10,000 seems sufficient."
+Each row is one simulated study of 62 clients in a world where the true rate is 10%. Simulating observations using a hypothesized null parameter value is often called a *parametric bootstrap simulation*.
 
 ### Exercise 7
 
@@ -355,11 +355,11 @@ null_dist |>
 
 ###
 
-The 10,000 studies produced only 18 different proportions, because a study of 62 clients can only have 0, 1, 2, or some other whole number of complications. The most common, 6/62 = 0.0968 in 1,700 studies, is the count closest to 10% of 62.
+The 10,000 studies produced only 18 different proportions, because a study of 62 clients can only have a whole number of complications. Together they form the null distribution, which is the distribution of the test statistic if the null hypothesis is true.
 
 ### Exercise 8
 
-Change the chunk so that it only creates `null_dist`, with no printing or counting. Render.
+Start a new chunk that uses `null_dist` to calculate how many of the simulated proportions are at or below the observed 3/62, and what proportion of the 10,000 that is. Render.
 
 ```{r}
 #| label: bootstrap-test-for-a-proportion-8
@@ -369,74 +369,8 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-````{verbatim}
-set.seed(16)
-null_dist <- read_csv("data/medical_consultant.csv", show_col_types = FALSE) |>
-  specify(response = complication, success = "yes") |>
-  hypothesize(null = "point", p = 0.10) |>
-  generate(reps = 10000, type = "draw") |>
-  calculate(stat = "prop")
-````
-
-###
-
-"The p-value is computed based on the null distribution, which is the distribution of the test statistic if the null hypothesis is true." `null_dist` is that distribution, built by simulation rather than by formula.
-
-### Exercise 9
-
-Add `#| cache: true` to that chunk. Render.
-
 ```{r}
-#| label: bootstrap-test-for-a-proportion-9
-#| echo: false
-learnr2::question("In the bash Terminal, run ls. CP/CR.", type = "reflection")
-```
-
-###
-
-```{.output}
-analysis.html  analysis.qmd  analysis_cache  analysis_files  data
-```
-
-###
-
-`analysis_cache` now holds all 10,000 rows of `null_dist`, so later renders reuse them instead of simulating again. Because the seed is inside the cached chunk, the simulation is the same 10,000 studies even if the cache is deleted and rebuilt.
-
-### Exercise 10
-
-Your Source Control count just jumped, because Git sees every file in the new cache directory. Add `analysis_cache` to `.gitignore`, and the count drops back.
-
-```{r}
-#| label: bootstrap-test-for-a-proportion-10
-#| echo: false
-learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{.output}
-analysis_files
-analysis_cache
-```
-
-###
-
-"Regardless of the statistical method chosen, the p-value is always derived by analyzing the null distribution of the test statistic." The rest of this section reads the p-value off `null_dist`.
-
-### Exercise 11
-
-Start a new chunk that uses `null_dist` to calculate how many of the simulated proportions are at or below the observed 3/62, and what proportion of the 10,000 that is. Render.
-
-```{r}
-#| label: bootstrap-test-for-a-proportion-11
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{r}
-#| label: bootstrap-test-for-a-proportion-11-test
+#| label: bootstrap-test-for-a-proportion-8-test
 #| echo: true
 null_dist |>
   summarize(at_or_below = sum(stat <= 3 / 62),
@@ -445,14 +379,14 @@ null_dist |>
 
 ###
 
-"Supposing the null hypothesis is true, we can compute the p-value by identifying the probability of observing a test statistic that favors the alternative hypothesis at least as strongly as the observed test statistic." In our simulation, 1,247 of 10,000 studies had 3 or fewer complications; in the chapter's, 1,170 did.
+Supposing the null hypothesis is true, we can compute the p-value by identifying the probability of observing a test statistic that favors the alternative hypothesis at least as strongly as the observed test statistic. In our simulation, 1,247 of 10,000 studies had 3 or fewer complications, and in the chapter's, 1,170 did.
 
-### Exercise 12
+### Exercise 9
 
 Replace the code in that chunk so that it calculates the same p-value with **infer**'s own tool for the job. The alternative hypothesis is that the consultant's rate is less than 10%. Render.
 
 ```{r}
-#| label: bootstrap-test-for-a-proportion-12
+#| label: bootstrap-test-for-a-proportion-9
 #| echo: false
 learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
@@ -460,7 +394,7 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ###
 
 ```{r}
-#| label: bootstrap-test-for-a-proportion-12-test
+#| label: bootstrap-test-for-a-proportion-9-test
 #| echo: true
 null_dist |>
   get_p_value(obs_stat = 3 / 62, direction = "less")
@@ -468,14 +402,14 @@ null_dist |>
 
 ###
 
-Our p-value is 0.125 and the chapter's is 0.117, and yours will be close to both. "It is not exact because the simulated null distribution itself is only a close approximation of the sampling distribution of the sample statistic."
+Our p-value is 0.125 and the chapter's is 0.117. Neither is exact because the simulated null distribution itself is only a close approximation of the sampling distribution of the sample statistic.
 
-### Exercise 13
+### Exercise 10
 
 Replace the code in that chunk with a histogram of `null_dist`, with one bar for each possible proportion and a dashed line at the observed 3/62. Render.
 
 ```{r}
-#| label: bootstrap-test-for-a-proportion-13
+#| label: bootstrap-test-for-a-proportion-10
 #| echo: false
 learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
@@ -483,7 +417,7 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ###
 
 ```{r}
-#| label: bootstrap-test-for-a-proportion-13-test
+#| label: bootstrap-test-for-a-proportion-10-test
 #| echo: true
 null_dist |>
   ggplot(aes(x = stat)) +
@@ -495,12 +429,12 @@ null_dist |>
 
 The distribution is lopsided: it stops at zero on the left but stretches to 0.274 on the right. The observed 3/62 sits in the left shoulder, not out in the tail.
 
-### Exercise 14
+### Exercise 11
 
 Improve the plot. Shade the bars at or below the observed proportion in a different color, show the x-axis as percentages, and add a title, axis labels, a subtitle that states the main finding, and a caption giving the number of surgeries, the number of simulations, and the source. Render.
 
 ```{r}
-#| label: bootstrap-test-for-a-proportion-14
+#| label: bootstrap-test-for-a-proportion-11
 #| echo: false
 learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
@@ -508,7 +442,7 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ###
 
 ```{r}
-#| label: bootstrap-test-for-a-proportion-14-test
+#| label: bootstrap-test-for-a-proportion-11-test
 #| echo: true
 null_dist |>
   ggplot(aes(x = stat, fill = stat <= 3 / 62)) +
@@ -525,14 +459,14 @@ null_dist |>
 
 ###
 
-"There is not enough evidence to reject the null hypothesis in favor of the alternative hypothesis." "There is no evidence to make a claim in either direction, so we cannot make any claims about whether the consultant is good at their job."
+There is not enough evidence to reject the null hypothesis in favor of the alternative hypothesis. There is no evidence to make a claim in either direction, so we cannot make any claims about whether the consultant is good at their job.
 
-### Exercise 15
+### Exercise 12
 
-Commit `analysis.qmd`, `.gitignore`, and the `data` directory with the message `"Simulate the consultant's null distribution"` and push.
+Commit `analysis.qmd` and the `data` directory with the message `"Simulate the consultant's null distribution"` and push.
 
 ```{r}
-#| label: bootstrap-test-for-a-proportion-15
+#| label: bootstrap-test-for-a-proportion-12
 #| echo: false
 learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type = "reflection")
 ```
@@ -546,11 +480,11 @@ learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type
 
 ###
 
-Simulating under the null "has a fantastic advantage that it can be used for any sample size (a huge benefit for small samples, a nice alternative for large samples)." Sixty-two surgeries with only a handful of complications is the small-sample case.
+The bootstrap simulation for hypothesis testing has a fantastic advantage that it can be used for any sample size (a huge benefit for small samples, a nice alternative for large samples). Sixty-two surgeries with only a handful of complications is the small-sample case.
 
 ## Mathematical model for a proportion
 
-"When the observations are independent and the sample size is sufficiently large, the normal model will describe the sampling distribution of the sample proportion quite well; when the observations violate the conditions, the normal model can be inaccurate." This section checks those conditions, then builds a confidence interval and a hypothesis test from the normal model, each checked against a simulation.
+When the observations are independent and the sample size is sufficiently large, the normal model will describe the sampling distribution of the sample proportion quite well, and when the observations violate the conditions, the normal model can be inaccurate. This section checks those conditions, then builds a confidence interval and a hypothesis test from the normal model, each checked against a simulation.
 
 ### Exercise 1
 
@@ -575,7 +509,7 @@ read_csv("data/medical_consultant.csv", show_col_types = FALSE) |>
 
 ###
 
-The **success-failure condition**: "We expected to see at least 10 successes and 10 failures in the sample." With only 6.2 expected complications, the consultant's data fail it, so the normal model should not be used for them.
+The *success-failure condition* says we should expect to see at least 10 successes and 10 failures in the sample. With only 6.2 expected complications, the consultant's data fail it, so the normal model should not be used for them.
 
 ### Exercise 2
 
@@ -602,7 +536,7 @@ read_csv("data/medical_consultant.csv", show_col_types = FALSE) |>
 
 ###
 
-The normal model's p-value, 0.088, is well below the 0.125 from simulation, which would make the consultant's record look more unusual than it is. "Particularly, it can underestimate the variability of the sample proportion."
+The normal model's p-value, 0.088, is well below the 0.125 from simulation, making the consultant's record look more unusual than it is. When the conditions fail, the normal model can underestimate the variability of the sample proportion.
 
 ### Exercise 3
 
@@ -629,7 +563,7 @@ borrower,support
 
 ###
 
-The chapter says only that 70% of 826 borrowers "supported new regulations on payday lenders." "The data are a random sample, so it is reasonable to assume that the observations are independent and representative of the population of interest."
+The chapter says only that 70% of the 826 responses supported new regulations on payday lenders. The data are a random sample, so it is reasonable to assume that the observations are independent and representative of the population of interest.
 
 ### Exercise 4
 
@@ -652,7 +586,7 @@ read_csv("data/payday_regulation.csv", show_col_types = FALSE) |>
 
 ###
 
-"The independence condition is a more nuanced requirement." "For example, there exist no statistical methods available to truly correct the inherent biases of data from a convenience sample."
+The independence condition is a more nuanced requirement. For example, there exist no statistical methods available to truly correct the inherent biases of data from a convenience sample.
 
 ### Exercise 5
 
@@ -677,7 +611,7 @@ read_csv("data/payday_regulation.csv", show_col_types = FALSE) |>
 
 ###
 
-Seventy percent of 826 is 578.2, and no poll has a fifth of a borrower, so the published "70%" was rounded from 578 supporters, a proportion of 0.6998. Rebuilding data from a reported percentage always takes a decision about rounding, and 578 is also the count the chapter uses to check its conditions.
+Seventy percent of 826 is 578.2, so the published 70% was rounded from 578 supporters, a proportion of 0.6998. The chapter also uses 578 to check its conditions.
 
 ### Exercise 6
 
@@ -703,7 +637,7 @@ read_csv("data/payday_regulation.csv", show_col_types = FALSE) |>
 
 ###
 
-For a confidence interval, the true proportion is unknown, so the condition is checked with the sample proportion: 578 and 248. "Since both values are at least 10, we can use the normal distribution to model" the sample proportion.
+For confidence intervals, the sample proportion is used to check the success-failure condition, giving 578 and 248. Since both values are at least 10, we can use the normal distribution to model the sample proportion.
 
 ### Exercise 7
 
@@ -730,7 +664,7 @@ read_csv("data/payday_regulation.csv", show_col_types = FALSE) |>
 
 ###
 
-Our bootstrap interval runs from 0.667 to 0.731; yours will differ slightly. "A confidence interval provides a range of plausible values for the parameter" — here, the proportion of all payday borrowers who support regulation.
+Our bootstrap interval runs from 0.667 to 0.731. A confidence interval provides a range of plausible values for the parameter, here the proportion of all payday borrowers who support regulation.
 
 ### Exercise 8
 
@@ -755,7 +689,7 @@ read_csv("data/payday_regulation.csv", show_col_types = FALSE) |>
 
 ###
 
-The formula gives 0.0159, the chapter's 0.016, and the standard deviation of our 10,000 bootstrap proportions was 0.0161. "For confidence intervals, we use" the sample proportion "as the best guess of" the true one.
+The formula gives 0.0159, the chapter's 0.016, and the standard deviation of our 10,000 bootstrap proportions was 0.0161. The value of the standard error depends heavily on the sample size.
 
 ### Exercise 9
 
@@ -782,7 +716,7 @@ read_csv("data/payday_regulation.csv", show_col_types = FALSE) |>
 
 ###
 
-The formula's interval, 0.668 to 0.731, matches the bootstrap's 0.667 to 0.731. "We are 95% confident that the true proportion of payday borrowers who supported regulation at the time of the poll was between 0.669 and 0.731," the chapter says, starting from the rounded 0.70.
+The formula's interval, 0.668 to 0.731, matches the bootstrap's 0.667 to 0.731. We are 95% confident that the true proportion of payday borrowers who supported regulation at the time of the poll was between 0.668 and 0.731.
 
 ### Exercise 10
 
@@ -813,7 +747,9 @@ read_csv("data/payday_regulation.csv", show_col_types = FALSE) |>
 
 ###
 
-The margin of error grows from 0.026 at 90% to 0.041 at 99%, as z-star grows from 1.64 to 2.58. "Think back to the analogy about trying to catch a fish: if we want to be more sure that we will catch the fish, we should use a wider net."
+The margin of error grows from 0.026 at 90% to 0.041 at 99%, as z-star grows from 1.64 to 2.58. We select z-star so that the area between -z-star and z-star in the normal model corresponds to the confidence level.
+
+![](images/fig-choosingZForCI.png){fig-alt="A normal curve with 99% of the area between negative z star and positive z star. The area between negative z star and positive z star increases as z star becomes larger. If the confidence level is 99 percent, we choose z star such that 99 percent of the normal curve is between negative z star and positive z star, which corresponds to 0.5 percent in the lower tail and 0.5 percent in the upper tail. The z star value is 2.58."}
 
 ### Exercise 11
 
@@ -840,7 +776,7 @@ borrower,support
 
 ###
 
-"One possible regulation for payday lenders is that they would be required to do a credit check and evaluate debt payments against the borrower's finances." The chapter reports that 51% of 826 borrowers supported it; 51% of 826 is 421.26, so the file has 421 supporters.
+One possible regulation for payday lenders is that they would be required to do a credit check and evaluate debt payments against the borrower's finances. The chapter reports that 51% of 826 borrowers supported it, and 51% of 826 is 421.26, so the file has 421 supporters.
 
 ### Exercise 12
 
@@ -866,7 +802,7 @@ read_csv("data/payday_credit_check.csv", show_col_types = FALSE) |>
 
 ###
 
-The question is whether a majority supports the regulation, so the null value is 50%, and the alternative is that more than 50% do. "In a hypothesis test, the success-failure condition is checked using the null proportion," and 413 expected supporters and 413 expected non-supporters pass easily.
+The question is whether a majority supports the regulation, so the null value is 50%, and the alternative is that more than 50% do. In a hypothesis test, the success-failure condition is checked using the null proportion, and 413 expected supporters and 413 expected non-supporters pass easily.
 
 ### Exercise 13
 
@@ -894,7 +830,7 @@ read_csv("data/payday_credit_check.csv", show_col_types = FALSE) |>
 
 ###
 
-In our simulation, 29.8% of polls from an evenly split population showed at least 421 supporters out of 826; yours will be close. "In either case, the general ideas of confidence intervals and hypothesis tests remain the same, but the strategy or technique used to generate the interval or p-value change."
+In our simulation, 29.8% of polls from an evenly split population showed at least 421 supporters out of 826. The general ideas of confidence intervals and hypothesis tests remain the same, but the strategy or technique used to generate the interval or p-value change.
 
 ### Exercise 14
 
@@ -921,7 +857,9 @@ read_csv("data/payday_credit_check.csv", show_col_types = FALSE) |>
 
 ###
 
-"When the null hypothesis is true and the conditions are met, Z has a standard normal distribution." Our Z of 0.557 gives a p-value of 0.289, close to the simulation's 0.298; the chapter's 0.59 and 0.2776 come from rounding the proportion to 0.51 and the standard error to 0.017.
+When the null hypothesis is true and the conditions are met, Z has a standard normal distribution. Our Z of 0.557 gives a p-value of 0.289, the shaded tail below, close to the simulation's 0.298 and the chapter's 0.2776.
+
+![](images/fig-normTail-51.png){fig-alt="A normal curve centered at 0.5 with a standard deviation of 0.017. The area to the right of 0.51 is shaded."}
 
 ### Exercise 15
 
@@ -952,7 +890,7 @@ read_csv("data/payday_credit_check.csv", show_col_types = FALSE) |>
 
 ###
 
-The normal curve traces the simulated histogram almost exactly, unlike the consultant's lopsided null distribution. With 413 expected successes and failures instead of 6.2, the success-failure condition is what separates the two cases.
+The normal curve traces the simulated histogram almost exactly, unlike the consultant's lopsided null distribution. The success-failure condition separates the two cases: 413 expected successes and failures here, against 6.2 expected complications for the consultant.
 
 ### Exercise 16
 
@@ -993,7 +931,7 @@ read_csv("data/payday_credit_check.csv", show_col_types = FALSE) |>
 
 ###
 
-"The poll does not provide convincing evidence that a majority of payday loan borrowers support regulations around credit checks and evaluation of debt payments." "We cannot claim that exactly 50% of people support the regulation, but we cannot claim a majority in either direction."
+The poll does not provide convincing evidence that a majority of payday loan borrowers support regulations around credit checks and evaluation of debt payments. We cannot claim that exactly 50% of people support the regulation, but we cannot claim a majority in either direction.
 
 ### Exercise 17
 
@@ -1015,17 +953,17 @@ b6f30c2 (HEAD -> main, origin/main) Test payday loan support with the normal mod
 
 ###
 
-"When using the mathematical model, keep in mind the success-failure conditions." The consultant's 62 surgeries failed them and the normal model understated her p-value, while the polls of 826 borrowers passed and the formula matched the simulation.
+The consultant's 62 surgeries failed the success-failure condition and the normal model understated her p-value, while the polls of 826 borrowers passed and the formula matched the simulation.
 
 ## Summary
 
 This tutorial covered [Chapter 16: Inference for a single proportion](https://openintrostat.github.io/ims/inference-one-prop.html) from [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) by Mine Çetinkaya-Rundel and Johanna Hardin. You have learned to test a claim about a single proportion by simulating under the null hypothesis, to check the success-failure condition, and to build normal-model confidence intervals and hypothesis tests that you compared against simulation, using a medical consultant's surgery record and two polls of payday loan borrowers.
 
-The chapter's own summary, in the authors' words:
-
-> Building on the foundational ideas from the previous few ideas, this chapter focused exclusively on the single population proportion as the parameter of interest. Note that it is not possible to do a randomization test with only one variable, so to do computational hypothesis testing, we applied a bootstrapping framework. The bootstrap confidence interval and the mathematical framework for both hypothesis testing and confidence intervals are similar to those applied to other data structures and parameters. When using the mathematical model, keep in mind the success-failure conditions. Additionally, know that bootstrapping is always more accurate with larger samples.
+Building on the foundational ideas from the previous few tutorials, this tutorial focused exclusively on the single population proportion as the parameter of interest. Note that it is not possible to do a randomization test with only one variable, so to do computational hypothesis testing, we applied a bootstrapping framework. The bootstrap confidence interval and the mathematical framework for both hypothesis testing and confidence intervals are similar to those applied to other data structures and parameters. When using the mathematical model, keep in mind the success-failure conditions. Additionally, know that bootstrapping is always more accurate with larger samples.
 
 For more on simulation-based inference in R, read **infer**'s "[Full infer Pipeline Examples](https://infer.tidymodels.org/articles/observed_stat_examples.html)," which runs the same specify, hypothesize, generate, and calculate steps for every test in the book. For the consultant's bootstrap confidence interval, which this chapter builds on, read the [medical consultant case study](https://openintrostat.github.io/ims/foundations-bootstrapping.html) in Chapter 12.
+
+Many sentences in this tutorial, and its figures, come from the chapter, used under the book's [CC BY-SA 3.0 license](https://creativecommons.org/licenses/by-sa/3.0/).
 
 ### Exercise 1
 
@@ -1055,13 +993,15 @@ library(infer)
 ```
 
 ```{r}
-#| cache: true
 set.seed(16)
 null_dist <- read_csv("data/medical_consultant.csv", show_col_types = FALSE) |>
   specify(response = complication, success = "yes") |>
   hypothesize(null = "point", p = 0.10) |>
   generate(reps = 10000, type = "draw") |>
   calculate(stat = "prop")
+
+null_dist |>
+  count(stat)
 ```
 
 ```{r}
@@ -1104,7 +1044,7 @@ read_csv("data/payday_credit_check.csv", show_col_types = FALSE) |>
 
 ###
 
-"Note that it is not possible to do a randomization test with only one variable, so to do computational hypothesis testing, we applied a bootstrapping framework." Your two plots show that framework next to the mathematical one: lopsided and essential for 62 surgeries, matched by the normal curve for 826 borrowers.
+Your first plot shows a lopsided null distribution for 62 surgeries, and your second shows the normal curve matching one for 826 borrowers.
 
 ### Exercise 2
 
@@ -1126,7 +1066,7 @@ Your answer should look like `https://your-github-username.github.io/inference-f
 
 ###
 
-"An exact p-value can be generated using the binomial distribution, but that method will not be covered in this text." Simulation gets close to that exact answer with nothing more than a seed and 10,000 draws.
+An exact p-value can be generated using the binomial distribution, but that method will not be covered in this text. Simulation gets close to that exact answer.
 
 ### Exercise 3
 
@@ -1144,7 +1084,7 @@ Your answer should look like `https://github.com/your-github-username/inference-
 
 ###
 
-"While this book is scoped to well-constrained statistical problems, do remember that this is just the first book in what is a large library of statistical methods that are suitable for a very wide range of data and contexts."
+While this book is scoped to well-constrained statistical problems, do remember that this is just the first book in what is a large library of statistical methods that are suitable for a very wide range of data and contexts.
 
 ## Your Answers
 

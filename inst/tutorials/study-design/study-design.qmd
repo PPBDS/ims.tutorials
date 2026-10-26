@@ -34,7 +34,7 @@ This tutorial covers [Chapter 2: Study design](https://openintrostat.github.io/i
 
 ### Exercise 1
 
-You should be doing this tutorial in a repo named `study-design`. If you are not, create one and then connect to it. You may need to restart this tutorial after you do so.
+You should be doing this tutorial in a repo named `study-design`. If you are not, create one and then connect to it.
 
 Create a new file, `analysis.qmd`, with the title `"Study Design"` and your name as the author. In a bash Terminal, render it:
 
@@ -62,7 +62,7 @@ analysis_files
 
 ###
 
-"Before digging into the details of working with data, we stop to think about how data come to be." The question this chapter asks of every dataset is, "How were these observations collected?"
+Before digging into the details of working with data, we stop to think about how data come to be. A good question to ask before working with any data is: how were these observations collected?
 
 ### Exercise 2
 
@@ -83,7 +83,7 @@ library(tidyverse)
 
 ###
 
-The **tidyverse** includes **dplyr**, whose verbs draw samples from a data frame as easily as they count or summarize it. Drawing samples is the work of this tutorial.
+The **tidyverse** includes **dplyr**, which draws random samples from a data frame as easily as it counts or summarizes one.
 
 ### Exercise 3
 
@@ -105,7 +105,7 @@ library(openintro)
 
 ###
 
-**openintro** holds `mlb`, the salaries of every Major League Baseball player in 2010, which the chapter uses to explain sampling, and `stent30` and `stent365`, the experiment from Hello Data that the chapter revisits when it asks whether a study can be blind.
+**openintro** holds `mlb`, the 2010 salaries of every Major League Baseball player, which the chapter uses to explain sampling. It also holds `stent30` and `stent365`, from the stent experiment in Hello Data.
 
 ### Exercise 4
 
@@ -128,11 +128,11 @@ library(usdata)
 
 ###
 
-**usdata** holds `county`. The chapter returns to it as an example of an observational study, where "making the same causal conclusions based on observational data can be treacherous."
+**usdata** holds `county`, which the chapter uses as an example of an observational study. Making causal conclusions based on observational data can be treacherous and is not recommended.
 
 ## Sampling principles and strategies
 
-"The first step in conducting research is to identify topics or questions that are to be investigated." Ours: what was the average salary of a Major League Baseball player in 2010? For once, we have the whole population, so we can watch how samples of it behave.
+The first step in conducting research is to identify topics or questions that are to be investigated. Ours: what was the average salary of a Major League Baseball player in 2010? We have the whole population, so we can see how samples of it behave.
 
 ### Exercise 1
 
@@ -154,7 +154,7 @@ mlb
 
 ###
 
-Each of the 828 rows is one player on a 2010 Major League roster. "Collecting data for an entire population is called a census," and that is what this data frame is.
+Each of the 828 rows is one player on a 2010 Major League roster. Collecting data for an entire population is called a *census*, and this data frame is one.
 
 ### Exercise 2
 
@@ -181,7 +181,7 @@ Source:
 
 ###
 
-Salaries are in thousands of dollars, so a value of `8500` means $8.5 million. The data came from a *USA Today* database, retrieved early in 2011, after the 2010 season ended.
+Salaries are in thousands of dollars, so a value of `8500` means $8.5 million. The data came from a *USA Today* database in February 2011, after the 2010 season ended.
 
 ### Exercise 3
 
@@ -204,7 +204,7 @@ mlb |>
 
 ###
 
-There are 30 teams, with 25 to 35 players each. The book's sampling examples all start here: "each player is a member of one of the league's 30 teams."
+Each player is a member of one of the league's 30 teams, which have 25 to 31 players each.
 
 ### Exercise 4
 
@@ -227,7 +227,7 @@ mlb |>
 
 ###
 
-The mean salary of the whole population, about $3.28 million, is a **population parameter**: a number "calculated or considered for calculation on the entire population." Usually we cannot compute it, because we have only a sample.
+The mean salary of the whole population, about $3.28 million, is a *population parameter*, a number calculated or considered for calculation on the entire population. Usually we have only a sample, so we cannot compute it.
 
 ### Exercise 5
 
@@ -251,7 +251,7 @@ mlb |>
 
 ###
 
-The Yankees averaged $8.25 million per player, the Pirates $1.29 million. The book says "some teams have a lot more money (up to 4 times as much!)," and this table shows the gap is even wider.
+The Yankees averaged $8.25 million per player and the Pirates $1.29 million. Some teams have a lot more money: the book says up to 4 times as much, but here it is more than 6 times.
 
 ### Exercise 6
 
@@ -277,7 +277,9 @@ mlb_srs
 
 ###
 
-"The most basic random sample is called a simple random sample and is equivalent to drawing names out of a hat to select cases." Your 120 players may differ from ours if your code drew the sample differently, which is fine.
+The most basic random sample is called a *simple random sample* and is equivalent to drawing names out of a hat to select cases. Your 120 players may differ from ours if your code drew the sample differently, which is fine.
+
+![](images/fig-pop-to-sample.png){fig-alt="A large circle contains many dots which indicate all the graduates. A smaller circle contains a few of the dots (i.e., graduates) which have been randomly selected from the larger circle."}
 
 ### Exercise 7
 
@@ -304,7 +306,7 @@ mlb_srs |>
 
 ###
 
-Our sample mean, about $3.29 million, is a **sample statistic**, a number "calculated on a sample of data." It lands close to the population parameter of $3.28 million, but a different sample would give a different number.
+Our sample mean, about $3.29 million, is a *sample statistic*, a number calculated on a sample of data. It is close to the population parameter of $3.28 million, but a different sample would give a different number.
 
 ### Exercise 8
 
@@ -331,11 +333,11 @@ mlb_srs |>
 
 ###
 
-A simple random sample does not spread evenly: in ours, the Mariners contributed one player and the Nationals ten. Since teams differ so much in pay, an unlucky draw could over-represent the rich ones.
+In our simple random sample, the Mariners contributed one player and the Nationals ten. Since teams differ so much in pay, an unlucky draw could over-represent the rich ones.
 
 ### Exercise 9
 
-Delete the count, so that the chunk only sets the seed and creates `mlb_srs`. Render.
+Start a new chunk that draws a stratified sample, 4 players from each `team`, stores it as `mlb_strat`, and calculates its mean `salary`. Set the random seed to 42 first. Render.
 
 ```{r}
 #| label: sampling-principles-and-strategies-9
@@ -345,71 +347,8 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-````{verbatim}
-set.seed(42)
-mlb_srs <- mlb |>
-  slice_sample(n = 120)
-````
-
-###
-
-"In general, we always seek to randomly select a sample from a population." Random selection is what lets a sample stand in for the population it came from.
-
-### Exercise 10
-
-Add `#| cache: true` to that chunk. Render.
-
 ```{r}
-#| label: sampling-principles-and-strategies-10
-#| echo: false
-learnr2::question("In the bash Terminal, run ls. CP/CR.", type = "reflection")
-```
-
-###
-
-```{.output}
-analysis.html  analysis.qmd  analysis_cache  analysis_files
-```
-
-###
-
-`analysis_cache` now holds the saved sample, so later renders reuse it instead of drawing again. A cached chunk only re-runs when its code changes.
-
-### Exercise 11
-
-Your Source Control count just jumped, because Git sees every file in the new cache directory. Add `analysis_cache` to `.gitignore`, and the count drops back.
-
-```{r}
-#| label: sampling-principles-and-strategies-11
-#| echo: false
-learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{.output}
-analysis_files
-analysis_cache
-```
-
-###
-
-Random selection is not the whole story. "Even when people are picked at random, e.g., for surveys, caution must be exercised if the non-response rate is high," since the people who answer may differ from those who do not.
-
-### Exercise 12
-
-Start a new chunk that draws a stratified sample, 4 players from each `team`, stores it as `mlb_strat`, and calculates its mean `salary`. Set the random seed to 42 first. Render.
-
-```{r}
-#| label: sampling-principles-and-strategies-12
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{r}
-#| label: sampling-principles-and-strategies-12-test
+#| label: sampling-principles-and-strategies-9-test
 #| echo: true
 set.seed(42)
 mlb_strat <- mlb |>
@@ -421,14 +360,16 @@ mlb_strat |>
 
 ###
 
-"Stratified sampling is a divide-and-conquer sampling strategy. The population is divided into groups called strata," here the 30 teams, and a simple random sample is drawn within each one.
+*Stratified sampling* is a divide-and-conquer sampling strategy. The population is divided into groups called *strata*, here the 30 teams, and a simple random sample is drawn within each one.
 
-### Exercise 13
+![](images/fig-simple-stratified.png){fig-alt="The top box shows a population of dots (i.e., individuals) where a handful of the dots have been sampled randomly. The bottom box shows the same population of dots but grouped in such a way that there are six strata. From each stratum three dots (i.e., individuals) are randomly selected."}
+
+### Exercise 10
 
 Replace the code in that chunk so that it calculates the mean `salary` of the first 120 rows of `mlb`, a sample of whoever happens to be at the top of the table. Render.
 
 ```{r}
-#| label: sampling-principles-and-strategies-13
+#| label: sampling-principles-and-strategies-10
 #| echo: false
 learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
@@ -436,7 +377,7 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ###
 
 ```{r}
-#| label: sampling-principles-and-strategies-13-test
+#| label: sampling-principles-and-strategies-10-test
 #| echo: true
 mlb |>
   slice_head(n = 120) |>
@@ -445,14 +386,16 @@ mlb |>
 
 ###
 
-The table is sorted by team, so the first 120 rows are Arizona, Atlanta, Baltimore, Boston, and a few Cubs, and the Red Sox payroll pushes the mean up to $4.35 million. This is a **convenience sample**, "where individuals who are easily accessible are more likely to be included in the sample."
+The table is sorted by team, so the first 120 rows hold only Arizona, Atlanta, Baltimore, Boston, and a few Cubs, and their mean is $4.35 million. This is a *convenience sample*, where individuals who are easily accessible are more likely to be included in the sample.
 
-### Exercise 14
+![](images/fig-pop-to-sub-sample-graduates.png){fig-alt="A large circle contains many dots which indicate all the graduates, but some of the dots have been greyed out where others are dark dots from which the sample is taken. A smaller circle contains a few of the dots (i.e., graduates) which have been selected from the biased group of dark dots in the large circle."}
+
+### Exercise 11
 
 Replace the code in that chunk with a bar chart of the mean `salary` for each `team`, with teams sorted by mean salary, and a vertical line at the mean salary of the whole population. Render.
 
 ```{r}
-#| label: sampling-principles-and-strategies-14
+#| label: sampling-principles-and-strategies-11
 #| echo: false
 learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
@@ -460,7 +403,7 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ###
 
 ```{r}
-#| label: sampling-principles-and-strategies-14-test
+#| label: sampling-principles-and-strategies-11-test
 #| echo: true
 mlb |>
   summarize(mean_salary = mean(salary), .by = team) |>
@@ -471,14 +414,14 @@ mlb |>
 
 ###
 
-Only 13 of the 30 teams sit above the population mean, because a few very expensive rosters pull the average up. Stratifying by team guarantees every roster, rich or poor, is represented.
+Only 13 of the 30 teams are above the population mean, because a few expensive rosters pull the average up. Stratifying by team guarantees that every roster, rich or poor, is represented.
 
-### Exercise 15
+### Exercise 12
 
 Improve the bar chart. Show salaries in millions of dollars, and add a title, axis labels, a subtitle that states the main finding, and a caption giving the number of players and the source. Render.
 
 ```{r}
-#| label: sampling-principles-and-strategies-15
+#| label: sampling-principles-and-strategies-12
 #| echo: false
 learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
@@ -486,7 +429,7 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ###
 
 ```{r}
-#| label: sampling-principles-and-strategies-15-test
+#| label: sampling-principles-and-strategies-12-test
 #| echo: true
 mlb |>
   summarize(mean_salary = mean(salary), .by = team) |>
@@ -503,14 +446,14 @@ mlb |>
 
 ###
 
-"Stratified sampling is especially useful when the cases in each stratum are very similar with respect to the outcome of interest." Teammates are not identical, but they are paid under one budget, which is why the book makes team the stratum.
+Stratified sampling is especially useful when the cases in each stratum are very similar with respect to the outcome of interest. Teammates are paid from one budget, so team is a natural stratum.
 
-### Exercise 16
+### Exercise 13
 
-Commit `analysis.qmd` and `.gitignore` with the message `"Sample baseball salaries"` and push.
+Commit `analysis.qmd` with the message `"Sample baseball salaries"` and push.
 
 ```{r}
-#| label: sampling-principles-and-strategies-16
+#| label: sampling-principles-and-strategies-13
 #| echo: false
 learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type = "reflection")
 ```
@@ -524,11 +467,13 @@ learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type
 
 ###
 
-The chapter also describes cluster and multistage samples, which pick whole groups: "we break up the population into many groups, called clusters," then keep every case in a few chosen clusters. Those work best when "there is a lot of case-to-case variability within a cluster but the clusters themselves do not look very different from one another."
+In a *cluster sample*, we break up the population into many groups, called *clusters*, then sample a fixed number of clusters and include all observations from each of those clusters in the sample. A *multistage sample* is like a cluster sample, but rather than keeping all observations in each cluster, we would collect a random sample within each selected cluster.
+
+![](images/fig-cluster-multistage.png){fig-alt="In the top figure, dots are grouped into clusters, three clusters are selected, and every dot (i.e., all individuals) from each of the three clusters are sampled. In the bottom figure, dots are again grouped into clusters and three clusters are selected. However, random sampling is applied so that a random sample from each of the three selected clusters is taken."}
 
 ## Experiments and observational studies
 
-"Studies where the researchers assign treatments to cases are called experiments." The chapter's other kind of study, where "no treatment has been explicitly applied," is observational. This section looks at one of each, starting with the stent study from Hello Data.
+Studies where the researchers assign treatments to cases are called *experiments*. Studies where no treatment has been explicitly applied (or explicitly withheld) are called *observational studies*. This section looks at one of each, starting with the stent study from Hello Data.
 
 ### Exercise 1
 
@@ -551,40 +496,35 @@ stent30 |>
 
 ###
 
-A coin flip, not a doctor, put 224 patients in the treatment group and 227 in the control group. "Researchers randomize patients into treatment groups to account for variables that cannot be controlled," and "randomizing patients into the treatment or control group helps even out such differences."
+The researchers randomly assigned 224 patients to the treatment group and 227 to the control group, so this study was a *randomized experiment*. Researchers randomize patients into treatment groups to account for variables that cannot be controlled.
 
 ### Exercise 2
+
+Replace the code in that chunk so that it calculates, for each `group`, the proportion of patients who had a stroke. Render.
 
 ```{r}
 #| label: experiments-and-observational-studies-2
 #| echo: false
-learnr2::question("In the R Terminal, run ?stent30. Copy and paste the Description and the Source.", type = "reflection")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
 
-```{.output}
-Description:
-
-     An experiment that studies effectiveness of stents in treating
-     patients at risk of stroke with some unexpected results. 'stent30'
-     represents the results 30 days after stroke and 'stent365'
-     represents the results 365 days after stroke.
-
-Source:
-
-     Chimowitz MI, Lynn MJ, Derdeyn CP, et al. 2011. Stenting versus
-     Aggressive Medical Therapy for Intracranial Arterial Stenosis.
-     New England Journal of Medicine 365:993-1003.
+```{r}
+#| label: experiments-and-observational-studies-2-test
+#| echo: true
+stent30 |>
+  summarize(prop_stroke = mean(outcome == "stroke"),
+            .by = group)
 ```
 
 ###
 
-"The researchers assigned the patients into their treatment groups, so this study was an experiment." The Source's title shows what the control group received, aggressive medical therapy rather than nothing, because "in medical experiments, typically the control group must get the current standard of care."
+Within 30 days, 14.7% of the treatment group had a stroke, against 5.7% of the control group, and every patient knew which group they were in. When researchers keep the patients uninformed about their treatment, the study is said to be *blind*.
 
 ### Exercise 3
 
-Replace the code in that chunk so that it calculates, for each `group`, the proportion of patients who had a stroke. Render.
+The study also recorded outcomes a year after enrollment, in `stent365`. Replace the code in that chunk so that it stacks `stent30` and `stent365` into one tibble named `stent`, with a `time` column recording `"30 days"` or `"365 days"`, and then calculates the proportion who had a stroke for each combination of `time` and `group`, as you did in Hello Data. Render.
 
 ```{r}
 #| label: experiments-and-observational-studies-3
@@ -597,18 +537,20 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: experiments-and-observational-studies-3-test
 #| echo: true
-stent30 |>
+stent <- bind_rows(`30 days` = stent30, `365 days` = stent365, .id = "time")
+
+stent |>
   summarize(prop_stroke = mean(outcome == "stroke"),
-            .by = group)
+            .by = c(time, group))
 ```
 
 ###
 
-Within 30 days, 14.7% of the treatment group had a stroke, against 5.7% of the control group, and every patient knew which group they were in. The chapter warns of "an emotional effect of (not) taking the drug, which is difficult to quantify," which is why "researchers do not want patients to know which group they are in."
+The only way to blind this study would have been a *sham surgery*, where the patient does undergo surgery but does not receive the full treatment, though they will still get a placebo effect. A sham surgery tends to create additional risk, while withholding a treatment only maintains a person's risk.
 
 ### Exercise 4
 
-The study also recorded outcomes a year after enrollment, in `stent365`. Replace the code in that chunk so that it stacks `stent30` and `stent365` into one tibble named `stent`, with a `time` column recording `"30 days"` or `"365 days"`, and then calculates the proportion who had a stroke for each combination of `time` and `group`, as you did in Hello Data. Render.
+Replace the summary in that chunk with a bar chart of the proportion of patients who had a stroke at each `time`, with the two groups' bars side by side. Render.
 
 ```{r}
 #| label: experiments-and-observational-studies-4
@@ -621,20 +563,20 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: experiments-and-observational-studies-4-test
 #| echo: true
-stent <- bind_rows(`30 days` = stent30, `365 days` = stent365, .id = "time")
-
 stent |>
   summarize(prop_stroke = mean(outcome == "stroke"),
-            .by = c(time, group))
+            .by = c(time, group)) |>
+  ggplot(aes(x = time, y = prop_stroke, fill = group)) +
+  geom_col(position = "dodge")
 ```
 
 ###
 
-The only way to blind this study would have been a sham surgery, where "the patient does undergo surgery, but the patient does not receive the full treatment, though they will still get a placebo effect." The chapter explains why that is a hard call: "a sham surgery tends to create additional risk, while withholding a treatment only maintains a person's risk."
+The treatment bar is taller at both times, and more than 200 patients stand behind each bar. In a single study, we *replicate* by collecting a sufficiently large sample.
 
 ### Exercise 5
 
-Replace the summary in that chunk with a bar chart of the proportion of patients who had a stroke at each `time`, with the two groups' bars side by side. Render.
+Improve the bar chart. Label each bar with its percentage, show the y-axis as percentages, and add a title, axis labels, a legend title, a subtitle that states the main finding, and a caption giving the number of patients and the source. Render.
 
 ```{r}
 #| label: experiments-and-observational-studies-5
@@ -646,32 +588,6 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ```{r}
 #| label: experiments-and-observational-studies-5-test
-#| echo: true
-stent |>
-  summarize(prop_stroke = mean(outcome == "stroke"),
-            .by = c(time, group)) |>
-  ggplot(aes(x = time, y = prop_stroke, fill = group)) +
-  geom_col(position = "dodge")
-```
-
-###
-
-The treatment bar is taller at both times, and with more than 200 patients behind each bar the gap is hard to dismiss. "In a single study, we replicate by collecting a sufficiently large sample," and "at a minimum we want to have multiple subjects (experimental units) per treatment group."
-
-### Exercise 6
-
-Improve the bar chart. Label each bar with its percentage, show the y-axis as percentages, and add a title, axis labels, a legend title, a subtitle that states the main finding, and a caption giving the number of patients and the source. Render.
-
-```{r}
-#| label: experiments-and-observational-studies-6
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{r}
-#| label: experiments-and-observational-studies-6-test
 #| echo: true
 stent |>
   summarize(prop_stroke = mean(outcome == "stroke"),
@@ -692,11 +608,35 @@ stent |>
 
 ###
 
-"Making causal conclusions based on experiments is often reasonable, since we can randomly assign the explanatory variable(s), i.e., the treatments." Even so, "randomized experiments have long been considered to be the gold standard for data collection, but they do not ensure an unbiased perspective into the cause-and-effect relationship in all cases," and an unblinded surgery is one such case.
+Making causal conclusions based on experiments is often reasonable, since we can randomly assign the explanatory variable(s), i.e., the treatments. Even so, randomized experiments do not ensure an unbiased perspective into the cause-and-effect relationship in all cases, and an unblinded surgery is one such case.
+
+### Exercise 6
+
+Start a new chunk with a scatterplot of `homeownership` against `multi_unit`, using `county`. Render.
+
+```{r}
+#| label: experiments-and-observational-studies-6
+#| echo: false
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
+```
+
+###
+
+```{r}
+#| label: experiments-and-observational-studies-6-test
+#| echo: true
+county |>
+  ggplot(aes(x = multi_unit, y = homeownership)) +
+  geom_point(alpha = 0.3)
+```
+
+###
+
+Nobody assigned counties their share of apartments, so this is observational data. Observational studies are generally only sufficient to show associations or form hypotheses that can be later checked with experiments.
 
 ### Exercise 7
 
-Start a new chunk with a scatterplot of `homeownership` against `multi_unit`, using `county`. Render.
+Replace the code in that chunk so that it counts the counties with each value of `metro`. Render.
 
 ```{r}
 #| label: experiments-and-observational-studies-7
@@ -710,17 +650,16 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: experiments-and-observational-studies-7-test
 #| echo: true
 county |>
-  ggplot(aes(x = multi_unit, y = homeownership)) +
-  geom_point(alpha = 0.3)
+  count(metro)
 ```
 
 ###
 
-Nobody assigned counties their share of apartments, so this is observational data, which can "show associations or form hypotheses that can be later checked with experiments." The book asks you to "suggest a variable that might explain the negative relationship."
+1,165 counties belong to a metropolitan area, 1,974 do not, and 3 are unknown. The book suggests population density might explain the negative relationship, and `metro` is the closest thing to density in this data.
 
 ### Exercise 8
 
-Replace the code in that chunk so that it counts the counties with each value of `metro`. Render.
+Replace the code in that chunk so that it calculates the mean `homeownership` and the mean `multi_unit` for each value of `metro`, ignoring missing values. Render.
 
 ```{r}
 #| label: experiments-and-observational-studies-8
@@ -734,16 +673,21 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: experiments-and-observational-studies-8-test
 #| echo: true
 county |>
-  count(metro)
+  drop_na(metro) |>
+  summarize(homeownership = mean(homeownership, na.rm = TRUE),
+            multi_unit = mean(multi_unit, na.rm = TRUE),
+            .by = metro)
 ```
 
 ###
 
-1,165 counties belong to a metropolitan area and 1,974 do not; 3 are unknown. The book's suggested explanation is population density, and `metro` is the closest thing to it in this data.
+Metro counties have more multi-unit housing and lower homeownership, so `metro` is associated with both variables. A *confounding variable*, like sun exposure for sunscreen use and skin cancer, is one that is associated with both the explanatory and response variables.
+
+![](images/fig-sun-causes-cancer.png){fig-alt="Three boxes are shown in a triangle arrangement representing: sun exposure, using sunscreen, and skin cancer. A solid arrow connects sun exposure as a causal mechanism to using sunscreen; a solid arrow also connects sun exposure as a causal mechanism to skin cancer. A questioning arrow indicates that the causal effect of using sunscreen on skin cancer is unknown."}
 
 ### Exercise 9
 
-Replace the code in that chunk so that it calculates the mean `homeownership` and the mean `multi_unit` for each value of `metro`, ignoring missing values. Render.
+Replace the code in that chunk with the scatterplot of `homeownership` against `multi_unit` again, this time with points colored by `metro` and counties with unknown `metro` dropped. Render.
 
 ```{r}
 #| label: experiments-and-observational-studies-9
@@ -758,18 +702,17 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| echo: true
 county |>
   drop_na(metro) |>
-  summarize(homeownership = mean(homeownership, na.rm = TRUE),
-            multi_unit = mean(multi_unit, na.rm = TRUE),
-            .by = metro)
+  ggplot(aes(x = multi_unit, y = homeownership, color = metro)) +
+  geom_point(alpha = 0.3)
 ```
 
 ###
 
-Metro counties have more multi-unit housing and lower homeownership, so `metro` is tied to both variables at once. "A confounding variable is one that is associated with both the explanatory and response variables."
+The metro counties crowd the lower right. Because a confounding variable is associated with both variables, it prevents the study from concluding that the explanatory variable caused the response variable.
 
 ### Exercise 10
 
-Replace the code in that chunk with the scatterplot of `homeownership` against `multi_unit` again, this time with points colored by `metro` and counties with unknown `metro` dropped. Render.
+Improve the scatterplot. Add a title, axis labels, a legend title, a subtitle that states the main finding, and a caption giving the number of counties. Render.
 
 ```{r}
 #| label: experiments-and-observational-studies-10
@@ -785,31 +728,6 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 county |>
   drop_na(metro) |>
   ggplot(aes(x = multi_unit, y = homeownership, color = metro)) +
-  geom_point(alpha = 0.3)
-```
-
-###
-
-The metro counties crowd the lower right. "Because it is associated with both variables, it prevents the study from concluding that the explanatory variable caused the response variable."
-
-### Exercise 11
-
-Improve the scatterplot. Add a title, axis labels, a legend title, a subtitle that states the main finding, and a caption giving the number of counties. Render.
-
-```{r}
-#| label: experiments-and-observational-studies-11
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{r}
-#| label: experiments-and-observational-studies-11-test
-#| echo: true
-county |>
-  drop_na(metro) |>
-  ggplot(aes(x = multi_unit, y = homeownership, color = metro)) +
   geom_point(alpha = 0.3) +
   labs(title = "Homeownership and Multi-Unit Housing in US Counties",
        subtitle = "Metro counties have more apartments and less ownership, so density may explain the link",
@@ -821,14 +739,14 @@ county |>
 
 ###
 
-"While one method to justify making causal conclusions from observational studies is to exhaust the search for confounding variables, there is no guarantee that all confounding variables can be examined or measured." Density is one candidate; there could be others.
+One method to justify making causal conclusions from observational studies is to exhaust the search for confounding variables, but there is no guarantee that all confounding variables can be examined or measured. Density is one candidate, and there could be others.
 
-### Exercise 12
+### Exercise 11
 
 Commit `analysis.qmd` with the message `"Compare an experiment with an observational study"` and push.
 
 ```{r}
-#| label: experiments-and-observational-studies-12
+#| label: experiments-and-observational-studies-11
 #| echo: false
 learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type = "reflection")
 ```
@@ -843,17 +761,19 @@ c7d10e4 (HEAD -> main, origin/main) Compare an experiment with an observational 
 
 ###
 
-Observational studies come in two forms. "A prospective study identifies individuals and collects information as events unfold," like the Nurses' Health Study, while "retrospective studies collect data after events have taken place," as the county data does.
+A *prospective study* identifies individuals and collects information as events unfold, like the Nurses' Health Study. *Retrospective studies* collect data after events have taken place, as the county data does.
 
 ## Summary
 
 This tutorial covered [Chapter 2: Study design](https://openintrostat.github.io/ims/data-design.html) from [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) by Mine Çetinkaya-Rundel and Johanna Hardin. You have learned the difference between a population and a sample, how simple random, stratified, and convenience samples behave, and what separates a randomized experiment from an observational study.
 
-The chapter's own summary, in the authors' words:
+A proficient analyst will have a good sense of the types of data they are working with and how to visualize the data in order to gain a complete understanding of the variables. Equally important, however, is the data source. In this tutorial, we have discussed randomized experiments and taking good, random, representative samples from a population. When we discuss inferential methods, the conclusions that can be drawn will be dependent on how the data were collected. The figure below summarizes how sampling and assignment methods relate to the scope of inference. Regularly revisiting this figure will be important when making conclusions from a given data analysis.
 
-> A proficient analyst will have a good sense of the types of data they are working with and how to visualize the data in order to gain a complete understanding of the variables. Equally important, however, is the data source. In this chapter, we have discussed randomized experiments and taking good, random, representative samples from a population. When we discuss inferential methods (starting in [Chapter 11]), the conclusions that can be drawn will be dependent on how the data were collected. [The chapter's closing figure] summarizes how sampling and assignment methods relate to the scope of inference. Regularly revisiting [that figure] will be important when making conclusions from a given data analysis.
+![](images/fig-randsampValloc.png){fig-alt="A two by two table describing the scenarios of random sample or not and random allocation or not. Selecting randomly from a population allows for generalization back to the population. Randomly allocating in an experiment allows for establishing causation."}
 
-For the stent study itself, read the original [article](https://doi.org/10.1056/NEJMoa1105335) by Chimowitz and colleagues in the *New England Journal of Medicine*. For how sampling and random assignment together decide what a study can conclude, revisit the chapter's [closing figure](https://openintrostat.github.io/ims/data-design.html#fig-randsampValloc).
+For the stent study itself, read the original [article](https://doi.org/10.1056/NEJMoa1105335) by Chimowitz and colleagues in the *New England Journal of Medicine*.
+
+Many sentences in this tutorial, and its figures, come from the chapter, used under the book's [CC BY-SA 3.0 license](https://creativecommons.org/licenses/by-sa/3.0/).
 
 ### Exercise 1
 
@@ -884,10 +804,18 @@ library(usdata)
 ```
 
 ```{r}
-#| cache: true
+mlb |>
+  summarize(mean_salary = mean(salary), .by = team) |>
+  arrange(desc(mean_salary))
+```
+
+```{r}
 set.seed(42)
 mlb_srs <- mlb |>
   slice_sample(n = 120)
+
+mlb_srs |>
+  count(team, sort = TRUE)
 ```
 
 ```{r}
@@ -940,7 +868,7 @@ county |>
 
 ###
 
-The page holds the chapter's two halves: how a sample relates to its population, and how an experiment differs from an observational study. "Both representative (ideally random) sampling and experiments (random assignment of treatments) are important for how statistical conclusions can be made on populations."
+Your page has a population, a sample from it, an experiment, and an observational study. Both representative (ideally random) sampling and experiments (random assignment of treatments) are important for how statistical conclusions can be made on populations.
 
 ### Exercise 2
 
@@ -962,7 +890,7 @@ Your answer should look like `https://your-github-username.github.io/study-desig
 
 ###
 
-The stent study was an experiment but not a blind one: "a stent is a surgical procedure. There is no equivalent surgical placebo, so this study was not blind."
+The stent patients could distinguish what treatment they received because a stent is a surgical procedure. There is no equivalent surgical placebo, so this study was not blind.
 
 ### Exercise 3
 
@@ -980,7 +908,7 @@ Your answer should look like `https://github.com/your-github-username/study-desi
 
 ###
 
-"Almost all statistical methods are based on the notion of implied randomness. If data are not collected in a random framework from a population, these statistical methods -- the estimates and errors associated with the estimates -- are not reliable."
+Almost all statistical methods are based on the notion of implied randomness. If data are not collected in a random framework from a population, these statistical methods -- the estimates and errors associated with the estimates -- are not reliable.
 
 ## Your Answers
 

@@ -41,7 +41,7 @@ This tutorial covers [Chapter 26: Inference for logistic regression](https://ope
 
 ### Exercise 1
 
-You should be doing this tutorial in a repo named `inference-for-logistic-regression`. If you are not, create one and then connect to it. You may need to restart this tutorial after you do so.
+You should be doing this tutorial in a repo named `inference-for-logistic-regression`. If you are not, create one and then connect to it.
 
 Create a new file, `analysis.qmd`, with the title `"Inference for Logistic Regression"` and your name as the author. In a bash Terminal, render it:
 
@@ -69,7 +69,7 @@ analysis_files
 
 ###
 
-This is the book's last chapter: "we wrap up the book by considering inferential methods applied to a logistic regression model." "Both p-values and cross-validation will be used for assessing a logistic regression model."
+We wrap up the book by considering inferential methods applied to a logistic regression model. Both p-values and cross-validation will be used for assessing a logistic regression model.
 
 ### Exercise 2
 
@@ -90,7 +90,7 @@ library(tidyverse)
 
 ###
 
-"As with multiple linear regression, the inference aspect for logistic regression will focus on interpretation of coefficients and relationships between explanatory variables." The **tidyverse** does the work around each model: **dplyr** groups and summarizes the predictions, and **ggplot2** plots them.
+As with multiple linear regression, the inference aspect for logistic regression will focus on interpretation of coefficients and relationships between explanatory variables. The **tidyverse** does the work around each model: **dplyr** groups and summarizes the predictions, and **ggplot2** plots them.
 
 ### Exercise 3
 
@@ -112,7 +112,7 @@ library(openintro)
 
 ###
 
-**openintro** holds `email`, "which describes email characteristics which can be used to predict whether a particular incoming email is spam (unsolicited bulk email)." The book used these data in Chapter 4, Exploring categorical data, to compare spam rates by email format, and it closes with them here.
+**openintro** holds `email`, data which describes email characteristics which can be used to predict whether a particular incoming email is spam (unsolicited bulk email). The book first used these data in Chapter 4 to compare spam rates by email format.
 
 ### Exercise 4
 
@@ -135,11 +135,11 @@ library(broom)
 
 ###
 
-**broom** turns a fitted model into a tibble with one row per coefficient: the estimate, its standard error, the z statistic, and the p-value. The chapter fits its models and folds with **[tidymodels](https://www.tidymodels.org/)**, a family of modeling packages that includes **broom**; base R's own model fitting gives the same estimates.
+**broom** turns a fitted model into a tibble with one row per coefficient: the estimate, its standard error, the z statistic, and the p-value. The chapter fits its models with **[tidymodels](https://www.tidymodels.org/)**, a family of packages that includes **broom**, but base R's `glm()` gives the same estimates.
 
 ## Model output and diagnostics
 
-"Which of the variables describing each email are important for predicting the status of the email?" This section reads the answer the software gives, coefficient by coefficient, and then checks whether the model's predicted probabilities match what actually landed in the inbox.
+Which of the variables describing each email are important for predicting the status of the email? This section reads the software's answer, then checks whether the model's predicted probabilities match what actually happened.
 
 ### Exercise 1
 
@@ -161,37 +161,34 @@ email
 
 ###
 
-Each of the 3,921 rows is one incoming email, described by 21 variables, from `spam` to `number`. "Without reading every incoming message, it might be nice to have an automated way to identify spam emails."
+Each of the 3,921 rows is one incoming email, described by 21 variables, from `spam` to `number`. Without reading every incoming message, it might be nice to have an automated way to identify spam emails.
 
 ### Exercise 2
+
+Replace the code in that chunk so that it counts the emails by `spam`. Render.
 
 ```{r}
 #| label: model-output-and-diagnostics-2
 #| echo: false
-learnr2::question("In the R Terminal, run ?email. Copy and paste the Description and the Source.", type = "reflection")
+learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
 
 ###
 
-```{.output}
-Description:
-
-     These data represent incoming emails for the first three months of
-     2012 for an email account (see Source).
-
-Source:
-
-     David Diez's Gmail Account, early months of 2012. All personally
-     identifiable information has been removed.
+```{r}
+#| label: model-output-and-diagnostics-2-test
+#| echo: true
+email |>
+  count(spam)
 ```
 
 ###
 
-David Diez is one of the founders of OpenIntro, so every email here comes from a single person's inbox. A model built from it describes the spam he received, which need not look like the spam anyone else gets.
+Only 367 of the 3,921 emails, about 9%, are spam. It is imperative that the response variable is binary, and `spam` is: 1 for spam, 0 for everything else.
 
 ### Exercise 3
 
-Replace the code in that chunk so that it counts the emails by `spam`. Render.
+Replace the code in that chunk so that it shows the time of the earliest email, the time of the latest, and the number of emails. Render.
 
 ```{r}
 #| label: model-output-and-diagnostics-3
@@ -205,16 +202,16 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| label: model-output-and-diagnostics-3-test
 #| echo: true
 email |>
-  count(spam)
+  summarize(first = min(time), last = max(time), n = n())
 ```
 
 ###
 
-Only 367 of the 3,921 emails, about 9%, are spam. "Generally, as you've seen in the logistic regression modeling examples, it is imperative that the response variable is binary," and `spam` is: 1 for spam, 0 for everything else.
+The emails, all from David Diez's Gmail account, run from January 1 to March 31, 2012. The first logistic regression model condition, independence of the outcomes, is reasonable if we can assume that the emails that arrive in an inbox within a few months are independent of each other with respect to whether they're spam or not.
 
 ### Exercise 4
 
-Replace the code in that chunk so that it shows the time of the earliest email, the time of the latest, and the number of emails. Render.
+Replace the code in that chunk with a logistic regression of `spam` on `to_multiple`, `cc`, `dollar`, and `urgent_subj`, using `email`. Show only the term and the estimate for each coefficient. Render.
 
 ```{r}
 #| label: model-output-and-diagnostics-4
@@ -227,17 +224,19 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: model-output-and-diagnostics-4-test
 #| echo: true
-email |>
-  summarize(first = min(time), last = max(time), n = n())
+glm(spam ~ to_multiple + cc + dollar + urgent_subj,
+    data = email, family = binomial) |>
+  tidy() |>
+  select(term, estimate)
 ```
 
 ###
 
-The emails run from January 1 to March 31, 2012. "The first logistic regression model condition --- independence of the outcomes --- is reasonable if we can assume that the emails that arrive in an inbox within a few months are independent of each other with respect to whether they're spam or not."
+Rounded, these are the chapter's estimated equation: -2.05 - 1.91 × `to_multiple` + 0.02 × `cc` - 0.07 × `dollar` + 2.66 × `urgent_subj`, on the logit scale. The probability of the outcome being a success is a function of a linear combination of the explanatory variables.
 
 ### Exercise 5
 
-Replace the code in that chunk with a logistic regression of `spam` on `to_multiple`, `cc`, `dollar`, and `urgent_subj`, using `email`. Show only the term and the estimate for each coefficient. Render.
+Change the code so that it shows every column of the model's output, not just the term and the estimate. Render.
 
 ```{r}
 #| label: model-output-and-diagnostics-5
@@ -252,17 +251,16 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| echo: true
 glm(spam ~ to_multiple + cc + dollar + urgent_subj,
     data = email, family = binomial) |>
-  tidy() |>
-  select(term, estimate)
+  tidy()
 ```
 
 ###
 
-Rounded, these are the chapter's estimated equation: -2.05 - 1.91 × `to_multiple` + 0.02 × `cc` - 0.07 × `dollar` + 2.66 × `urgent_subj`, on the logit scale. "What you do need to remember is that the probability of the outcome being a success is a function of a linear combination of the explanatory variables."
+Each row tests whether its coefficient is zero, and with *multiple predictors*, each hypothesis test is conditioned on each of the other variables remaining in the model. The p-value of 1.95e-10 on `to_multiple1`, for example, assumes `cc`, `dollar`, and `urgent_subj` are in the model too.
 
 ### Exercise 6
 
-Change the code so that it shows every column of the model's output, not just the term and the estimate. Render.
+Change the code so that it keeps only the predictors, not the intercept, whose p-value is below 0.05. Render.
 
 ```{r}
 #| label: model-output-and-diagnostics-6
@@ -277,16 +275,17 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 #| echo: true
 glm(spam ~ to_multiple + cc + dollar + urgent_subj,
     data = email, family = binomial) |>
-  tidy()
+  tidy() |>
+  filter(term != "(Intercept)", p.value < 0.05)
 ```
 
 ###
 
-Each row tests the null hypothesis that its coefficient is zero, and with **multiple predictors** "each hypothesis test (for each of the explanatory variables) is conditioned on each of the other variables remaining in the model." The p-value of 1.95e-10 on `to_multiple1`, for example, assumes `cc`, `dollar`, and `urgent_subj` are all in the model too.
+`cc`, with a p-value of 0.245, is gone. The very low p-values from the software output tell us that three of the variables (that is, not `cc`) act as statistically discernible predictors in the model at the discernibility level of 0.05, despite the inclusion of any of the other variables.
 
 ### Exercise 7
 
-Change the code so that it keeps only the predictors, not the intercept, whose p-value is below 0.05. Render.
+Add a column that divides each estimate by its standard error. Render.
 
 ```{r}
 #| label: model-output-and-diagnostics-7
@@ -302,16 +301,17 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 glm(spam ~ to_multiple + cc + dollar + urgent_subj,
     data = email, family = binomial) |>
   tidy() |>
-  filter(term != "(Intercept)", p.value < 0.05)
+  filter(term != "(Intercept)", p.value < 0.05) |>
+  mutate(ratio = estimate / std.error)
 ```
 
 ###
 
-Three predictors remain, and `cc`, with a p-value of 0.245, is gone. "The very low p-values from the software output tell us that three of the variables (that is, not `cc`) act as statistically discernible predictors in the model at the discernibility level of 0.05, despite the inclusion of any of the other variables."
+The new column matches `statistic` exactly: the z statistic counts how many standard errors an estimate sits from zero. The `dollar` estimate, -0.069, looks tiny, but in units of standard errors (0.02 here), 0.07 is actually quite far from zero.
 
 ### Exercise 8
 
-Add a column that divides each estimate by its standard error. Render.
+Replace the code in that chunk so that it counts the emails by both `urgent_subj` and `spam`. Render.
 
 ```{r}
 #| label: model-output-and-diagnostics-8
@@ -324,20 +324,17 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: model-output-and-diagnostics-8-test
 #| echo: true
-glm(spam ~ to_multiple + cc + dollar + urgent_subj,
-    data = email, family = binomial) |>
-  tidy() |>
-  filter(term != "(Intercept)", p.value < 0.05) |>
-  mutate(ratio = estimate / std.error)
+email |>
+  count(urgent_subj, spam)
 ```
 
 ###
 
-The new column matches `statistic` exactly: the z statistic counts how many standard errors an estimate sits from zero. The `dollar` estimate, -0.069, looks tiny, but "in units of standard errors (0.02 here), 0.07 is actually quite far from zero, it's all about context!"
+Only 7 emails have "urgent" in the subject, 4 of them spam, so the largest coefficient, 2.66, rests on seven emails, which is why its standard error, 0.80, is also the largest. Although p-values provide some information about the importance of each of the predictors in the model, there are many, arguably more important, aspects to consider when choosing the best model.
 
 ### Exercise 9
 
-Replace the code in that chunk so that it counts the emails by both `urgent_subj` and `spam`. Render.
+Replace the code in that chunk so that it saves the four-predictor model as `spam_fit`, then uses `spam_fit` to show each email's `spam` value next to its predicted probability of being spam. Render.
 
 ```{r}
 #| label: model-output-and-diagnostics-9
@@ -350,17 +347,21 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: model-output-and-diagnostics-9-test
 #| echo: true
-email |>
-  count(urgent_subj, spam)
+spam_fit <- glm(spam ~ to_multiple + cc + dollar + urgent_subj,
+                data = email, family = binomial)
+
+spam_fit |>
+  augment(type.predict = "response") |>
+  select(spam, .fitted)
 ```
 
 ###
 
-Only 7 of the 3,921 emails have "urgent" in the subject, 4 of them spam, so the model's largest coefficient, 2.66, and its p-value of 0.0009 rest on seven emails, which is also why its standard error, 0.80, is the largest. "We remind you that although p-values provide some information about the importance of each of the predictors in the model, there are many, arguably more important, aspects to consider when choosing the best model."
+Seven of the first ten emails get the same prediction, 0.114. To assess the quality of the model, we might ask: if we look at emails that we modeled as having 10% chance of being spam, do we find out 10% of them actually are spam?
 
 ### Exercise 10
 
-Replace the code in that chunk so that it saves the four-predictor model as `spam_fit`, then uses `spam_fit` to show each email's `spam` value next to its predicted probability of being spam. Render.
+Change the code so that it counts how many emails get each predicted probability, from most common to least. Render.
 
 ```{r}
 #| label: model-output-and-diagnostics-10
@@ -378,16 +379,16 @@ spam_fit <- glm(spam ~ to_multiple + cc + dollar + urgent_subj,
 
 spam_fit |>
   augment(type.predict = "response") |>
-  select(spam, .fitted)
+  count(.fitted, sort = TRUE)
 ```
 
 ###
 
-Seven of the first ten emails get the same prediction, 0.114. "We'd like to assess the quality of the model," and the chapter's test is this: "if we look at emails that we modeled as having 10% chance of being spam, do we find out 10% of them actually are spam?"
+The 3,921 emails get only 107 distinct predictions, and 2,260 of them, 58%, share 0.114. Those are the emails sent only to the owner, with no cc, no dollar signs, and no "urgent," which the model cannot tell apart.
 
 ### Exercise 11
 
-Change the code so that it counts how many emails get each predicted probability, from most common to least. Render.
+Start a new chunk that plots, for every email, its predicted probability of being spam on the x-axis against whether it actually was spam on the y-axis. Jitter the points so that emails with the same values do not sit on top of each other. Render.
 
 ```{r}
 #| label: model-output-and-diagnostics-11
@@ -400,21 +401,19 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ```{r}
 #| label: model-output-and-diagnostics-11-test
 #| echo: true
-spam_fit <- glm(spam ~ to_multiple + cc + dollar + urgent_subj,
-                data = email, family = binomial)
-
 spam_fit |>
   augment(type.predict = "response") |>
-  count(.fitted, sort = TRUE)
+  ggplot(aes(x = .fitted, y = spam)) +
+  geom_jitter(alpha = 0.2)
 ```
 
 ###
 
-There are 3,921 emails but only 107 distinct predictions, and 2,260 emails, 58% of the inbox, share the same one, 0.114. Those are the emails sent only to the owner, with no cc, no dollar signs, and no "urgent," so the model sees nothing to tell them apart.
+The predictions do not perfectly classify the emails, but the not spam emails generally have lower prediction probabilities than the spam emails. Only 6 emails get a predicted probability above 0.5, and the average prediction is 0.113 for spam against 0.092 for everything else.
 
 ### Exercise 12
 
-Delete the lines that use `spam_fit`, so that the chunk only creates it. Render.
+Replace the code in that chunk so that it groups the emails into buckets by predicted probability, with breaks at 0.02, 0.05, 0.08, 0.10, and 0.12. For each bucket, show the number of emails, the average predicted probability, and the observed proportion that are spam, ordered from the lowest prediction to the highest. Render.
 
 ```{r}
 #| label: model-output-and-diagnostics-12
@@ -424,95 +423,8 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 
 ###
 
-````{verbatim}
-spam_fit <- glm(spam ~ to_multiple + cc + dollar + urgent_subj,
-                data = email, family = binomial)
-````
-
-###
-
-The chapter's second condition is that each predictor "is linearly related to logit(*p~i~*) if all other predictors are held constant." "The second condition of the logistic regression model is not easily checked without a fairly sizable amount of data," and 3,921 emails is enough to check it with the plots that follow.
-
-### Exercise 13
-
-Add `#| cache: true` to that chunk. Render.
-
 ```{r}
-#| label: model-output-and-diagnostics-13
-#| echo: false
-learnr2::question("In the bash Terminal, run ls. CP/CR.", type = "reflection")
-```
-
-###
-
-```{.output}
-analysis.html  analysis.qmd  analysis_cache  analysis_files
-```
-
-###
-
-`analysis_cache` now holds `spam_fit`, so later renders reload the fitted model instead of refitting it. A cached chunk only re-runs when its code changes.
-
-### Exercise 14
-
-Your Source Control count just jumped, because Git sees every file in the new cache directory. Add `analysis_cache` to `.gitignore`, and the count drops back.
-
-```{r}
-#| label: model-output-and-diagnostics-14
-#| echo: false
-learnr2::question('In the R Terminal, run show_file(".gitignore"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{.output}
-analysis_files
-analysis_cache
-```
-
-###
-
-"Let's first visualize these data by plotting the true classification of the emails against the model's fitted probabilities." Plotting is the only way to see thousands of predictions at once.
-
-### Exercise 15
-
-Start a new chunk that plots, for every email, its predicted probability of being spam on the x-axis against whether it actually was spam on the y-axis. Jitter the points so that emails with the same values do not sit on top of each other. Render.
-
-```{r}
-#| label: model-output-and-diagnostics-15
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{r}
-#| label: model-output-and-diagnostics-15-test
-#| echo: true
-spam_fit |>
-  augment(type.predict = "response") |>
-  ggplot(aes(x = .fitted, y = spam)) +
-  geom_jitter(alpha = 0.2)
-```
-
-###
-
-"We can see that the predictions do not perfectly classify the emails; however, the not spam emails generally have lower prediction probabilities than the spam emails." Only 6 emails get a predicted probability above 0.5, and the average prediction is 0.113 for spam against 0.092 for everything else.
-
-### Exercise 16
-
-Replace the code in that chunk so that it groups the emails into buckets by predicted probability, with breaks at 0.02, 0.05, 0.08, 0.10, and 0.12. For each bucket, show the number of emails, the average predicted probability, and the observed proportion that are spam, ordered from the lowest prediction to the highest. Render.
-
-```{r}
-#| label: model-output-and-diagnostics-16
-#| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
-```
-
-###
-
-```{r}
-#| label: model-output-and-diagnostics-16-test
+#| label: model-output-and-diagnostics-12-test
 #| echo: true
 spam_fit |>
   augment(type.predict = "response") |>
@@ -526,14 +438,14 @@ spam_fit |>
 
 ###
 
-In the biggest bucket, 2,756 emails predicted at 11.3% spam turned out 11.2% spam, which is just what a good model should do. These are the chapter's first steps: "Bucket the observations into groups based on their predicted probabilities," then compute the average predicted and the observed probability for each group.
+In the biggest bucket, 2,756 emails predicted at 11.3% spam turned out 11.2% spam. Comparing the two bucket by bucket checks the second condition of logistic regression: each predictor *x~i~* is linearly related to logit(*p~i~*) if all other predictors are held constant.
 
-### Exercise 17
+### Exercise 13
 
 Add the lower and upper ends of a 95% confidence interval for the observed proportion in each bucket, using its standard error. Render.
 
 ```{r}
-#| label: model-output-and-diagnostics-17
+#| label: model-output-and-diagnostics-13
 #| echo: false
 learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
@@ -541,7 +453,7 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ###
 
 ```{r}
-#| label: model-output-and-diagnostics-17-test
+#| label: model-output-and-diagnostics-13-test
 #| echo: true
 spam_fit |>
   augment(type.predict = "response") |>
@@ -558,14 +470,14 @@ spam_fit |>
 
 ###
 
-"We can use the confidence intervals to roughly gauge whether anything might be amiss." Four of the six intervals contain their bucket's average prediction, but in the two buckets predicted at 2% to 8% spam, the whole interval sits below the prediction.
+We can use the confidence intervals to roughly gauge whether anything might be amiss. Four of the six intervals contain their bucket's average prediction, but in the two buckets predicted at 2% to 8% spam, the whole interval sits below the prediction.
 
-### Exercise 18
+### Exercise 14
 
 Change the code so that, instead of the table, it plots each bucket's observed proportion against its average predicted probability, with the confidence interval as an error bar, and a dashed line where observed equals predicted. Render.
 
 ```{r}
-#| label: model-output-and-diagnostics-18
+#| label: model-output-and-diagnostics-14
 #| echo: false
 learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
@@ -573,7 +485,7 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ###
 
 ```{r}
-#| label: model-output-and-diagnostics-18-test
+#| label: model-output-and-diagnostics-14-test
 #| echo: true
 spam_fit |>
   augment(type.predict = "response") |>
@@ -593,14 +505,14 @@ spam_fit |>
 
 ###
 
-"If the model does a good job describing the data, the plotted points should fall close to the line *y* = *x*, since the predicted probabilities should be similar to the observed probabilities." The six points hug the dashed line, though two dip below it, at predictions of 3% and 7%.
+If the model does a good job describing the data, the plotted points should fall close to the line *y* = *x*, since the predicted probabilities should be similar to the observed probabilities. The six points hug the dashed line, though two dip below it, at predictions of 3% and 7%.
 
-### Exercise 19
+### Exercise 15
 
 Improve the plot. Make the size of each point show the number of emails in its bucket, make both axes percentages over the same range, and add a title, axis labels, a subtitle that states the main finding, and a caption giving the number of emails and the source. Render.
 
 ```{r}
-#| label: model-output-and-diagnostics-19
+#| label: model-output-and-diagnostics-15
 #| echo: false
 learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")
 ```
@@ -608,7 +520,7 @@ learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', ty
 ###
 
 ```{r}
-#| label: model-output-and-diagnostics-19-test
+#| label: model-output-and-diagnostics-15-test
 #| echo: true
 spam_fit |>
   augment(type.predict = "response") |>
@@ -637,14 +549,14 @@ spam_fit |>
 
 ###
 
-The chapter's verdict on its version of this plot: "The dashed line is within the confidence bound of the 95% confidence intervals for many of the buckets, suggesting the logistic fit is reasonable." The largest point, holding 70% of the emails, sits right on the line.
+The dashed line is within the confidence bound of the 95% confidence intervals for many of the buckets, suggesting the logistic fit is reasonable. The largest point, holding 70% of the emails, sits right on the line.
 
-### Exercise 20
+### Exercise 16
 
-Commit `analysis.qmd` and `.gitignore` with the message `"Model spam with four predictors"` and push.
+Commit `analysis.qmd` with the message `"Model spam with four predictors"` and push.
 
 ```{r}
-#| label: model-output-and-diagnostics-20
+#| label: model-output-and-diagnostics-16
 #| echo: false
 learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type = "reflection")
 ```
@@ -658,11 +570,11 @@ learnr2::question("In the bash Terminal, run git log --oneline -3. CP/CR.", type
 
 ###
 
-"Depending on the goal of the research project, you might be inclined to focus on variable importance (through p-values) or you might be inclined to focus on prediction accuracy (through cross-validation)." So far, this tutorial has done the first.
+Depending on the goal of the research project, you might be inclined to focus on variable importance (through p-values) or you might be inclined to focus on prediction accuracy (through cross-validation). So far, you have done the first.
 
 ## Cross-validation for prediction error
 
-"The p-value is a probability measure under a setting of no relationship." It tells us whether a variable matters, but "the p-value does not measure how well the model will predict the individual emails (e.g., the accuracy of the model)," which is what **cross-validation** measures.
+The p-value is a probability measure under a setting of no relationship. It does not measure how well the model will predict the individual emails (e.g., the accuracy of the model), which is what *cross-validation* measures.
 
 ### Exercise 1
 
@@ -685,7 +597,7 @@ glm(spam ~ to_multiple, data = email, family = binomial) |>
 
 ###
 
-This is the chapter's smaller model, -2.12 - 1.81 × `to_multiple`, fit to all 3,921 emails. "As with linear regression [...], we compare a smaller logistic regression model to a larger logistic regression model."
+This is the chapter's smaller model, -2.12 - 1.81 × `to_multiple`, fit to all 3,921 emails. As with linear regression, we compare a smaller logistic regression model to a larger logistic regression model.
 
 ### Exercise 2
 
@@ -712,7 +624,7 @@ email_folds |>
 
 ###
 
-Each fold holds about 980 emails, 91 or 92 of them spam. "Using *k*-fold cross-validation, we can build *k* different models which are used to predict the observations in each of the *k* holdout samples"; the chapter uses four folds and seed 470 too, but a different function, so its folds, and every number that follows, differ slightly from ours, as yours may.
+Using *k*-fold cross-validation, we can build *k* different models which are used to predict the observations in each of the *k* holdout samples. The chapter also uses four folds and seed 470, but a different function, so its folds, and every number that follows, differ slightly from ours.
 
 ### Exercise 3
 
@@ -759,7 +671,7 @@ glm(spam ~ to_multiple,
 
 ###
 
-Without fold 1, the slope is -1.62 instead of -1.81, and the intercept stays at -2.12. "For each cross-validated model, the coefficients change slightly, and the model is used to make independent predictions on the holdout sample."
+Without fold 1, the slope is -1.62 instead of -1.81, and the intercept stays at -2.12. For each cross-validated model, the coefficients change slightly, and the model is used to make independent predictions on the holdout sample.
 
 ### Exercise 5
 
@@ -785,7 +697,7 @@ glm(spam ~ to_multiple,
 
 ###
 
-With one two-level predictor, the model can only give two answers: 10.7% for the 835 emails sent to the owner alone, and 2.3% for the 146 sent to several people. None of the fold 1 emails helped fit the model, so these are honest predictions.
+With one two-level predictor, the model can only give two answers: 10.7% for the 835 emails sent to the owner alone, and 2.3% for the 146 sent to several people. None of the fold 1 emails helped fit the model.
 
 ### Exercise 6
 
@@ -812,7 +724,9 @@ glm(spam ~ to_multiple,
 
 ###
 
-The model catches 91 of the 92 spam emails but correctly passes only 145 of the 889 real ones; the chapter's fold caught 80 of 83 and passed 143 of 897. "Additionally, in the logistic regression model, we use a 10% cutoff to predict whether the email is spam."
+The model catches 91 of the 92 spam emails but correctly passes only 145 of the 889 real ones. In the chapter's first fold, below, the model fit to the other three folds caught 80 of 83 and passed 143 of 897.
+
+![](images/fig-emailCV1.png){fig-alt="The left panel shows the logistic model predicting the probability of an email being spam as a function of whether the email was sent to multiple individuals; the model was built using the red, green, and yellow triangular sections of the observed data. The right panel shows a confusion matrix of the predicted spam label crossed with the observed spam label for the set of observations in the blue triangular section of the observed data. Of the 83 spam emails, 80 were correctly classified as spam. Of the 897 non-spam emails, 143 were correctly classified as not spam."}
 
 ### Exercise 7
 
@@ -840,7 +754,7 @@ map(1:4, \(k)
 
 ###
 
-All 3,921 emails now have a prediction, and each one comes from a model that never saw that email. "The logistic regression model was fit independently of the removed emails."
+All 3,921 emails now have a prediction, each from a model that never saw that email. The logistic regression model was fit independently of the removed emails.
 
 ### Exercise 8
 
@@ -873,7 +787,7 @@ map(1:4, \(k)
 
 ###
 
-In every fold, `spamTP` is 0.93 or higher, but `notspamTP` is below 0.19 and overall accuracy is about 0.25. "However, the trade-off was that most of the non-spam emails are now predicted to be spam which is not acceptable for a prediction algorithm."
+In every fold, `spamTP` is 0.93 or higher, but `notspamTP` is below 0.19 and overall accuracy is about 0.25. The trade-off was that most of the non-spam emails are now predicted to be spam, which is not acceptable for a prediction algorithm.
 
 ### Exercise 9
 
@@ -896,7 +810,7 @@ email_folds |>
 
 ###
 
-Calling everything real email is right 90.6% of the time, far better than the smaller model's 25%, while catching no spam at all. "Because the `email` dataset has a ratio of roughly 90% non-spam and 10% spam emails, a model which randomly guessed all non-spam would have an overall accuracy of 90%!"
+Calling everything real email is right 90.6% of the time, far better than the smaller model's 25%, while catching no spam at all. Because the `email` dataset has a ratio of roughly 90% non-spam and 10% spam emails, a model which randomly guessed all non-spam would have an overall accuracy of 90%.
 
 ### Exercise 10
 
@@ -921,7 +835,7 @@ glm(spam ~ to_multiple + attach + winner + format + re_subj +
 
 ###
 
-The estimates match the chapter's equation, from -2.56 on `to_multiple1` to -0.42 on `numberbig`, and every p-value is below 0.05 except the one on `exclaim_mess`, 0.79. "Adding more variables to the model may help with both the spam and non-spam predictions."
+The estimates match the chapter's equation, from -2.56 on `to_multiple1` to -0.42 on `numberbig`, and every p-value is below 0.05 except the one on `exclaim_mess`, 0.79. Adding more variables to the model may help with both the spam and non-spam predictions.
 
 ### Exercise 11
 
@@ -955,7 +869,9 @@ map(1:4, \(k)
 
 ###
 
-`notspamTP` jumps to between 0.766 and 0.845, while `spamTP` falls to between 0.59 and 0.74. The larger model "was able to capture more nuance in the emails which lead to better predictions."
+The larger model was able to capture more nuance in the emails, which led to better predictions: `notspamTP` rises to between 0.766 and 0.845, while `spamTP` falls to between 0.59 and 0.74. In the chapter's first fold, below, it caught 73 of 97 spam emails and passed 688 of 883 real ones.
+
+![](images/fig-emailCV2.png){fig-alt="The left panel shows the logistic model predicting the probability of an email being spam as a function of the email being sent to multiple recipients, number of attachments, using the word winner, format of HTML, RE in the subject line, number of exclamation points in the message, and the existence of a number in the email; the model was built using the red, green, and yellow triangular sections of the observed data. The right panel shows a confusion matrix of the predicted spam label crossed with the observed spam label for the set of observations in the blue triangular section of the observed data. Of the 97 spam emails, 73 were correctly classified as spam. Of the 883 non-spam emails, 688 were correctly classified as not spam."}
 
 ### Exercise 12
 
@@ -994,7 +910,7 @@ bind_rows(smaller = cv_predict(spam ~ to_multiple),
 
 ###
 
-Eight rows, one for each model and fold, put the trade-off side by side: the larger model's accuracy runs from 0.76 to 0.82, against 0.23 to 0.26 for the smaller one. In fold 4 the larger model caught only 59% of the spam, the kind of fold-to-fold variation a single train-and-test split would hide.
+The larger model's accuracy runs from 0.76 to 0.82, against 0.23 to 0.26 for the smaller one. In fold 4 the larger model caught only 59% of the spam, variation that a single train-and-test split would hide.
 
 ### Exercise 13
 
@@ -1090,7 +1006,7 @@ bind_rows(smaller = cv_predict(spam ~ to_multiple),
 
 ###
 
-"However, it is not true that adding variables will always lead to better predictions, as correlated or noise variables may dampen the signal from the set of variables that truly predict the status." Cross-validation is how you find out, because every point on the plot comes from emails the model never saw.
+It is not true that adding variables will always lead to better predictions, as correlated or noise variables may dampen the signal from the set of variables that truly predict the status. Cross-validation tests this, because every point on the plot comes from emails the model never saw.
 
 ### Exercise 15
 
@@ -1112,19 +1028,19 @@ b83d5f1 (HEAD -> main, origin/main) Cross-validate two spam models
 
 ###
 
-"A full treatment of cross-validation and logistic regression models is beyond the scope of this text." "We encourage you to learn more about multiple variable models and cross-validation in your future exploration of statistical topics."
+A full treatment of cross-validation and logistic regression models is beyond the scope of this book. We encourage you to learn more about multiple variable models and cross-validation in your future exploration of statistical topics.
 
 ## Summary
 
 This tutorial covered [Chapter 26: Inference for logistic regression](https://openintrostat.github.io/ims/inf-model-logistic.html) from [*Introduction to Modern Statistics*](https://openintrostat.github.io/ims/) by Mine Çetinkaya-Rundel and Johanna Hardin. You have learned to read the standard errors, z statistics, and p-values of a logistic regression, to check a model by comparing its predicted probabilities with what actually happened, and to compare two models with cross-validation, using emails from one inbox, some of them spam.
 
-The chapter's own summary, in the authors' words:
+Throughout the text, we have presented a modern view to introduction to statistics. Earlier, we presented graphical techniques which communicated relationships across multiple variables. We also used modeling to formalize the relationships. In this tutorial we considered inferential claims on models which include many variables used to predict the probability of the outcome being a success. We continue to emphasize the importance of experimental design in making conclusions about research claims. In particular, recall that variability can come from different sources (e.g., random sampling vs. random allocation).
 
-> Throughout the text, we have presented a modern view to introduction to statistics. Earlier, we presented graphical techniques which communicated relationships across multiple variables. We also used modeling to formalize the relationships. In [Chapter 26] we considered inferential claims on models which include many variables used to predict the probability of the outcome being a success. We continue to emphasize the importance of experimental design in making conclusions about research claims. In particular, recall that variability can come from different sources (e.g., random sampling vs. random allocation, see [the figure on sampling and assignment in Chapter 2]).
->
-> As you might guess, this text has only scratched the surface of the world of statistical analyses that can be applied to different datasets. In particular, to do justice to the topic, the linear models and generalized linear models we have introduced can each be covered with their own course or book. Hierarchical models, alternative methods for fitting parameters (e.g., Ridge Regression or LASSO), and advanced computational methods applied to multivariable models (e.g., permuting the response variable? one explanatory variable? all the explanatory variables?) are all beyond the scope of this book. However, your successful understanding of the ideas we have covered has set you up perfectly to move on to a higher level of statistical modeling and inference. Enjoy!
+As you might guess, this text has only scratched the surface of the world of statistical analyses that can be applied to different datasets. In particular, to do justice to the topic, the linear models and generalized linear models we have introduced can each be covered with their own course or book. Hierarchical models, alternative methods for fitting parameters (e.g., Ridge Regression or LASSO), and advanced computational methods applied to multivariable models (e.g., permuting the response variable? one explanatory variable? all the explanatory variables?) are all beyond the scope of this book. However, your successful understanding of the ideas we have covered has set you up perfectly to move on to a higher level of statistical modeling and inference. Enjoy!
 
 For the next step, read [*Tidy Modeling with R*](https://www.tmwr.org/) by Max Kuhn and Julia Silge, the guide to **tidymodels**, the packages the chapter uses for its folds and models. For cross-validation, ridge regression, and the LASSO, which the chapter leaves for later, read [*An Introduction to Statistical Learning*](https://www.statlearning.com/) by Gareth James, Daniela Witten, Trevor Hastie, and Robert Tibshirani.
+
+Many sentences in this tutorial, and its figures, come from the chapter, used under the book's [CC BY-SA 3.0 license](https://creativecommons.org/licenses/by-sa/3.0/).
 
 ### Exercise 1
 
@@ -1155,9 +1071,12 @@ library(broom)
 ```
 
 ```{r}
-#| cache: true
 spam_fit <- glm(spam ~ to_multiple + cc + dollar + urgent_subj,
                 data = email, family = binomial)
+
+spam_fit |>
+  augment(type.predict = "response") |>
+  count(.fitted, sort = TRUE)
 ```
 
 ```{r}
@@ -1233,7 +1152,7 @@ bind_rows(smaller = cv_predict(spam ~ to_multiple),
 
 ###
 
-"We also used modeling to formalize the relationships." Your two plots check one model two ways: the first asks whether its probabilities are honest, the second whether its predictions hold up on emails it never saw.
+Your first plot checks whether the four-predictor model's probabilities match what happened, and your second compares two models on emails they never saw.
 
 ### Exercise 2
 
@@ -1255,7 +1174,7 @@ Your answer should look like `https://your-github-username.github.io/inference-f
 
 ###
 
-"We continue to emphasize the importance of experimental design in making conclusions about research claims." The emails were observed, not assigned, so the model predicts spam without telling us what causes it.
+The emails were observed, not assigned, so the model predicts spam without telling us what causes it.
 
 ### Exercise 3
 
@@ -1273,7 +1192,7 @@ Your answer should look like `https://github.com/your-github-username/inference-
 
 ###
 
-"However, your successful understanding of the ideas we have covered has set you up perfectly to move on to a higher level of statistical modeling and inference." "Enjoy!"
+The next tutorial, "Applications: Model and Infer," applies regression, simulation, and cross-validation to one more dataset.
 
 ## Your Answers
 
