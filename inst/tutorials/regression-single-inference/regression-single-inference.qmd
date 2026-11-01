@@ -961,78 +961,17 @@ Many sentences in this tutorial, and its figures, come from the chapter, used un
 
 ### Exercise 1
 
-Render one last time.
+Render one last time. Commit and push.
 
 ```{r}
 #| label: summary-1
 #| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). CP/CR.', type = "reflection")
+learnr2::question('Open your repo on GitHub, click analysis.qmd, and paste the URL of that page below.', type = "reflection")
 ```
 
 ###
 
-````{verbatim}
----
-title: "Inference for Linear Regression with a Single Predictor"
-author: "Your Name"
-format: html
-execute:
-  echo: false
----
-
-```{r}
-#| message: false
-library(tidyverse)
-library(openintro)
-library(infer)
-library(broom)
-```
-
-```{r}
-set.seed(47)
-births14_100 <- births14 |>
-  drop_na() |>
-  slice_sample(n = 100)
-
-births14_100
-```
-
-```{r}
-set.seed(24)
-mage_boot <- births14_100 |>
-  specify(weight ~ mage) |>
-  generate(reps = 1000, type = "bootstrap") |>
-  calculate(stat = "slope")
-
-mage_ci <- mage_boot |>
-  get_confidence_interval(level = 0.95, type = "percentile")
-
-mage_boot |>
-  ggplot(aes(x = stat)) +
-  geom_histogram(bins = 30) +
-  geom_vline(xintercept = c(mage_ci$lower_ci, mage_ci$upper_ci),
-             linetype = "dashed") +
-  geom_vline(xintercept = 0, color = "red") +
-  labs(title = "Bootstrapped Slopes for Baby's Weight on Mother's Age",
-       subtitle = "The 95% interval, -0.004 to 0.073 pounds per year, includes zero: the slope might be null",
-       x = "Bootstrapped Slope (pounds of birth weight per year of mother's age)",
-       y = "Count",
-       caption = "100 births from births14; 1,000 bootstrap resamples\nSource: CDC National Center for Health Statistics, 2014")
-```
-
-```{r}
-lm(gift_aid ~ family_income, data = elmhurst) |>
-  augment() |>
-  ggplot(aes(x = family_income, y = .resid)) +
-  geom_point() +
-  geom_hline(yintercept = 0, linetype = "dashed") +
-  labs(title = "Residuals from Predicting Gift Aid by Family Income",
-       subtitle = "No curve, no outliers, and an even spread: the conditions for the t-test look reasonable",
-       x = "Family Income ($1,000s)",
-       y = "Residual Gift Aid ($1,000s)",
-       caption = "50 students, Elmhurst College class of 2011\nSource: The Chronicle of Higher Education")
-```
-````
+Your answer should look like `https://github.com/your-github-username/inference-for-linear-regression-with-a-single-predictor/blob/main/analysis.qmd`.
 
 ###
 
@@ -1059,20 +998,6 @@ Your answer should look like `https://your-github-username.github.io/inference-f
 ###
 
 The technical condition describing the independence of the observations is often the most crucial but also the most difficult to diagnose. It is also extremely difficult to gather a dataset which is a true random sample from the population of interest.
-
-### Exercise 3
-
-Commit and push any remaining changes.
-
-```{r}
-#| label: summary-3
-#| echo: false
-learnr2::question("Paste the URL of your GitHub repo.", type = "reflection")
-```
-
-###
-
-Your answer should look like `https://github.com/your-github-username/inference-for-linear-regression-with-a-single-predictor`.
 
 ###
 

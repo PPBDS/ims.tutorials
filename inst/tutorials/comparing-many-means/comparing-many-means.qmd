@@ -1032,109 +1032,17 @@ Many sentences in this tutorial, and its figures, come from the chapter, used un
 
 ### Exercise 1
 
-Render one last time.
+Render one last time. Commit and push.
 
 ```{r}
 #| label: summary-1
 #| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). CP/CR.', type = "reflection")
+learnr2::question('Open your repo on GitHub, click analysis.qmd, and paste the URL of that page below.', type = "reflection")
 ```
 
 ###
 
-````{verbatim}
----
-title: "Inference for Comparing Many Means"
-author: "Your Name"
-format: html
-execute:
-  echo: false
----
-
-```{r}
-#| message: false
-library(tidyverse)
-library(openintro)
-library(infer)
-library(broom)
-```
-
-```{r}
-mlb <- mlb_players_18 |>
-  filter(AB >= 100, !position %in% c("P", "DH")) |>
-  mutate(position = case_when(position %in% c("LF", "CF", "RF") ~ "OF",
-                              position %in% c("1B", "2B", "3B", "SS") ~ "IF",
-                              .default = position),
-         position = fct_relevel(position, "OF", "IF", "C"))
-
-mlb |>
-  count(position)
-```
-
-```{r}
-mlb |>
-  ggplot(aes(x = position, y = OBP)) +
-  geom_boxplot()
-```
-
-```{r}
-class_F <- classdata |>
-  mutate(exam = str_to_upper(lecture)) |>
-  specify(m1 ~ exam) |>
-  calculate(stat = "F")
-
-set.seed(47)
-class_null <- classdata |>
-  mutate(exam = str_to_upper(lecture)) |>
-  specify(m1 ~ exam) |>
-  hypothesize(null = "independence") |>
-  generate(reps = 1000, type = "permute") |>
-  calculate(stat = "F")
-
-class_null |>
-  mutate(extreme = if_else(stat >= class_F$stat,
-                           "At least as large as observed",
-                           "Smaller than observed")) |>
-  ggplot(aes(x = stat, fill = extreme)) +
-  geom_histogram(binwidth = 0.25, boundary = 0) +
-  geom_vline(xintercept = class_F$stat, linetype = "dashed") +
-  scale_fill_manual(values = c("At least as large as observed" = "steelblue",
-                               "Smaller than observed" = "gray70")) +
-  labs(title = "F Statistics in 1,000 Shuffles of Three Exams",
-       subtitle = "If the exams were equally hard, only 3.6% of shuffles would reach the observed F of 3.48",
-       x = "F Statistic",
-       y = "Number of Shuffles",
-       fill = NULL,
-       caption = "164 students; 1,000 random shuffles of the exams\nSimulated data: classdata, openintro package") +
-  theme(legend.position = "bottom")
-```
-
-```{r}
-mlb_F <- mlb |>
-  specify(OBP ~ position) |>
-  calculate(stat = "F")
-
-set.seed(47)
-mlb_null <- mlb |>
-  specify(OBP ~ position) |>
-  hypothesize(null = "independence") |>
-  generate(reps = 1000, type = "permute") |>
-  calculate(stat = "F")
-
-mlb_null |>
-  ggplot(aes(x = stat)) +
-  geom_histogram(aes(y = after_stat(density)), binwidth = 0.25, boundary = 0,
-                 fill = "gray80", color = "white") +
-  stat_function(fun = df, args = list(df1 = 2, df2 = 426),
-                color = "steelblue", linewidth = 1) +
-  geom_vline(xintercept = mlb_F$stat, linetype = "dashed") +
-  labs(title = "On-Base Percentage by Position: Shuffles and the F Distribution",
-       subtitle = "Both put the observed F of 5.08 in the far tail: position matters (p = 0.007)",
-       x = "F Statistic",
-       y = "Density",
-       caption = "429 MLB players with at least 100 at bats in 2018; 1,000 random shuffles of position\nSource: mlb_players_18, openintro package; mlb.com")
-```
-````
+Your answer should look like `https://github.com/your-github-username/inference-for-comparing-many-means/blob/main/analysis.qmd`.
 
 ###
 
@@ -1161,20 +1069,6 @@ Your answer should look like `https://your-github-username.github.io/inference-f
 ###
 
 The larger the observed variability in the sample means (MSG) relative to the within-group observations (MSE), the larger F will be and the stronger the evidence against the null hypothesis.
-
-### Exercise 3
-
-Commit and push any remaining changes.
-
-```{r}
-#| label: summary-3
-#| echo: false
-learnr2::question("Paste the URL of your GitHub repo.", type = "reflection")
-```
-
-###
-
-Your answer should look like `https://github.com/your-github-username/inference-for-comparing-many-means`.
 
 ###
 

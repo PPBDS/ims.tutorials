@@ -973,89 +973,17 @@ Many sentences in this tutorial, and its figures, come from the chapter, used un
 
 ### Exercise 1
 
-Render one last time.
+Render one last time. Commit and push.
 
 ```{r}
 #| label: summary-1
 #| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). CP/CR.', type = "reflection")
+learnr2::question('Open your repo on GitHub, click analysis.qmd, and paste the URL of that page below.', type = "reflection")
 ```
 
 ###
 
-````{verbatim}
----
-title: "Applications: Infer"
-author: "Your Name"
-format: html
-execute:
-  echo: false
----
-
-```{r}
-#| message: false
-library(tidyverse)
-library(infer)
-```
-
-```{r}
-redundant <- read_csv("data/redundant_adjectives.csv", show_col_types = FALSE) |>
-  rename(language = Language, subject = Subject,
-         question = Question, color_response = `Color Response`) |>
-  mutate(items = if_else(question > 10, 16, 4)) |>
-  summarize(redundant_perc = sum(color_response) * 100 / n(),
-            .by = c(language, subject, items))
-```
-
-```{r}
-set.seed(74)
-boot_eng_4 <- redundant |>
-  filter(language == "English", items == 4) |>
-  specify(response = redundant_perc) |>
-  generate(reps = 1000, type = "bootstrap") |>
-  calculate(stat = "mean")
-
-boot_eng_4
-```
-
-```{r}
-ci_eng_4 <- boot_eng_4 |>
-  get_confidence_interval(level = 0.95, type = "percentile")
-
-boot_eng_4 |>
-  ggplot(aes(x = stat)) +
-  annotate("rect", xmin = ci_eng_4$lower_ci, xmax = ci_eng_4$upper_ci,
-           ymin = -Inf, ymax = Inf, fill = "steelblue", alpha = 0.2) +
-  geom_histogram(binwidth = 5, fill = "steelblue") +
-  geom_vline(xintercept = c(ci_eng_4$lower_ci, ci_eng_4$upper_ci),
-             color = "navy") +
-  scale_x_continuous(labels = scales::label_percent(scale = 1)) +
-  labs(title = "Redundant Adjectives Among English Speakers, 4-Item Displays",
-       subtitle = "95% confidence interval for the mean usage: 19.1% to 56.4%",
-       x = "Mean Percentage of Answers With a Redundant Adjective",
-       y = "Number of Bootstrap Resamples",
-       caption = "22 English speakers, 1,000 bootstrap resamples\nRubio-Fernandez, Mollica, and Jara-Ettinger (2021), via Introduction to Modern Statistics")
-```
-
-```{r}
-redundant |>
-  summarize(mean_redundant_perc = mean(redundant_perc),
-            .by = c(language, items)) |>
-  ggplot(aes(x = factor(items), y = mean_redundant_perc, fill = language)) +
-  geom_col(position = position_dodge(width = 0.9)) +
-  geom_text(aes(label = scales::label_percent(scale = 1, accuracy = 0.1)(mean_redundant_perc)),
-            position = position_dodge(width = 0.9), vjust = -0.4) +
-  scale_y_continuous(labels = scales::label_percent(scale = 1),
-                     limits = c(0, 100)) +
-  labs(title = "Redundant Color Adjectives in English and Spanish",
-       subtitle = "English speakers were more redundant with 4 items (p = 0.002), but the gap was not\nclear with 16 (p = 0.11)",
-       x = "Number of Items in the Display",
-       y = "Mean Redundant Adjective Use",
-       fill = "Language",
-       caption = "22 English and 22 Spanish speakers, 10 answers per display size\nRubio-Fernandez, Mollica, and Jara-Ettinger (2021), via Introduction to Modern Statistics") +
-  theme(legend.position = "bottom")
-```
-````
+Your answer should look like `https://github.com/your-github-username/applications-infer/blob/main/analysis.qmd`.
 
 ###
 
@@ -1082,20 +1010,6 @@ Your answer should look like `https://your-github-username.github.io/application
 ###
 
 In Spanish, the adjective comes after the noun (e.g., "el triángulo azul"), so the incremental value of the additional adjective might be different. The study's title credits word order for the difference between the languages.
-
-### Exercise 3
-
-Commit and push any remaining changes.
-
-```{r}
-#| label: summary-3
-#| echo: false
-learnr2::question("Paste the URL of your GitHub repo.", type = "reflection")
-```
-
-###
-
-Your answer should look like `https://github.com/your-github-username/applications-infer`.
 
 ###
 

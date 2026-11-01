@@ -904,78 +904,17 @@ Many sentences in this tutorial, and its figures, come from the chapter, used un
 
 ### Exercise 1
 
-Render one last time.
+Render one last time. Commit and push.
 
 ```{r}
 #| label: summary-1
 #| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). CP/CR.', type = "reflection")
+learnr2::question('Open your repo on GitHub, click analysis.qmd, and paste the URL of that page below.', type = "reflection")
 ```
 
 ###
 
-````{verbatim}
----
-title: "Inference for Two-Way Tables"
-author: "Your Name"
-format: html
-execute:
-  echo: false
----
-
-```{r}
-#| message: false
-library(tidyverse)
-library(openintro)
-library(infer)
-```
-
-```{r}
-set.seed(4747)
-null_dist <- ask |>
-  specify(response ~ question_class) |>
-  hypothesize(null = "independence") |>
-  generate(reps = 1000, type = "permute") |>
-  calculate(stat = "Chisq")
-
-null_dist
-```
-
-```{r}
-null_dist |>
-  ggplot(aes(x = stat)) +
-  geom_histogram(binwidth = 1, fill = "gray60", color = "white") +
-  geom_vline(xintercept = 40.13, color = "red", linetype = "dashed", linewidth = 1) +
-  annotate("text", x = 40.13, y = 150, label = "Observed: 40.13",
-           hjust = 1.1, color = "red") +
-  labs(title = "Chi-Squared Statistics If the Question Made No Difference",
-       subtitle = "No shuffle came near the observed 40.13: the question changed what sellers disclosed",
-       x = "Chi-Squared Statistic from a Shuffle of the Responses",
-       y = "Number of Shuffles",
-       caption = "219 sellers, 73 per question; 1,000 shuffles\nIntroduction to Modern Statistics, Chapter 18")
-```
-
-```{r}
-set.seed(4747)
-diabetes2 |>
-  specify(outcome ~ treatment) |>
-  hypothesize(null = "independence") |>
-  generate(reps = 1000, type = "permute") |>
-  calculate(stat = "Chisq") |>
-  ggplot(aes(x = stat)) +
-  geom_histogram(aes(y = after_stat(count / sum(count) / width),
-                     fill = stat >= 8.16),
-                 binwidth = 0.51, boundary = 0) +
-  geom_function(fun = dchisq, args = list(df = 2), linewidth = 1) +
-  geom_vline(xintercept = 8.16, color = "red", linetype = "dashed") +
-  scale_fill_manual(values = c("gray70", "steelblue"), guide = "none") +
-  labs(title = "Chi-Squared Statistics If the Diabetes Treatments Were Equally Effective",
-       subtitle = "Simulation (p = 0.015) and the chi-squared curve (p = 0.017) agree: the treatments differ",
-       x = "Chi-Squared Statistic from a Shuffle of the Outcomes",
-       y = "Density",
-       caption = "699 patients, three treatments; 1,000 shuffles; curve has 2 degrees of freedom\nIntroduction to Modern Statistics, Chapter 18")
-```
-````
+Your answer should look like `https://github.com/your-github-username/inference-for-two-way-tables/blob/main/analysis.qmd`.
 
 ###
 
@@ -1002,20 +941,6 @@ Your answer should look like `https://your-github-username.github.io/inference-f
 ###
 
 Both studies randomly assigned their treatments, which is what lets a small p-value support a causal claim.
-
-### Exercise 3
-
-Commit and push any remaining changes.
-
-```{r}
-#| label: summary-3
-#| echo: false
-learnr2::question("Paste the URL of your GitHub repo.", type = "reflection")
-```
-
-###
-
-Your answer should look like `https://github.com/your-github-username/inference-for-two-way-tables`.
 
 ###
 

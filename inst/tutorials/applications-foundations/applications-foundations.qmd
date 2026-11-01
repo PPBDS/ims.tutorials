@@ -707,69 +707,17 @@ Many sentences in this tutorial come from the chapter, and its figure from [Chap
 
 ### Exercise 1
 
-Render one last time.
+Render one last time. Commit and push.
 
 ```{r}
 #| label: summary-1
 #| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). CP/CR.', type = "reflection")
+learnr2::question('Open your repo on GitHub, click analysis.qmd, and paste the URL of that page below.', type = "reflection")
 ```
 
 ###
 
-````{verbatim}
----
-title: "Applications: Foundations"
-author: "Your Name"
-format: html
-execute:
-  echo: false
----
-
-```{r}
-#| message: false
-library(tidyverse)
-library(openintro)
-library(infer)
-```
-
-```{r}
-malaria |>
-  ggplot(aes(x = treatment, fill = outcome)) +
-  geom_bar(position = "fill") +
-  scale_y_continuous(labels = scales::label_percent()) +
-  labs(title = "Infections in the PfSPZ Malaria Vaccine Trial",
-       subtitle = "36% of vaccinated volunteers showed signs of infection, against all six given the placebo",
-       x = "Treatment",
-       y = "Percent of Volunteers",
-       fill = "Outcome",
-       caption = "20 volunteers: 14 vaccine, 6 placebo; Lyke et al. (2017), via openintro") +
-  theme(legend.position = "bottom")
-```
-
-```{r}
-set.seed(15)
-null_dist <- malaria |>
-  specify(response = outcome, explanatory = treatment, success = "infection") |>
-  hypothesize(null = "independence") |>
-  generate(reps = 1000, type = "permute") |>
-  calculate(stat = "diff in props", order = c("placebo", "vaccine"))
-
-null_dist
-```
-
-```{r}
-null_dist |>
-  ggplot(aes(x = stat, fill = stat >= 0.64)) +
-  geom_bar(width = 0.15) +
-  scale_fill_manual(values = c("grey60", "firebrick"), guide = "none") +
-  labs(title = "Differences in Infection Rates When the Vaccine Does Nothing",
-       subtitle = "Only 12 of 1,000 shuffles matched the observed difference of 64.3 percentage points",
-       x = "Difference in Infection Rates (Placebo Minus Vaccine)",
-       y = "Number of Shuffles",
-       caption = "20 volunteers, 1,000 shuffles under the independence model\nLyke et al. (2017), via openintro")
-```
-````
+Your answer should look like `https://github.com/your-github-username/applications-foundations/blob/main/analysis.qmd`.
 
 ###
 
@@ -796,20 +744,6 @@ Your answer should look like `https://your-github-username.github.io/application
 ###
 
 The methods presented in this text (and used in science generally) are typically used interchangeably across ideas of random samples or random allocations of the treatment. The most important thing to consider is how to contextualize the conclusion in terms of the problem.
-
-### Exercise 3
-
-Commit and push any remaining changes.
-
-```{r}
-#| label: summary-3
-#| echo: false
-learnr2::question("Paste the URL of your GitHub repo.", type = "reflection")
-```
-
-###
-
-Your answer should look like `https://github.com/your-github-username/applications-foundations`.
 
 ###
 

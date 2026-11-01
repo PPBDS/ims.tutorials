@@ -777,94 +777,17 @@ Many sentences in this tutorial, and its figures, come from the chapter, used un
 
 ### Exercise 1
 
-Render one last time.
+Render one last time. Commit and push.
 
 ```{r}
 #| label: summary-1
 #| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). CP/CR.', type = "reflection")
+learnr2::question('Open your repo on GitHub, click analysis.qmd, and paste the URL of that page below.', type = "reflection")
 ```
 
 ###
 
-````{verbatim}
----
-title: "Study Design"
-author: "Your Name"
-format: html
-execute:
-  echo: false
----
-
-```{r}
-#| message: false
-library(tidyverse)
-library(openintro)
-library(usdata)
-```
-
-```{r}
-mlb |>
-  summarize(mean_salary = mean(salary), .by = team) |>
-  arrange(desc(mean_salary))
-```
-
-```{r}
-set.seed(42)
-mlb_srs <- mlb |>
-  slice_sample(n = 120)
-
-mlb_srs |>
-  count(team, sort = TRUE)
-```
-
-```{r}
-mlb |>
-  summarize(mean_salary = mean(salary), .by = team) |>
-  ggplot(aes(x = mean_salary, y = fct_reorder(team, mean_salary))) +
-  geom_col() +
-  geom_vline(xintercept = mean(mlb$salary), linetype = "dashed") +
-  scale_x_continuous(labels = scales::label_dollar(scale = 1 / 1000, suffix = "M")) +
-  labs(title = "Mean Player Salary by Team, 2010",
-       subtitle = "The Yankees paid six times what the Pirates did, so team is a natural stratum",
-       x = "Mean Salary",
-       y = NULL,
-       caption = "828 players; USA Today salary database")
-```
-
-```{r}
-stent <- bind_rows(`30 days` = stent30, `365 days` = stent365, .id = "time")
-
-stent |>
-  summarize(prop_stroke = mean(outcome == "stroke"),
-            .by = c(time, group)) |>
-  ggplot(aes(x = time, y = prop_stroke, fill = group)) +
-  geom_col(position = "dodge") +
-  geom_text(aes(label = scales::label_percent(accuracy = 0.1)(prop_stroke)),
-            position = position_dodge(width = 0.9), vjust = -0.5) +
-  scale_y_continuous(labels = scales::label_percent(),
-                     expand = expansion(mult = c(0, 0.1))) +
-  labs(title = "Stroke Rates in the Stent Experiment",
-       subtitle = "Random assignment made the groups alike, so the extra strokes point to the stent",
-       x = "Time Since Enrollment",
-       y = "Patients Who Had a Stroke",
-       fill = "Group",
-       caption = "451 patients randomly assigned; Chimowitz et al. (2011)")
-```
-
-```{r}
-county |>
-  drop_na(metro) |>
-  ggplot(aes(x = multi_unit, y = homeownership, color = metro)) +
-  geom_point(alpha = 0.3) +
-  labs(title = "Homeownership and Multi-Unit Housing in US Counties",
-       subtitle = "Metro counties have more apartments and less ownership, so density may explain the link",
-       x = "Housing Units in Multi-Unit Structures (%)",
-       y = "Homeownership Rate (%)",
-       color = "Metro Area",
-       caption = "3,139 US counties with known metro status")
-```
-````
+Your answer should look like `https://github.com/your-github-username/study-design/blob/main/analysis.qmd`.
 
 ###
 
@@ -891,20 +814,6 @@ Your answer should look like `https://your-github-username.github.io/study-desig
 ###
 
 The stent patients could distinguish what treatment they received because a stent is a surgical procedure. There is no equivalent surgical placebo, so this study was not blind.
-
-### Exercise 3
-
-Commit and push any remaining changes.
-
-```{r}
-#| label: summary-3
-#| echo: false
-learnr2::question("Paste the URL of your GitHub repo.", type = "reflection")
-```
-
-###
-
-Your answer should look like `https://github.com/your-github-username/study-design`.
 
 ###
 

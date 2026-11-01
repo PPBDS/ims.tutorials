@@ -915,82 +915,17 @@ Many sentences in this tutorial, and its figures, come from the chapter, used un
 
 ### Exercise 1
 
-Render one last time.
+Render one last time. Commit and push.
 
 ```{r}
 #| label: summary-1
 #| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). CP/CR.', type = "reflection")
+learnr2::question('Open your repo on GitHub, click analysis.qmd, and paste the URL of that page below.', type = "reflection")
 ```
 
 ###
 
-````{verbatim}
----
-title: "Inference for Comparing Two Independent Means"
-author: "Your Name"
-format: html
-execute:
-  echo: false
----
-
-```{r}
-#| message: false
-library(tidyverse)
-library(openintro)
-library(infer)
-```
-
-```{r}
-exams <- classdata |>
-  filter(lecture %in% c("a", "b")) |>
-  mutate(exam = str_to_upper(lecture))
-
-set.seed(47)
-null_dist <- exams |>
-  specify(m1 ~ exam) |>
-  hypothesize(null = "independence") |>
-  generate(reps = 1000, type = "permute") |>
-  calculate(stat = "diff in means", order = c("A", "B"))
-
-null_dist
-```
-
-```{r}
-set.seed(470)
-stem_cell |>
-  mutate(change = after - before) |>
-  specify(change ~ trmt) |>
-  generate(reps = 1000, type = "bootstrap") |>
-  calculate(stat = "diff in means", order = c("esc", "ctrl")) |>
-  ggplot(aes(x = stat)) +
-  geom_histogram(binwidth = 0.5, fill = "gray75", color = "white") +
-  geom_vline(xintercept = 0, linewidth = 0.3) +
-  geom_vline(xintercept = 7.83, linewidth = 1) +
-  geom_vline(xintercept = c(4.56, 11.2), linetype = "dashed") +
-  expand_limits(x = 0) +
-  labs(title = "Embryonic Stem Cells and Heart Recovery in Sheep",
-       subtitle = "No bootstrap difference reaches zero: the 90% interval runs from 4.6 to 11.2 points",
-       x = "Difference in Mean Change in Pumping Capacity (ESC - Control)",
-       y = "Count",
-       caption = "1,000 bootstrap resamples of 18 sheep; Ménard et al. (2005)")
-```
-
-```{r}
-null_dist |>
-  ggplot(aes(x = stat)) +
-  geom_histogram(aes(y = after_stat(density)), binwidth = 1,
-                 fill = "gray75", color = "white") +
-  geom_function(fun = \(x) dt(x / 2.60, df = 54) / 2.60,
-                color = "steelblue", linewidth = 1.2) +
-  geom_vline(xintercept = c(-3.14, 3.14), linetype = "dashed") +
-  labs(title = "Shuffled Exam Versions and the t-Distribution",
-       subtitle = "A t-curve with SE 2.60 matches the shuffles; a 3.14-point gap is common by chance",
-       x = "Difference in Mean Score (Version A - Version B)",
-       y = "Density",
-       caption = "1,000 shuffles of 113 students; classdata, openintro")
-```
-````
+Your answer should look like `https://github.com/your-github-username/inference-for-comparing-two-independent-means/blob/main/analysis.qmd`.
 
 ###
 
@@ -1017,20 +952,6 @@ Your answer should look like `https://your-github-username.github.io/inference-f
 ###
 
 Your page uses all three of the chapter's approaches: a randomization test, bootstrapping for interval estimates, and the mathematical framework of the t-distribution.
-
-### Exercise 3
-
-Commit and push any remaining changes.
-
-```{r}
-#| label: summary-3
-#| echo: false
-learnr2::question("Paste the URL of your GitHub repo.", type = "reflection")
-```
-
-###
-
-Your answer should look like `https://github.com/your-github-username/inference-for-comparing-two-independent-means`.
 
 ###
 

@@ -798,81 +798,17 @@ Many sentences in this tutorial come from the chapter, used under the book's [CC
 
 ### Exercise 1
 
-Render one last time.
+Render one last time. Commit and push.
 
 ```{r}
 #| label: summary-1
 #| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). CP/CR.', type = "reflection")
+learnr2::question('Open your repo on GitHub, click analysis.qmd, and paste the URL of that page below.', type = "reflection")
 ```
 
 ###
 
-````{verbatim}
----
-title: "Applications: Model"
-author: "Your Name"
-format: html
-execute:
-  echo: false
----
-
-```{r}
-#| message: false
-library(tidyverse)
-library(openintro)
-library(broom)
-```
-
-```{r}
-duke_forest |>
-  arrange(price) |>
-  select(address, price, area, bed, bath) |>
-  slice_head(n = 5)
-```
-
-```{r}
-price_area <- lm(price ~ area, data = duke_forest)
-
-price_area |>
-  augment(data = duke_forest) |>
-  select(address, price, area, .fitted, .resid) |>
-  arrange(.resid)
-```
-
-```{r}
-price_area |>
-  augment() |>
-  ggplot(aes(x = .fitted, y = .resid)) +
-  geom_point(alpha = 0.7) +
-  geom_hline(yintercept = 0, linetype = "dashed") +
-  scale_x_continuous(labels = scales::label_dollar(scale = 1 / 1000, suffix = "K")) +
-  scale_y_continuous(labels = scales::label_dollar(scale = 1 / 1000, suffix = "K")) +
-  labs(title = "Residuals from Modeling Price with Area",
-       subtitle = "Errors grow for pricier homes, and one house sold for $802K less than predicted",
-       x = "Predicted Sale Price",
-       y = "Residual",
-       caption = "98 houses sold in Duke Forest, Durham, NC; Zillow, November 2020")
-```
-
-```{r}
-price_final <- lm(price ~ area + bath + year_built + cooling + lot,
-                  data = duke_forest)
-
-price_final |>
-  augment() |>
-  ggplot(aes(x = .fitted, y = .resid)) +
-  geom_point(alpha = 0.7) +
-  geom_hline(yintercept = 0, linetype = "dashed") +
-  scale_x_continuous(labels = scales::label_dollar(scale = 1 / 1000, suffix = "K")) +
-  scale_y_continuous(labels = scales::label_dollar(scale = 1 / 1000, suffix = "K")) +
-  labs(title = "Residuals from Modeling Price with Five Predictors",
-       subtitle = "Errors still grow for pricier homes, and one house sold for $714K less than predicted",
-       x = "Predicted Sale Price",
-       y = "Residual",
-       caption = "97 houses with a known lot size, Duke Forest, Durham, NC; Zillow, November 2020")
-```
-````
+Your answer should look like `https://github.com/your-github-username/applications-model/blob/main/analysis.qmd`.
 
 ###
 
@@ -899,20 +835,6 @@ Your answer should look like `https://your-github-username.github.io/application
 ###
 
 The data were scraped from [Zillow](https://www.zillow.com), and each row's `url` still points to the original listing. A listing records what the seller reported, which can be incomplete, as the house with no lot size shows.
-
-### Exercise 3
-
-Commit and push any remaining changes.
-
-```{r}
-#| label: summary-3
-#| echo: false
-learnr2::question("Paste the URL of your GitHub repo.", type = "reflection")
-```
-
-###
-
-Your answer should look like `https://github.com/your-github-username/applications-model`.
 
 ###
 

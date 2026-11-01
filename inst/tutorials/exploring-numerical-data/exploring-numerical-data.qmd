@@ -740,81 +740,17 @@ Many sentences in this tutorial, and its figures, come from the chapter, used un
 
 ### Exercise 1
 
-Render one last time.
+Render one last time. Commit and push.
 
 ```{r}
 #| label: summary-1
 #| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). CP/CR.', type = "reflection")
+learnr2::question('Open your repo on GitHub, click analysis.qmd, and paste the URL of that page below.', type = "reflection")
 ```
 
 ###
 
-````{verbatim}
----
-title: "Exploring Numerical Data"
-author: "Your Name"
-format: html
-execute:
-  echo: false
----
-
-```{r}
-#| message: false
-library(tidyverse)
-library(openintro)
-library(usdata)
-library(maps)
-```
-
-```{r}
-loan50 |>
-  ggplot(aes(x = interest_rate)) +
-  geom_histogram(breaks = seq(5, 27.5, 2.5)) +
-  geom_vline(xintercept = mean(loan50$interest_rate)) +
-  geom_vline(xintercept = median(loan50$interest_rate), linetype = "dashed") +
-  annotate("text", x = mean(loan50$interest_rate), y = 15, label = "mean", hjust = -0.2) +
-  annotate("text", x = median(loan50$interest_rate), y = 13, label = "median", hjust = 1.2) +
-  scale_x_continuous(labels = scales::label_percent(scale = 1)) +
-  labs(title = "Interest Rates on 50 Lending Club Loans",
-       subtitle = "A right-skewed distribution: the mean (11.6%) sits above the median (9.9%)",
-       x = "Interest Rate",
-       y = "Loans",
-       caption = "50 loans sampled from Lending Club")
-```
-
-```{r}
-county |>
-  drop_na(poverty, median_hh_income) |>
-  ggplot(aes(x = poverty, y = median_hh_income)) +
-  geom_point(alpha = 0.3) +
-  geom_smooth(formula = y ~ x, method = "loess", se = FALSE)
-```
-
-```{r}
-county_map <- map_data("county") |>
-  as_tibble() |>
-  left_join(county |>
-              mutate(region = str_to_lower(state),
-                     subregion = str_to_lower(str_remove(name, " County| Parish"))),
-            by = c("region", "subregion"))
-
-county_map
-```
-
-```{r}
-county_map |>
-  ggplot(aes(x = long, y = lat, group = group, fill = poverty)) +
-  geom_polygon() +
-  coord_quickmap() +
-  scale_fill_viridis_c(labels = scales::label_percent(scale = 1)) +
-  theme_void() +
-  labs(title = "Poverty Rate by US County, 2017",
-       subtitle = "Poverty is concentrated in the Deep South, the Mississippi Delta, Appalachia, and the Southwest",
-       fill = "Poverty",
-       caption = "US counties in the lower 48 states; Census Quick Facts")
-```
-````
+Your answer should look like `https://github.com/your-github-username/exploring-numerical-data/blob/main/analysis.qmd`.
 
 ###
 
@@ -841,20 +777,6 @@ Your answer should look like `https://your-github-username.github.io/exploring-n
 ###
 
 Looking for modes isn't about finding a clear and correct answer about the number of modes in a distribution. The most important part of this examination is to better understand your data.
-
-### Exercise 3
-
-Commit and push any remaining changes.
-
-```{r}
-#| label: summary-3
-#| echo: false
-learnr2::question("Paste the URL of your GitHub repo.", type = "reflection")
-```
-
-###
-
-Your answer should look like `https://github.com/your-github-username/exploring-numerical-data`.
 
 ###
 

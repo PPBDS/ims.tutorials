@@ -798,77 +798,17 @@ Many sentences in this tutorial come from the chapter, used under the book's [CC
 
 ### Exercise 1
 
-Render one last time.
+Render one last time. Commit and push.
 
 ```{r}
 #| label: summary-1
 #| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). CP/CR.', type = "reflection")
+learnr2::question('Open your repo on GitHub, click analysis.qmd, and paste the URL of that page below.', type = "reflection")
 ```
 
 ###
 
-````{verbatim}
----
-title: "Exploring Categorical Data"
-author: "Your Name"
-format: html
-execute:
-  echo: false
----
-
-```{r}
-#| message: false
-library(tidyverse)
-library(openintro)
-library(usdata)
-library(ggridges)
-```
-
-```{r}
-loans_full_schema |>
-  count(application_type)
-```
-
-```{r}
-loans <- loans_full_schema |>
-  mutate(homeownership = str_to_lower(homeownership),
-         homeownership = fct_relevel(homeownership, "rent", "mortgage", "own"))
-
-loans
-```
-
-```{r}
-loans |>
-  ggplot(aes(x = homeownership, fill = application_type)) +
-  geom_bar(position = "fill") +
-  scale_y_continuous(labels = scales::label_percent()) +
-  labs(title = "Application Type by Homeownership for Lending Club Loans",
-       subtitle = "Joint applications are twice as common among borrowers with a mortgage as among renters",
-       x = "Homeownership",
-       y = "Share of Loans",
-       fill = "Application Type",
-       caption = "10,000 loans; Lending Club")
-```
-
-```{r}
-county_change <- county |>
-  drop_na(pop_change, median_hh_income) |>
-  mutate(change = if_else(pop_change > 0, "gain", "no gain"))
-
-county_change |>
-  drop_na(metro) |>
-  ggplot(aes(x = median_hh_income)) +
-  geom_histogram(binwidth = 5000) +
-  facet_grid(change ~ metro, labeller = label_both) +
-  scale_x_continuous(labels = scales::label_dollar(scale = 1 / 1000, suffix = "K")) +
-  labs(title = "Median Household Income in US Counties, by Growth and Metro Status",
-       subtitle = "Metro counties earn more whether or not they grew, and growing counties earn more either way",
-       x = "Median Household Income",
-       y = "Counties",
-       caption = "3,136 US counties with known population change and metro status")
-```
-````
+Your answer should look like `https://github.com/your-github-username/exploring-categorical-data/blob/main/analysis.qmd`.
 
 ###
 
@@ -895,20 +835,6 @@ Your answer should look like `https://your-github-username.github.io/exploring-c
 ###
 
 Row and column proportions can also be thought of as *conditional proportions* as they tell us about the proportion of observations in a given level of a categorical variable conditional on the level of another categorical variable.
-
-### Exercise 3
-
-Commit and push any remaining changes.
-
-```{r}
-#| label: summary-3
-#| echo: false
-learnr2::question("Paste the URL of your GitHub repo.", type = "reflection")
-```
-
-###
-
-Your answer should look like `https://github.com/your-github-username/exploring-categorical-data`.
 
 ###
 

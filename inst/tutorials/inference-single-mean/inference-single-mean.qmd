@@ -956,123 +956,17 @@ Many sentences in this tutorial, and its figures, come from the chapter, used un
 
 ### Exercise 1
 
-Render one last time.
+Render one last time. Commit and push.
 
 ```{r}
 #| label: summary-1
 #| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). CP/CR.', type = "reflection")
+learnr2::question('Open your repo on GitHub, click analysis.qmd, and paste the URL of that page below.', type = "reflection")
 ```
 
 ###
 
-````{verbatim}
----
-title: "Inference for a Single Mean"
-author: "Your Name"
-format: html
-execute:
-  echo: false
----
-
-```{r}
-#| message: false
-library(tidyverse)
-library(cherryblossom)
-library(infer)
-```
-
-```{r}
-run17 |>
-  filter(event == "10 Mile") |>
-  summarize(runners = n(),
-            mean_time = mean(net_sec / 60),
-            sd_time = sd(net_sec / 60))
-```
-
-```{r}
-set.seed(1)
-run17_sample <- run17 |>
-  filter(event == "10 Mile") |>
-  slice_sample(n = 100) |>
-  mutate(time = net_sec / 60)
-
-run17_sample |>
-  summarize(n = n(),
-            mean_time = mean(time),
-            sd_time = sd(time),
-            min_time = min(time),
-            max_time = max(time))
-```
-
-```{r}
-set.seed(19)
-boot_means <- run17_sample |>
-  specify(response = time) |>
-  generate(reps = 10000, type = "bootstrap") |>
-  calculate(stat = "mean")
-
-boot_means
-```
-
-```{r}
-boot_ci <- boot_means |>
-  get_confidence_interval(level = 0.95, type = "percentile")
-
-true_mean <- run17 |>
-  filter(event == "10 Mile") |>
-  summarize(mean_time = mean(net_sec / 60)) |>
-  pull(mean_time)
-
-boot_means |>
-  ggplot(aes(x = stat)) +
-  geom_histogram(binwidth = 0.5) +
-  geom_vline(xintercept = c(boot_ci$lower_ci, boot_ci$upper_ci),
-             linetype = "dashed") +
-  geom_vline(xintercept = true_mean, color = "red") +
-  labs(title = "Bootstrapped Mean Finishing Times, 2017 Cherry Blossom 10 Mile",
-       subtitle = "The 95% interval, 95.5 to 101.9 minutes, captures the true mean of all runners, 97.8",
-       x = "Bootstrapped Mean Finishing Time (minutes)",
-       y = "Number of Bootstrap Samples",
-       caption = "100 runners sampled from 17,442; 10,000 bootstrap samples\nSource: run17, cherryblossom package; Introduction to Modern Statistics, Chapter 19")
-```
-
-```{r}
-run17_sample |>
-  mutate(margin = qt(0.975, df = n() - 1) * sd(time) / sqrt(n()),
-         lower = mean(time) - margin,
-         upper = mean(time) + margin) |>
-  summarize(inside = sum(time >= lower & time <= upper))
-```
-
-```{r}
-set.seed(19)
-null_means <- run17_sample |>
-  specify(response = time) |>
-  hypothesize(null = "point", mu = 93.29) |>
-  generate(reps = 10000, type = "bootstrap") |>
-  calculate(stat = "mean")
-
-null_means |>
-  get_p_value(obs_stat = mean(run17_sample$time), direction = "two-sided")
-```
-
-```{r}
-se <- sd(run17_sample$time) / sqrt(nrow(run17_sample))
-gap <- mean(run17_sample$time) - 93.29
-
-null_means |>
-  ggplot(aes(x = stat)) +
-  geom_histogram(aes(y = after_stat(density)), binwidth = 0.5, fill = "gray70") +
-  geom_function(fun = \(x) dt((x - 93.29) / se, df = 99) / se, linewidth = 1) +
-  geom_vline(xintercept = 93.29 + c(-gap, gap), linetype = "dashed") +
-  labs(title = "Mean 10 Mile Times If 2017 Runners Matched 2006's 93.29 Minutes",
-       subtitle = "The 2017 mean of 98.8 is far in the tail: p = 0.0006 by simulation, 0.0013 by the t-test",
-       x = "Mean Finishing Time of 100 Runners (minutes)",
-       y = "Density",
-       caption = "100 runners sampled from 17,442; 10,000 bootstrap samples under the null; curve: t, df = 99\nSource: run17, cherryblossom package; Introduction to Modern Statistics, Chapter 19")
-```
-````
+Your answer should look like `https://github.com/your-github-username/inference-for-a-single-mean/blob/main/analysis.qmd`.
 
 ###
 
@@ -1099,20 +993,6 @@ Your answer should look like `https://your-github-username.github.io/inference-f
 ###
 
 The published page carries an interval of about 95.5 to 102 minutes, on which the bootstrap and the $t$-distribution agree. The same two approaches return in the tutorials on two independent means and paired means.
-
-### Exercise 3
-
-Commit and push any remaining changes.
-
-```{r}
-#| label: summary-3
-#| echo: false
-learnr2::question("Paste the URL of your GitHub repo.", type = "reflection")
-```
-
-###
-
-Your answer should look like `https://github.com/your-github-username/inference-for-a-single-mean`.
 
 ###
 

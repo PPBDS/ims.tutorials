@@ -887,103 +887,17 @@ Many sentences in this tutorial, and its figure, come from the chapter, used und
 
 ### Exercise 1
 
-Render one last time.
+Render one last time. Commit and push.
 
 ```{r}
 #| label: summary-1
 #| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). CP/CR.', type = "reflection")
+learnr2::question('Open your repo on GitHub, click analysis.qmd, and paste the URL of that page below.', type = "reflection")
 ```
 
 ###
 
-````{verbatim}
----
-title: "Decision Errors"
-author: "Your Name"
-format: html
-execute:
-  echo: false
----
-
-```{r}
-#| message: false
-library(tidyverse)
-library(openintro)
-library(infer)
-```
-
-```{r}
-set.seed(47)
-cpr_null <- cpr |>
-  specify(outcome ~ group, success = "survived") |>
-  hypothesize(null = "independence") |>
-  generate(reps = 1000, type = "permute") |>
-  calculate(stat = "diff in props", order = c("treatment", "control")) |>
-  mutate(stat = round(stat, 3))
-
-cpr_null |>
-  summarize(right_tail = mean(stat >= 0.13))
-```
-
-```{r}
-cpr_null |>
-  mutate(extreme = if_else(stat >= 0.13 | stat <= -0.13,
-                           "At least 0.13 from zero", "Closer to zero")) |>
-  ggplot(aes(x = stat, fill = extreme)) +
-  geom_histogram(binwidth = 0.045, center = 0.04) +
-  scale_fill_manual(values = c("At least 0.13 from zero" = "firebrick",
-                               "Closer to zero" = "gray60")) +
-  labs(title = "Survival Differences When Blood Thinners Have No Effect",
-       subtitle = "Two-sided p-value of 0.27: chance alone often gives a difference as large as the observed 0.13",
-       x = "Difference in Survival Rate (Treatment - Control)",
-       y = "Number of Shuffles",
-       fill = NULL,
-       caption = "1,000 shuffles of 90 patients; Böttiger et al. (2001), via openintro") +
-  theme(legend.position = "bottom")
-```
-
-```{r}
-power_at <- function(copies) {
-  study <- cpr |>
-    slice(rep(1:n(), times = copies))
-  null <- study |>
-    specify(outcome ~ group, success = "survived") |>
-    hypothesize(null = "independence") |>
-    generate(reps = 1000, type = "permute") |>
-    calculate(stat = "diff in props", order = c("treatment", "control")) |>
-    pull(stat) |>
-    round(4)
-  study |>
-    specify(outcome ~ group, success = "survived") |>
-    generate(reps = 1000, type = "bootstrap") |>
-    calculate(stat = "diff in props", order = c("treatment", "control")) |>
-    mutate(stat = round(stat, 4),
-           p_value = map_dbl(stat, \(s) 2 * min(mean(null >= s), mean(null <= s)))) |>
-    summarize(power = mean(p_value <= 0.05)) |>
-    pull(power)
-}
-
-set.seed(14)
-tibble(patients = 90 * 1:8) |>
-  mutate(power = map_dbl(patients / 90, power_at)) |>
-  ggplot(aes(x = patients, y = power)) +
-  geom_hline(yintercept = 0.05, linetype = "dashed") +
-  annotate("text", x = 720, y = 0.09, hjust = 1,
-           label = "Discernibility level: 5%") +
-  geom_line() +
-  geom_point(size = 2) +
-  geom_text(aes(label = scales::label_percent(accuracy = 1)(power)),
-            vjust = -1) +
-  scale_x_continuous(breaks = 90 * 1:8) +
-  scale_y_continuous(labels = scales::label_percent(), limits = c(0, 1.05)) +
-  labs(title = "Power to Detect a 13-Point Gain in Survival",
-       subtitle = "A 90-patient study like the CPR trial detects the gain only about a third of the time",
-       x = "Number of Patients",
-       y = "Power at a 0.05 Discernibility Level",
-       caption = "1,000 simulated studies per size, with survival of 22% (control) and 35% (treatment)\nBöttiger et al. (2001), via openintro")
-```
-````
+Your answer should look like `https://github.com/your-github-username/decision-errors/blob/main/analysis.qmd`.
 
 ###
 
@@ -1010,20 +924,6 @@ Your answer should look like `https://your-github-username.github.io/decision-er
 ###
 
 Sometimes data simply point us to the wrong conclusion, which is why scientific studies are often repeated to check initial findings. A repeat of the CPR trial with several hundred patients would settle what 90 could not.
-
-### Exercise 3
-
-Commit and push any remaining changes.
-
-```{r}
-#| label: summary-3
-#| echo: false
-learnr2::question("Paste the URL of your GitHub repo.", type = "reflection")
-```
-
-###
-
-Your answer should look like `https://github.com/your-github-username/decision-errors`.
 
 ###
 

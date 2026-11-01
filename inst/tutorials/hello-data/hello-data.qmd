@@ -814,95 +814,17 @@ Many sentences in this tutorial, and its figure, come from the chapter, used und
 
 ### Exercise 1
 
-Render one last time.
+Render one last time. Commit and push.
 
 ```{r}
 #| label: summary-1
 #| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). CP/CR.', type = "reflection")
+learnr2::question('Open your repo on GitHub, click analysis.qmd, and paste the URL of that page below.', type = "reflection")
 ```
 
 ###
 
-````{verbatim}
----
-title: "Hello Data"
-author: "Your Name"
-format: html
-execute:
-  echo: false
----
-
-```{r}
-#| message: false
-library(tidyverse)
-library(openintro)
-library(usdata)
-```
-
-```{r}
-stent365 |>
-  summarize(prop_stroke = mean(outcome == "stroke"),
-            .by = group)
-```
-
-```{r}
-stent <- bind_rows(`30 days` = stent30, `365 days` = stent365, .id = "time")
-
-stent |>
-  summarize(prop_stroke = mean(outcome == "stroke"),
-            .by = c(time, group)) |>
-  mutate(time = fct_relevel(time, "30 days")) |>
-  ggplot(aes(x = group, y = prop_stroke)) +
-  geom_col() +
-  geom_text(aes(label = scales::label_percent(accuracy = 1)(prop_stroke)),
-            vjust = -0.5) +
-  facet_wrap(~ time) +
-  scale_y_continuous(labels = scales::label_percent()) +
-  labs(title = "Stroke Rates in the Stent Experiment",
-       subtitle = "Patients who received a stent had more strokes, not fewer",
-       x = "Group",
-       y = "Patients Who Had a Stroke",
-       caption = "451 patients; Chimowitz et al. (2011)")
-```
-
-```{r}
-loan50 |>
-  count(term)
-```
-
-```{r}
-county_clean <- county |>
-  select(name, state, homeownership, multi_unit, pop_change, median_hh_income) |>
-  drop_na()
-
-county_clean
-```
-
-```{r}
-county_clean |>
-  ggplot(aes(x = multi_unit, y = homeownership)) +
-  geom_point(alpha = 0.3) +
-  labs(title = "Homeownership and Multi-Unit Housing in US Counties",
-       subtitle = "Counties with more apartments and condos have lower homeownership",
-       x = "Housing Units in Multi-Unit Structures (%)",
-       y = "Homeownership Rate (%)",
-       caption = "3,137 US counties")
-```
-
-```{r}
-county_clean |>
-  ggplot(aes(x = median_hh_income, y = pop_change)) +
-  geom_point(alpha = 0.3) +
-  geom_smooth(method = "lm", formula = y ~ x, se = FALSE) +
-  scale_x_continuous(labels = scales::label_dollar()) +
-  labs(title = "Population Change and Income in US Counties, 2010 to 2017",
-       subtitle = "Counties with higher median household incomes tended to grow faster",
-       x = "Median Household Income",
-       y = "Population Change (%)",
-       caption = "3,137 US counties")
-```
-````
+Your answer should look like `https://github.com/your-github-username/hello-data/blob/main/analysis.qmd`.
 
 ###
 
@@ -929,20 +851,6 @@ Your answer should look like `https://your-github-username.github.io/hello-data/
 ###
 
 The stent study appeared in the *New England Journal of Medicine* in 2011. Your page shows its main finding: more strokes with stents than without.
-
-### Exercise 3
-
-Commit and push any remaining changes.
-
-```{r}
-#| label: summary-3
-#| echo: false
-learnr2::question("Paste the URL of your GitHub repo.", type = "reflection")
-```
-
-###
-
-Your answer should look like `https://github.com/your-github-username/hello-data`.
 
 ###
 

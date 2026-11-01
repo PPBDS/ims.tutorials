@@ -874,102 +874,17 @@ Many sentences in this tutorial, and its figures, come from the chapter, used un
 
 ### Exercise 1
 
-Render one last time.
+Render one last time. Commit and push.
 
 ```{r}
 #| label: summary-1
 #| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). CP/CR.', type = "reflection")
+learnr2::question('Open your repo on GitHub, click analysis.qmd, and paste the URL of that page below.', type = "reflection")
 ```
 
 ###
 
-````{verbatim}
----
-title: "Hypothesis Testing with Randomization"
-author: "Your Name"
-format: html
-execute:
-  echo: false
----
-
-```{r}
-#| message: false
-library(tidyverse)
-library(openintro)
-library(infer)
-```
-
-```{r}
-sex_obs <- sex_discrimination |>
-  specify(decision ~ sex, success = "promoted") |>
-  calculate(stat = "diff in props", order = c("male", "female"))
-
-set.seed(37)
-sex_null <- sex_discrimination |>
-  specify(decision ~ sex, success = "promoted") |>
-  hypothesize(null = "independence") |>
-  generate(reps = 1000, type = "permute") |>
-  calculate(stat = "diff in props", order = c("male", "female"))
-
-sex_null |>
-  summarize(n_extreme = sum(stat >= sex_obs$stat),
-            prop_extreme = mean(stat >= sex_obs$stat))
-```
-
-```{r}
-sex_null |>
-  mutate(extreme = if_else(stat >= sex_obs$stat,
-                           "At least as large as observed",
-                           "Smaller than observed")) |>
-  ggplot(aes(x = stat, fill = extreme)) +
-  geom_histogram(binwidth = 1/12, center = 1/24) +
-  geom_vline(xintercept = sex_obs$stat, linetype = "dashed") +
-  scale_fill_manual(values = c("At least as large as observed" = "steelblue",
-                               "Smaller than observed" = "gray70")) +
-  scale_x_continuous(labels = scales::label_percent()) +
-  labs(title = "Promotion Gaps in 1,000 Shuffled Experiments",
-       subtitle = "With no effect of sex, only 2.4% of shuffles reached the observed 29.2-point gap",
-       x = "Difference in Promotion Rates, Male Minus Female",
-       y = "Number of Shuffles",
-       fill = NULL,
-       caption = "48 bank supervisors; 1,000 random shuffles of the files\nRosen and Jerdee (1974)") +
-  theme(legend.position = "bottom")
-```
-
-```{r}
-opp_obs <- opportunity_cost |>
-  specify(decision ~ group, success = "not buy video") |>
-  calculate(stat = "diff in props", order = c("treatment", "control"))
-
-set.seed(25)
-opp_null <- opportunity_cost |>
-  specify(decision ~ group, success = "not buy video") |>
-  hypothesize(null = "independence") |>
-  generate(reps = 1000, type = "permute") |>
-  calculate(stat = "diff in props", order = c("treatment", "control"))
-```
-
-```{r}
-opp_null |>
-  mutate(extreme = if_else(stat >= opp_obs$stat,
-                           "At least as large as observed",
-                           "Smaller than observed")) |>
-  ggplot(aes(x = stat, fill = extreme)) +
-  geom_histogram(binwidth = 2/75, center = 1/75) +
-  geom_vline(xintercept = opp_obs$stat, linetype = "dashed") +
-  scale_fill_manual(values = c("At least as large as observed" = "steelblue",
-                               "Smaller than observed" = "gray70")) +
-  scale_x_continuous(labels = scales::label_percent()) +
-  labs(title = "Gaps in Not Buying the Video in 1,000 Shuffled Experiments",
-       subtitle = "With no effect of the reminder, only 6 of 1,000 shuffles reached the observed 20-point gap",
-       x = "Difference in Proportion Not Buying, Treatment Minus Control",
-       y = "Number of Shuffles",
-       fill = NULL,
-       caption = "150 students; 1,000 random shuffles of the groups\nFrederick et al. (2009)") +
-  theme(legend.position = "bottom")
-```
-````
+Your answer should look like `https://github.com/your-github-username/hypothesis-testing-with-randomization/blob/main/analysis.qmd`.
 
 ###
 
@@ -996,20 +911,6 @@ Your answer should look like `https://your-github-username.github.io/hypothesis-
 ###
 
 If a jury finds a defendant *not guilty*, this does not necessarily mean the jury is confident in the person's innocence. The same holds for a test: *even if we fail to reject the null hypothesis, we do not accept the null hypothesis as truth*.
-
-### Exercise 3
-
-Commit and push any remaining changes.
-
-```{r}
-#| label: summary-3
-#| echo: false
-learnr2::question("Paste the URL of your GitHub repo.", type = "reflection")
-```
-
-###
-
-Your answer should look like `https://github.com/your-github-username/hypothesis-testing-with-randomization`.
 
 ###
 

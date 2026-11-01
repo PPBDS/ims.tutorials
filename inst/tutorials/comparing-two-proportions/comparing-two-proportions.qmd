@@ -882,102 +882,17 @@ Many sentences in this tutorial, and its figures, come from the chapter, used un
 
 ### Exercise 1
 
-Render one last time.
+Render one last time. Commit and push.
 
 ```{r}
 #| label: summary-1
 #| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). CP/CR.', type = "reflection")
+learnr2::question('Open your repo on GitHub, click analysis.qmd, and paste the URL of that page below.', type = "reflection")
 ```
 
 ###
 
-````{verbatim}
----
-title: "Inference for Comparing Two Proportions"
-author: "Your Name"
-format: html
-execute:
-  echo: false
----
-
-```{r}
-#| message: false
-library(tidyverse)
-library(openintro)
-library(infer)
-```
-
-```{r}
-cpr_obs <- cpr |>
-  specify(outcome ~ group, success = "survived") |>
-  calculate(stat = "diff in props", order = c("treatment", "control"))
-
-set.seed(47)
-cpr_null <- cpr |>
-  specify(outcome ~ group, success = "survived") |>
-  hypothesize(null = "independence") |>
-  generate(reps = 1000, type = "permute") |>
-  calculate(stat = "diff in props", order = c("treatment", "control"))
-
-set.seed(47)
-cpr_boot <- cpr |>
-  specify(outcome ~ group, success = "survived") |>
-  generate(reps = 1000, type = "bootstrap") |>
-  calculate(stat = "diff in props", order = c("treatment", "control"))
-
-bind_rows(Shuffled = cpr_null, Bootstrapped = cpr_boot, .id = "simulation") |>
-  mutate(simulation = fct_relevel(simulation, "Shuffled")) |>
-  ggplot(aes(x = stat)) +
-  geom_histogram(binwidth = 0.045, fill = "steelblue") +
-  geom_vline(xintercept = 0, linetype = "dotted") +
-  geom_vline(xintercept = cpr_obs$stat, linetype = "dashed") +
-  facet_wrap(~ simulation, ncol = 1) +
-  scale_x_continuous(labels = scales::label_percent(suffix = " pts")) +
-  labs(title = "Blood Thinners After CPR: Shuffled and Bootstrapped Differences",
-       subtitle = "Chance often gives a 13-point gap; the 90% interval, -3 to 28 points, includes 0",
-       x = "Difference in Survival Rates, Treatment Minus Control",
-       y = "Number of Simulations",
-       caption = "90 patients, 14 of 40 treated and 11 of 50 controls survived; 1,000 shuffles and 1,000 resamples\nBottiger et al. (2001), via Introduction to Modern Statistics, Chapter 17")
-```
-
-```{r}
-mammo_obs <- mammogram |>
-  specify(breast_cancer_death ~ treatment, success = "yes") |>
-  calculate(stat = "diff in props", order = c("mammogram", "control"))
-
-set.seed(17)
-mammo_null <- mammogram |>
-  specify(breast_cancer_death ~ treatment, success = "yes") |>
-  hypothesize(null = "independence") |>
-  generate(reps = 1000, type = "permute") |>
-  calculate(stat = "diff in props", order = c("mammogram", "control"))
-
-mammo_null |>
-  get_p_value(obs_stat = mammo_obs, direction = "two-sided")
-```
-
-```{r}
-mammo_null |>
-  ggplot(aes(x = stat)) +
-  geom_histogram(aes(y = after_stat(count / sum(count) / width),
-                     fill = abs(stat) >= abs(mammo_obs$stat)),
-                 binwidth = 1 / 44925 + 1 / 44910, center = mammo_obs$stat) +
-  geom_function(fun = dnorm,
-                args = list(mean = 0,
-                            sd = sqrt(1005 / 89835 * (1 - 1005 / 89835) *
-                                        (1 / 44925 + 1 / 44910))),
-                linewidth = 1) +
-  geom_vline(xintercept = mammo_obs$stat, linetype = "dashed") +
-  scale_fill_manual(values = c("gray70", "steelblue"), guide = "none") +
-  scale_x_continuous(labels = scales::label_percent(accuracy = 0.1, suffix = " pts")) +
-  labs(title = "Breast Cancer Deaths If Mammograms Made No Difference",
-       subtitle = "Shuffles and the normal curve agree: the observed gap is ordinary (p near 0.87)",
-       x = "Difference in Breast Cancer Death Rates, Mammogram Minus Control",
-       y = "Density",
-       caption = "89,835 participants, 500 and 505 breast cancer deaths; 1,000 shuffles\nMiller et al. (2014), via Introduction to Modern Statistics, Chapter 17")
-```
-````
+Your answer should look like `https://github.com/your-github-username/inference-for-comparing-two-proportions/blob/main/analysis.qmd`.
 
 ###
 
@@ -1004,20 +919,6 @@ Your answer should look like `https://your-github-username.github.io/inference-f
 ###
 
 Large sample sizes lead to smaller standard errors for a difference in proportions. The CPR study's 90 patients gave a standard error of 0.096, and the mammogram study's 89,835 women gave 0.0007.
-
-### Exercise 3
-
-Commit and push any remaining changes.
-
-```{r}
-#| label: summary-3
-#| echo: false
-learnr2::question("Paste the URL of your GitHub repo.", type = "reflection")
-```
-
-###
-
-Your answer should look like `https://github.com/your-github-username/inference-for-comparing-two-proportions`.
 
 ###
 

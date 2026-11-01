@@ -890,82 +890,17 @@ Many sentences in this tutorial, and its figures, come from the chapter, used un
 
 ### Exercise 1
 
-Render one last time.
+Render one last time. Commit and push.
 
 ```{r}
 #| label: summary-1
 #| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). CP/CR.', type = "reflection")
+learnr2::question('Open your repo on GitHub, click analysis.qmd, and paste the URL of that page below.', type = "reflection")
 ```
 
 ###
 
-````{verbatim}
----
-title: "Inference with Mathematical Models"
-author: "Your Name"
-format: html
-execute:
-  echo: false
----
-
-```{r}
-#| message: false
-library(tidyverse)
-library(openintro)
-library(infer)
-```
-
-```{r}
-set.seed(13)
-null_dist <- opportunity_cost |>
-  specify(decision ~ group, success = "not buy video") |>
-  hypothesize(null = "independence") |>
-  generate(reps = 10000, type = "permute") |>
-  calculate(stat = "diff in props", order = c("treatment", "control"))
-
-null_dist
-```
-
-```{r}
-null_dist |>
-  ggplot(aes(x = stat)) +
-  geom_histogram(aes(y = after_stat(density)), binwidth = 2 / 75, boundary = 0,
-                 fill = "gray75", color = "white") +
-  geom_function(fun = dnorm, args = list(mean = 0, sd = 0.078),
-                color = "steelblue", linewidth = 1.2) +
-  labs(title = "Permuted Differences and the Normal Model",
-       subtitle = "A normal curve with mean 0 and SE 0.078 matches the simulated null distribution",
-       x = "Difference in Proportion Not Buying the Video (Treatment - Control)",
-       y = "Density",
-       caption = "10,000 permutations of 150 students; Frederick et al. (2009)")
-```
-
-```{r}
-set.seed(13)
-boot_dist <- stent30 |>
-  specify(outcome ~ group, success = "stroke") |>
-  generate(reps = 10000, type = "bootstrap") |>
-  calculate(stat = "diff in props", order = c("treatment", "control"))
-```
-
-```{r}
-boot_dist |>
-  ggplot(aes(x = stat)) +
-  geom_histogram(aes(y = after_stat(density)), binwidth = 0.01,
-                 fill = "gray75", color = "white") +
-  geom_function(fun = dnorm, args = list(mean = 0.090, sd = 0.028),
-                color = "steelblue", linewidth = 1.2) +
-  geom_vline(xintercept = c(0.035, 0.145), linetype = "dashed") +
-  geom_vline(xintercept = 0) +
-  scale_x_continuous(labels = scales::label_percent()) +
-  labs(title = "Stents and 30-Day Stroke Risk",
-       subtitle = "Bootstrap and normal model agree: stents raised stroke risk 3.5 to 14.5 points",
-       x = "Difference in Stroke Rate (Treatment - Control)",
-       y = "Density",
-       caption = "10,000 bootstrap resamples of 451 patients; Chimowitz et al. (2011)")
-```
-````
+Your answer should look like `https://github.com/your-github-username/inference-with-mathematical-models/blob/main/analysis.qmd`.
 
 ###
 
@@ -992,20 +927,6 @@ Your answer should look like `https://your-github-username.github.io/inference-w
 ###
 
 Confidence intervals provide an interval estimate for and attempt to capture *population parameters*. Your page's second plot shows one such interval, not a range for individual patients.
-
-### Exercise 3
-
-Commit and push any remaining changes.
-
-```{r}
-#| label: summary-3
-#| echo: false
-learnr2::question("Paste the URL of your GitHub repo.", type = "reflection")
-```
-
-###
-
-Your answer should look like `https://github.com/your-github-username/inference-with-mathematical-models`.
 
 ###
 

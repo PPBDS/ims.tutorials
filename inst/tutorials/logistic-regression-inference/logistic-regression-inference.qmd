@@ -1044,111 +1044,17 @@ Many sentences in this tutorial, and its figures, come from the chapter, used un
 
 ### Exercise 1
 
-Render one last time.
+Render one last time. Commit and push.
 
 ```{r}
 #| label: summary-1
 #| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). CP/CR.', type = "reflection")
+learnr2::question('Open your repo on GitHub, click analysis.qmd, and paste the URL of that page below.', type = "reflection")
 ```
 
 ###
 
-````{verbatim}
----
-title: "Inference for Logistic Regression"
-author: "Your Name"
-format: html
-execute:
-  echo: false
----
-
-```{r}
-#| message: false
-library(tidyverse)
-library(openintro)
-library(broom)
-```
-
-```{r}
-spam_fit <- glm(spam ~ to_multiple + cc + dollar + urgent_subj,
-                data = email, family = binomial)
-
-spam_fit |>
-  augment(type.predict = "response") |>
-  count(.fitted, sort = TRUE)
-```
-
-```{r}
-spam_fit |>
-  augment(type.predict = "response") |>
-  mutate(bucket = cut(.fitted, breaks = c(0, 0.02, 0.05, 0.08, 0.10, 0.12, 1))) |>
-  summarize(n = n(),
-            predicted = mean(.fitted),
-            observed = mean(spam == "1"),
-            .by = bucket) |>
-  mutate(se = sqrt(observed * (1 - observed) / n),
-         lower = observed - 1.96 * se,
-         upper = observed + 1.96 * se) |>
-  ggplot(aes(x = predicted, y = observed)) +
-  geom_abline(linetype = "dashed", color = "gray50") +
-  geom_errorbar(aes(ymin = lower, ymax = upper), width = 0) +
-  geom_point(aes(size = n)) +
-  scale_x_continuous(labels = scales::label_percent()) +
-  scale_y_continuous(labels = scales::label_percent()) +
-  coord_equal(xlim = c(0, 0.35), ylim = c(0, 0.35)) +
-  labs(title = "Predicted and Observed Spam Rates",
-       subtitle = "Observed spam rates track the predictions, except between 2% and 8%",
-       x = "Average Predicted Probability of Spam",
-       y = "Observed Proportion of Spam",
-       size = "Emails",
-       caption = "3,921 emails in six buckets; bars are 95% confidence intervals\nSource: openintro, David Diez's Gmail, Jan.-Mar. 2012")
-```
-
-```{r}
-set.seed(470)
-email_folds <- email |>
-  mutate(fold = sample(rep(1:4, length.out = n())), .by = spam)
-```
-
-```{r}
-cv_predict <- function(formula) {
-  map(1:4, \(k)
-    glm(formula, data = filter(email_folds, fold != k), family = binomial) |>
-      augment(newdata = filter(email_folds, fold == k),
-              type.predict = "response")) |>
-    list_rbind()
-}
-
-bind_rows(smaller = cv_predict(spam ~ to_multiple),
-          larger = cv_predict(spam ~ to_multiple + attach + winner + format +
-                                re_subj + exclaim_mess + number),
-          .id = "model") |>
-  mutate(predicted_spam = if_else(.fitted > 0.1, "1", "0")) |>
-  summarize(notspamTP = mean(predicted_spam[spam == "0"] == "0"),
-            spamTP = mean(predicted_spam[spam == "1"] == "1"),
-            .by = c(model, fold)) |>
-  pivot_longer(c(notspamTP, spamTP), names_to = "measure", values_to = "rate") |>
-  mutate(model = fct_relevel(if_else(model == "smaller",
-                                     "Smaller: 1 predictor",
-                                     "Larger: 7 predictors"),
-                             "Smaller: 1 predictor"),
-         measure = if_else(measure == "spamTP",
-                           "Spam caught (spamTP)",
-                           "Real email let through (notspamTP)")) |>
-  ggplot(aes(x = model, y = rate, color = measure)) +
-  geom_line(aes(group = interaction(measure, fold)), alpha = 0.3) +
-  geom_point(size = 3) +
-  scale_y_continuous(labels = scales::label_percent(), limits = c(0, 1)) +
-  labs(title = "Cross-Validated Spam Predictions from Two Logistic Models",
-       subtitle = "The larger model catches less spam (69% vs. 97%)\nbut lets through far more real email (79% vs. 17%)",
-       x = NULL,
-       y = "Proportion Predicted Correctly",
-       color = NULL,
-       caption = "3,921 emails in four folds, each predicted by a model fit to the other three; spam if predicted probability > 10%\nSource: openintro package, David Diez's Gmail account, January to March 2012") +
-  theme(legend.position = "bottom")
-```
-````
+Your answer should look like `https://github.com/your-github-username/inference-for-logistic-regression/blob/main/analysis.qmd`.
 
 ###
 
@@ -1175,20 +1081,6 @@ Your answer should look like `https://your-github-username.github.io/inference-f
 ###
 
 The emails were observed, not assigned, so the model predicts spam without telling us what causes it.
-
-### Exercise 3
-
-Commit and push any remaining changes.
-
-```{r}
-#| label: summary-3
-#| echo: false
-learnr2::question("Paste the URL of your GitHub repo.", type = "reflection")
-```
-
-###
-
-Your answer should look like `https://github.com/your-github-username/inference-for-logistic-regression`.
 
 ###
 

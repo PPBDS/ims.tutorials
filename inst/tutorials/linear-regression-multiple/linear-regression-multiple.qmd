@@ -936,87 +936,17 @@ Many sentences in this tutorial come from the chapter, used under the book's [CC
 
 ### Exercise 1
 
-Render one last time.
+Render one last time. Commit and push.
 
 ```{r}
 #| label: summary-1
 #| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). CP/CR.', type = "reflection")
+learnr2::question('Open your repo on GitHub, click analysis.qmd, and paste the URL of that page below.', type = "reflection")
 ```
 
 ###
 
-````{verbatim}
----
-title: "Linear Regression with Multiple Predictors"
-author: "Your Name"
-format: html
-execute:
-  echo: false
----
-
-```{r}
-#| message: false
-library(tidyverse)
-library(openintro)
-library(broom)
-```
-
-```{r}
-loans_full_schema |>
-  count(public_record_bankrupt)
-```
-
-```{r}
-loans <- loans_full_schema |>
-  mutate(credit_util = total_credit_utilized / total_credit_limit,
-         bankruptcy = as.factor(if_else(public_record_bankrupt == 0, 0, 1)),
-         verified_income = droplevels(verified_income)) |>
-  rename(credit_checks = inquiries_last_12m) |>
-  select(interest_rate, verified_income, debt_to_income, credit_util,
-         bankruptcy, term, credit_checks, issue_month)
-
-summary(loans)
-```
-
-```{r}
-lm(interest_rate ~ credit_util + verified_income, data = loans) |>
-  augment() |>
-  ggplot(aes(x = credit_util, color = verified_income)) +
-  geom_point(aes(y = interest_rate), alpha = 0.1) +
-  geom_line(aes(y = .fitted), linewidth = 1) +
-  scale_x_continuous(labels = scales::label_percent()) +
-  labs(title = "Interest Rate by Credit Utilization and Income Verification",
-       subtitle = "At every utilization, verified borrowers are predicted to pay 3.3 points more",
-       x = "Credit Utilization",
-       y = "Interest Rate (%)",
-       color = "Income Verification",
-       caption = "9,998 Lending Club loans, January to March 2018; openintro package") +
-  theme(legend.position = "bottom")
-```
-
-```{r}
-predictors <- c("term", "credit_util", "verified_income", "credit_checks",
-                "debt_to_income", "bankruptcy", "issue_month")
-
-tibble(step = 1:7, added = predictors) |>
-  mutate(adj_r_squared = map_dbl(step, \(i) {
-    lm(interest_rate ~ ., data = select(loans, interest_rate, all_of(predictors[1:i]))) |>
-      glance() |>
-      pull(adj.r.squared)
-  })) |>
-  ggplot(aes(x = fct_inorder(added), y = adj_r_squared, group = 1)) +
-  geom_line() +
-  geom_point() +
-  geom_label(aes(label = round(adj_r_squared, 4)), vjust = -0.3, size = 3) +
-  scale_y_continuous(limits = c(0.1, 0.3)) +
-  labs(title = "Forward Selection for Loan Interest Rates",
-       subtitle = "Term and credit utilization do most of the work; adding issue month lowers adjusted R-squared",
-       x = "Predictor Added",
-       y = "Adjusted R-squared",
-       caption = "Up to 10,000 Lending Club loans, January to March 2018; openintro package")
-```
-````
+Your answer should look like `https://github.com/your-github-username/linear-regression-with-multiple-predictors/blob/main/analysis.qmd`.
 
 ###
 
@@ -1043,20 +973,6 @@ Your answer should look like `https://your-github-username.github.io/linear-regr
 ###
 
 Model building is an extensive topic, and we scratch the surface here by defining and utilizing the adjusted $R^2$ value. Stepwise selection can also be carried out with decision criteria other than adjusted $R^2$, such as AIC, which the next tutorial uses.
-
-### Exercise 3
-
-Commit and push any remaining changes.
-
-```{r}
-#| label: summary-3
-#| echo: false
-learnr2::question("Paste the URL of your GitHub repo.", type = "reflection")
-```
-
-###
-
-Your answer should look like `https://github.com/your-github-username/linear-regression-with-multiple-predictors`.
 
 ###
 

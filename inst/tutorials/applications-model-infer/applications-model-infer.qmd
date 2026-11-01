@@ -982,107 +982,17 @@ Many sentences in this tutorial come from the chapter, used under the book's [CC
 
 ### Exercise 1
 
-Render one last time.
+Render one last time. Commit and push.
 
 ```{r}
 #| label: summary-1
 #| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). CP/CR.', type = "reflection")
+learnr2::question('Open your repo on GitHub, click analysis.qmd, and paste the URL of that page below.', type = "reflection")
 ```
 
 ###
 
-````{verbatim}
----
-title: "Applications: Model and Infer"
-author: "Your Name"
-format: html
-execute:
-  echo: false
----
-
-```{r}
-#| message: false
-library(tidyverse)
-library(openintro)
-library(infer)
-library(broom)
-```
-
-```{r}
-mario <- mariokart |>
-  filter(total_pr < 100) |>
-  mutate(price = total_pr,
-         cond_new = if_else(cond == "new", 1, 0),
-         stock_photo = if_else(stock_photo == "yes", 1, 0)) |>
-  select(price, cond_new, stock_photo, duration, wheels)
-
-mario
-```
-
-```{r}
-bind_rows(
-  "One predictor" = lm(price ~ cond_new, data = mario) |>
-    tidy(conf.int = TRUE),
-  "Four predictors" = lm(price ~ cond_new + stock_photo + duration + wheels,
-                         data = mario) |>
-    tidy(conf.int = TRUE),
-  .id = "model"
-) |>
-  filter(term != "(Intercept)") |>
-  mutate(model = fct_inorder(model),
-         term = fct_recode(term,
-                           "New condition" = "cond_new",
-                           "Stock photo" = "stock_photo",
-                           "Each day of auction" = "duration",
-                           "Each Wii wheel" = "wheels")) |>
-  ggplot(aes(x = term, y = estimate, color = model)) +
-  geom_hline(yintercept = 0, linetype = "dashed") +
-  geom_pointrange(aes(ymin = conf.low, ymax = conf.high),
-                  position = position_dodge(width = 0.4)) +
-  scale_y_continuous(labels = scales::label_dollar()) +
-  labs(title = "What Adds to the Price of Mario Kart on eBay",
-       subtitle = "Holding wheels and the rest constant cuts the premium for a new game from $10.90 to $5.13",
-       x = NULL,
-       y = "Change in Total Price, with 95% Confidence Interval",
-       color = "Model",
-       caption = "141 eBay auctions under $100, October 2009; two bundles removed") +
-  theme(legend.position = "bottom")
-```
-
-```{r}
-set.seed(4)
-mario_folds <- mario |>
-  mutate(fold = sample(rep(1:3, length.out = n())))
-
-mario_cv <- bind_rows(
-  "One predictor" = map(1:3, \(k) lm(price ~ cond_new,
-                                     data = filter(mario_folds, fold != k)) |>
-                          augment(newdata = filter(mario_folds, fold == k))) |>
-    list_rbind(),
-  "Four predictors" = map(1:3, \(k) lm(price ~ cond_new + stock_photo + duration + wheels,
-                                       data = filter(mario_folds, fold != k)) |>
-                            augment(newdata = filter(mario_folds, fold == k))) |>
-    list_rbind(),
-  .id = "model"
-)
-
-mario_cv |>
-  mutate(model = fct_inorder(model)) |>
-  ggplot(aes(x = .fitted, y = .resid, color = factor(fold))) +
-  geom_point(alpha = 0.7) +
-  geom_hline(yintercept = 0) +
-  facet_wrap(~ model) +
-  scale_x_continuous(labels = scales::label_dollar()) +
-  scale_y_continuous(labels = scales::label_dollar()) +
-  labs(title = "Cross-Validated Errors for Two Models of Mario Kart Prices",
-       subtitle = "Four predictors cut the CV sum of squared errors from 7,923 to 3,482",
-       x = "Predicted Total Price",
-       y = "Prediction Error (Residual)",
-       color = "Fold",
-       caption = "141 eBay auctions under $100, October 2009; 3-fold cross-validation")
-```
-````
+Your answer should look like `https://github.com/your-github-username/applications-model-and-infer/blob/main/analysis.qmd`.
 
 ###
 
@@ -1109,20 +1019,6 @@ Your answer should look like `https://your-github-username.github.io/application
 ###
 
 Each row of `mariokart` also carries the eBay auction ID and the seller's title, which is how you identified the two bundles.
-
-### Exercise 3
-
-Commit and push any remaining changes.
-
-```{r}
-#| label: summary-3
-#| echo: false
-learnr2::question("Paste the URL of your GitHub repo.", type = "reflection")
-```
-
-###
-
-Your answer should look like `https://github.com/your-github-username/applications-model-and-infer`.
 
 ###
 

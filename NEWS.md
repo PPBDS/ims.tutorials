@@ -1,3 +1,11 @@
+# ims.tutorials (development version)
+
+* Every Summary's first exercise is now a final render, commit and push,
+  answered with the URL of `analysis.qmd` on GitHub, in place of the
+  whole-file `show_file("analysis.qmd", start = 0)` paste. The separate
+  repo-URL exercise is gone; the file URL contains it. Each tutorial is one
+  exercise shorter.
+
 # ims.tutorials 0.0.0.9004
 
 * Knowledge drops now show the book's own diagrams: 63 figures across 21 tutorials,

@@ -936,88 +936,17 @@ Many sentences in this tutorial, and its figures, come from the chapter, used un
 
 ### Exercise 1
 
-Render one last time.
+Render one last time. Commit and push.
 
 ```{r}
 #| label: summary-1
 #| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). CP/CR.', type = "reflection")
+learnr2::question('Open your repo on GitHub, click analysis.qmd, and paste the URL of that page below.', type = "reflection")
 ```
 
 ###
 
-````{verbatim}
----
-title: "Inference for Comparing Paired Means"
-author: "Your Name"
-format: html
-execute:
-  echo: false
----
-
-```{r}
-#| message: false
-library(tidyverse)
-library(openintro)
-library(infer)
-```
-
-```{r}
-textbooks <- ucla_textbooks_f18 |>
-  select(subject, course_num, textbook_isbn, bookstore_new, amazon_new) |>
-  filter(!is.na(bookstore_new), !is.na(amazon_new)) |>
-  mutate(price_diff = bookstore_new - amazon_new)
-```
-
-```{r}
-set.seed(21)
-null_dist <- textbooks |>
-  specify(response = price_diff) |>
-  hypothesize(null = "paired independence") |>
-  generate(reps = 10000, type = "permute") |>
-  calculate(stat = "mean")
-
-boot_dist <- textbooks |>
-  specify(response = price_diff) |>
-  generate(reps = 10000, type = "bootstrap") |>
-  calculate(stat = "mean")
-
-boot_dist |>
-  get_confidence_interval(level = 0.99, type = "se",
-                          point_estimate = mean(textbooks$price_diff))
-```
-
-```{r}
-null_dist |>
-  ggplot(aes(x = stat)) +
-  geom_histogram(binwidth = 0.25, fill = "gray75", color = "white") +
-  geom_vline(xintercept = c(-1, 1) * mean(textbooks$price_diff),
-             color = "firebrick", linewidth = 1) +
-  scale_x_continuous(labels = scales::label_dollar()) +
-  labs(title = "Shuffling Prices Within Each Textbook",
-       subtitle = "Only 2% of shuffles give a mean difference as far from $0 as the observed $3.58",
-       x = "Mean Price Difference, UCLA Bookstore - Amazon",
-       y = "Count",
-       caption = "10,000 within-book shuffles of 68 textbooks; UCLA courses, Fall 2018 (openintro)")
-```
-
-```{r}
-boot_dist |>
-  ggplot(aes(x = stat)) +
-  geom_histogram(aes(y = after_stat(density)), binwidth = 0.25,
-                 fill = "gray75", color = "white") +
-  geom_function(fun = \(x) dt((x - 3.58) / 1.63, df = 67) / 1.63,
-                color = "steelblue", linewidth = 1.2) +
-  geom_vline(xintercept = c(0.33, 6.83), linetype = "dashed") +
-  geom_vline(xintercept = 0) +
-  scale_x_continuous(labels = scales::label_dollar()) +
-  labs(title = "UCLA Bookstore Versus Amazon, New Textbooks",
-       subtitle = "Bootstrap and t-model agree: the bookstore charged $0.33 to $6.83 more on average",
-       x = "Mean Price Difference, UCLA Bookstore - Amazon",
-       y = "Density",
-       caption = "10,000 bootstrap resamples of 68 textbooks; UCLA courses, Fall 2018 (openintro)")
-```
-````
+Your answer should look like `https://github.com/your-github-username/inference-for-comparing-paired-means/blob/main/analysis.qmd`.
 
 ###
 
@@ -1044,20 +973,6 @@ Your answer should look like `https://your-github-username.github.io/inference-f
 ###
 
 There are certainly a handful of cases where Amazon prices are far below the UCLA Bookstore's, which suggests it is worth checking Amazon (and probably other online sites) before purchasing. But in many cases the Amazon price is above what the UCLA Bookstore charges, and most of the time the price isn't that different.
-
-### Exercise 3
-
-Commit and push any remaining changes.
-
-```{r}
-#| label: summary-3
-#| echo: false
-learnr2::question("Paste the URL of your GitHub repo.", type = "reflection")
-```
-
-###
-
-Your answer should look like `https://github.com/your-github-username/inference-for-comparing-paired-means`.
 
 ###
 

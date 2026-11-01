@@ -897,110 +897,17 @@ Many sentences in this tutorial, and its figures, come from the chapter, used un
 
 ### Exercise 1
 
-Render one last time.
+Render one last time. Commit and push.
 
 ```{r}
 #| label: summary-1
 #| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). CP/CR.', type = "reflection")
+learnr2::question('Open your repo on GitHub, click analysis.qmd, and paste the URL of that page below.', type = "reflection")
 ```
 
 ###
 
-````{verbatim}
----
-title: "Confidence Intervals with Bootstrapping"
-author: "Your Name"
-format: html
-execute:
-  echo: false
----
-
-```{r}
-#| message: false
-library(tidyverse)
-library(infer)
-```
-
-```{r}
-set.seed(4)
-read_csv("data/medical_consultant.csv", show_col_types = FALSE) |>
-  slice_sample(n = 62, replace = TRUE) |>
-  summarize(prop_complication = mean(complication == "yes"))
-```
-
-```{r}
-set.seed(10)
-boot_med <- read_csv("data/medical_consultant.csv", show_col_types = FALSE) |>
-  specify(response = complication, success = "yes") |>
-  generate(reps = 10000, type = "bootstrap") |>
-  calculate(stat = "prop")
-
-boot_med
-```
-
-```{r}
-med_ci <- boot_med |>
-  get_confidence_interval(level = 0.95, type = "percentile")
-
-boot_med |>
-  ggplot(aes(x = stat)) +
-  geom_histogram(binwidth = 1 / 62) +
-  geom_vline(xintercept = c(med_ci$lower_ci, med_ci$upper_ci),
-             linetype = "dashed") +
-  geom_vline(xintercept = 0.10, color = "red") +
-  scale_x_continuous(labels = scales::label_percent()) +
-  labs(title = "Bootstrapped Complication Rates for One Medical Consultant",
-       subtitle = "The 95% interval, 0% to 11.3%, includes the national rate of 10%",
-       x = "Bootstrapped Proportion of Clients with a Complication",
-       y = "Number of Bootstrap Samples",
-       caption = "62 clients, 10,000 bootstrap samples; Introduction to Modern Statistics, Chapter 12")
-```
-
-```{r}
-set.seed(10)
-boot_tap <- read_csv("data/tappers.csv", show_col_types = FALSE) |>
-  specify(response = correct, success = "yes") |>
-  generate(reps = 10000, type = "bootstrap") |>
-  calculate(stat = "prop")
-
-tibble(level = c(0.80, 0.95, 0.99)) |>
-  mutate(ci = map(level, \(l) get_confidence_interval(boot_tap, level = l,
-                                                        type = "percentile"))) |>
-  unnest(ci)
-```
-
-```{r}
-set.seed(10)
-population <- tibble(complication = rep(c("yes", "no"), times = c(1000, 9000)))
-
-ci_sims <- population |>
-  rep_slice_sample(n = 62, reps = 100) |>
-  nest() |>
-  ungroup() |>
-  mutate(ci = map(data, \(sample) sample |>
-                    specify(response = complication, success = "yes") |>
-                    generate(reps = 1000, type = "bootstrap") |>
-                    calculate(stat = "prop") |>
-                    get_confidence_interval(level = 0.95, type = "percentile"))) |>
-  unnest(ci) |>
-  mutate(captured = lower_ci <= 0.10 & upper_ci >= 0.10)
-
-ci_sims |>
-  ggplot(aes(y = replicate, color = captured)) +
-  geom_segment(aes(x = lower_ci, xend = upper_ci)) +
-  geom_vline(xintercept = 0.10) +
-  scale_x_continuous(labels = scales::label_percent()) +
-  scale_color_manual(values = c(`TRUE` = "grey50", `FALSE` = "red"),
-                     labels = c(`TRUE` = "Yes", `FALSE` = "No")) +
-  labs(title = "100 Bootstrap Confidence Intervals for a 10% Complication Rate",
-       subtitle = "93 of the 100 95% intervals captured the true rate",
-       x = "95% Bootstrap Percentile Interval",
-       y = "Sample",
-       color = "Captured 10%?",
-       caption = "100 samples of 62 clients from a population with a 10% complication rate;\n1,000 bootstrap samples each. Rate from Introduction to Modern Statistics, Chapter 12.")
-```
-````
+Your answer should look like `https://github.com/your-github-username/confidence-intervals-with-bootstrapping/blob/main/analysis.qmd`.
 
 ###
 
@@ -1029,20 +936,6 @@ Your answer should look like `https://your-github-username.github.io/confidence-
 ###
 
 Bootstrapping returns in the book's chapters on a single mean, two means, and paired means.
-
-### Exercise 3
-
-Commit and push any remaining changes.
-
-```{r}
-#| label: summary-3
-#| echo: false
-learnr2::question("Paste the URL of your GitHub repo.", type = "reflection")
-```
-
-###
-
-Your answer should look like `https://github.com/your-github-username/confidence-intervals-with-bootstrapping`.
 
 ###
 

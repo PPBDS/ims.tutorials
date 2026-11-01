@@ -649,74 +649,17 @@ Many sentences in this tutorial come from the chapter, used under the book's [CC
 
 ### Exercise 1
 
-Render one last time.
+Render one last time. Commit and push.
 
 ```{r}
 #| label: summary-1
 #| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). CP/CR.', type = "reflection")
+learnr2::question('Open your repo on GitHub, click analysis.qmd, and paste the URL of that page below.', type = "reflection")
 ```
 
 ###
 
-````{verbatim}
----
-title: "Applications: Data"
-author: "Your Name"
-format: html
-execute:
-  echo: false
----
-
-```{r}
-#| message: false
-library(tidyverse)
-library(openintro)
-```
-
-```{r}
-paralympic_1500 |>
-  filter(division == "Men", year > 1950) |>
-  ggplot(aes(x = year, y = time_min, color = type)) +
-  geom_vline(xintercept = 2016, linetype = "dashed", color = "darkgrey") +
-  geom_point(size = 2) +
-  labs(title = "Men's 1500m Gold Medal Times, 1952 to 2020",
-       subtitle = "Olympic winners are faster every year except 2016, when the T13 winner beat them",
-       x = "Year",
-       y = "Winning Time (minutes)",
-       color = "Race Type",
-       caption = "43 gold medal races; paralympic.org and Wikipedia")
-```
-
-```{r}
-men_1500 <- paralympic_1500 |>
-  filter(division == "Men", type %in% c("Olympic", "T11"), year > 1950)
-
-men_1500
-```
-
-```{r}
-men_1500 |>
-  ggplot(aes(x = year, y = time_min, color = type)) +
-  geom_point(size = 2) +
-  geom_smooth(method = "lm", formula = y ~ x, se = FALSE) +
-  labs(title = "Men's Olympic and T11 Paralympic 1500m Gold Medal Times",
-       subtitle = "Winners of both races have gotten faster, though the pooled trend points the other way",
-       x = "Year",
-       y = "Winning Time (minutes)",
-       color = "Race Type",
-       caption = "28 gold medal races since 1952; paralympic.org and Wikipedia")
-```
-
-```{r}
-paralympic_1500 |>
-  filter(division == "Women", type %in% c("Olympic", "T11")) |>
-  summarize(n = n(),
-            first_year = min(year),
-            mean_time = mean(time_min),
-            .by = type)
-```
-````
+Your answer should look like `https://github.com/your-github-username/applications-data/blob/main/analysis.qmd`.
 
 ###
 
@@ -743,20 +686,6 @@ Your answer should look like `https://your-github-username.github.io/application
 ###
 
 The chapter ends by asking: is there a biological boundary which establishes a time under which no human could run 1500m? Winners' times keep falling, but 82 races cannot say where they stop.
-
-### Exercise 3
-
-Commit and push any remaining changes.
-
-```{r}
-#| label: summary-3
-#| echo: false
-learnr2::question("Paste the URL of your GitHub repo.", type = "reflection")
-```
-
-###
-
-Your answer should look like `https://github.com/your-github-username/applications-data`.
 
 ###
 

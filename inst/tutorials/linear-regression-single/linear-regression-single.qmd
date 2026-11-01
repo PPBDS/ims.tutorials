@@ -903,78 +903,17 @@ Many sentences in this tutorial, and its figures, come from the chapter, used un
 
 ### Exercise 1
 
-Render one last time.
+Render one last time. Commit and push.
 
 ```{r}
 #| label: summary-1
 #| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). CP/CR.', type = "reflection")
+learnr2::question('Open your repo on GitHub, click analysis.qmd, and paste the URL of that page below.', type = "reflection")
 ```
 
 ###
 
-````{verbatim}
----
-title: "Linear Regression with a Single Predictor"
-author: "Your Name"
-format: html
-execute:
-  echo: false
----
-
-```{r}
-#| message: false
-library(tidyverse)
-library(openintro)
-library(broom)
-```
-
-```{r}
-possum |>
-  mutate(total_in = total_l / 2.54) |>
-  summarize(r = cor(total_in, head_l))
-```
-
-```{r}
-possum_fit <- lm(head_l ~ total_l, data = possum)
-
-possum_fit |>
-  augment() |>
-  select(head_l, total_l, .fitted, .resid)
-```
-
-```{r}
-possum_fit |>
-  augment(data = possum) |>
-  ggplot(aes(x = total_l, y = head_l)) +
-  geom_point(aes(color = sex)) +
-  geom_line(aes(y = .fitted)) +
-  scale_color_discrete(labels = c("Female", "Male")) +
-  labs(title = "Head Length and Total Length of Brushtail Possums",
-       subtitle = "Each extra 10 cm of body goes with about 5.7 mm more head, on average",
-       x = "Total Length (cm)",
-       y = "Head Length (mm)",
-       color = "Sex",
-       caption = "104 possums; Lindenmayer et al. (1995)")
-```
-
-```{r}
-mariokart |>
-  filter(total_pr < 100) |>
-  mutate(new = if_else(cond == "new", 1, 0)) |>
-  ggplot(aes(x = new, y = total_pr)) +
-  geom_jitter(width = 0.05, height = 0, alpha = 0.6) +
-  geom_smooth(method = "lm", formula = y ~ x, se = FALSE) +
-  scale_x_continuous(breaks = c(0, 1),
-                     labels = c("Used (0)", "New (1)")) +
-  scale_y_continuous(labels = scales::label_dollar()) +
-  labs(title = "Mario Kart Wii Prices on eBay by Condition",
-       subtitle = "New copies sold for about $10.90 more than used ones",
-       x = "Condition",
-       y = "Total Price (Auction plus Shipping)",
-       caption = "141 eBay auctions under $100, October 2009; two bundles removed")
-```
-````
+Your answer should look like `https://github.com/your-github-username/linear-regression-with-a-single-predictor/blob/main/analysis.qmd`.
 
 ###
 
@@ -1001,20 +940,6 @@ Your answer should look like `https://your-github-username.github.io/linear-regr
 ###
 
 A regression line, unlike a correlation, depends on which variable predicts which.
-
-### Exercise 3
-
-Commit and push any remaining changes.
-
-```{r}
-#| label: summary-3
-#| echo: false
-learnr2::question("Paste the URL of your GitHub repo.", type = "reflection")
-```
-
-###
-
-Your answer should look like `https://github.com/your-github-username/linear-regression-with-a-single-predictor`.
 
 ###
 

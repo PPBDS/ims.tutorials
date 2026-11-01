@@ -248,9 +248,11 @@ everything in this file; copy its patterns.
   package (learnr2 is in `Imports`), and the standing note on the first `show_file()`
   exercise names `library(learnr2)`. For a file with code chunks it shows only the
   last chunk by default, so the evidence call is `show_file("analysis.qmd")`, with no
-  `chunk` argument, and the Summary's whole-file check is
-  `show_file("analysis.qmd", start = 0)`. Files without chunks, like `.gitignore`,
-  print whole by default.
+  `chunk` argument. Files without chunks, like `.gitignore`, print whole by default.
+  No tutorial asks for the whole QMD (`start = 0`) any more: per the base guide's
+  *Summary exercises*, the Summary's first exercise is a final render, commit and
+  push, answered with the URL of `analysis.qmd` on GitHub, and there is no separate
+  repo-URL exercise.
 - **Questions** are `type = "reflection"`, which locks the answer once submitted, and
   the question's text carries the whole instruction:
   `learnr2::question('In the R Terminal, run show_file("analysis.qmd"). CP/CR.', type = "reflection")`.
@@ -283,7 +285,7 @@ everything in this file; copy its patterns.
   is tagged `default`; anything the student compares against (an `ls` listing, a help
   page excerpt, the `.gitignore` answer, a `git log`) is tagged `{.output}`. Our
   answer for a `show_file()` question that is not a live chunk (the setup chunk, a
-  cleaned-up cached chunk, the whole-file check) goes in a four-backtick
+  cleaned-up cached chunk) goes in a four-backtick
   ````` ````{verbatim} ````` block, which shows chunk fences without running them.
   Never a bare ```` ``` ```` fence, and never `<pre><code>` with `&#96;` entities.
 - **No install exercises.** Every package a tutorial uses, including the book's data

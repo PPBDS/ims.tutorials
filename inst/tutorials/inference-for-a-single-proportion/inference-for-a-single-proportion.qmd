@@ -967,80 +967,17 @@ Many sentences in this tutorial, and its figures, come from the chapter, used un
 
 ### Exercise 1
 
-Render one last time.
+Render one last time. Commit and push.
 
 ```{r}
 #| label: summary-1
 #| echo: false
-learnr2::question('In the R Terminal, run show_file("analysis.qmd", start = 0). CP/CR.', type = "reflection")
+learnr2::question('Open your repo on GitHub, click analysis.qmd, and paste the URL of that page below.', type = "reflection")
 ```
 
 ###
 
-````{verbatim}
----
-title: "Inference for a Single Proportion"
-author: "Your Name"
-format: html
-execute:
-  echo: false
----
-
-```{r}
-#| message: false
-library(tidyverse)
-library(infer)
-```
-
-```{r}
-set.seed(16)
-null_dist <- read_csv("data/medical_consultant.csv", show_col_types = FALSE) |>
-  specify(response = complication, success = "yes") |>
-  hypothesize(null = "point", p = 0.10) |>
-  generate(reps = 10000, type = "draw") |>
-  calculate(stat = "prop")
-
-null_dist |>
-  count(stat)
-```
-
-```{r}
-null_dist |>
-  ggplot(aes(x = stat, fill = stat <= 3 / 62)) +
-  geom_histogram(binwidth = 1 / 62, center = 0) +
-  geom_vline(xintercept = 3 / 62, linetype = "dashed") +
-  scale_fill_manual(values = c("gray70", "steelblue"), guide = "none") +
-  scale_x_continuous(labels = scales::label_percent()) +
-  labs(title = "Complication Rates If the Consultant Matched the US Rate of 10%",
-       subtitle = "12.5% of simulated studies had 3 or fewer complications, so her record could easily be chance",
-       x = "Simulated Complication Rate",
-       y = "Number of Simulated Studies",
-       caption = "62 surgeries, 3 with complications; 10,000 simulated studies\nIntroduction to Modern Statistics, Chapter 16")
-```
-
-```{r}
-set.seed(16)
-read_csv("data/payday_credit_check.csv", show_col_types = FALSE) |>
-  specify(response = support, success = "yes") |>
-  hypothesize(null = "point", p = 0.5) |>
-  generate(reps = 10000, type = "draw") |>
-  calculate(stat = "prop") |>
-  ggplot(aes(x = stat)) +
-  geom_histogram(aes(y = after_stat(count / sum(count) / width),
-                     fill = stat >= 421 / 826),
-                 binwidth = 5 / 826, center = 0.5) +
-  geom_function(fun = dnorm, args = list(mean = 0.5, sd = sqrt(0.5 * 0.5 / 826)),
-                linewidth = 1) +
-  geom_vline(xintercept = 421 / 826, linetype = "dashed") +
-  scale_fill_manual(values = c("gray70", "steelblue"), guide = "none") +
-  scale_x_continuous(labels = scales::label_percent()) +
-  labs(title = "Support for a Credit-Check Rule If Borrowers Were Evenly Split",
-       subtitle = "Simulation and normal model agree on a p-value near 0.3: no clear majority support",
-       x = "Simulated Proportion Supporting the Regulation",
-       y = "Density",
-       caption = "826 borrowers, 421 in support; 10,000 simulated polls\nIntroduction to Modern Statistics, Chapter 16")
-```
-````
+Your answer should look like `https://github.com/your-github-username/inference-for-a-single-proportion/blob/main/analysis.qmd`.
 
 ###
 
@@ -1067,20 +1004,6 @@ Your answer should look like `https://your-github-username.github.io/inference-f
 ###
 
 An exact p-value can be generated using the binomial distribution, but that method will not be covered in this text. Simulation gets close to that exact answer.
-
-### Exercise 3
-
-Commit and push any remaining changes.
-
-```{r}
-#| label: summary-3
-#| echo: false
-learnr2::question("Paste the URL of your GitHub repo.", type = "reflection")
-```
-
-###
-
-Your answer should look like `https://github.com/your-github-username/inference-for-a-single-proportion`.
 
 ###
 
