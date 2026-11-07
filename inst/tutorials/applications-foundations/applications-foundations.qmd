@@ -712,7 +712,7 @@ Render one last time. Commit and push.
 ```{r}
 #| label: summary-1
 #| echo: false
-learnr2::question('Open your repo on GitHub, click analysis.qmd, and paste the URL of that page below.', type = "reflection")
+learnr2::question('Open your repo on GitHub, click analysis.qmd, and paste the URL of that page below.', type = "reflection_editable")
 ```
 
 ###
@@ -734,7 +734,7 @@ quarto publish gh-pages analysis.qmd
 ```{r}
 #| label: summary-2
 #| echo: false
-learnr2::question("Paste the URL of your published page.", type = "reflection")
+learnr2::question("Paste the URL of your published page.", type = "reflection_editable")
 ```
 
 ###
