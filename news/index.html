@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ims.tutorials</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1.9001</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1.9002</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -34,7 +34,8 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="imstutorials-development-version">ims.tutorials (development version)<a class="anchor" aria-label="anchor" href="#imstutorials-development-version"></a></h2>
-<ul><li>Every Summary’s first exercise is now a final render, commit and push, answered with the URL of <code>analysis.qmd</code> on GitHub, in place of the whole-file <code>show_file("analysis.qmd", start = 0)</code> paste. The separate repo-URL exercise is gone; the file URL contains it. Each tutorial is one exercise shorter.</li>
+<ul><li><p>The tests now call <code><a href="https://ppbds.github.io/learnr2/reference/check_tutorials.html" class="external-link">learnr2::check_tutorials()</a></code>, which runs learnr2’s static checks on every tutorial, renders each, and confirms each page’s download names this package and tutorial. It replaces a loop that only rendered. <strong>quarto</strong> joins <code>Suggests</code> for the test, and <strong>withr</strong>, no longer used, leaves it.</p></li>
+<li><p>Every Summary’s first exercise is now a final render, commit and push, answered with the URL of <code>analysis.qmd</code> on GitHub, in place of the whole-file <code>show_file("analysis.qmd", start = 0)</code> paste. The separate repo-URL exercise is gone; the file URL contains it. Each tutorial is one exercise shorter.</p></li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.0.0.9004" id="imstutorials-0009004">ims.tutorials 0.0.0.9004<a class="anchor" aria-label="anchor" href="#imstutorials-0009004"></a></h2>
