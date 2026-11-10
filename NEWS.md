@@ -1,5 +1,11 @@
 # ims.tutorials (development version)
 
+* The tests now call `learnr2::check_tutorials()`, which runs learnr2's static
+  checks on every tutorial, renders each, and confirms each page's download
+  names this package and tutorial. It replaces a loop that only rendered.
+  **quarto** joins `Suggests` for the test, and **withr**, no longer used,
+  leaves it.
+
 * Every Summary's first exercise is now a final render, commit and push,
   answered with the URL of `analysis.qmd` on GitHub, in place of the
   whole-file `show_file("analysis.qmd", start = 0)` paste. The separate

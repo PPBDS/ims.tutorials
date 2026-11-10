@@ -1,6 +1,6 @@
 Package: ims.tutorials
 Title: Tutorials for Introduction to Modern Statistics
-Version: 0.1.1.9001
+Version: 0.1.1.9002
 Authors@R:
     c(
     person(given = "David",
@@ -35,11 +35,11 @@ Suggests:
     maps,
     openintro,
     palmerpenguins,
+    quarto,
     scales,
     testthat,
     tidyverse,
-    usdata,
-    withr
+    usdata
 Remotes:
     PPBDS/learnr2
 SystemRequirements: Quarto command line tool

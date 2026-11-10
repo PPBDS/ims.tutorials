@@ -26,16 +26,16 @@ test_that("each tutorial's file name and download prefix match its directory", {
   }
 })
 
-test_that("tutorials can be rendered", {
+# learnr2's one-call check for a content package: check_tutorial()'s static
+# checks on every tutorial, a real render of each, and a check that each
+# rendered page's download names this package, its version, and the tutorial.
+test_that("every tutorial passes learnr2's checks", {
   testthat::skip_on_cran() # Rendering needs the Quarto CLI.
   skip_if(length(tutorial_names()) == 0, "No tutorials yet")
 
-  for (name in tutorial_names()) {
-    html <- learnr2::run_tutorial(name, package = "ims.tutorials",
-                                  output_dir = withr::local_tempdir(),
-                                  open = FALSE)
-    expect_true(file.exists(html), label = name)
-  }
+  expect_no_error(learnr2::check_tutorials(
+    "ims.tutorials", render = !is.null(quarto::quarto_path())
+  ))
 })
 
 # R CMD check gives a NOTE for any package path over 100 bytes, the limit for
